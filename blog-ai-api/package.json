@@ -1,0 +1,8 @@
+{
+  "name": "blog-ai-api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "sync:corpus": "node scripts/sync-corpus.js"
+  }
+}

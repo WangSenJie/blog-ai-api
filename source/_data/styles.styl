@@ -1,0 +1,1087 @@
+body
+  background linear-gradient(180deg, #f4f7f9 0%, #ebf0f4 100%)
+  color #2b3440
+
+body::before,
+body::after
+  content ''
+  pointer-events none
+  position fixed
+  inset 0
+  z-index 0
+
+body::before
+  background linear-gradient(180deg, $site-bg-overlay 0%, rgba(235, 240, 244, .9) 100%)
+  z-index 0
+
+body::after
+  background-image $site-bg-image
+  background-position center top
+  background-repeat no-repeat
+  background-size cover
+  opacity $site-bg-opacity
+  transform scale(1.02)
+  z-index 1
+
+.container::before,
+.container::after
+  content ''
+  pointer-events none
+  position fixed
+  z-index 0
+
+.container::before
+  top -120px
+  right -90px
+  width 540px
+  height 540px
+  background radial-gradient(circle, rgba(126, 174, 207, .12) 0%, rgba(126, 174, 207, 0) 72%)
+
+.container::after
+  left -120px
+  top 180px
+  width 460px
+  height 460px
+  background radial-gradient(circle, rgba(15, 23, 42, .08) 0%, rgba(15, 23, 42, 0) 72%)
+
+.container
+  position relative
+  z-index 2
+
+.headband
+  box-shadow 0 8px 24px rgba(15, 23, 42, .12)
+
+.header-inner
+  padding-top 40px
+
+  +mobile()
+    padding-top 28px
+
+.site-brand-container
+  background transparent
+  border none
+  border-radius 0
+  box-shadow none
+  backdrop-filter none
+  overflow visible
+  padding 34px 40px
+  position relative
+
+  &::before
+    display none
+
+  &::after
+    display none
+
+  +mobile()
+    padding 22px 18px 16px
+
+.brand
+  background transparent !important
+  box-shadow none
+  align-items center
+  display inline-flex
+  gap 18px
+  padding 0
+
+  +mobile()
+    gap 0
+
+.logo-line-before,
+.logo-line-after
+  background linear-gradient(90deg, rgba(169, 199, 221, 0), rgba(169, 199, 221, .96), rgba(169, 199, 221, 0))
+  display block
+  height 1px
+  width 92px
+
+  i
+    display none
+
+  +mobile()
+    display none
+
+.site-title
+  color #4b585f
+  font-size 2.9rem
+  font-weight 600
+  letter-spacing .035em
+  text-shadow none
+
+  +mobile()
+    font-size 2.05rem
+
+.site-subtitle
+  color rgba(90, 101, 108, .74)
+  font-size .82rem
+  letter-spacing .18em
+  margin-top 16px
+  text-transform uppercase
+
+.site-nav
+  background transparent
+  border-radius 0
+  overflow visible
+  padding 0
+  position relative
+
+  &::before
+    display none
+
+  &::after
+    display none
+
+.main-menu
+  align-items center
+  display flex
+  flex-wrap wrap
+  gap 10px
+  justify-content center
+  margin 26px 0 2px
+  padding 0
+
+  +mobile()
+    gap 8px
+    margin-top 14px
+
+.main-menu .menu-item
+  margin 0
+
+.main-menu .menu-item a
+  background rgba(255, 255, 255, .16)
+  border none
+  border-radius 999px
+  box-shadow inset 0 0 0 1px rgba(255, 255, 255, .34), 0 8px 18px rgba(15, 23, 42, .05)
+  color #334155
+  font-weight 600
+  padding 10px 18px
+  position relative
+  transition background .2s ease, box-shadow .2s ease, color .2s ease
+  z-index 2
+
+  &:hover
+    background rgba(255, 255, 255, .22)
+    box-shadow inset 0 0 0 1px rgba(255, 255, 255, .46), 0 12px 24px rgba(15, 23, 42, .08)
+    color #7eaecf
+
+.menu-item-active a
+  background rgba(255, 255, 255, .24)
+  box-shadow inset 0 0 0 1px rgba(255, 255, 255, .52), 0 12px 24px rgba(15, 23, 42, .07)
+  color #2f3d47 !important
+
+.site-nav-right .toggle
+  background rgba(255, 255, 255, .2)
+  border-radius 50%
+  box-shadow inset 0 0 0 1px rgba(255, 255, 255, .34), 0 8px 18px rgba(15, 23, 42, .05)
+  color #3f4d57
+  display grid
+  height 42px
+  place-items center
+  width 42px
+
+.content
+  padding-top 42px
+
+  +mobile()
+    padding-top 22px
+
+.post-block,
+.pagination,
+.comments
+  background rgba(255, 255, 255, .34)
+  border 1px solid rgba(255, 255, 255, .38)
+  border-radius 26px
+  box-shadow 0 22px 44px rgba(15, 23, 42, .08)
+  backdrop-filter blur(18px)
+  overflow hidden
+  padding 38px 42px
+
+  +tablet-mobile()
+    border-radius 18px
+    padding 24px 20px
+
+.posts-expand .post-block + .post-block
+  margin-top 24px
+
+.index .post-block
+  transition border-color .25s ease, box-shadow .25s ease, transform .25s ease
+
+  &:hover
+    border-color rgba(255, 255, 255, .52)
+    box-shadow 0 28px 56px rgba(15, 23, 42, .1)
+    transform translateY(-4px)
+
+.posts-expand .post-title
+  color #151922
+  font-size 2rem
+  line-height 1.28
+
+  +mobile()
+    font-size 1.6rem
+
+.index .post-title
+  text-align left
+  font-size 2.2rem
+
+.index .post-meta
+  text-align left
+
+.posts-expand .post-title-link
+  color #151922
+
+  &::before
+    background linear-gradient(90deg, #bad3e5, #7eaecf)
+    border-radius 999px
+    height 2px
+
+.posts-expand .post-meta
+  color #6b7280
+  letter-spacing .02em
+  margin 10px 0 24px
+
+.index .post-body
+  font-size 1.04rem
+
+.index .post-body h1
+  display none
+
+.index .post-body h2
+  font-size 1.36rem
+  margin-top 1.35em
+
+.post-meta time
+  border-bottom 1px dashed rgba(107, 114, 128, .35)
+
+.post-button .btn
+  background linear-gradient(135deg, #d4e4f0, #bdd5e6)
+  border none
+  box-shadow 0 12px 24px rgba(169, 199, 221, .18)
+  color #46545b
+  padding 10px 20px
+
+#blog-ai-agent-root
+  position fixed
+  right 24px
+  bottom 28px
+  z-index 40
+
+  +mobile()
+    right 14px
+    bottom 18px
+
+.blog-ai-agent__toggle
+  background linear-gradient(135deg, #23313d, #405466)
+  border none
+  border-radius 999px
+  box-shadow 0 18px 36px rgba(15, 23, 42, .18)
+  color #f8fbff
+  cursor pointer
+  font-size .95rem
+  font-weight 600
+  letter-spacing .02em
+  padding 14px 18px
+
+.blog-ai-agent__panel
+  background rgba(255, 255, 255, .92)
+  border 1px solid rgba(214, 223, 232, .95)
+  border-radius 24px
+  box-shadow 0 26px 60px rgba(15, 23, 42, .16)
+  display none
+  margin-top 14px
+  max-width 92vw
+  overflow hidden
+  width 420px
+
+  &.is-open
+    display block
+
+  +mobile()
+    width 92vw
+
+.blog-ai-agent__header
+  align-items flex-start
+  background linear-gradient(180deg, rgba(242, 247, 251, .95), rgba(235, 241, 246, .95))
+  border-bottom 1px solid rgba(214, 223, 232, .9)
+  display flex
+  justify-content space-between
+  gap 12px
+  padding 18px 18px 14px
+
+  h3
+    color #1f2b37
+    font-size 1rem
+    margin 0
+
+  p
+    color #607080
+    font-size .8rem
+    line-height 1.45
+    margin 6px 0 0
+
+.blog-ai-agent__close
+  background transparent
+  border none
+  color #607080
+  cursor pointer
+  font-size 1.4rem
+  line-height 1
+  padding 2px 4px
+
+.blog-ai-agent__suggestions
+  display flex
+  flex-wrap wrap
+  gap 8px
+  padding 14px 18px 0
+
+  button
+    background #eef4f8
+    border 1px solid rgba(195, 210, 221, .85)
+    border-radius 999px
+    color #415463
+    cursor pointer
+    font-size .8rem
+    padding 8px 12px
+
+.blog-ai-agent__messages
+  max-height 360px
+  overflow auto
+  padding 14px 18px
+
+.blog-ai-agent__message
+  border-radius 16px
+  margin-bottom 12px
+  padding 12px 14px
+
+.blog-ai-agent__message--assistant
+  background #f4f8fb
+  border 1px solid rgba(213, 224, 233, .9)
+
+.blog-ai-agent__message--user
+  background #23313d
+  color #f8fbff
+  margin-left 24px
+
+.blog-ai-agent__message-label
+  font-size .74rem
+  font-weight 700
+  letter-spacing .05em
+  margin-bottom 6px
+  opacity .72
+  text-transform uppercase
+
+.blog-ai-agent__message-body
+  font-size .92rem
+  line-height 1.65
+  white-space pre-wrap
+  word-break break-word
+
+.blog-ai-agent__citation-list
+  display grid
+  gap 8px
+  margin-top 12px
+
+.blog-ai-agent__citation
+  background rgba(255, 255, 255, .86)
+  border 1px solid rgba(213, 224, 233, .95)
+  border-radius 12px
+  color #334155
+  display block
+  padding 10px 12px
+  text-decoration none
+
+  strong
+    display block
+    font-size .84rem
+    margin-bottom 4px
+
+  span
+    color #607080
+    display block
+    font-size .78rem
+    line-height 1.5
+
+.blog-ai-agent__related
+  display flex
+  flex-wrap wrap
+  gap 8px
+  margin-top 12px
+
+.blog-ai-agent__related-link
+  background #eef4f8
+  border-radius 999px
+  color #2f4758
+  font-size .78rem
+  padding 6px 10px
+  text-decoration none
+
+.blog-ai-agent__form
+  border-top 1px solid rgba(214, 223, 232, .9)
+  display grid
+  gap 10px
+  padding 14px 18px 18px
+
+.blog-ai-agent__input
+  background #fbfdff
+  border 1px solid rgba(195, 210, 221, .95)
+  border-radius 14px
+  color #22303a
+  font-size .92rem
+  line-height 1.5
+  min-height 92px
+  padding 12px 14px
+  resize vertical
+  width 100%
+
+.blog-ai-agent__submit
+  background linear-gradient(135deg, #23313d, #405466)
+  border none
+  border-radius 999px
+  color #f8fbff
+  cursor pointer
+  font-weight 600
+  justify-self end
+  padding 10px 18px
+
+  &:disabled
+    cursor wait
+    opacity .72
+
+  &:hover
+    background #bdd5e6
+    color #3f4b52
+
+.post-body
+  color #2f3742
+  font-size 1.02rem
+  line-height 1.98
+
+  a,
+  span.exturl
+    border-bottom-color rgba(126, 174, 207, .28)
+    color #7eaecf
+
+    &:hover
+      border-bottom-color rgba(17, 24, 39, .28)
+      color #46545b
+
+  h1,
+  h2,
+  h3,
+  h4
+    color #171b23
+    margin-top 2em
+
+  h2
+    border-bottom 1px solid rgba(214, 220, 228, .95)
+    padding-bottom .45em
+
+  blockquote
+    background rgba(244, 248, 247, .98)
+    border-left 3px solid #a9c7dd
+    border-radius 14px
+    margin 26px 0
+    padding 16px 20px
+
+  img,
+  iframe,
+  video
+    border-radius 14px
+    box-shadow 0 14px 28px rgba(15, 23, 42, .08)
+
+  code
+    background rgba(15, 23, 42, .05)
+    border-radius 6px
+    color #7eaecf
+    padding .15em .4em
+
+.post-body > pre
+  background linear-gradient(180deg, #fbfbfd 0%, #f5f5f7 100%)
+  border 1px solid rgba(17, 24, 39, .08)
+  border-radius 16px
+  box-shadow 0 8px 24px rgba(15, 23, 42, .05), inset 0 1px 0 rgba(255, 255, 255, .9)
+  margin 26px 0
+  overflow hidden
+
+.post-cover
+  margin 0 0 24px
+  overflow hidden
+  position relative
+
+  img
+    aspect-ratio 16 / 8.8
+    border-radius 18px
+    display block
+    object-fit cover
+    width 100%
+    box-shadow 0 18px 40px rgba(15, 23, 42, .08)
+
+.index .post-cover
+  margin-bottom 18px
+
+  img
+    aspect-ratio 16 / 8
+
+.post-body > .post-cover:first-child
+  margin-top 2px
+
+.post-body figure.highlight
+  background transparent
+  border 0
+  border-radius 0
+  box-shadow none
+  margin 0
+  overflow visible
+
+.post-body > pre
+  padding 16px 18px
+
+.post-body pre,
+.post-body code
+  font-family "SFMono-Regular", "SF Mono", "Menlo", "Monaco", "Consolas", monospace
+
+.post-body code
+  background rgba(255, 255, 255, .92)
+  border 1px solid rgba(17, 24, 39, .05)
+  border-radius 7px
+  color #374151
+  padding .18em .46em
+
+.highlight-container
+  background linear-gradient(180deg, rgba(255, 255, 255, .34) 0%, rgba(244, 247, 250, .24) 100%)
+  border 1px solid rgba(255, 255, 255, .42)
+  border-radius 20px
+  box-shadow 0 18px 38px rgba(15, 23, 42, .08), inset 0 1px 0 rgba(255, 255, 255, .42)
+  backdrop-filter blur(22px)
+  margin 26px 0
+  overflow hidden
+  padding-top 44px
+  position relative
+
+  &::before
+    background #ff5f57
+    border-radius 50%
+    box-shadow 16px 0 0 #febc2e, 32px 0 0 #28c840
+    content ''
+    height 9px
+    left 16px
+    position absolute
+    top 17px
+    width 9px
+    z-index 2
+
+  &::after
+    background linear-gradient(180deg, rgba(255, 255, 255, .26), rgba(255, 255, 255, .1))
+    border-bottom 1px solid rgba(255, 255, 255, .3)
+    content ''
+    backdrop-filter blur(18px)
+    height 44px
+    inset 0 0 auto 0
+    position absolute
+
+.highlight-container .highlight
+  background transparent
+  border 0
+  border-radius 0 0 20px 20px
+  box-shadow none
+  margin 0
+
+.highlight-container .copy-btn
+  align-items center
+  background rgba(255, 255, 255, .2)
+  border 1px solid rgba(255, 255, 255, .32)
+  border-radius 999px
+  color #51606a
+  display inline-flex
+  height 26px
+  justify-content center
+  opacity .9
+  padding 0
+  right 12px
+  top 9px
+  width 26px
+  z-index 2
+
+  &:hover
+    background rgba(255, 255, 255, .3)
+    color #1f2937
+    opacity 1
+
+.post-body .highlight
+  background transparent
+  color #24303d
+  line-height 1.78
+
+.post-body .highlight *::selection
+  background rgba(0, 113, 227, .16)
+
+.post-body .highlight table
+  width 100%
+
+.post-body .highlight figcaption
+  align-items center
+  background rgba(255, 255, 255, .14)
+  border-bottom 1px solid rgba(255, 255, 255, .22)
+  color #60707a
+  font-size .76rem
+  letter-spacing .03em
+  padding 10px 16px
+
+.post-body .highlight .gutter
+  user-select none
+
+.post-body .highlight .gutter pre
+  background rgba(255, 255, 255, .08)
+  border-right 1px solid rgba(255, 255, 255, .18)
+  color #8f9aa6
+  padding 14px 12px 14px 14px
+  text-align right
+
+.post-body .highlight .code pre
+  background transparent
+  color #23303b
+  padding 14px 16px
+  width 100%
+
+.post-body pre code
+  background none
+  border 0
+  border-radius 0
+  box-shadow none
+  color #1f2937
+  font-size .9rem
+  padding 0
+  text-shadow none
+
+.post-body pre .comment
+  color #8c919b
+  font-style italic
+
+.post-body pre .keyword,
+.post-body pre .selector-tag,
+.post-body pre .meta .keyword,
+.post-body pre .doctag
+  color #2259bd
+
+.post-body pre .title,
+.post-body pre .section,
+.post-body pre .function .title,
+.post-body pre .class .title
+  color #7eaecf
+
+.post-body pre .string,
+.post-body pre .attr,
+.post-body pre .template-tag,
+.post-body pre .template-variable
+  color #966026
+
+.post-body pre .number,
+.post-body pre .literal,
+.post-body pre .symbol,
+.post-body pre .bullet
+  color #7854c4
+
+.post-body pre .built_in,
+.post-body pre .type,
+.post-body pre .params
+  color #3d78ad
+
+.post-body pre .variable,
+.post-body pre .attribute,
+.post-body pre .tag,
+.post-body pre .name,
+.post-body pre .regexp
+  color #b24a52
+
+.post-share
+  background linear-gradient(135deg, rgba(255, 255, 255, .32), rgba(241, 246, 249, .2))
+  border 1px solid rgba(255, 255, 255, .38)
+  border-radius 22px
+  box-shadow 0 20px 40px rgba(15, 23, 42, .08)
+  backdrop-filter blur(18px)
+  margin 36px 0 10px
+  padding 22px 22px 18px
+
+.post-share-title
+  color #4a575e
+  font-size 1rem
+  font-weight 700
+  margin-bottom 14px
+
+.post-share-actions
+  display flex
+  flex-wrap wrap
+  gap 12px
+
+.post-share-btn
+  appearance none
+  background rgba(255, 255, 255, .22)
+  border 1px solid rgba(255, 255, 255, .34)
+  border-radius 999px
+  box-shadow 0 10px 20px rgba(15, 23, 42, .06)
+  color #334155
+  cursor pointer
+  font inherit
+  font-weight 600
+  line-height 1
+  padding 12px 18px
+  transition transform .18s ease, box-shadow .18s ease, background .18s ease
+
+  &:hover
+    background rgba(255, 255, 255, .3)
+    box-shadow 0 14px 24px rgba(15, 23, 42, .1)
+    transform translateY(-1px)
+
+.post-share-hint
+  color #5f6b76
+  font-size .92rem
+  margin 14px 0 0
+
+.post-share-status
+  color #7eaecf
+  font-size .9rem
+  font-weight 600
+  margin-top 10px
+
+.sidebar
+  background transparent
+  box-shadow none
+  padding 24px 20px
+
+.sidebar-inner
+  background linear-gradient(180deg, rgba(255, 255, 255, .24), rgba(241, 246, 249, .16))
+  border 1px solid rgba(255, 255, 255, .34)
+  border-radius 24px
+  box-shadow 0 22px 44px rgba(15, 23, 42, .08)
+  backdrop-filter blur(20px)
+  color #5a666d
+  padding 22px 18px 26px
+
+.site-author,
+.post-toc-wrap .post-toc
+  background linear-gradient(180deg, rgba(255, 255, 255, .22), rgba(244, 247, 250, .14))
+  border 1px solid rgba(255, 255, 255, .3)
+  border-radius 20px
+  box-shadow 0 14px 30px rgba(15, 23, 42, .06)
+  backdrop-filter blur(18px)
+
+.site-author
+  padding 18px 16px
+
+.site-author
+  margin-bottom 16px
+  text-align center
+
+.post-toc-wrap .post-toc
+  padding 16px 14px
+
+.site-overview-wrap
+  overflow hidden
+
+.site-state-wrap,
+.links-of-author,
+.links-of-blogroll
+  margin-top 16px
+  padding 0 6px
+
+.sidebar a,
+.site-overview-wrap a
+  border-bottom-color rgba(126, 174, 207, .2)
+  color #56636a
+
+  &:hover
+    border-bottom-color rgba(126, 174, 207, .38)
+    color #7eaecf
+
+.site-author-image
+  border 3px solid rgba(255, 255, 255, .54)
+  box-shadow 0 14px 30px rgba(15, 23, 42, .12)
+
+.site-author-name,
+.site-description,
+.links-of-author-item,
+.site-state-item-name,
+.site-state-item-count,
+.sidebar-nav li
+  color #56636a
+
+.site-state-item
+  padding 0 10px
+
+.sidebar-nav
+  background rgba(255, 255, 255, .22)
+  border 1px solid rgba(255, 255, 255, .28)
+  border-radius 999px
+  box-shadow inset 0 1px 0 rgba(255, 255, 255, .2)
+  padding 4px
+
+.sidebar-nav li
+  border-radius 999px
+
+.sidebar-nav li.sidebar-nav-active
+  background rgba(255, 255, 255, .28)
+  box-shadow 0 8px 18px rgba(15, 23, 42, .06)
+
+.post-toc .nav
+  margin 0
+
+.post-toc .nav .nav-item
+  margin 6px 0
+
+.post-toc .nav a
+  border-bottom none
+  color #5b6872
+  display block
+  padding 4px 2px
+  transition color .18s ease, transform .18s ease
+
+  &:hover
+    color #7eaecf
+    transform translateX(2px)
+
+.post-toc .nav .active > a
+  color #334155
+
+.back-to-top
+  background linear-gradient(135deg, #d4e4f0, #bdd5e6)
+  border-radius 999px
+  box-shadow 0 18px 34px rgba(169, 199, 221, .22)
+  color #45535a
+  right 26px
+
+.footer
+  padding-bottom 28px
+
+.footer-inner
+  background rgba(255, 255, 255, .78)
+  border 1px solid rgba(213, 218, 227, .82)
+  border-radius 18px
+  box-shadow 0 12px 28px rgba(15, 23, 42, .04)
+  padding 18px 22px
+
+.search-pop-overlay
+  background rgba(20, 26, 35, .28)
+  backdrop-filter blur(6px)
+
+.search-popup
+  background rgba(255, 255, 255, .98)
+  border 1px solid rgba(213, 218, 227, .96)
+  border-radius 22px
+  box-shadow 0 24px 54px rgba(15, 23, 42, .12)
+
+  .search-input-container
+    border-bottom 1px solid rgba(213, 218, 227, .96)
+    padding 16px 20px
+
+  .search-input
+    color #1f2937
+
+  .popup-btn-close
+    color #6b7280
+
+    &:hover
+      color #7eaecf
+
+.pagination
+  text-align center
+
+  .page-number,
+  .extend
+    background rgba(247, 249, 251, .95)
+    border none
+    border-radius 999px
+    margin 0 4px
+    min-width 40px
+
+  .current
+    background linear-gradient(135deg, #d4e4f0, #bdd5e6)
+    color #45535a
+
+  +mobile()
+    padding 18px 14px
+
+.site-meta,
+.site-nav,
+.site-nav-right,
+.site-nav-toggle
+  position relative
+  z-index 2
+
+.category-all-page
+  position relative
+
+  &::before
+    color rgba(15, 23, 42, .08)
+    content 'KNOWLEDGE MAP'
+    font-size .78rem
+    font-weight 700
+    letter-spacing .32em
+    position absolute
+    right 2px
+    top -14px
+
+  .category-all-title
+    align-items center
+    background linear-gradient(135deg, rgba(255, 255, 255, .26), rgba(241, 246, 249, .18))
+    border 1px solid rgba(255, 255, 255, .34)
+    border-radius 999px
+    box-shadow 0 18px 36px rgba(15, 23, 42, .08)
+    backdrop-filter blur(16px)
+    color #4d5a61
+    display inline-flex
+    font-size .92rem
+    font-weight 600
+    gap 10px
+    letter-spacing .06em
+    margin 0 auto
+    padding 12px 18px
+    text-align center
+
+    &::before
+      background linear-gradient(135deg, #d4e4f0, #a9c7dd)
+      border-radius 50%
+      box-shadow 0 0 0 6px rgba(169, 199, 221, .18)
+      content ''
+      display inline-block
+      flex none
+      height 8px
+      width 8px
+
+  .category-all
+    margin-top 26px
+
+  .category-all > .category-list
+    display grid
+    gap 20px
+    grid-template-columns repeat(2, minmax(0, 1fr))
+
+    +mobile()
+      gap 16px
+      grid-template-columns 1fr
+
+  .category-all > .category-list > .category-list-item
+    background linear-gradient(180deg, rgba(255, 255, 255, .28), rgba(241, 246, 249, .18))
+    border 1px solid rgba(255, 255, 255, .36)
+    border-radius 24px
+    box-shadow 0 20px 40px rgba(15, 23, 42, .08)
+    backdrop-filter blur(20px)
+    margin 0
+    padding 20px 22px 18px
+    position relative
+    transition border-color .22s ease, box-shadow .22s ease, transform .22s ease
+
+    &::before
+      background linear-gradient(180deg, #a9c7dd, rgba(169, 199, 221, 0))
+      border-radius 999px
+      content ''
+      height 52px
+      left 22px
+      position absolute
+      top 18px
+      width 3px
+
+    &:hover
+      border-color rgba(255, 255, 255, .5)
+      box-shadow 0 28px 52px rgba(15, 23, 42, .1)
+      transform translateY(-3px)
+
+  .category-all > .category-list > .category-list-item > .category-list-link
+    color #49565d
+    display inline-block
+    font-family "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", "Source Han Serif SC", serif
+    font-size 1.34rem
+    font-weight 600
+    letter-spacing .02em
+    margin-left 14px
+    padding-right 10px
+
+  .category-list
+    list-style none
+    margin 0
+    padding 0
+
+  .category-list-item
+    margin 10px 0
+    position relative
+
+  .category-list-link
+    border-bottom none
+    color #1f2937
+    transition color .2s ease
+
+    &:hover
+      color #7eaecf
+
+  .category-list-count
+    align-items center
+    background rgba(255, 255, 255, .2)
+    border 1px solid rgba(255, 255, 255, .28)
+    border-radius 999px
+    color #475569
+    display inline-flex
+    font-size .78rem
+    font-weight 700
+    justify-content center
+    line-height 1
+    margin-left 8px
+    min-width 32px
+    padding 6px 9px
+    vertical-align middle
+
+    &::before
+      content none
+
+    &::after
+      content none
+
+  .category-list-child
+    border-left 1px solid rgba(194, 206, 219, .62)
+    margin-left 18px
+    margin-top 14px
+    padding-left 18px
+
+  .category-list-child > .category-list-item
+    margin 12px 0
+    padding-left 14px
+
+    &::before
+      background linear-gradient(135deg, #a9c7dd, #d4e4f0)
+      border-radius 50%
+      box-shadow 0 0 0 5px rgba(169, 199, 221, .14)
+      content ''
+      height 7px
+      left -22px
+      position absolute
+      top .72em
+      width 7px
+
+  .category-list-child .category-list-link
+    font-size .98rem
+    font-weight 600
+
+  .category-list-child .category-list-child
+    border-left-color rgba(214, 220, 228, .86)
+    margin-left 12px
+    padding-left 16px
+
+  .category-list-child .category-list-child .category-list-link
+    color #475569
+    font-size .92rem
+    font-weight 500
+
+  +mobile()
+    &::before
+      font-size .68rem
+      right 0
+      top -18px
+
+    .category-all-title
+      display flex
+      justify-content center
+      width 100%
+
+    .category-all > .category-list > .category-list-item
+      border-radius 18px
+      padding 18px 18px 16px
+
+    .category-all > .category-list > .category-list-item > .category-list-link
+      font-size 1.18rem
+      margin-left 12px

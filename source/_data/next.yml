@@ -1,0 +1,74 @@
+custom_file_path:
+  postBodyEnd: source/_data/post-body-end.swig
+  bodyEnd: source/_data/body-end.swig
+  variable: source/_data/variables.styl
+  style: source/_data/styles.styl
+
+menu:
+  home: / || fa fa-home
+  about: /about/ || fa fa-user
+  tags: /tags/ || fa fa-tags
+  categories: /categories/ || fa fa-th
+  archives: /archives/ || fa fa-archive
+  RSS: /subscribe/ || fa fa-rss
+
+social:
+  GitHub: https://github.com/WangSenJie || fab fa-github
+
+avatar:
+  rounded: true
+
+codeblock:
+  copy_button:
+    enable: true
+    show_result: true
+    style: flat
+
+back2top:
+  enable: true
+  sidebar: false
+  scrollpercent: true
+
+reading_progress:
+  enable: true
+  position: top
+  color: "#a9c7dd"
+  height: 2px
+
+local_search:
+  enable: true
+  trigger: auto
+  top_n_per_article: 2
+  unescape: false
+  preload: false
+
+index_with_subtitle: true
+
+font:
+  enable: true
+  global:
+    external: false
+    family: "PingFang SC, Hiragino Sans GB, Microsoft YaHei, Segoe UI, sans-serif"
+  title:
+    external: false
+    family: "Iowan Old Style, Palatino Linotype, Noto Serif SC, Source Han Serif SC, serif"
+  headings:
+    external: false
+    family: "Iowan Old Style, Palatino Linotype, Noto Serif SC, Source Han Serif SC, serif"
+  posts:
+    external: false
+    family: "PingFang SC, Hiragino Sans GB, Microsoft YaHei, Segoe UI, sans-serif"
+  codes:
+    external: false
+    family: "SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace"
+
+math:
+  enable: true
+  per_page: true
+  mathjax:
+    enable: true
+    tags: ams
+
+pdf:
+  enable: true
+  height: 960px

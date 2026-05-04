@@ -1,0 +1,35 @@
+<svg width="1600" height="1200" viewBox="0 0 1600 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="220" y1="120" x2="1320" y2="1030" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7FAFC"/>
+      <stop offset="1" stop-color="#E9EEF4"/>
+    </linearGradient>
+    <linearGradient id="line" x1="320" y1="180" x2="1360" y2="940" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A" stop-opacity="0.12"/>
+      <stop offset="0.55" stop-color="#1F9D84" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#0F172A" stop-opacity="0.08"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1290 250) rotate(90) scale(240 360)">
+      <stop stop-color="#1F9D84" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#1F9D84" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(320 930) rotate(90) scale(220 320)">
+      <stop stop-color="#0F172A" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#0F172A" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0V64" stroke="#0F172A" stroke-opacity="0.045" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1600" height="1200" fill="url(#bg)"/>
+  <rect width="1600" height="1200" fill="url(#grid)"/>
+
+  <circle cx="1290" cy="250" r="360" fill="url(#glowA)"/>
+  <circle cx="320" cy="930" r="320" fill="url(#glowB)"/>
+
+  <path d="M120 870C300 790 470 720 690 740C900 758 1080 906 1320 870C1425 854 1505 819 1550 792" stroke="url(#line)" stroke-width="2"/>
+  <path d="M160 236C300 198 468 184 650 236C838 290 1030 416 1236 401C1340 393 1437 356 1512 314" stroke="url(#line)" stroke-width="1.5"/>
+  <path d="M1080 104C1168 174 1206 260 1212 328C1218 414 1189 492 1116 566" stroke="#0F172A" stroke-opacity="0.1" stroke-width="1.5"/>
+  <path d="M254 1044C352 980 456 946 565 938C705 928 842 972 962 1042" stroke="#1F9D84" stroke-opacity="0.1" stroke-width="1.5"/>
+</svg>
