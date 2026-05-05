@@ -12,7 +12,7 @@ function readJson(filePath) {
 function loadCorpus() {
   if (cachedCorpus) return cachedCorpus;
 
-  const dataDir = path.join(process.cwd(), 'data');
+  const dataDir = path.join(__dirname, '..', 'data');
   const postsPath = path.join(dataDir, 'posts.json');
   const chunksPath = path.join(dataDir, 'chunks.json');
 

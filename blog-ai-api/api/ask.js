@@ -33,7 +33,9 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const body = req.body || {};
+    const body = typeof req.body === 'string'
+      ? JSON.parse(req.body || '{}')
+      : (req.body || {});
     const question = String(body.question || '').trim();
     const page = body.page || null;
     const mode = body.mode || detectMode(question);
@@ -66,6 +68,10 @@ module.exports = async (req, res) => {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.end(JSON.stringify(payload));
   } catch (error) {
+    console.error('ask.js failed', {
+      message: error && error.message ? error.message : 'Unknown error',
+      stack: error && error.stack ? error.stack : null
+    });
     res.statusCode = 500;
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.end(JSON.stringify({
