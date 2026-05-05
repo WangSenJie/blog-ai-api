@@ -87,7 +87,8 @@ async function generateAnswer(question, mode, page, citations) {
   });
 
   if (!response.ok) {
-    throw new Error(`LLM request failed: ${response.status}`);
+    const errorText = await response.text();
+    throw new Error(`LLM request failed: ${response.status} ${errorText}`);
   }
 
   const payload = await response.json();
@@ -104,5 +105,6 @@ async function generateAnswer(question, mode, page, citations) {
 
 module.exports = {
   canUseModel,
+  getModelConfig,
   generateAnswer
 };

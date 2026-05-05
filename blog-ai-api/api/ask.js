@@ -1,7 +1,7 @@
 'use strict';
 
 const { loadCorpus } = require('../lib/corpus');
-const { canUseModel, generateAnswer } = require('../lib/generate');
+const { canUseModel, generateAnswer, getModelConfig } = require('../lib/generate');
 const { buildResponse, detectMode, rankChunks } = require('../lib/retrieve');
 
 function applyCors(req, res) {
@@ -58,6 +58,14 @@ module.exports = async (req, res) => {
           payload.answer = generated;
         }
       } catch (error) {
+        const modelConfig = getModelConfig();
+        console.error('LLM fallback triggered', {
+          message: error && error.message ? error.message : 'Unknown LLM error',
+          apiBaseUrl: modelConfig.apiBaseUrl,
+          apiPath: modelConfig.apiPath,
+          model: modelConfig.model,
+          hasApiKey: Boolean(modelConfig.apiKey)
+        });
         payload.meta = Object.assign({}, payload.meta, {
           llmFallback: true
         });
