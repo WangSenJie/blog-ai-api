@@ -189,32 +189,118 @@ function buildPostObject(filePath, assignedSlugs) {
     };
 }
 
+function splitMarkdownSections(markdown) {
+    const sections = [];
+    let sectionTitle = '';
+    let lines = [];
+
+    function flush() {
+        const content = markdownToText(lines.join('\n'));
+        if (content) {
+            sections.push({ sectionTitle, content });
+        }
+        lines = [];
+    }
+
+    for (const line of String(markdown || '').split('\n')) {
+        const heading = line.match(/^#{1,6}\s+(.+?)\s*#*$/);
+        if (heading) {
+            flush();
+            sectionTitle = markdownToText(heading[1]);
+            continue;
+        }
+        lines.push(line);
+    }
+
+    flush();
+    return sections;
+}
+
+function splitLongText(text, maxLength) {
+    const parts = [];
+    let remaining = String(text || '').trim();
+
+    while (remaining.length > maxLength) {
+        const candidate = remaining.slice(0, maxLength + 1);
+        const boundaryMatches = [...candidate.matchAll(/[。！？；.!?;]\s*/g)];
+        const lastBoundary = boundaryMatches[boundaryMatches.length - 1];
+        const whitespaceIndex = Math.max(candidate.lastIndexOf(' '), candidate.lastIndexOf('\n'));
+        const minimumBreak = Math.floor(maxLength * 0.55);
+        let breakAt = maxLength;
+
+        if (lastBoundary && lastBoundary.index >= minimumBreak) {
+            breakAt = lastBoundary.index + lastBoundary[0].length;
+        } else if (whitespaceIndex >= minimumBreak) {
+            breakAt = whitespaceIndex + 1;
+        }
+
+        parts.push(remaining.slice(0, breakAt).trim());
+        remaining = remaining.slice(breakAt).trim();
+    }
+
+    if (remaining) parts.push(remaining);
+    return parts;
+}
+
+function chunkSection(text, chunkSize, overlap) {
+    const paragraphs = String(text || '')
+        .split(/\n\s*\n/)
+        .map(paragraph => paragraph.trim())
+        .filter(Boolean)
+        .flatMap(paragraph => splitLongText(paragraph, chunkSize));
+    const chunks = [];
+    let current = '';
+
+    function flush() {
+        const content = current.trim();
+        if (!content) return;
+        chunks.push(content);
+        current = content.slice(-overlap).trim();
+    }
+
+    for (const paragraph of paragraphs) {
+        const separator = current ? '\n\n' : '';
+        if (current && current.length + separator.length + paragraph.length > chunkSize) {
+            flush();
+        }
+
+        // A maximum-size paragraph cannot coexist with an overlap tail.
+        if (current && current.length + 2 + paragraph.length > chunkSize) {
+            current = paragraph;
+        } else {
+            current += `${current ? '\n\n' : ''}${paragraph}`;
+        }
+    }
+
+    if (current.trim()) chunks.push(current.trim());
+    return chunks;
+}
+
 function chunkPost(post) {
     const chunks = [];
-    const text = post.contentText || '';
-    const chunkSize = 500;
+    const chunkSize = 700;
     const overlap = 100;
     const postUrl = post.url || '';
-
+    const sections = splitMarkdownSections(post.body);
+    const sourceSections = sections.length
+        ? sections
+        : [{ sectionTitle: '', content: post.contentText || '' }];
     let index = 0;
 
-    for (let start = 0; start < text.length; start += (chunkSize - overlap)) {
-        const content = text.slice(start, start + chunkSize).trim();
-
-        if (!content) continue;
-
-        chunks.push({
-            id: `${post.id}#${index}`,
-            postUrl,
-            postId: post.id,
-            postTitle: post.title,
-            tags: post.tags || [],
-            categories: post.categories || [],
-            sectionTitle: '',
-            content: content
-        });
-
-        index += 1;
+    for (const section of sourceSections) {
+        for (const content of chunkSection(section.content, chunkSize, overlap)) {
+            chunks.push({
+                id: `${post.id}#${index}`,
+                postUrl,
+                postId: post.id,
+                postTitle: post.title,
+                tags: post.tags || [],
+                categories: post.categories || [],
+                sectionTitle: section.sectionTitle,
+                content
+            });
+            index += 1;
+        }
     }
 
     return chunks;
@@ -245,6 +331,8 @@ module.exports = {
     readPostFile,
     parseFrontMatter,
     buildPostObject,
+    splitMarkdownSections,
+    chunkSection,
     chunkPost,
     buildCorpus
 };
