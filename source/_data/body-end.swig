@@ -53,7 +53,7 @@ document.addEventListener('click', async event => {
 <div id="blog-ai-agent-root"></div>
 <script>
 window.__BLOG_AI_CONFIG__ = window.__BLOG_AI_CONFIG__ || {
-  apiBaseUrl: '',
+  apiBaseUrl: 'https://blog-ai-api.vercel.app',
   dataBasePath: '/ai-data'
 };
 </script>

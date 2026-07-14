@@ -1,6 +1,6 @@
 body
-  background linear-gradient(180deg, #f4f7f9 0%, #ebf0f4 100%)
-  color #2b3440
+  background linear-gradient(180deg, #eef6f8 0%, #f7fafb 46%, #e8eef2 100%)
+  color #24303d
 
 body::before,
 body::after
@@ -11,7 +11,7 @@ body::after
   z-index 0
 
 body::before
-  background linear-gradient(180deg, $site-bg-overlay 0%, rgba(235, 240, 244, .9) 100%)
+  background linear-gradient(180deg, $site-bg-overlay 0%, rgba(235, 241, 244, .94) 100%), repeating-linear-gradient(90deg, rgba(20, 42, 68, .045) 0, rgba(20, 42, 68, .045) 1px, transparent 1px, transparent 88px), repeating-linear-gradient(0deg, rgba(20, 42, 68, .035) 0, rgba(20, 42, 68, .035) 1px, transparent 1px, transparent 88px)
   z-index 0
 
 body::after
@@ -33,23 +33,25 @@ body::after
 .container::before
   top -120px
   right -90px
-  width 540px
-  height 540px
-  background radial-gradient(circle, rgba(126, 174, 207, .12) 0%, rgba(126, 174, 207, 0) 72%)
+  width 560px
+  height 720px
+  background linear-gradient(135deg, rgba(26, 166, 168, .18), rgba(26, 166, 168, 0) 58%)
+  clip-path polygon(32% 0, 100% 0, 74% 100%, 0 72%)
 
 .container::after
   left -120px
   top 180px
-  width 460px
-  height 460px
-  background radial-gradient(circle, rgba(15, 23, 42, .08) 0%, rgba(15, 23, 42, 0) 72%)
+  width 520px
+  height 620px
+  background linear-gradient(150deg, rgba(31, 42, 68, .1), rgba(31, 42, 68, 0) 64%)
+  clip-path polygon(0 8%, 72% 0, 100% 72%, 18% 100%)
 
 .container
   position relative
   z-index 2
 
 .headband
-  box-shadow 0 8px 24px rgba(15, 23, 42, .12)
+  box-shadow 0 8px 24px rgba(15, 23, 42, .16)
 
 .header-inner
   padding-top 40px
@@ -101,19 +103,19 @@ body::after
     display none
 
 .site-title
-  color #4b585f
-  font-size 2.9rem
+  color #203040
+  font-size 3rem
   font-weight 600
-  letter-spacing .035em
+  letter-spacing .02em
   text-shadow none
 
   +mobile()
     font-size 2.05rem
 
 .site-subtitle
-  color rgba(90, 101, 108, .74)
+  color rgba(39, 58, 75, .72)
   font-size .82rem
-  letter-spacing .18em
+  letter-spacing .16em
   margin-top 16px
   text-transform uppercase
 
@@ -147,11 +149,11 @@ body::after
   margin 0
 
 .main-menu .menu-item a
-  background rgba(255, 255, 255, .16)
+  background rgba(255, 255, 255, .42)
   border none
   border-radius 999px
-  box-shadow inset 0 0 0 1px rgba(255, 255, 255, .34), 0 8px 18px rgba(15, 23, 42, .05)
-  color #334155
+  box-shadow inset 0 0 0 1px rgba(255, 255, 255, .58), 0 8px 18px rgba(15, 23, 42, .04)
+  color #243447
   font-weight 600
   padding 10px 18px
   position relative
@@ -159,20 +161,20 @@ body::after
   z-index 2
 
   &:hover
-    background rgba(255, 255, 255, .22)
-    box-shadow inset 0 0 0 1px rgba(255, 255, 255, .46), 0 12px 24px rgba(15, 23, 42, .08)
-    color #7eaecf
+    background rgba(255, 255, 255, .66)
+    box-shadow inset 0 0 0 1px rgba(26, 166, 168, .32), 0 12px 24px rgba(15, 23, 42, .07)
+    color #178f92
 
 .menu-item-active a
-  background rgba(255, 255, 255, .24)
-  box-shadow inset 0 0 0 1px rgba(255, 255, 255, .52), 0 12px 24px rgba(15, 23, 42, .07)
-  color #2f3d47 !important
+  background rgba(255, 255, 255, .72)
+  box-shadow inset 0 0 0 1px rgba(26, 166, 168, .34), 0 12px 24px rgba(15, 23, 42, .06)
+  color #203040 !important
 
 .site-nav-right .toggle
-  background rgba(255, 255, 255, .2)
+  background rgba(255, 255, 255, .56)
   border-radius 50%
-  box-shadow inset 0 0 0 1px rgba(255, 255, 255, .34), 0 8px 18px rgba(15, 23, 42, .05)
-  color #3f4d57
+  box-shadow inset 0 0 0 1px rgba(26, 166, 168, .24), 0 8px 18px rgba(15, 23, 42, .05)
+  color #243447
   display grid
   height 42px
   place-items center
@@ -184,31 +186,316 @@ body::after
   +mobile()
     padding-top 22px
 
+.home-hero
+  background linear-gradient(135deg, rgba(248, 252, 253, .82), rgba(224, 240, 244, .48))
+  border 1px solid rgba(255, 255, 255, .62)
+  border-radius 8px
+  box-shadow 0 24px 60px rgba(15, 23, 42, .1)
+  display grid
+  grid-template-columns minmax(0, 1.05fr) minmax(260px, .7fr)
+  gap 28px
+  min-height 430px
+  overflow hidden
+  padding 48px 48px 42px
+  position relative
+  backdrop-filter blur(18px)
+
+  &::before
+    background linear-gradient(90deg, rgba(26, 166, 168, .85), rgba(31, 42, 68, .05))
+    content ''
+    height 2px
+    left 0
+    position absolute
+    right 0
+    top 0
+
+  &::after
+    background linear-gradient(90deg, rgba(20, 42, 68, .08) 0, rgba(20, 42, 68, .08) 1px, transparent 1px, transparent 100%), linear-gradient(180deg, rgba(20, 42, 68, .06) 0, rgba(20, 42, 68, .06) 1px, transparent 1px, transparent 100%)
+    background-size 42px 42px
+    content ''
+    inset 0
+    opacity .42
+    pointer-events none
+    position absolute
+
+.home-hero__content,
+.home-hero__visual
+  position relative
+  z-index 1
+
+.home-hero__kicker
+  color #178f92
+  font-size .78rem
+  font-weight 800
+  letter-spacing .18em
+  margin 0 0 18px
+  text-transform uppercase
+
+.home-hero__title
+  color #172536
+  font-size 4.1rem
+  font-weight 700
+  line-height 1
+  margin 0
+
+.home-hero__summary
+  color rgba(36, 52, 71, .78)
+  font-size 1.08rem
+  line-height 1.9
+  margin 24px 0 0
+  max-width 580px
+
+.home-hero__topics
+  display grid
+  gap 12px
+  grid-template-columns repeat(3, minmax(0, 1fr))
+  margin-top 34px
+
+  a
+    background rgba(255, 255, 255, .44)
+    border 1px solid rgba(255, 255, 255, .64)
+    border-radius 8px
+    box-shadow inset 0 1px 0 rgba(255, 255, 255, .68)
+    color #243447
+    display grid
+    gap 3px
+    min-height 78px
+    padding 16px 14px
+    text-decoration none
+    transition border-color .2s ease, box-shadow .2s ease, transform .2s ease
+
+    span
+      color rgba(36, 52, 71, .56)
+      font-size .68rem
+      font-weight 800
+      letter-spacing .08em
+      text-transform uppercase
+
+    strong
+      color #172536
+      font-size 1rem
+      font-weight 700
+
+    &:hover
+      border-color rgba(26, 166, 168, .42)
+      box-shadow inset 0 1px 0 rgba(255, 255, 255, .78), 0 12px 24px rgba(15, 23, 42, .08)
+      color #178f92
+      transform translateY(-2px)
+
+.home-hero__actions
+  display flex
+  flex-wrap wrap
+  gap 12px
+  margin-top 28px
+
+.home-hero__action
+  align-items center
+  background rgba(255, 255, 255, .48)
+  border 1px solid rgba(255, 255, 255, .68)
+  border-radius 999px
+  color #243447
+  display inline-flex
+  font-weight 700
+  min-height 42px
+  padding 0 18px
+  text-decoration none
+  transition background .2s ease, border-color .2s ease, color .2s ease, transform .2s ease
+
+  &:hover
+    background rgba(255, 255, 255, .72)
+    border-color rgba(26, 166, 168, .42)
+    color #178f92
+    transform translateY(-1px)
+
+.home-hero__action--primary
+  background linear-gradient(135deg, #1f2a44, #178f92)
+  border-color rgba(255, 255, 255, .36)
+  color #f8fcfd
+  box-shadow 0 16px 34px rgba(23, 143, 146, .18)
+
+  &:hover
+    background linear-gradient(135deg, #172536, #1aa6a8)
+    color #fff
+
+.home-hero__visual
+  align-self stretch
+  min-height 300px
+
+.home-hero__matrix
+  background linear-gradient(135deg, rgba(31, 42, 68, .86), rgba(23, 143, 146, .58))
+  border 1px solid rgba(255, 255, 255, .44)
+  border-radius 8px
+  box-shadow 0 24px 60px rgba(15, 23, 42, .16)
+  inset 8px 0 8px auto
+  overflow hidden
+  position absolute
+  max-width 100%
+  width 330px
+
+  &::before
+    background linear-gradient(90deg, rgba(255, 255, 255, .11) 0, rgba(255, 255, 255, .11) 1px, transparent 1px, transparent 100%), linear-gradient(180deg, rgba(255, 255, 255, .1) 0, rgba(255, 255, 255, .1) 1px, transparent 1px, transparent 100%)
+    background-size 28px 28px
+    content ''
+    inset 0
+    opacity .62
+    position absolute
+
+  &::after
+    color rgba(255, 255, 255, .72)
+    content '∫  ∇  Σ  λ  AI  ML  01'
+    font-family "SFMono-Regular", "Menlo", "Monaco", monospace
+    font-size .78rem
+    font-weight 700
+    left 24px
+    letter-spacing .12em
+    position absolute
+    right 24px
+    top 24px
+    word-spacing .4em
+
+.home-hero__beam
+  background linear-gradient(180deg, rgba(255, 255, 255, .72), rgba(26, 166, 168, .18), rgba(255, 255, 255, 0))
+  height 74%
+  position absolute
+  right 46px
+  top 13%
+  transform skewX(-16deg)
+  width 2px
+  z-index 2
+
+.home-hero__scanline
+  background linear-gradient(90deg, transparent, rgba(255, 255, 255, .78), transparent)
+  height 1px
+  left 26px
+  position absolute
+  right 26px
+  top 38%
+  z-index 3
+  animation homeScan 4.8s ease-in-out infinite
+
+.home-section-label
+  align-items end
+  display flex
+  justify-content space-between
+  margin 34px 4px 16px
+
+  span
+    color #178f92
+    font-size .72rem
+    font-weight 800
+    letter-spacing .18em
+    text-transform uppercase
+
+  strong
+    color #172536
+    font-size 1.1rem
+    letter-spacing .04em
+
+@keyframes homeScan
+  0%, 100%
+    opacity .28
+    transform translateY(-92px)
+
+  50%
+    opacity .86
+    transform translateY(124px)
+
+@media (prefers-reduced-motion: reduce)
+  .home-hero__scanline,
+  .index .post-block,
+  .home-hero__topics a,
+  .home-hero__action
+    animation none
+    transition none
+
++tablet-mobile()
+  .home-hero
+    grid-template-columns 1fr
+    min-height 0
+    padding 36px 28px 30px
+
+  .home-hero__visual
+    min-height 180px
+
+  .home-hero__matrix
+    inset 0
+    width 100%
+
+  .home-hero__beam
+    right 34px
+
+  .home-hero__topics
+    grid-template-columns 1fr
+
++mobile()
+  body::after
+    background-position 56% top
+    opacity .28
+
+  .home-hero
+    padding 28px 20px 22px
+
+  .home-hero__kicker
+    font-size .68rem
+    letter-spacing .12em
+
+  .home-hero__title
+    font-size 2.5rem
+
+  .home-hero__summary
+    font-size .98rem
+    line-height 1.75
+
+  .home-hero__visual
+    display none
+
+  .home-hero__topics
+    gap 10px
+    margin-top 24px
+
+  .home-hero__topics a
+    min-height 68px
+    padding 14px
+
+  .home-section-label
+    align-items flex-start
+    flex-direction column
+    gap 4px
+    margin 26px 2px 14px
+
 .post-block,
 .pagination,
 .comments
-  background rgba(255, 255, 255, .34)
-  border 1px solid rgba(255, 255, 255, .38)
-  border-radius 26px
-  box-shadow 0 22px 44px rgba(15, 23, 42, .08)
-  backdrop-filter blur(18px)
+  background rgba(255, 255, 255, .58)
+  border 1px solid rgba(255, 255, 255, .62)
+  border-radius 8px
+  box-shadow 0 18px 40px rgba(15, 23, 42, .07)
+  backdrop-filter blur(16px)
   overflow hidden
   padding 38px 42px
 
   +tablet-mobile()
-    border-radius 18px
+    border-radius 8px
     padding 24px 20px
 
 .posts-expand .post-block + .post-block
   margin-top 24px
 
 .index .post-block
+  position relative
   transition border-color .25s ease, box-shadow .25s ease, transform .25s ease
 
+  &::before
+    background linear-gradient(180deg, rgba(26, 166, 168, .74), rgba(26, 166, 168, 0))
+    content ''
+    inset 0 auto 0 0
+    position absolute
+    width 3px
+
   &:hover
-    border-color rgba(255, 255, 255, .52)
-    box-shadow 0 28px 56px rgba(15, 23, 42, .1)
-    transform translateY(-4px)
+    border-color rgba(26, 166, 168, .32)
+    box-shadow 0 26px 52px rgba(15, 23, 42, .1)
+    transform translateY(-3px)
 
 .posts-expand .post-title
   color #151922
@@ -220,7 +507,7 @@ body::after
 
 .index .post-title
   text-align left
-  font-size 2.2rem
+  font-size 2rem
 
 .index .post-meta
   text-align left
@@ -229,7 +516,7 @@ body::after
   color #151922
 
   &::before
-    background linear-gradient(90deg, #bad3e5, #7eaecf)
+    background linear-gradient(90deg, #1aa6a8, #1f2a44)
     border-radius 999px
     height 2px
 
@@ -252,11 +539,15 @@ body::after
   border-bottom 1px dashed rgba(107, 114, 128, .35)
 
 .post-button .btn
-  background linear-gradient(135deg, #d4e4f0, #bdd5e6)
+  background linear-gradient(135deg, #1f2a44, #178f92)
   border none
-  box-shadow 0 12px 24px rgba(169, 199, 221, .18)
-  color #46545b
+  box-shadow 0 12px 24px rgba(23, 143, 146, .18)
+  color #f8fcfd
   padding 10px 20px
+
+  &:hover
+    background linear-gradient(135deg, #172536, #1aa6a8)
+    color #fff
 
 #blog-ai-agent-root
   position fixed
@@ -269,10 +560,10 @@ body::after
     bottom 18px
 
 .blog-ai-agent__toggle
-  background linear-gradient(135deg, #23313d, #405466)
+  background linear-gradient(135deg, #1f2a44, #178f92)
   border none
   border-radius 999px
-  box-shadow 0 18px 36px rgba(15, 23, 42, .18)
+  box-shadow 0 18px 36px rgba(23, 143, 146, .22)
   color #f8fbff
   cursor pointer
   font-size .95rem
@@ -281,10 +572,10 @@ body::after
   padding 14px 18px
 
 .blog-ai-agent__panel
-  background rgba(255, 255, 255, .92)
-  border 1px solid rgba(214, 223, 232, .95)
-  border-radius 24px
-  box-shadow 0 26px 60px rgba(15, 23, 42, .16)
+  background rgba(250, 253, 254, .94)
+  border 1px solid rgba(255, 255, 255, .72)
+  border-radius 8px
+  box-shadow 0 26px 60px rgba(15, 23, 42, .14)
   display none
   margin-top 14px
   max-width 92vw
@@ -299,20 +590,20 @@ body::after
 
 .blog-ai-agent__header
   align-items flex-start
-  background linear-gradient(180deg, rgba(242, 247, 251, .95), rgba(235, 241, 246, .95))
-  border-bottom 1px solid rgba(214, 223, 232, .9)
+  background linear-gradient(135deg, rgba(31, 42, 68, .94), rgba(23, 143, 146, .82))
+  border-bottom 1px solid rgba(255, 255, 255, .28)
   display flex
   justify-content space-between
   gap 12px
   padding 18px 18px 14px
 
   h3
-    color #1f2b37
+    color #f8fcfd
     font-size 1rem
     margin 0
 
   p
-    color #607080
+    color rgba(248, 252, 253, .72)
     font-size .8rem
     line-height 1.45
     margin 6px 0 0
@@ -320,7 +611,7 @@ body::after
 .blog-ai-agent__close
   background transparent
   border none
-  color #607080
+  color rgba(248, 252, 253, .82)
   cursor pointer
   font-size 1.4rem
   line-height 1
@@ -333,10 +624,10 @@ body::after
   padding 14px 18px 0
 
   button
-    background #eef4f8
-    border 1px solid rgba(195, 210, 221, .85)
+    background rgba(238, 248, 249, .92)
+    border 1px solid rgba(23, 143, 146, .18)
     border-radius 999px
-    color #415463
+    color #243447
     cursor pointer
     font-size .8rem
     padding 8px 12px
@@ -347,16 +638,16 @@ body::after
   padding 14px 18px
 
 .blog-ai-agent__message
-  border-radius 16px
+  border-radius 8px
   margin-bottom 12px
   padding 12px 14px
 
 .blog-ai-agent__message--assistant
-  background #f4f8fb
-  border 1px solid rgba(213, 224, 233, .9)
+  background #f5fafb
+  border 1px solid rgba(205, 226, 230, .92)
 
 .blog-ai-agent__message--user
-  background #23313d
+  background linear-gradient(135deg, #1f2a44, #178f92)
   color #f8fbff
   margin-left 24px
 
@@ -380,9 +671,9 @@ body::after
   margin-top 12px
 
 .blog-ai-agent__citation
-  background rgba(255, 255, 255, .86)
-  border 1px solid rgba(213, 224, 233, .95)
-  border-radius 12px
+  background rgba(255, 255, 255, .9)
+  border 1px solid rgba(205, 226, 230, .95)
+  border-radius 8px
   color #334155
   display block
   padding 10px 12px
@@ -406,9 +697,9 @@ body::after
   margin-top 12px
 
 .blog-ai-agent__related-link
-  background #eef4f8
+  background #eef8f9
   border-radius 999px
-  color #2f4758
+  color #178f92
   font-size .78rem
   padding 6px 10px
   text-decoration none
@@ -421,8 +712,8 @@ body::after
 
 .blog-ai-agent__input
   background #fbfdff
-  border 1px solid rgba(195, 210, 221, .95)
-  border-radius 14px
+  border 1px solid rgba(205, 226, 230, .95)
+  border-radius 8px
   color #22303a
   font-size .92rem
   line-height 1.5
@@ -432,7 +723,7 @@ body::after
   width 100%
 
 .blog-ai-agent__submit
-  background linear-gradient(135deg, #23313d, #405466)
+  background linear-gradient(135deg, #1f2a44, #178f92)
   border none
   border-radius 999px
   color #f8fbff
@@ -446,8 +737,8 @@ body::after
     opacity .72
 
   &:hover
-    background #bdd5e6
-    color #3f4b52
+    background linear-gradient(135deg, #172536, #1aa6a8)
+    color #fff
 
 .post-body
   color #2f3742
@@ -456,8 +747,8 @@ body::after
 
   a,
   span.exturl
-    border-bottom-color rgba(126, 174, 207, .28)
-    color #7eaecf
+    border-bottom-color rgba(23, 143, 146, .28)
+    color #178f92
 
     &:hover
       border-bottom-color rgba(17, 24, 39, .28)
@@ -476,27 +767,27 @@ body::after
 
   blockquote
     background rgba(244, 248, 247, .98)
-    border-left 3px solid #a9c7dd
-    border-radius 14px
+    border-left 3px solid #1aa6a8
+    border-radius 8px
     margin 26px 0
     padding 16px 20px
 
   img,
   iframe,
   video
-    border-radius 14px
+    border-radius 8px
     box-shadow 0 14px 28px rgba(15, 23, 42, .08)
 
   code
     background rgba(15, 23, 42, .05)
     border-radius 6px
-    color #7eaecf
+    color #178f92
     padding .15em .4em
 
 .post-body > pre
   background linear-gradient(180deg, #fbfbfd 0%, #f5f5f7 100%)
   border 1px solid rgba(17, 24, 39, .08)
-  border-radius 16px
+  border-radius 8px
   box-shadow 0 8px 24px rgba(15, 23, 42, .05), inset 0 1px 0 rgba(255, 255, 255, .9)
   margin 26px 0
   overflow hidden
@@ -508,7 +799,7 @@ body::after
 
   img
     aspect-ratio 16 / 8.8
-    border-radius 18px
+    border-radius 8px
     display block
     object-fit cover
     width 100%
@@ -548,7 +839,7 @@ body::after
 .highlight-container
   background linear-gradient(180deg, rgba(255, 255, 255, .34) 0%, rgba(244, 247, 250, .24) 100%)
   border 1px solid rgba(255, 255, 255, .42)
-  border-radius 20px
+  border-radius 8px
   box-shadow 0 18px 38px rgba(15, 23, 42, .08), inset 0 1px 0 rgba(255, 255, 255, .42)
   backdrop-filter blur(22px)
   margin 26px 0
@@ -580,7 +871,7 @@ body::after
 .highlight-container .highlight
   background transparent
   border 0
-  border-radius 0 0 20px 20px
+  border-radius 0 0 8px 8px
   box-shadow none
   margin 0
 
@@ -665,7 +956,7 @@ body::after
 .post-body pre .section,
 .post-body pre .function .title,
 .post-body pre .class .title
-  color #7eaecf
+  color #178f92
 
 .post-body pre .string,
 .post-body pre .attr,
@@ -694,7 +985,7 @@ body::after
 .post-share
   background linear-gradient(135deg, rgba(255, 255, 255, .32), rgba(241, 246, 249, .2))
   border 1px solid rgba(255, 255, 255, .38)
-  border-radius 22px
+  border-radius 8px
   box-shadow 0 20px 40px rgba(15, 23, 42, .08)
   backdrop-filter blur(18px)
   margin 36px 0 10px
@@ -736,7 +1027,7 @@ body::after
   margin 14px 0 0
 
 .post-share-status
-  color #7eaecf
+  color #178f92
   font-size .9rem
   font-weight 600
   margin-top 10px
@@ -749,7 +1040,7 @@ body::after
 .sidebar-inner
   background linear-gradient(180deg, rgba(255, 255, 255, .24), rgba(241, 246, 249, .16))
   border 1px solid rgba(255, 255, 255, .34)
-  border-radius 24px
+  border-radius 8px
   box-shadow 0 22px 44px rgba(15, 23, 42, .08)
   backdrop-filter blur(20px)
   color #5a666d
@@ -759,7 +1050,7 @@ body::after
 .post-toc-wrap .post-toc
   background linear-gradient(180deg, rgba(255, 255, 255, .22), rgba(244, 247, 250, .14))
   border 1px solid rgba(255, 255, 255, .3)
-  border-radius 20px
+  border-radius 8px
   box-shadow 0 14px 30px rgba(15, 23, 42, .06)
   backdrop-filter blur(18px)
 
@@ -789,7 +1080,7 @@ body::after
 
   &:hover
     border-bottom-color rgba(126, 174, 207, .38)
-    color #7eaecf
+    color #178f92
 
 .site-author-image
   border 3px solid rgba(255, 255, 255, .54)
@@ -834,17 +1125,17 @@ body::after
   transition color .18s ease, transform .18s ease
 
   &:hover
-    color #7eaecf
+    color #178f92
     transform translateX(2px)
 
 .post-toc .nav .active > a
   color #334155
 
 .back-to-top
-  background linear-gradient(135deg, #d4e4f0, #bdd5e6)
+  background linear-gradient(135deg, #1f2a44, #178f92)
   border-radius 999px
   box-shadow 0 18px 34px rgba(169, 199, 221, .22)
-  color #45535a
+  color #f8fcfd
   right 26px
 
 .footer
@@ -853,7 +1144,7 @@ body::after
 .footer-inner
   background rgba(255, 255, 255, .78)
   border 1px solid rgba(213, 218, 227, .82)
-  border-radius 18px
+  border-radius 8px
   box-shadow 0 12px 28px rgba(15, 23, 42, .04)
   padding 18px 22px
 
@@ -864,7 +1155,7 @@ body::after
 .search-popup
   background rgba(255, 255, 255, .98)
   border 1px solid rgba(213, 218, 227, .96)
-  border-radius 22px
+  border-radius 8px
   box-shadow 0 24px 54px rgba(15, 23, 42, .12)
 
   .search-input-container
@@ -878,7 +1169,7 @@ body::after
     color #6b7280
 
     &:hover
-      color #7eaecf
+      color #178f92
 
 .pagination
   text-align center
@@ -892,8 +1183,8 @@ body::after
     min-width 40px
 
   .current
-    background linear-gradient(135deg, #d4e4f0, #bdd5e6)
-    color #45535a
+    background linear-gradient(135deg, #1f2a44, #178f92)
+    color #f8fcfd
 
   +mobile()
     padding 18px 14px
@@ -936,7 +1227,7 @@ body::after
     text-align center
 
     &::before
-      background linear-gradient(135deg, #d4e4f0, #a9c7dd)
+      background linear-gradient(135deg, #1f2a44, #178f92)
       border-radius 50%
       box-shadow 0 0 0 6px rgba(169, 199, 221, .18)
       content ''
@@ -960,7 +1251,7 @@ body::after
   .category-all > .category-list > .category-list-item
     background linear-gradient(180deg, rgba(255, 255, 255, .28), rgba(241, 246, 249, .18))
     border 1px solid rgba(255, 255, 255, .36)
-    border-radius 24px
+    border-radius 8px
     box-shadow 0 20px 40px rgba(15, 23, 42, .08)
     backdrop-filter blur(20px)
     margin 0
@@ -969,7 +1260,7 @@ body::after
     transition border-color .22s ease, box-shadow .22s ease, transform .22s ease
 
     &::before
-      background linear-gradient(180deg, #a9c7dd, rgba(169, 199, 221, 0))
+      background linear-gradient(180deg, #1aa6a8, rgba(26, 166, 168, 0))
       border-radius 999px
       content ''
       height 52px
@@ -979,7 +1270,7 @@ body::after
       width 3px
 
     &:hover
-      border-color rgba(255, 255, 255, .5)
+      border-color rgba(26, 166, 168, .32)
       box-shadow 0 28px 52px rgba(15, 23, 42, .1)
       transform translateY(-3px)
 
@@ -1008,7 +1299,7 @@ body::after
     transition color .2s ease
 
     &:hover
-      color #7eaecf
+      color #178f92
 
   .category-list-count
     align-items center
@@ -1043,7 +1334,7 @@ body::after
     padding-left 14px
 
     &::before
-      background linear-gradient(135deg, #a9c7dd, #d4e4f0)
+      background linear-gradient(135deg, #1aa6a8, #1f2a44)
       border-radius 50%
       box-shadow 0 0 0 5px rgba(169, 199, 221, .14)
       content ''
@@ -1079,9 +1370,192 @@ body::after
       width 100%
 
     .category-all > .category-list > .category-list-item
-      border-radius 18px
+      border-radius 8px
       padding 18px 18px 16px
 
     .category-all > .category-list > .category-list-item > .category-list-link
       font-size 1.18rem
       margin-left 12px
+
+#blog-ai-agent-root
+  position fixed
+  right 24px
+  bottom 28px
+  z-index 40
+
+  +mobile()
+    right 14px
+    bottom 18px
+
+.blog-ai-agent__toggle
+  background linear-gradient(135deg, #1f2a44, #178f92)
+  border none
+  border-radius 999px
+  box-shadow 0 18px 36px rgba(23, 143, 146, .22)
+  color #f8fbff
+  cursor pointer
+  font-size .95rem
+  font-weight 600
+  letter-spacing .02em
+  padding 14px 18px
+
+.blog-ai-agent__panel
+  background rgba(250, 253, 254, .94)
+  border 1px solid rgba(255, 255, 255, .72)
+  border-radius 8px
+  box-shadow 0 26px 60px rgba(15, 23, 42, .14)
+  display none
+  margin-top 14px
+  max-width 92vw
+  overflow hidden
+  width 420px
+
+  &.is-open
+    display block
+
+  +mobile()
+    width 92vw
+
+.blog-ai-agent__header
+  align-items flex-start
+  background linear-gradient(135deg, rgba(31, 42, 68, .94), rgba(23, 143, 146, .82))
+  border-bottom 1px solid rgba(255, 255, 255, .28)
+  display flex
+  justify-content space-between
+  gap 12px
+  padding 18px 18px 14px
+
+  h3
+    color #f8fcfd
+    font-size 1rem
+    margin 0
+
+  p
+    color rgba(248, 252, 253, .72)
+    font-size .8rem
+    line-height 1.45
+    margin 6px 0 0
+
+.blog-ai-agent__close
+  background transparent
+  border none
+  color rgba(248, 252, 253, .82)
+  cursor pointer
+  font-size 1.4rem
+  line-height 1
+  padding 2px 4px
+
+.blog-ai-agent__suggestions
+  display flex
+  flex-wrap wrap
+  gap 8px
+  padding 14px 18px 0
+
+  button
+    background rgba(238, 248, 249, .92)
+    border 1px solid rgba(23, 143, 146, .18)
+    border-radius 999px
+    color #243447
+    cursor pointer
+    font-size .8rem
+    padding 8px 12px
+
+.blog-ai-agent__messages
+  max-height 360px
+  overflow auto
+  padding 14px 18px
+
+.blog-ai-agent__message
+  border-radius 8px
+  margin-bottom 12px
+  padding 12px 14px
+
+.blog-ai-agent__message--assistant
+  background #f5fafb
+  border 1px solid rgba(205, 226, 230, .92)
+
+.blog-ai-agent__message--user
+  background linear-gradient(135deg, #1f2a44, #178f92)
+  color #f8fbff
+  margin-left 24px
+
+.blog-ai-agent__message-label
+  font-size .74rem
+  font-weight 700
+  letter-spacing .05em
+  margin-bottom 6px
+  opacity .72
+  text-transform uppercase
+
+.blog-ai-agent__message-body
+  font-size .92rem
+  line-height 1.65
+  white-space pre-wrap
+  word-break break-word
+
+.blog-ai-agent__citation-list
+  display grid
+  gap 8px
+  margin-top 12px
+
+.blog-ai-agent__citation
+  background rgba(255, 255, 255, .9)
+  border 1px solid rgba(205, 226, 230, .95)
+  border-radius 8px
+  color #334155
+  display grid
+  gap 4px
+  padding 10px 12px
+  text-decoration none
+
+  strong
+    color #1e293b
+    font-size .84rem
+
+  span
+    color #607080
+    font-size .78rem
+    line-height 1.45
+
+.blog-ai-agent__related
+  display flex
+  flex-wrap wrap
+  gap 8px
+  margin-top 12px
+
+.blog-ai-agent__related-link
+  background #eef8f9
+  border 1px solid rgba(23, 143, 146, .18)
+  border-radius 999px
+  color #178f92
+  font-size .78rem
+  padding 7px 11px
+  text-decoration none
+
+.blog-ai-agent__form
+  border-top 1px solid rgba(214, 223, 232, .9)
+  display grid
+  gap 10px
+  padding 16px 18px 18px
+
+.blog-ai-agent__input
+  background #fff
+  border 1px solid rgba(205, 226, 230, .95)
+  border-radius 8px
+  color #243341
+  font inherit
+  min-height 88px
+  outline none
+  padding 12px 14px
+  resize vertical
+
+.blog-ai-agent__submit
+  background linear-gradient(135deg, #1f2a44, #178f92)
+  border none
+  border-radius 999px
+  color #f8fbff
+  cursor pointer
+  font-size .9rem
+  font-weight 600
+  justify-self end
+  padding 10px 16px

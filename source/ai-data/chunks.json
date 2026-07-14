@@ -4328,6 +4328,1215 @@
     "content": "lta(1)) & (weather_diff['temperature'] > 0),\n ['id']\n ]\n``"
   },
   {
+    "id": "VUE-BASIC#0",
+    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
+    "postId": "VUE-BASIC",
+    "postTitle": "VUE-BASIC",
+    "tags": [
+      "Vue",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "Vue 简介\n\nVue 是什么\n\nVue 是一个用来构建用户界面的 JavaScript 框架.\n\n如果前面学的 HTML、CSS 和 JavaScript 是前端开发的基础三件套, 那么 Vue 可以理解成: 它是在这三件套之上, 提供了一套更高效的组织方式.\n\n你可以先粗暴地把它理解成:\nHTML 用来写页面结构\nCSS 用来写页面样式\nJavaScript 用来写交互逻辑\nVue 用来把这些内容更清楚地组织起来\n\n所以 Vue 不是替代前端三件套, 而是建立在它们之上的一套开发方式.\n\n为什么要用 Vue\n\n当页面非常简单时, 只用原生 HTML、CSS 和 JavaScript 就够了.\n\n但当页面越来越复杂时, 代码往往会出现这些问题:\n页面结构越来越大\n交互逻辑越来越多\n手动操作 DOM 很繁琐\n同样的页面块容易重复写\n\n这时候 Vue 的价值就出来了.\n\n它主要帮你解决这些问题:\n用组件拆分页面\n用数据驱动页面更新\n更方便地处理事件和表单\n让代码更容易维护\n\n你可以把它理解成: \n页面复杂之后, Vue 能让前端代码没那么乱.\n\n<!-- ## Vue 和原生前端三件套的"
+  },
+  {
+    "id": "VUE-BASIC#1",
+    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
+    "postId": "VUE-BASIC",
+    "postTitle": "VUE-BASIC",
+    "tags": [
+      "Vue",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "题:\n用组件拆分页面\n用数据驱动页面更新\n更方便地处理事件和表单\n让代码更容易维护\n\n你可以把它理解成: \n页面复杂之后, Vue 能让前端代码没那么乱.\n\n<!-- ## Vue 和原生前端三件套的关系\n\nVue 和原生前端三件套不是对立关系, 而是建立关系.\n\n你仍然需要:\n用 HTML 理解页面结构\n用 CSS 控制页面样式\n用 JavaScript 理解变量、函数、事件和逻辑\n\n而 Vue 做的事是:\n用模板更方便地写页面\n用响应式数据驱动界面变化\n用组件组织页面\n\n可以这样理解:\n原生前端三件套 = 基础能力\nVue = 更适合做复杂页面的组织方式\n\n所以学 Vue 的前提不是把原生 JavaScript 学到很深, 而是至少能看懂基础的变量、函数、对象和事件. -->\n\n什么是组件\n\n组件是 Vue 里非常重要的概念.\n\n你可以把组件理解成: 页面中的一个独立小模块.\n\n比如一个页面可以拆成:\n顶部导航栏\n侧边栏\n文章卡片\n评论区\n登录框\n\n这些都可以做成组件.\n\n组件的好处是:\n每一块功能更独立\n可以重复使用\n页面结构更清楚\n后续修改时影响范围更小\n\n例如一个按钮组件、一"
+  },
+  {
+    "id": "VUE-BASIC#2",
+    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
+    "postId": "VUE-BASIC",
+    "postTitle": "VUE-BASIC",
+    "tags": [
+      "Vue",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "个页面可以拆成:\n顶部导航栏\n侧边栏\n文章卡片\n评论区\n登录框\n\n这些都可以做成组件.\n\n组件的好处是:\n每一块功能更独立\n可以重复使用\n页面结构更清楚\n后续修改时影响范围更小\n\n例如一个按钮组件、一个卡片组件, 可以在多个页面里重复使用, 不需要每次都从头写一遍.\n\n所以 Vue 的一个核心思路就是: \n把大页面拆成很多小组件.\n\n什么是数据驱动视图\n\n这是 Vue 最核心的思想之一.\n\n所谓“数据驱动视图”, 可以简单理解成:\n数据变了\n页面会自动跟着变\n\n在原生 JavaScript 里, 你可能需要手动:\n选中元素\n修改 textContent\n处理页面更新\n\n而在 Vue 里, 通常你只需要修改数据, 页面会自动重新渲染.\n\n例如:\n\n``vue\n<template>\n <p>{{ message }}</p>\n <button @click=\"changeMessage\">点我</button>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\n\nconst message = ref('Hello Vue')\n\nf"
+  },
+  {
+    "id": "VUE-BASIC#3",
+    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
+    "postId": "VUE-BASIC",
+    "postTitle": "VUE-BASIC",
+    "tags": [
+      "Vue",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "</button>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\n\nconst message = ref('Hello Vue')\n\nfunction changeMessage() {\n message.value = '你点击了按钮'\n}\n</script>\n`\n\n这里最重要的不是语法细节, 而是理解这个过程:\nmessage 是数据\n页面显示 message\n按钮点击后修改 message\n页面自动更新\n<!-- \n所以你可以把 Vue 的核心思路记成一句话:\n\n数据变, 界面跟着变 -->\n\n常见模板语法\n\nVue 模板语法就是在页面里把数据和界面连起来的写法.\n\n最常见的有下面几种.\n\n插值表达式\n\n用 {{ }} 把数据直接显示到页面上:\n\n`vue\n<template>\n <p>{{ message }}</p>\n</template>\n`\n\n如果 message = 'Hello Vue', 页面上就会显示 Hello Vue.\n\n绑定属性\n\n用 v-bind 或简写 : 给标签属性绑定数据:\n\n`vue"
+  },
+  {
+    "id": "VUE-BASIC#4",
+    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
+    "postId": "VUE-BASIC",
+    "postTitle": "VUE-BASIC",
+    "tags": [
+      "Vue",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "</template>\n`\n\n如果 message = 'Hello Vue', 页面上就会显示 Hello Vue.\n\n绑定属性\n\n用 v-bind 或简写 : 给标签属性绑定数据:\n\n`vue\n<template>\n <img :src=\"imageUrl\" :alt=\"title\" />\n</template>\n`\n\n表示图片地址和说明文字不是写死的, 而是来自数据.\n\n绑定事件\n\n用 v-on 或简写 @ 监听事件:\n\n`vue\n<template>\n <button @click=\"handleClick\">点我</button>\n</template>\n`\n\n表示点击按钮时执行 handleClick.\n\n如果你只想先看懂大多数简单 Vue 代码, 先掌握这三个语法就够用了:\n{{ }}\n:\n@\n\n常见指令\n\nVue 提供了一些很常用的指令, 用来控制页面渲染和交互.\n\nv-if\n\n根据条件决定元素是否显示:\n\n`vue\n<template>\n <p v-if=\"isLogin\">欢迎回来</p>\n</template>\n`\n\n如果 isLogin 为真, 就显示这段内容"
+  },
+  {
+    "id": "VUE-BASIC#5",
+    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
+    "postId": "VUE-BASIC",
+    "postTitle": "VUE-BASIC",
+    "tags": [
+      "Vue",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "if\n\n根据条件决定元素是否显示:\n\n`vue\n<template>\n <p v-if=\"isLogin\">欢迎回来</p>\n</template>\n`\n\n如果 isLogin 为真, 就显示这段内容.\n\nv-for\n\n用来渲染列表:\n\n`vue\n<template>\n <li v-for=\"item in list\" :key=\"item.id\">\n {{ item.name }}\n </li>\n</template>\n`\n\n表示把 list 里的每一项渲染出来.\n\nv-model\n\n用来做表单双向绑定:\n\n`vue\n<template>\n <input v-model=\"username\" />\n</template>\n`\n\n它的作用是:\n输入框内容变了, 数据会变\n数据变了, 输入框内容也会变\n\n<!-- 对入门来说, 最值得先记住的三个指令就是:\nv-if\nv-for\nv-model -->\n\n<!-- ## 如何用 Vue 指挥 AI\n\n如果你后续主要是靠 AI 帮你写 Vue, 那你最需要学会的不是所有语法, 而是怎么把需求拆清楚.\n\n描述一个 Vue 需求时, 最好至少说"
+  },
+  {
+    "id": "VUE-BASIC#6",
+    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
+    "postId": "VUE-BASIC",
+    "postTitle": "VUE-BASIC",
+    "tags": [
+      "Vue",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "l -->\n\n<!-- ## 如何用 Vue 指挥 AI\n\n如果你后续主要是靠 AI 帮你写 Vue, 那你最需要学会的不是所有语法, 而是怎么把需求拆清楚.\n\n描述一个 Vue 需求时, 最好至少说清楚这几件事:\n页面要拆成哪些组件\n每个组件显示什么内容\n组件里有哪些数据\n用户点击后会发生什么\n是否需要请求接口\n\n例如你想让 AI 写一个登录框, 可以这样描述:\n用 Vue 3 写一个登录卡片组件\n页面包含标题、用户名输入框、密码输入框、登录按钮\n使用 v-model 绑定输入内容\n点击按钮后先校验是否为空\n如果不为空, 调用登录接口\n样式保持简洁, 卡片居中, 有圆角和阴影\n\n再比如你想做一个文章列表页, 可以这样描述:\n用 Vue 写一个文章列表页面\n页面拆成“搜索框组件”和“文章卡片组件”\n文章列表通过 v-for 渲染\n搜索框输入时实时过滤标题\n点击文章卡片跳转详情页\n\n你可以把“指挥 AI 写 Vue”总结成一个固定模板:\n组件结构是什么\n数据有哪些\n交互有哪些\n接口有哪些\n样式想要什么效果\n\n只要这 5 点说清楚, AI 写出来的结果通常就会更接近你的预期. -->\n\n小"
+  },
+  {
+    "id": "VUE-BASIC#7",
+    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
+    "postId": "VUE-BASIC",
+    "postTitle": "VUE-BASIC",
+    "tags": [
+      "Vue",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "“指挥 AI 写 Vue”总结成一个固定模板:\n组件结构是什么\n数据有哪些\n交互有哪些\n接口有哪些\n样式想要什么效果\n\n只要这 5 点说清楚, AI 写出来的结果通常就会更接近你的预期. -->\n\n小结\n\n<!-- 对入门来说, 学 Vue 不需要一开始就陷进复杂概念里.\n\n你先抓住下面这些最关键的点就够了: -->\nVue 是一个构建用户界面的 JavaScript 框架\n它建立在 HTML、CSS 和 JavaScript 之上\n它擅长用组件拆页面\n它的核心思路是“数据变, 界面跟着变”\n最常见的模板语法是 {{ }}、: 和 @\n最常见的指令是 v-if、v-for 和 v-model\n<!-- \n如果你能先看懂这些内容, 基本就已经能理解简单的 Vue 代码, 也能更准确地让 AI 帮你生成和修改 Vue` 页面了. -->"
+  },
+  {
+    "id": "FRONTEND-BASIC#0",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "HTML、CSS 和 JavaScript 的分工\n\n前端最核心的三件套就是 HTML、CSS 和 JavaScript.\nHTML: 页面里有什么\nCSS: 页面长什么样\nJavaScript: 页面会发生什么\n\n例如做一个简单的登录页面:\nHTML 负责写出标题、输入框、按钮这些页面结构\nCSS 负责控制颜色、间距、边框、对齐方式这些外观样式\nJavaScript 负责处理点击按钮、校验输入、发送请求这些交互逻辑\n\n也可以把它们理解成:\nHTML = 骨架\nCSS = 外观\nJavaScript = 行为\n<!-- \n所以当你和 AI 一起写前端代码时, 最重要的不是立刻去写复杂语法, 而是先把需求拆清楚:\n哪些内容属于页面结构\n哪些内容属于样式表现\n哪些内容属于交互逻辑\n\n比如你可以这样给 AI 描述需求:\nHTML: 我要一个标题、一个输入框和一个提交按钮\nCSS: 整体居中, 按钮是蓝色, 卡片有圆角和阴影\nJavaScript: 点击按钮后校验输入内容, 然后弹出提示 -->\n\n这就是最基础但最实用的前端思维方式.\n\nHTML 简介\n\nHTML 是什么\nHTML 是什么?"
+  },
+  {
+    "id": "FRONTEND-BASIC#1",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "钮是蓝色, 卡片有圆角和阴影\nJavaScript: 点击按钮后校验输入内容, 然后弹出提示 -->\n\n这就是最基础但最实用的前端思维方式.\n\nHTML 简介\n\nHTML 是什么\nHTML 是什么?\nHTML 是用来定义网页内容和结构的标记语言, 英文全称是 HyperText Markup Language, 中文一般叫\"超文本标记语言\".\n可以理解成: 它告诉浏览器, 这个页面里有什么.\n\nHTML 页面基本结构\n\n``html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n <meta charset=\"UTF-8\" />\n <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n <title>我的第一个页面</title>\n</head>\n<body>\n <h1>Hello HTML</h1>\n <p>这是一个简单的网页。</p>\n</body>\n</html>\n`\n其中:\n<!DOCTYPE html> 声明这是一个 HTML5 页面.\n<htm"
+  },
+  {
+    "id": "FRONTEND-BASIC#2",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "<h1>Hello HTML</h1>\n <p>这是一个简单的网页。</p>\n</body>\n</html>\n`\n其中:\n<!DOCTYPE html> 声明这是一个 HTML5 页面.\n<html lang=\"zh-CN\"> 是整个 HTML 页面的根标签, 并且告诉浏览器和搜索引擎这个页面的语言是 \"简体中文\".\n<head> 放页面的“配置信息”, 这些内容通常不给用户直接看. 比如字符编码、页面标题、移动端适配、引入 CSS/JS.\n<meta charset=\"UTF-8\" /> 指定字符编码是 UTF-8, 避免中文乱码.\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /> 让页面在手机上正常缩放和显示. 页面的宽度应该跟设备宽度一致, 并且初始缩放比例是 1\n<title> 浏览器标签页上显示的标题\n<body> 放页面真正显示给用户看的内容. 比如标题、段落、图片、按钮、表单这些.\nHTML 页面本质上就是: 用 <head> 描述页面, 用 <body> 承载内容.\n\n常"
+  },
+  {
+    "id": "FRONTEND-BASIC#3",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "器标签页上显示的标题\n<body> 放页面真正显示给用户看的内容. 比如标题、段落、图片、按钮、表单这些.\nHTML 页面本质上就是: 用 <head> 描述页面, 用 <body> 承载内容.\n\n常见的 HTML 标签:\n<h1> 到 <h6>: 标题. 例: <h1>HTML</h1>\n<p>: 段落. 例: <p>hello world</p>\n<a>: 链接. 例: <a href=\"https://example.com\">打开网站</a>\n<img>: 图片. 例: <img src=\"cover.jpg\" alt=\"封面图\" />\n<div>: 块级容器标签, 用来把一组内容包起来.\n<span>: 行内容器标签, 通常用来包住一小段文字或局部内容\n<ul>: 无序列表.\n<ol>: 有序列表.\n<li>: 列表项.\n `html\n <ul>\n <li>HTML</li>\n <li>CSS</li>\n <li>JavaScript</li>\n </ul>\n `\ninput: 输入框.\nbutton: 按钮\n `html\n <form>\n <label>用户名</label"
+  },
+  {
+    "id": "FRONTEND-BASIC#4",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "<li>CSS</li>\n <li>JavaScript</li>\n </ul>\n `\ninput: 输入框.\nbutton: 按钮\n `html\n <form>\n <label>用户名</label>\n <input type=\"text\" />\n <button type=\"submit\">提交</button>\n </form>\n `\n\nHTML 标签的常见属性\n\nHTML 标签的属性, 是写在开始标签里的补充信息, 用来说明这个元素的更多细节.\n标签决定“这是什么”\n属性决定“它怎么表现、指向哪里、有什么标识”\n\n属性的基本写法通常是:\n\n`html\n<标签名 属性名=\"属性值\">内容</标签名>\n`\n\n常见的 HTML 标签属性\nhref: 用于 <a> 标签, 指定链接地址. 例: <a href=\"https://example.com\">打开网站</a>\nsrc: 用于 <img> 标签, 指定图片地址. 例: <img src=\"cover.jpg\" alt=\"封面图\" />\nalt: 用于 <img> 标签, 图片无法显示时的替代文本. 例: <img src=\"c"
+  },
+  {
+    "id": "FRONTEND-BASIC#5",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "img> 标签, 指定图片地址. 例: <img src=\"cover.jpg\" alt=\"封面图\" />\nalt: 用于 <img> 标签, 图片无法显示时的替代文本. 例: <img src=\"cover.jpg\" alt=\"封面图\" />\nclass: 用于给元素指定一个或多个类名, 方便 CSS 和 JS 选择和操作. 例: <div class=\"card\">这是一张卡片</div>\nid: 用于给元素指定一个唯一的标识符, 方便 CSS 和 JS 选择和操作. 例: <h1 id=\"main-title\">欢迎来到我的网站</h1>\ntitle: 用于给元素添加一个提示文本, 当用户鼠标悬停在元素上时显示. 例: <p title=\"这是一个段落\">这是一个段落</p>\ntarget: 用于 <a> 标签, 指定链接的打开方式. 例: <a href=\"https://example.com\" target=\"_blank\">在新标签页打开</a>\ntype: 用于 <input> 和 <button> 标签, 指定输入框或按钮的类型. 例: <input type=\"te"
+  },
+  {
+    "id": "FRONTEND-BASIC#6",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "ple.com\" target=\"_blank\">在新标签页打开</a>\ntype: 用于 <input> 和 <button> 标签, 指定输入框或按钮的类型. 例: <input type=\"text\" />, <button type=\"submit\">提交</button>\nplaceholder: 用于 <input> 标签, 指定输入框的占位文本. 例: <input type=\"text\" placeholder=\"请输入用户名\" />\n\n语义化标签\n语义化标签, 指的是标签本身就带有明确含义, 能让人一眼看出这部分内容是做什么的.\n\n比如:\n<header>: 页头\n<nav>: 导航\n<main>: 页面主要内容\n<section>: 一个内容区块\n<article>: 一篇独立的文章或内容\n<footer>: 页脚\n\n相比只使用 <div>, 语义化标签能让页面结构更清楚.\n\n例如下面两种写法都能实现页面结构:\n\n`html\n<div>\n <div>网站标题</div>\n <div>导航菜单</div>\n <div>文章内容</div>\n <div>页脚</div>"
+  },
+  {
+    "id": "FRONTEND-BASIC#7",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "楚.\n\n例如下面两种写法都能实现页面结构:\n\n`html\n<div>\n <div>网站标题</div>\n <div>导航菜单</div>\n <div>文章内容</div>\n <div>页脚</div>\n</div>\n`\n`html\n<header>网站标题</header>\n<nav>导航菜单</nav>\n<main>\n <article>文章内容</article>\n</main>\n<footer>页脚</footer>\n`\n\n第二种写法更容易读懂, 因为标签本身已经说明了这块区域的用途.\n\n为什么要用语义化标签\n\n语义化标签的好处主要有这些:\n代码结构更清晰, 自己以后回头看也更容易懂\n更利于搜索引擎理解页面内容\n更利于屏幕阅读器等辅助工具识别页面结构\n与 CSS、JavaScript 配合时, 语义上更自然\n\n表单基础\n\n表单是网页中用于接收用户输入信息的区域.\n\n比如登录、注册、搜索、留言、提交评论, 本质上都离不开表单.\n\n一个最简单的表单例子如下:\n\n`html\n<form>\n <label for=\"username\">用户名</label>\n <input id=\"us"
+  },
+  {
+    "id": "FRONTEND-BASIC#8",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "索、留言、提交评论, 本质上都离不开表单.\n\n一个最简单的表单例子如下:\n\n`html\n<form>\n <label for=\"username\">用户名</label>\n <input id=\"username\" type=\"text\" placeholder=\"请输入用户名\" />\n\n <label for=\"password\">密码</label>\n <input id=\"password\" type=\"password\" placeholder=\"请输入密码\" />\n\n <button type=\"submit\">提交</button>\n</form>\n`\n\n这个表单里最常见的几个标签有:\n<form>: 表单整体\n<label>: 输入项的说明文字\n<input>: 输入框\n<button>: 按钮\n\n常见表单标签\n<form>: 表示一个表单区域, 用来包裹所有需要提交的数据.\n<input>: 最常见的输入标签, 不同的 type 表示不同类型的输入框, 比如 text、password、email.\n<label>: 用来描述输入框的含义, 让用户知道这里该填什么.\n<"
+  },
+  {
+    "id": "FRONTEND-BASIC#9",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "<input>: 最常见的输入标签, 不同的 type 表示不同类型的输入框, 比如 text、password、email.\n<label>: 用来描述输入框的含义, 让用户知道这里该填什么.\n<button>: 表示按钮, 在表单中最常见的是提交按钮.\n<textarea>: 用于多行文本输入, 比如留言、评论.\n<select>: 用于下拉选择.\n\n例如:\n\n`html\n<textarea placeholder=\"请输入留言内容\"></textarea>\n\n<select>\n <option>北京</option>\n <option>上海</option>\n <option>广州</option>\n</select>\n`\n\nCSS 简介\n\nCSS 是什么\n\nCSS(Cascading Style Sheets) 是用来控制网页样式的语言.\nHTML 决定页面里有什么\nCSS 决定这些内容长什么样\n\n比如文字颜色、字体大小、边距、边框、背景颜色、页面布局这些, 都主要由 CSS 控制.\n\n例如:\n\n`css\nh1 {\n color: blue;\n font-size: 32px"
+  },
+  {
+    "id": "FRONTEND-BASIC#10",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "这些内容长什么样\n\n比如文字颜色、字体大小、边距、边框、背景颜色、页面布局这些, 都主要由 CSS 控制.\n\n例如:\n\n`css\nh1 {\n color: blue;\n font-size: 32px;\n}\n`\n\n这段 CSS 的意思是:\n把页面中的 h1 标题文字设置成蓝色\n把字体大小设置成 32px\n\nCSS 怎么写到页面里\n\n常见的写法有三种:\n\n行内样式\n\n直接写在标签的 style 属性里:\n\n`html\n<p style=\"color: red;\">这是一段红色文字</p>\n`\n\n这种方式简单直接, 但不适合写太多样式.\n\n内部样式\n\n写在页面的 <style> 标签里:\n\n`html\n<head>\n <style>\n p {\n color: red;\n }\n </style>\n</head>\n`\n\n<!-- 这种方式适合小型页面或练习时使用. -->\n\n外部样式表\n\n把样式写到单独的 .css 文件中, 再在 HTML 中引入:\n\n`html\n<head>\n <link rel=\"stylesheet\" href=\"style.css\" />\n</head>\n`\n\n这是实"
+  },
+  {
+    "id": "FRONTEND-BASIC#11",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "到单独的 .css 文件中, 再在 HTML 中引入:\n\n`html\n<head>\n <link rel=\"stylesheet\" href=\"style.css\" />\n</head>\n`\n\n这是实际开发中最常见的方式.\n\n常见选择器\n\n选择器的作用, 就是告诉 CSS: 你要给谁加样式.\n\n标签选择器\n\n直接选中某种标签:\n\n`css\np {\n color: green;\n}\n`\n\n表示所有 <p> 标签都变成绿色.\n\n类选择器\n\n用 .类名 选中带有某个 class 的元素:\n\n`html\n<div class=\"card\">这是一张卡片</div>\n`\n\n`css\n.card {\n border: 1px solid #ddd;\n}\n`\n\nid 选择器\n\n用 #id名 选中带有某个 id 的元素:\n\n`html\n<h1 id=\"title\">我的博客</h1>\n`\n\n`css\ntitle {\n color: purple;\n}\n`\n\n<!-- 对于初学者来说, 先掌握这三种选择器就够用了. -->\n\n常见样式属性\n\n下面这些是最常见、最实用的 CSS 属性:\ncolor: 文字"
+  },
+  {
+    "id": "FRONTEND-BASIC#12",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "tle {\n color: purple;\n}\n`\n\n<!-- 对于初学者来说, 先掌握这三种选择器就够用了. -->\n\n常见样式属性\n\n下面这些是最常见、最实用的 CSS 属性:\ncolor: 文字颜色\nfont-size: 字体大小\nbackground: 背景颜色\nwidth: 宽度\nheight: 高度\nmargin: 外边距\npadding: 内边距\nborder: 边框\nborder-radius: 圆角\ntext-align: 文本对齐方式\n\n例如:\n\n`css\n.card {\n width: 300px;\n padding: 20px;\n margin: 20px auto;\n border: 1px solid #ddd;\n border-radius: 12px;\n background: #f8f8f8;\n}\n`\n\n这段样式可以把一个普通的 div 变成一个简单的卡片区域.\n\n布局基础: flex\n\n<!-- 前端布局里最值得先学的是 flex. -->\n\n它适合用来做:\n水平排列\n垂直居中\n元素之间均匀分布\n\n一个最简单的例子:\n\n`css\n.container"
+  },
+  {
+    "id": "FRONTEND-BASIC#13",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "区域.\n\n布局基础: flex\n\n<!-- 前端布局里最值得先学的是 flex. -->\n\n它适合用来做:\n水平排列\n垂直居中\n元素之间均匀分布\n\n一个最简单的例子:\n\n`css\n.container {\n display: flex;\n justify-content: center;\n align-items: center;\n}\n`\n\n这里:\ndisplay: flex 开启弹性布局\njustify-content: center 让内容水平居中\nalign-items: center 让内容垂直居中\n\n<!-- 如果你只是想先看懂大多数简单页面, 那掌握 flex 就已经很够用了. -->\n\nCSS 负责什么, 不负责什么\n\nCSS 主要负责:\n颜色\n字体\n间距\n边框\n阴影\n布局\n\nCSS 不负责:\n页面内容本身\n点击后的业务逻辑\n数据请求\n\n可以简单记成:\nHTML 负责结构\nCSS 负责外观\nJavaScript 负责交互\n\nJavaScript 简介\n\nJavaScript 是什么\n\nJavaScript 是让网页“动起来”的语言.\n\n如果说:\nHTML 是页面骨架\nCS"
+  },
+  {
+    "id": "FRONTEND-BASIC#14",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "SS 负责外观\nJavaScript 负责交互\n\nJavaScript 简介\n\nJavaScript 是什么\n\nJavaScript 是让网页“动起来”的语言.\n\n如果说:\nHTML 是页面骨架\nCSS 是页面外观\n\n那么 JavaScript 就是页面的行为和交互.\n\n比如:\n点击按钮后弹出提示\n输入内容后实时校验\n请求后端接口获取数据\n修改页面上的文字和内容\n\n这些通常都由 JavaScript 完成.\n\nJavaScript 能做什么\n\n对初学者来说, 最常见的用途有三类:\n处理用户操作, 比如点击、输入、提交\n修改页面内容\n与后端接口通信\n\n例如点击按钮后修改文字:\n\n`html\n<p id=\"text\">还没有点击按钮</p>\n<button id=\"btn\">点我</button>\n`\n\n`html\n<script>\n const btn = document.getElementById(\"btn\");\n const text = document.getElementById(\"text\");\n\n btn.addEventListener(\"click\", functi"
+  },
+  {
+    "id": "FRONTEND-BASIC#15",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "ntById(\"btn\");\n const text = document.getElementById(\"text\");\n\n btn.addEventListener(\"click\", function () {\n text.textContent = \"你点击了按钮\";\n });\n</script>\n`\n\n常见语法: 变量、条件、函数\n\n变量\n\n变量用来保存数据, 常见写法有 let 和 const.\n\n`js\nlet name = \"Tom\";\nconst age = 20;\n`\nlet: 之后可能会变(变量)\nconst: 定义后通常不再改(常量)\n\n条件判断\n\n`js\nconst score = 85;\n\nif (score >= 60) {\n console.log(\"及格\");\n} else {\n console.log(\"不及格\");\n}\n`\n\n函数\n\n`js\nfunction sayHello() {\n console.log(\"Hello\");\n}\n\nsayHello();\n`\n\nDOM 操作: 选元素、改内容、绑事件\n\n前端里最常见的 JavaScript 操作之"
+  },
+  {
+    "id": "FRONTEND-BASIC#16",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "on sayHello() {\n console.log(\"Hello\");\n}\n\nsayHello();\n`\n\nDOM 操作: 选元素、改内容、绑事件\n\n前端里最常见的 JavaScript 操作之一, 就是操作页面元素, 也就是操作 DOM.\n\n常见动作有:\n选中元素\n修改内容\n监听事件\n\n例如:\n\n`html\n<h1 id=\"title\">原始标题</h1>\n<button id=\"changeBtn\">修改标题</button>\n`\n\n`html\n<script>\n const title = document.getElementById(\"title\");\n const changeBtn = document.getElementById(\"changeBtn\");\n\n changeBtn.addEventListener(\"click\", function () {\n title.textContent = \"标题已修改\";\n });\n</script>\n`\n\n这里:\ndocument.getElementById 用来选中元素\naddEventListener 用来监"
+  },
+  {
+    "id": "FRONTEND-BASIC#17",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "tle.textContent = \"标题已修改\";\n });\n</script>\n`\n\n这里:\ndocument.getElementById 用来选中元素\naddEventListener 用来监听事件\ntextContent 用来修改文字内容\n\n与后端通信: fetch\n\n前端经常需要请求后端接口, 最常见的方法之一就是 fetch.\n\n例如:\n\n`js\nfetch(\"/api/user\")\n .then(response => response.json())\n .then(data => {\n console.log(data);\n });\n`\n\n它的意思是:\n向 /api/user 发请求\n把返回结果转成 JSON\n再处理返回的数据\n\n<!-- 你现阶段不需要把异步原理学得很深, 只要知道前端可以通过 fetch 获取数据就够了. -->\n\n<!-- ## JavaScript 负责什么, 不负责什么\n\nJavaScript 主要负责:\n事件响应\n页面内容更新\n表单校验\n网络请求\n交互逻辑\n\nJavaScript 不负责:\n页面基础结构\n主要视觉样式\n\n所以:\n结构问题看"
+  },
+  {
+    "id": "FRONTEND-BASIC#18",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "负责什么, 不负责什么\n\nJavaScript 主要负责:\n事件响应\n页面内容更新\n表单校验\n网络请求\n交互逻辑\n\nJavaScript 不负责:\n页面基础结构\n主要视觉样式\n\n所以:\n结构问题看 HTML\n样式问题看 CSS\n交互问题看 JavaScript -->\n\n<!-- ## 如何用 HTML、CSS 和 JavaScript 指挥 AI\n\n如果你打算让 AI 帮你写前端代码, 最重要的不是把三种语言学得很深, 而是先学会拆需求.\n\n你可以按下面这套思路给 AI 提要求:\nHTML: 页面里要有什么\nCSS: 页面要长什么样\nJavaScript: 页面要怎么交互\n\n例如你想做一个登录框, 可以这样描述:\nHTML: 一个标题、两个输入框、一个登录按钮\nCSS: 整个卡片居中, 白底, 圆角, 阴影, 按钮蓝色\nJavaScript: 点击登录按钮时检查输入是否为空, 如果为空就提示, 不为空就发请求\n\n这种表达方式会让 AI 写出来的代码更清楚, 也更容易修改. -->\n\n小结\n\n这篇文章里最重要的不是记住所有标签、属性和语法细节, 而是先建立一个最小认知框架:\nHTML"
+  },
+  {
+    "id": "FRONTEND-BASIC#19",
+    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+    "postId": "FRONTEND-BASIC",
+    "postTitle": "FRONTEND-BASIC",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "categories": [
+      "前端"
+    ],
+    "sectionTitle": "",
+    "content": "就提示, 不为空就发请求\n\n这种表达方式会让 AI 写出来的代码更清楚, 也更容易修改. -->\n\n小结\n\n这篇文章里最重要的不是记住所有标签、属性和语法细节, 而是先建立一个最小认知框架:\nHTML 决定页面结构\nCSS 决定页面样式\nJavaScript 决定页面交互\n\n能把一个需求拆成这三部分时, 就具备和 AI` 配合完成大多数简单前端页面的基础能力了."
+  },
+  {
+    "id": "LangChain 基础#0",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langchain-basic/",
+    "postId": "LangChain 基础",
+    "postTitle": "LangChain 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "LangChain Basic\n\n目标: 认识 模型 (Model)、消息 (Message)、工具 (Tool) 三个组件\n\n1. 设置 API Key\n\n采用 DeepSeek 模型, OpenAI 兼容接口\n\n``python\nimport os, getpass\n\ndef _set_env(var: str):\n if not os.environ.get(var):\n os.environ[var] = getpass.getpass(f\"{var}: \")\n\n_set_env(\"DEEPSEEK_API_KEY\")\n`\n\n2. 创建聊天模型\n\n`python\nfrom langchain_openai import ChatOpenAI\nimport os\n\ndeepseek_chat = ChatOpenAI(\n model=\"deepseek-v4-flash\",\n temperature=0,\n api_key=os.environ[\"DEEPSEEK_API_KEY\"],\n base_url=\"https://api.deepseek.com\",\n)\n`\n\n这里:"
+  },
+  {
+    "id": "LangChain 基础#1",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langchain-basic/",
+    "postId": "LangChain 基础",
+    "postTitle": "LangChain 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "perature=0,\n api_key=os.environ[\"DEEPSEEK_API_KEY\"],\n base_url=\"https://api.deepseek.com\",\n)\n`\n\n这里:\nmodel 为服务端模型名称\ntemperature 的参数值越小, 模型就会返回越确定的一个结果. 如果调高该参数值, 大语言模型可能会返回更随机的结果, 也就是说这可能会带来更多样化或更具创造性的产出\n\n3. 消息对象\n\n`python\nfrom langchain_core.messages import HumanMessage\n\nCreate a message\nmsg = HumanMessage(content=\"Hello world\", name=\"Lance\")\n\nMessage list\nmessages = [msg]\n\n调用模型\ndeepseek_chat.invoke(messages)\n`\n\nLangChain 采用结构化消息:\nHumanMessage 为用户消息, 其中 content 为消息正文, name 为可选的发送者标识\nAIMessage 为模型"
+  },
+  {
+    "id": "LangChain 基础#2",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langchain-basic/",
+    "postId": "LangChain 基础",
+    "postTitle": "LangChain 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "e(messages)\n`\n\nLangChain 采用结构化消息:\nHumanMessage 为用户消息, 其中 content 为消息正文, name 为可选的发送者标识\nAIMessage 为模型回复\nSystemMessage 为系统指令\nToolMessage 为工具执行结果\n\ninvoke() 为同步调用接口, 返回的 AIMessage 除了文本, 还包含 token 用量、模型名称、结束原因等元数据\n\ndeepseek_chat.invoke([HumanMessage(content=\"hello world\")]) 等价于\ndeepseek_chat.invoke(\"hello world\")\n\n4. Tavily 搜索工具\n\n`python\n_set_env(\"TAVILY_API_KEY\")\n\nfrom langchain_tavily import TavilySearch\n\ntavily_search = TavilySearch(max_results=3) # 最多返回 3 条搜索结果\n\ndata = tavily_search.invoke({\n \"qu"
+  },
+  {
+    "id": "LangChain 基础#3",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langchain-basic/",
+    "postId": "LangChain 基础",
+    "postTitle": "LangChain 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "arch\n\ntavily_search = TavilySearch(max_results=3) # 最多返回 3 条搜索结果\n\ndata = tavily_search.invoke({\n \"query\": \"What is LangGraph?\"\n})\n`\n\n每条搜索结果通常包含:\n`python\n{\n \"title\": \"...\",\n \"url\": \"...\",\n \"content\": \"...\",\n \"score\": 0.95\n}\n`\n\nTavily` 主要作用是 让模型获取互联网上的最新信息"
+  },
+  {
+    "id": "LangGraph 基础#0",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "LangGraph\n\n1. Simple Graph\n\nLangGraph 最基础的组成有:\nState : 图中传递的数据\nNode : 执行工作的 Python 函数\nEdge : 节点之间的连接\nConditional Edge : 条件分支\nSTART / END : 图的 入口 / 出口\ncompile() : 编译图\ninvoke() : 执行图\n\n**示例:** 构造如下流程图\n\n``text\nSTART\n ↓\nnode_1：追加 \" I am\"\n ↓\n随机条件判断\n ├── node_2：追加 \" happy!\"\n └── node_3：追加 \" sad!\"\n ↓\n END\n`\n\n这样, 输入 {\"graph_state\" : \"Hi, this is Lance.\"}, 可能会输出 {\"graph_state\" : \"Hi, this is Lance. I am happy!\"}, 也可能会输出 {\"graph_state\" : \"Hi, this is Lance. I am sad!\"}\n\n1.1 构造图中的共享数据 State\n\n`python\nfrom ty"
+  },
+  {
+    "id": "LangGraph 基础#1",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "py!\"}, 也可能会输出 {\"graph_state\" : \"Hi, this is Lance. I am sad!\"}\n\n1.1 构造图中的共享数据 State\n\n`python\nfrom typing_extensions import TypedDict\n\nclass State(TypedDict):\n graph_state: str\n`\n\n1.2 构造 Node: 处理数据的步骤\n\n`python\ndef node_1(state):\n print(\"---Node 1---\")\n return {\"graph_state\": state['graph_state'] +\" I am\"}\n\ndef node_2(state):\n print(\"---Node 2---\")\n return {\"graph_state\": state['graph_state'] +\" happy!\"}\n\ndef node_3(state):\n print(\"---Node 3---\")\n return {\"graph_state\": state['graph_state'] +\" sad"
+  },
+  {
+    "id": "LangGraph 基础#2",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "py!\"}\n\ndef node_3(state):\n print(\"---Node 3---\")\n return {\"graph_state\": state['graph_state'] +\" sad!\"}\n`\n\n1.3 Edge: 规定节点如何连接\n\n普通边表示无条件执行\n\n`python\nbuilder.add_edge(START, \"node_1\") # START -> node_1\nbuilder.add_edge(\"node_2\", END) # node_2 -> END\n`\n\n**条件分支**:\n先定义一个条件判断函数 decide_mood()\n `python\n import random\n from typing import Literal\n \n def decide_mood(state) -> Literal[\"node_2\", \"node_3\"]:\n \n # Often, we will use state to decide on the next node to visit\n user_input = state['graph_state']"
+  },
+  {
+    "id": "LangGraph 基础#3",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "Often, we will use state to decide on the next node to visit\n user_input = state['graph_state'] \n \n # Here, let's just do a 50 / 50 split between nodes 2, 3\n if random.random() < 0.5:\n \n # 50% of the time, we return Node 2\n return \"node_2\"\n \n # 50% of the time, we return Node 3\n return \"node_3\"\n `\n\n Literal[\"node_2\", \"node_3\"] 表示函数的输出只能是 node_2 或者 node_3\n连接\n `python\n builder.add_conditional_edges(\n \"node_1\",\n decide_mood\n )\n `\n\n1.4 构建图\n\n`python\nfrom IPython.display import Image, display\nfrom la"
+  },
+  {
+    "id": "LangGraph 基础#4",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "(\n \"node_1\",\n decide_mood\n )\n `\n\n1.4 构建图\n\n`python\nfrom IPython.display import Image, display\nfrom langgraph.graph import StateGraph, START, END\n\nBuild graph\nbuilder = StateGraph(State)\nbuilder.add_node(\"node_1\", node_1)\nbuilder.add_node(\"node_2\", node_2)\nbuilder.add_node(\"node_3\", node_3)\n\nLogic\nbuilder.add_edge(START, \"node_1\")\nbuilder.add_conditional_edges(\"node_1\", decide_mood)\nbuilder.add_edge(\"node_2\", END)\nbuilder.add_edge(\"node_3\", END)\n\nAdd\ngraph = builder.compile() # 编译生成可执行对象\n\nView\ndis"
+  },
+  {
+    "id": "LangGraph 基础#5",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "(\"node_2\", END)\nbuilder.add_edge(\"node_3\", END)\n\nAdd\ngraph = builder.compile() # 编译生成可执行对象\n\nView\ndisplay(Image(graph.get_graph().draw_mermaid_png()))\n`\n\n1.5 调用图\n\n`python\ngraph.invoke({\n \"graph_state\": \"Hi, this is Lance.\"\n})\n`\n\n执行过程:\n`text\n初始状态：\n\"Hi, this is Lance.\"\n\n经过 node_1：\n\"Hi, this is Lance. I am\"\n\n经过 node_2：\n\"Hi, this is Lance. I am happy!\"\n\n到达 END，返回最终状态\n`\n\n2. Chain\n\n把聊天模型引入到 LangGraph, 重点包括:\nHumanMessage, AIMessage, ToolMessage\n使用模型处理消息列表\nbind_tools() 把 Python 函数描述给模型\n模型生成 tool_calls\n使用"
+  },
+  {
+    "id": "LangGraph 基础#6",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "包括:\nHumanMessage, AIMessage, ToolMessage\n使用模型处理消息列表\nbind_tools() 把 Python 函数描述给模型\n模型生成 tool_calls\n使用 MessageState 保存消息\n使用 add_message reducer 追加消息\n\n**目标:** 构建一条简单的线性图\n\n`text\nSTART → tool_calling_llm → END\n`\n\n2.1 Messages\n\n`python\nfrom pprint import pprint\nfrom langchain_core.messages import AIMessage, HumanMessage\n\nmessages = [AIMessage(content=f\"So you said you were researching ocean mammals?\", name=\"Model\")]\nmessages.append(HumanMessage(content=f\"Yes, that's right.\",name=\"Lance\"))\nmessages.app"
+  },
+  {
+    "id": "LangGraph 基础#7",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "ame=\"Model\")]\nmessages.append(HumanMessage(content=f\"Yes, that's right.\",name=\"Lance\"))\nmessages.append(AIMessage(content=f\"Great, what would you like to learn about.\", name=\"Model\"))\nmessages.append(HumanMessage(content=f\"I want to learn about the best place to see Orcas in the US.\", name=\"Lance\"))\n\nfor m in messages:\n m.pretty_print()\n`\n\n`text\n================================== Ai Message ==================================\nName: Model\n\nSo you said you were researching ocean mammals?\n=========="
+  },
+  {
+    "id": "LangGraph 基础#8",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "============================\nName: Model\n\nSo you said you were researching ocean mammals?\n================================ Human Message =================================\nName: Lance\n\nYes, that's right.\n================================== Ai Message ==================================\nName: Model\n\nGreat, what would you like to learn about.\n================================ Human Message =================================\nName: Lance\n\nI want to learn about the best place to see Orcas in the US.\n`\n\n2."
+  },
+  {
+    "id": "LangGraph 基础#9",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "====================\nName: Lance\n\nI want to learn about the best place to see Orcas in the US.\n`\n\n2.2 调用 Chat Models\n\n`python\nimport os, getpass\n\ndef _set_env(var: str):\n if not os.environ.get(var):\n os.environ[var] = getpass.getpass(f\"{var}: \")\n\n_set_env(\"DEEPSEEK_API_KEY\")\n`\n\n`python\nfrom langchain_openai import ChatOpenAI\nllm = ChatOpenAI(\n model=\"deepseek-v4-flash\", \n temperature=0, \n api_key=os.environ[\"DEEPSEEK_API_KEY\"], \n base_url=\"https://api.deepseek.com\"\n)\nresult = llm.invoke(messages"
+  },
+  {
+    "id": "LangGraph 基础#10",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "os.environ[\"DEEPSEEK_API_KEY\"], \n base_url=\"https://api.deepseek.com\"\n)\nresult = llm.invoke(messages)\ntype(result)\n`\n\ntype(result) 的返回为 langchain_core.messages.ai.AIMessage\nresult.content 为 AI 模型返回的正文内容\nresult.content 为模型元数据, 包含 模型名称、token数量、结束原因、服务商信息\n\n2.3 定义工具并绑定\n\n这里定义一个简单的示例工具 — 乘法函数\n\n`python\ndef multiply(a: int, b: int) -> int:\n \"\"\"Multiply a and b.\n\n Args:\n a: first int\n b: second int\n \"\"\"\n return a * b\n\nllm_with_tools = llm.bind_tools([multiply]) # 给模型绑定工具\n`\n\n调用:\n\n`python\ntool_call = llm_w"
+  },
+  {
+    "id": "LangGraph 基础#11",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "eturn a * b\n\nllm_with_tools = llm.bind_tools([multiply]) # 给模型绑定工具\n`\n\n调用:\n\n`python\ntool_call = llm_with_tools.invoke([\n HumanMessage(\n content=\"What is 2 multiplied by 3?\"\n )\n])\n`\n\n其中得到的 tool_call.tool_calls 为\n\n`text\n[\n {\n 'name': 'multiply',\n 'args': {\n 'a': 2, \n 'b': 3\n },\n 'id': 'call_XXX',\n 'type': 'tool_call'\n }\n]\n`\n\n2.4 使用消息作为 State\n\n手动定义:\n\n`python\nfrom typing_extensions import TypedDict\nfrom langchain_core.messages import AnyMessage\n\nclass MessagesState(TypedDict):\n messages: list[AnyMess"
+  },
+  {
+    "id": "LangGraph 基础#12",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "m langchain_core.messages import AnyMessage\n\nclass MessagesState(TypedDict):\n messages: list[AnyMessage]\n`\n\n2.5 Reducers\n**Q: 为什么需要 Reducer ?**\n假设当前 State 为\n`python\n{\n\"messages\": [\nHumanMessage(content=\"Hello\")\n]\n}\n`\n模型节点返回:\n`python\n{\n\"messages\": [\nAIMessage(content=\"Hi\")\n]\n}\n`\n如果没有 reducer, 则新值会覆盖旧值, 最后只剩下\n`python\n{\n\"messages\": [\nAIMessage(content=\"Hi\")\n]\n}\n`\n这样导致 HumanMessage 消失了, 但对话状态需要追加\n`python\n[\nHumanMessage(content=\"Hello\"),\nAIMessage(content=\"Hi\"),\n]\n`\n因此需要 add_messages\n\n**add_messages:"
+  },
+  {
+    "id": "LangGraph 基础#13",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "hon\n[\nHumanMessage(content=\"Hello\"),\nAIMessage(content=\"Hi\"),\n]\n`\n因此需要 add_messages\n\n**add_messages:**\n\n`python\nfrom typing import Annotated\nfrom langgraph.graph.message import add_messages\n\nclass MessagesState(TypedDict):\n messages: Annotated[\n list[AnyMessage],\n add_messages\n ] # messages 是一个 list[AnyMessage] 类型的字段，并且这个字段更新时要使用 add_messages 这个规则。\n`\n\n2.6 内置 MessageState\n\n由于消息状态非常常见, LangGraph 已经内置\n\n`python\nfrom langgraph.graph import MessagesState\n`\n\n等价于\n\n`python\nclass MessagesState(TypedDict):"
+  },
+  {
+    "id": "LangGraph 基础#14",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "置\n\n`python\nfrom langgraph.graph import MessagesState\n`\n\n等价于\n\n`python\nclass MessagesState(TypedDict):\n messages: Annotated[\n list[AnyMessage],\n add_messages\n ]\n`\n\n如果要扩展内置状态, 例如添加自定义字段:\n`python\nclass CustomState(MessagesState):\n user_id: str\n retry_count: int\n`\n\n2.7 构建图\n\n`python\nfrom IPython.display import Image, display\nfrom langgraph.graph import StateGraph, START, END\n \nNode\ndef tool_calling_llm(state: MessagesState):\n return {\"messages\": [llm_with_tools.invoke(state[\"messages\"])]}\n\nBuild graph"
+  },
+  {
+    "id": "LangGraph 基础#15",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "state: MessagesState):\n return {\"messages\": [llm_with_tools.invoke(state[\"messages\"])]}\n\nBuild graph\nbuilder = StateGraph(MessagesState)\nbuilder.add_node(\"tool_calling_llm\", tool_calling_llm)\nbuilder.add_edge(START, \"tool_calling_llm\")\nbuilder.add_edge(\"tool_calling_llm\", END)\ngraph = builder.compile()\n\nView\ndisplay(Image(graph.get_graph().draw_mermaid_png()))\n`\n\n**示例1:**\n\n`python\nmessages = graph.invoke({\"messages\": HumanMessage(content=\"Hello!\")})\nfor m in messages['messages']:\n m.pretty_print"
+  },
+  {
+    "id": "LangGraph 基础#16",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": ".invoke({\"messages\": HumanMessage(content=\"Hello!\")})\nfor m in messages['messages']:\n m.pretty_print()\n`\n\n`text\n================================ Human Message =================================\n\nHello!\n================================== Ai Message ==================================\n\nHello! How can I help you today?\n`\n\n**示例2:**\n\n`python\nmessages = graph.invoke({\"messages\": HumanMessage(content=\"Multiply 2 and 3\")})\nfor m in messages['messages']:\n m.pretty_print()\n`\n\n`text\n========================="
+  },
+  {
+    "id": "LangGraph 基础#17",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "iply 2 and 3\")})\nfor m in messages['messages']:\n m.pretty_print()\n`\n\n`text\n================================ Human Message =================================\n\nMultiply 2 and 3\n================================== Ai Message ==================================\nTool Calls:\n multiply (call_00_1neDhYhULBgO7OdVbYjL1912)\n Call ID: call_00_1neDhYhULBgO7OdVbYjL1912\n Args:\n a: 2\n b: 3\n`\n\n3. Router\n\n让大模型根据用户的问题, 决定直接回答, 还是调用某个工具\n\n**整体流程:**\n\n`text\n ┌─ 没有工具调用 ─→ END\n用户 → 大模型判断 ┤\n └─ 产生工具调用 ─→ ToolNode → END\n`\n\n例"
+  },
+  {
+    "id": "LangGraph 基础#18",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "决定直接回答, 还是调用某个工具\n\n**整体流程:**\n\n`text\n ┌─ 没有工具调用 ─→ END\n用户 → 大模型判断 ┤\n └─ 产生工具调用 ─→ ToolNode → END\n`\n\n例如: \n用户问 “你好”: 模型就直接回答, 然后 END;\n用户问 “2 乘 2 等于多少“: 模型决定调用 multiply 工具\n\n3.1 定义工具\n\n定义 multiply 工具, 并绑定给模型\n\n`python\nfrom lanchain_openai import ChatOpenAI\n\ndef multiply(a: int, b: int) -> int:\n \"\"\"Multiply a and b.\n \n Args:\n a: first int\n b: second int\n \"\"\"\n return a*b\n\n绑定给模型\nllm = ChatOpenAI(\n model = \"deepseek-v4-flash\",\n temperature=0,\n api_key=os.environ[\"DEEPSEEK_API_KEY\"],\n base_url=\"https://api."
+  },
+  {
+    "id": "LangGraph 基础#19",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "deepseek-v4-flash\",\n temperature=0,\n api_key=os.environ[\"DEEPSEEK_API_KEY\"],\n base_url=\"https://api.deepseek.com\"\n)\nllm_with_tools = llm.bind_tools([multiply])\n`\n\n此时, 可以使用名为 multiply 的工具, 当用户问 \"what is 2 multiplied by 2? \", 模型会返回一个**工具调用请求** (还没有真正执行 Python 函数):\n`python\nAIMessage(\n tool_calls=[\n {\n \"name\": \"multiply\",\n \"args\": {\n \"a\": 2,\n \"b\": 2\n }\n }\n ]\n)\n`\n\n3.2 定义图\n\n`python\nfrom IPython.display import Image, display\nfrom langgraph.graph import StateGraph, START, END\nfrom langgraph.graph import"
+  },
+  {
+    "id": "LangGraph 基础#20",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "import Image, display\nfrom langgraph.graph import StateGraph, START, END\nfrom langgraph.graph import MessagesState # 使用 LangGraph 内置的 MessagesState, 对 message 是用了消息 reducer\nfrom langgraph.prebuilt import ToolNode\nfrom langgraph.prebuilt import tools_condition # 本图的 router\n\nNode\ndef tool_calling_llm(state: MessagesState):\n return {\"messages\": [llm_with_tools.invoke(state[\"messages\"])]}\n\nBuild graph\nbuilder = StateGraph(MessagesState)\nbuilder.add_node(\"tool_calling_llm\", tool_calling_llm)\nbuilder."
+  },
+  {
+    "id": "LangGraph 基础#21",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "builder = StateGraph(MessagesState)\nbuilder.add_node(\"tool_calling_llm\", tool_calling_llm)\nbuilder.add_node(\"tools\", ToolNode([multiply]))\nbuilder.add_edge(START, \"tool_calling_llm\")\nbuilder.add_conditional_edges(\n \"tool_calling_llm\",\n # If the latest message (result) from assistant is a tool call -> tools_condition routes to tools\n # If the latest message (result) from assistant is a not a tool call -> tools_condition routes to END\n tools_condition,\n) # 检查最新的 AIMessage, 若存在 tool_calls, 则返回 \"to"
+  },
+  {
+    "id": "LangGraph 基础#22",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "call -> tools_condition routes to END\n tools_condition,\n) # 检查最新的 AIMessage, 若存在 tool_calls, 则返回 \"tools\", 执行 ToolNode; 反之, 则返回 END.\nbuilder.add_edge(\"tools\", END)\ngraph = builder.compile()\n\nView\ndisplay(Image(graph.get_graph().draw_mermaid_png()))\n`\n\n**调用:**\n\n`python\nfrom langchain_core.messages import HumanMessage\nmessages = [HumanMessage(content=\"Hello, what is 2 multiplied by 2?\")]\nmessages = graph.invoke({\"messages\": messages})\nfor m in messages['messages']:\n m.pretty_print()\n`\n\n`text\n======"
+  },
+  {
+    "id": "LangGraph 基础#23",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "raph.invoke({\"messages\": messages})\nfor m in messages['messages']:\n m.pretty_print()\n`\n\n`text\n================================\u001b[1m Human Message \u001b[0m=================================\n\nHello, what is 2 multiplied by 2?\n==================================\u001b[1m Ai Message \u001b[0m==================================\nTool Calls:\n multiply (call_00_4gO4eoSW9OTspeFrBTPC5704)\n Call ID: call_00_4gO4eoSW9OTspeFrBTPC5704\n Args:\n a: 2\n b: 2\n=================================\u001b[1m Tool Message \u001b[0m==================="
+  },
+  {
+    "id": "LangGraph 基础#24",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "PC5704\n Args:\n a: 2\n b: 2\n=================================\u001b[1m Tool Message \u001b[0m=================================\nName: multiply\n\n4\n`\n\n4. Agent\n\n在 Router 一节中, ToolNode 后面直接连 END 了, 这样最后输出的是 ToolMessage(content=\"4\"), 而不是模型整理后的自然语言:\n\n`text \n2 multipled by 2 is 4.\n`\n\n而一个完整的基础 Agent 会让 ToolMessage 重新回到模型, 再考虑调用工具还是得到最终回答, 其流程如下:\n`text\n用户\n ↓\n模型\n ├── 直接回答 → END\n └── 调用工具\n ↓\n 工具结果\n ↓\n 返回模型\n ├── 再调用工具\n └── 最终回答 → END\n`\n\n4.1 ReAct\n\nReAct 全称 Reasoning+Acting\nReason: 模型分析当前问题和已有结果\nAct: 模型选择并调用工具\nObserve:"
+  },
+  {
+    "id": "LangGraph 基础#25",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "── 最终回答 → END\n`\n\n4.1 ReAct\n\nReAct 全称 Reasoning+Acting\nReason: 模型分析当前问题和已有结果\nAct: 模型选择并调用工具\nObserve: 把工具结果作为 ToolMessage 返回模型\n重复以上过程, 直至模型直接回答\n\n`text\n用户提出问题\n ↓\nThought：分析当前需要做什么\n ↓\nAction：调用某个工具\n ↓\nObservation：获得工具返回结果\n ↓\nThought：根据结果继续判断\n ↓\nAction：继续调用工具或生成答案\n ↓\nFinal Answer：输出最终结果\n`\n\n4.2 定义多个工具并绑定到模型\n\n定义工具:\n\n`python\ndef multiply(a: int, b: int) -> int:\n return a * b\n\ndef add(a: int, b: int) -> int:\n return a + b\n\ndef divide(a: int, b: int) -> float:\n return a / b\n\ntools = [add, multiply, divide"
+  },
+  {
+    "id": "LangGraph 基础#26",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "t:\n return a + b\n\ndef divide(a: int, b: int) -> float:\n return a / b\n\ntools = [add, multiply, divide]\n`\n\n绑定模型:\n\n`python\nllm_with_tools = llm.bind_tools(\n tools,\n parallel_tool_calls=False\n)\n`\n\nparallel_tool_calls=False 表示每次模型调用最多选择一个工具\n\n4.3 SystemMessage\n\n`python\nsys_msg = SystemMessage(\n content=(\n \"You are a helpful assistant tasked \"\n \"with performing arithmetic on a set of inputs.\"\n )\n)\n`\n\nSystemMessage 规定 Agent 得总体职责为 执行算术任务.\n\n模型节点:\n\n`python\ndef assistant(state: MessagesState):\n return {\n \""
+  },
+  {
+    "id": "LangGraph 基础#27",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "temMessage 规定 Agent 得总体职责为 执行算术任务.\n\n模型节点:\n\n`python\ndef assistant(state: MessagesState):\n return {\n \"messages\": [\n llm_with_tools.invoke(\n [sys_msg] + state[\"messages\"]\n )\n ]\n }\n`\n\n每次调用模型, 输入由两部分组成 SystemMessage+当前历史消息\n\n4.4 MessageState\n\n`python\n{\n \"messages\": [\n HumanMessage(...),\n AIMessage(tool_calls=[...]),\n ToolMessage(...),\n AIMessage(tool_calls=[...]),\n ToolMessage(...),\n AIMessage(content=\"最终答案\")\n ]\n}\n`\n\n4.5 构建图\n\n`python\nfrom langgraph.graph import START, StateGraph\nfrom langgraph.prebuil"
+  },
+  {
+    "id": "LangGraph 基础#28",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "最终答案\")\n ]\n}\n`\n\n4.5 构建图\n\n`python\nfrom langgraph.graph import START, StateGraph\nfrom langgraph.prebuilt import tools_condition\nfrom langgraph.prebuilt import ToolNode\nfrom IPython.display import Image, display\n\nGraph\nbuilder = StateGraph(MessagesState)\n\nDefine nodes: these do the work\nbuilder.add_node(\"assistant\", assistant)\nbuilder.add_node(\"tools\", ToolNode(tools))\n\nDefine edges: these determine how the control flow moves\nbuilder.add_edge(START, \"assistant\")\nbuilder.add_conditional_edges(\n \"assi"
+  },
+  {
+    "id": "LangGraph 基础#29",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "ow the control flow moves\nbuilder.add_edge(START, \"assistant\")\nbuilder.add_conditional_edges(\n \"assistant\",\n # If the latest message (result) from assistant is a tool call -> tools_condition routes to tools\n # If the latest message (result) from assistant is a not a tool call -> tools_condition routes to END\n tools_condition,\n)\nbuilder.add_edge(\"tools\", \"assistant\")\nreact_graph = builder.compile()\n\nShow\ndisplay(Image(react_graph.get_graph(xray=True).draw_mermaid_png()))\n`\n\n4.6 执行\n\n`python\nmessag"
+  },
+  {
+    "id": "LangGraph 基础#30",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "Show\ndisplay(Image(react_graph.get_graph(xray=True).draw_mermaid_png()))\n`\n\n4.6 执行\n\n`python\nmessages = [\n HumanMessage(\n content=\"Add 3 and 4. Multiply the output by 2. Divide the output by 5\"\n )\n]\nmessages = react_graph.invoke({\"messages\": messages})\n`\n\n`python\nfor m in messages['messages']:\n m.pretty_print()\n`\n\n`text\n================================\u001b[1m Human Message \u001b[0m=================================\n\nAdd 3 and 4. Multiply the output by 2. Divide the output by 5\n========================="
+  },
+  {
+    "id": "LangGraph 基础#31",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "===========\n\nAdd 3 and 4. Multiply the output by 2. Divide the output by 5\n==================================\u001b[1m Ai Message \u001b[0m==================================\nTool Calls:\n add (call_00_hDatE3PUZjBEpoV0EKTx0453)\n Call ID: call_00_hDatE3PUZjBEpoV0EKTx0453\n Args:\n a: 3\n b: 4\n=================================\u001b[1m Tool Message \u001b[0m=================================\nName: add\n\n7\n==================================\u001b[1m Ai Message \u001b[0m==================================\nTool Calls:\n multiply (call_00_"
+  },
+  {
+    "id": "LangGraph 基础#32",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "==============\u001b[1m Ai Message \u001b[0m==================================\nTool Calls:\n multiply (call_00_mT9QDArQQsqWvpneF0kp5285)\n Call ID: call_00_mT9QDArQQsqWvpneF0kp5285\n Args:\n a: 7\n b: 2\n=================================\u001b[1m Tool Message \u001b[0m=================================\nName: multiply\n\n14\n==================================\u001b[1m Ai Message \u001b[0m==================================\nTool Calls:\n divide (call_00_NzuDcoyKMNwOHs6kK7hQ1714)\n Call ID: call_00_NzuDcoyKMNwOHs6kK7hQ1714\n Args:\n a: 14\n b:"
+  },
+  {
+    "id": "LangGraph 基础#33",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "vide (call_00_NzuDcoyKMNwOHs6kK7hQ1714)\n Call ID: call_00_NzuDcoyKMNwOHs6kK7hQ1714\n Args:\n a: 14\n b: 5\n=================================\u001b[1m Tool Message \u001b[0m=================================\nName: divide\n\n2.8\n==================================\u001b[1m Ai Message \u001b[0m==================================\n\nHere are the results:\n\n1. **Add 3 and 4**: 3 + 4 = **7**\n2. **Multiply by 2**: 7 × 2 = **14**\n3. **Divide by 5**: 14 ÷ 5 = **2.8**\n\nFinal answer: **2.8**\n`\n\n5. Agent-Memory\n**Q: 为什么需要 Memory ?**\n上一节的"
+  },
+  {
+    "id": "LangGraph 基础#34",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "ivide by 5**: 14 ÷ 5 = **2.8**\n\nFinal answer: **2.8**\n`\n\n5. Agent-Memory\n**Q: 为什么需要 Memory ?**\n上一节的 Agent 在一次 invoke 里面连续调用了多个工具;\n但是实际很多时候不会在一个 invoke() 里面说全;\n往往是分多个对话输入:\n第一次调用:\n`python\nreact_graph.invoke({\n\"messages\": [\nHumanMessage(content=\"Add 3 and 4.\")\n]\n})\n`\n模型得到 3+4=7\n第二次调用:\n`python\nreact_graph.invoke({\n\"messages\": [\nHumanMessage(content=\"Multiply that by 2.\")\n]\n})\n`\n此时模型看不到上一轮的 7, 不知道 that 指的是什么.\nLLM 本身没有记忆\n大模型本身不会记住上一次 API 请求. 所谓的 \"对话记忆\", 实际上是应用程序保存历史消息, 并在下一次请求时重新发送给模型.\n\n5.1 MemorySave"
+  },
+  {
+    "id": "LangGraph 基础#35",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "指的是什么.\nLLM 本身没有记忆\n大模型本身不会记住上一次 API 请求. 所谓的 \"对话记忆\", 实际上是应用程序保存历史消息, 并在下一次请求时重新发送给模型.\n\n5.1 MemorySaver\n\n`python\nfrom langgraph.checkpoint.memory import MemorySaver\n\nmemory = MemorySaver()\n\nreact_graph_memory = builder.compile(\n checkpointer=memory\n)\n`\nMemorySaver 是一个内存中的检查点存储\ncheckpointer 会在图执行过程中保存 State (是某个时刻保存下来的 State 快照), 包括:\n消息历史\n当前节点位置\n节点执行结果\n工具调用和工具结果\nMemory 通过加载历史 checkpoint 实现跨调用记忆.\n\n`text\nStateGraph\n ↓ 每一步保存\nCheckpointer\n ↓\n某个 thread_id 对应的检查点\n`\n\nthread_id 是某段对话的唯一标识:\n\n`python\nconfig"
+  },
+  {
+    "id": "LangGraph 基础#36",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "xt\nStateGraph\n ↓ 每一步保存\nCheckpointer\n ↓\n某个 thread_id 对应的检查点\n`\n\nthread_id 是某段对话的唯一标识:\n\n`python\nconfig = {\n \"configurable\": {\n \"thread_id\": \"1\"\n }\n}\n`\n\n可以理解成聊天会话的ID:\n`text\nthread_id=\"1\" → 用户A的第一段对话\nthread_id=\"2\" → 用户A的另一段对话\n`\n\n不同 thread_id 状态相互隔离.\n\n5.2 调用\n\n第一次调用\n\n`python\nmessages = [\n HumanMessage(content=\"Add 3 and 4.\")\n]\n\nresult = react_graph_memory.invoke(\n {\"messages\": messages},\n config\n)\n`\n\n这里的 config 包含 thread_id= \"1\"\n\n执行流程如下:\n`text\nHumanMessage：3 + 4\n ↓\nAIMessage：调用 add(3, 4)\n ↓\nToolMessage"
+  },
+  {
+    "id": "LangGraph 基础#37",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "config 包含 thread_id= \"1\"\n\n执行流程如下:\n`text\nHumanMessage：3 + 4\n ↓\nAIMessage：调用 add(3, 4)\n ↓\nToolMessage：7\n ↓\nAIMessage：结果是 7\n ↓\n保存到 thread_id=\"1\"\n`\n\n保存的 State 为\n\n`python\n{\n \"messages\": [\n HumanMessage(\"Add 3 and 4.\"),\n AIMessage(tool_calls=[...]),\n ToolMessage(\"7\"),\n AIMessage(\"The result is 7.\")\n ]\n}\n`\n\n第二次调用\n\n`python\nmessages = [\n HumanMessage(\n content=\"Multiply that by 2.\"\n )\n]\n\nresult = react_graph_memory.invoke(\n {\"messages\": messages},\n config\n)\n`\n\n因为仍然适用 thread_id = \"1\", 所以 LangGraph 会加载上一次"
+  },
+  {
+    "id": "LangGraph 基础#38",
+    "postUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+    "postId": "LangGraph 基础",
+    "postTitle": "LangGraph 基础",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "aph_memory.invoke(\n {\"messages\": messages},\n config\n)\n`\n\n因为仍然适用 thread_id = \"1\", 所以 LangGraph 会加载上一次保存的 State, 并把新的 HumanMessage 追加到历史消息, 再继续执行 Agent, 最后保存更新后的 State.\n\n如果换一个新的 thread_id, 那么模型仍然不知道 that` 是什么."
+  },
+  {
+    "id": "报告生成Agent——Word解析#0",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent-word/",
+    "postId": "报告生成Agent——Word解析",
+    "postTitle": "报告生成Agent——Word解析",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "报告生成Agent——Word解析\n\n技术验证目标\n读取 Word 文档\n将文档内容拆分成块, 用于后续打标\n接到 FastAPI 上传接口\n\nWord 解析技术验证\n利用 docx 库读取 Word 文档内容\n ``python\n from docx import Document\n\n doc = Document(file_path) \n `\n将文档内容拆分拆块\n第一版只考虑段落和表格\n先拆分段落\n `python\n blocks = []\n paragraph_index = 0\n \n for para in doc.paragraphs:\n text = para.text.strip() # 除去字符串首尾空格\n if not text:\n continue\n\n paragraph_index += 1\n blocks.append({\n \"block_id\": f\"p_{paragraph_index:03d}\",\n \"block_type\": \"paragraph\",\n \"text\": text,\n })\n `\n再拆分表格\n `python\n table_index ="
+  },
+  {
+    "id": "报告生成Agent——Word解析#1",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent-word/",
+    "postId": "报告生成Agent——Word解析",
+    "postTitle": "报告生成Agent——Word解析",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "agraph_index:03d}\",\n \"block_type\": \"paragraph\",\n \"text\": text,\n })\n `\n再拆分表格\n `python\n table_index = 0\n\n for table in doc.tables:\n table_index += 1\n for row_index, row in enumerate(table.rows):\n for col_index, cell in enumerate(row.cells):\n text = cell.text.strip()\n if not text:\n continue\n\n blocks.append({\n \"block_id\": f\"t_{table_index:03d}_r{row_index}_c{col_index}\",\n \"block_type\": \"table_cell\",\n \"text\": text,\n })\n\n `\n问题/后续优化方向\n当前分块逻辑比较简单, 先对段落分块, 再对表格分块, 这与阅读顺序不一致\n没有处理图片等其他类型的内容\n\n接入 FastAPI 上传接"
+  },
+  {
+    "id": "报告生成Agent——Word解析#2",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent-word/",
+    "postId": "报告生成Agent——Word解析",
+    "postTitle": "报告生成Agent——Word解析",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "\"text\": text,\n })\n\n `\n问题/后续优化方向\n当前分块逻辑比较简单, 先对段落分块, 再对表格分块, 这与阅读顺序不一致\n没有处理图片等其他类型的内容\n\n接入 FastAPI 上传接口\n假设 Word 解析脚本为 parse_docx.py, 里面定义了一个 parse_docx(file_path) 函数, 返回解析后的内容块列表. 在 main.py 中创建一个上传接口, 接收前端上传的 Word 文件, 调用 parse_docx 函数解析文件, 并返回解析结果.\n`python\nfrom fastapi import FastAPI, File, UploadFile\nfrom parse_docx import parse_docx\n\napp = FastAPI()\n\n@app.post(\"/upload/\")\nasync def upload(file: UploadFile = File(...)):\n file_location = f\"temp/{file.filename}\"\n with open(file_location, \"wb\") as f"
+  },
+  {
+    "id": "报告生成Agent——Word解析#3",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent-word/",
+    "postId": "报告生成Agent——Word解析",
+    "postTitle": "报告生成Agent——Word解析",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "loadFile = File(...)):\n file_location = f\"temp/{file.filename}\"\n with open(file_location, \"wb\") as f:\n f.write(await file.read())\n\n blocks = parse_docx(file_location)\n return {\"blocks\": blocks}\n`\n\n做前端最小上传页\n封装一个上传 .docx 模板文件的前端请求函数, 用 axios 把文件发送到 FastAPI 后端接口.\n新建一个 template.js 文件\n创建 axios 实例\n`javascript\nimport axios from 'axios';\n\nconst request = axios.create({\n baseURL: 'http://127.0.0.1:8000', // FastAPI 后端地址\n timeout: 3000, // 请求超时时间\n})\n`\n创建上传函数\n `javascript\n export function uploadTemplate(fi"
+  },
+  {
+    "id": "报告生成Agent——Word解析#4",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent-word/",
+    "postId": "报告生成Agent——Word解析",
+    "postTitle": "报告生成Agent——Word解析",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "/ FastAPI 后端地址\n timeout: 3000, // 请求超时时间\n})\n`\n创建上传函数\n `javascript\n export function uploadTemplate(file) {\n const formData = new FormData();\n formData.append('file', file);\n\n return request.post('/api/templates/upload', formData, {\n headers: {\n 'Content-type': 'multipart/form-data',\n },\n });\n }\n `\nrequest.post(url, data, config) 是发送 POST 请求的方法\n\n修改 App.vue 文件, 把整个首页变成上传页\n<script setup>: 逻辑区\n `javascript\n <script setup>\n import { ref } from \"vue\"; # ref 是 Vue 3 里用来创建响应式变量的, 这样变量变化后页面会自动更新\n import {"
+  },
+  {
+    "id": "报告生成Agent——Word解析#5",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent-word/",
+    "postId": "报告生成Agent——Word解析",
+    "postTitle": "报告生成Agent——Word解析",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "ript\n <script setup>\n import { ref } from \"vue\"; # ref 是 Vue 3 里用来创建响应式变量的, 这样变量变化后页面会自动更新\n import { uploadTemplate } from \"./api/template\"; # 之前的 axios 请求函数\n `\n状态变量区\n `javascript\n const selectedFile = ref(null); # 当前用户选择的文件\n const loading = ref(false); # 当前是否正在上传\n const result = ref(null); # 保存后端返回的解析结果\n const errorMessage = ref(\"\"); # 保存错误信息\n `\n文件选择函数: handleFileChange\n `javascript\n function handleFileChange(event) {\n const file = event.target.files?.[0];\n selectedFile.value = file || null;\n r"
+  },
+  {
+    "id": "报告生成Agent——Word解析#6",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent-word/",
+    "postId": "报告生成Agent——Word解析",
+    "postTitle": "报告生成Agent——Word解析",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "dleFileChange(event) {\n const file = event.target.files?.[0];\n selectedFile.value = file || null;\n result.value = null;\n errorMessage.value = \"\";\n }\n `\n文件上传函数: handleUpload\n `javascript\n async function handleUpload() {\n if (!selectedFile.value) {\n errorMessage.value = \"请先选择一个 docx 文件\";\n return;\n }\n\n loading.value = true;\n errorMessage.value = \"\";\n\n try {\n const response = await uploadTemplate(selectedFile.value);\n result.value = response.data;\n } catch (error) {\n errorMessage.value =\n error.resp"
+  },
+  {
+    "id": "报告生成Agent——Word解析#7",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent-word/",
+    "postId": "报告生成Agent——Word解析",
+    "postTitle": "报告生成Agent——Word解析",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "ctedFile.value);\n result.value = response.data;\n } catch (error) {\n errorMessage.value =\n error.response?.data?.error || error.message || \"上传失败\";\n } finally {\n loading.value = false;\n }\n }\n `\nasync/await 用于处理异步请求, 让异步代码写起来像同步代码一样清晰, 主要用于处理 \"需要等待结果\" 的操作, 比如网络请求、读写文件、数据库查询、定时器等.\n写 HTML 模板\n `vue\n <template>\n <div class=\"upload-page\">\n <h1>上传 Word 模板</h1>\n\n <!-- 文件选择: 只允许选 .docx -->\n <input\n type=\"file\"\n accept=\".docx\"\n @change=\"handleFileChange\"\n />\n\n <!-- 上传按钮: 没选文件或正在上传时禁用 -->\n <button\n :disabled"
+  },
+  {
+    "id": "报告生成Agent——Word解析#8",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent-word/",
+    "postId": "报告生成Agent——Word解析",
+    "postTitle": "报告生成Agent——Word解析",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "e\"\n accept=\".docx\"\n @change=\"handleFileChange\"\n />\n\n <!-- 上传按钮: 没选文件或正在上传时禁用 -->\n <button\n :disabled=\"!selectedFile || loading\"\n @click=\"handleUpload\"\n{{ loading ? \"上传中...\" : \"上传并解析\" }}\n </button>\n\n <!-- 错误提示: v-if 控制只在有错误时显示 -->\n <p v-if=\"errorMessage\" class=\"error\">{{ errorMessage }}</p>\n\n <!-- 解析结果: v-for 循环渲染每个内容块 -->\n <div v-if=\"result\" class=\"result\">\n <h2>解析到 {{ result.blocks.length }} 个内容块</h2>\n <ul>\n <li v-for=\"block in result.blocks\" :key=\"block.block_id\">\n <span class=\"block-type\">[{{"
+  },
+  {
+    "id": "报告生成Agent——Word解析#9",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent-word/",
+    "postId": "报告生成Agent——Word解析",
+    "postTitle": "报告生成Agent——Word解析",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "</h2>\n <ul>\n <li v-for=\"block in result.blocks\" :key=\"block.block_id\">\n <span class=\"block-type\">[{{ block.block_type }}]</span>\n {{ block.text }}\n </li>\n </ul>\n </div>\n </div>\n </template>\n `\nv-if / v-for 是 Vue 的指令: v-if 控制元素是否渲染, v-for 根据数组循环生成元素\n:key 给循环出的每个元素一个唯一标识, 帮助 Vue 高效更新 DOM (这里用后端返回的 block_id)\n:disabled 是 v-bind:disabled 的简写, 把按钮的禁用状态绑定到表达式上: 没选文件 (!selectedFile) 或正在上传 (loading) 时按钮不可点\n{{ }} 是插值语法, 用来把变量值渲染到标签内\n\n小结\n这一篇打通了**前端上传 Word -> 后端解析 -> 前端展示内容块**的最小链路:\n后端用 python-docx 把 Word 拆"
+  },
+  {
+    "id": "报告生成Agent——Word解析#10",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent-word/",
+    "postId": "报告生成Agent——Word解析",
+    "postTitle": "报告生成Agent——Word解析",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "{{ }} 是插值语法, 用来把变量值渲染到标签内\n\n小结\n这一篇打通了**前端上传 Word -> 后端解析 -> 前端展示内容块**的最小链路:\n后端用 python-docx 把 Word 拆成段落块和表格块, 通过 FastAPI 的 /upload/ 接口返回\n前端用 axios 发送 FormData 上传文件, 拿到 blocks 后用 v-for 渲染\n\n遗留问题在下一篇逐步解决:\n当前分块顺序与阅读顺序不一致 (先段落再表格), 需要优化 parse_docx` 的遍历逻辑\n还没处理图片等内容类型\n下一篇进入**打标模块**: 让用户在内容块上标记关键信息, 作为后续生成新报告的模板"
+  },
+  {
+    "id": "报告生成Agent开发方案#0",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent/",
+    "postId": "报告生成Agent开发方案",
+    "postTitle": "报告生成Agent开发方案",
+    "tags": [
+      "Agent"
+    ],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "报告生成Agent开发方案\n\n功能需求\n用户上传一份 Word 工业报告样例\n前端展示 Word 内容块\n用户对内容块进行打标，标记出关键信息\n后端保存原报告结构和打标结果\n后端把打标结果汇总成表单\n用户填写新数据\n系统基于旧模板数据和新报告数据生成新报告\n\n实现流程\n[x] 前端、后端环境配置\n[x] 技术验证：word读取\n[x] FastAPI 骨架跑通\n[x] 完成前端上传 Word -> 后端解析 -> 前端展示内容块\n[x] 打标模块\n[x] 打标逻辑实现 修改 main.py, 创建一个可继续打标的模版记录\n[x] 表单 Schema 生成模块\n[x] 动态表单页面模块\n[x] 报告生成模块\n[x] 报告下载模块\n[x] 模板数据存储模块\n[ ] 打标交互优化\n[ ] word解析优化\n[ ] 图片处理模块\n[ ] 结果校验与异常值处理\n[ ] 界面结构完善"
+  },
+  {
+    "id": "报告生成Agent——环境配置#0",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent-2/",
+    "postId": "报告生成Agent——环境配置",
+    "postTitle": "报告生成Agent——环境配置",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "报告生成Agent——环境配置\n\n创建项目目录\n``bash\nmkdir -p report-demo/{backend,frontend,storage/{uploads,parsed,labels,schemas,outputs}}\n`\n初始化后端环境\n创建 Python3 虚拟环境\n `bash\n cd report-demo/backend\n python3 -m venv .venv # 基于当前终端的 Python3 版本创建名为 .venv 的虚拟环境\n `\n激活虚拟环境\n `bash\n source .venv/bin/activate # 激活虚拟环境, 之后的 Python 包安装和运行都在这个环境中进行\n `\n安装依赖项\n `bash\n pip install fastapi uvicorn python-multipart python-docx docxtpl\n `\n创建 requirements.txt 文件\n `bash\n pip freeze > requirements.txt # 将当前虚拟环境中的所有安装的包及其版本信息写入 requirement"
+  },
+  {
+    "id": "报告生成Agent——环境配置#1",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent-2/",
+    "postId": "报告生成Agent——环境配置",
+    "postTitle": "报告生成Agent——环境配置",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "`\n创建 requirements.txt 文件\n `bash\n pip freeze > requirements.txt # 将当前虚拟环境中的所有安装的包及其版本信息写入 requirements.txt 文件\n `\n\n初始化前端环境\n用 Vite 创建 Vue 项目\n `bash\n cd ../frontend\n npm create vite@latest . -- --template vue\n `\nnpm 是 Node.js 的包管理工具\ncreate vite@latest 是使用 Vite 创建一个新的项目\n. 表示在当前目录创建项目\n--template vue 指定使用 Vue 模板\nnpm create vite 会生成一个 package.json，里面会写好 Vue、Vite 等基础依赖\n安装 package.json 中记录的项目依赖和前端的常用库\n `bash\n npm install # 安装 package.json 中记录的项目依赖\n npm install axios vue-router element-plus\n `\naxios 是一个基于"
+  },
+  {
+    "id": "报告生成Agent——环境配置#2",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent-2/",
+    "postId": "报告生成Agent——环境配置",
+    "postTitle": "报告生成Agent——环境配置",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "h\n npm install # 安装 package.json 中记录的项目依赖\n npm install axios vue-router element-plus\n `\naxios 是一个基于 Promise 的 HTTP 客户端，用于发送网络请求\nvue-router 是 Vue.js 的官方路由管理器，用于构建单页应用\nelement-plus 是一个基于 Vue 3 的组件库，提供丰富的 UI 组件和样式\n启动前端开发服务器\n `bash\n npm run dev # 启动前端开发服务器, 之后可以在浏览器访问 http://localhost:5173 来查看前端页面\n ` \n\n运行后端最小服务\n新开一个终端, 激活后端虚拟环境\n `bash\n cd report-demo/backend\n source .venv/bin/activate # 激活后端虚拟环境\n ` \n创建 main.py 文件, 先放最小版本\n `bash\n mkdir -p app\n touch app/main.py\n `\n 在 app.py 中写入以下最小版本代码:\n `python\n fro"
+  },
+  {
+    "id": "报告生成Agent——环境配置#3",
+    "postUrl": "https://wangsenjie.github.io/2026/05/17/agent-2/",
+    "postId": "报告生成Agent——环境配置",
+    "postTitle": "报告生成Agent——环境配置",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "报告生成Agent"
+    ],
+    "sectionTitle": "",
+    "content": "建 main.py 文件, 先放最小版本\n `bash\n mkdir -p app\n touch app/main.py\n `\n 在 app.py 中写入以下最小版本代码:\n `python\n from fastapi import FastAPI\n\n app = FastAPI()\n\n @app.get(\"/ping\")\n def ping():\n return {\"message\": \"pong\"} \n `\n启动后端服务\n `bash\n uvicorn app.main:app --reload # 启动后端服务, 之后可以在浏览器访问 http://localhost:8000/ping 来测试后端是否正常运行\n ``"
+  },
+  {
     "id": "ALS 排序算法#0",
     "postUrl": "https://wangsenjie.github.io/2026/03/30/als/",
     "postId": "ALS 排序算法",
