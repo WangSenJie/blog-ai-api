@@ -16,24 +16,78 @@ function snippet(value, maxLength) {
   return `${condensed.slice(0, maxLength).trim()}...`;
 }
 
-function getTerms(question) {
-  const asciiTerms = normalizeText(question).match(/[a-z0-9]+/g) || [];
-  const hanChars = String(question || '').match(/[\u4e00-\u9fff]/g) || [];
-  const terms = new Set(asciiTerms);
+const searchIndexes = new WeakMap();
+const questionNoiseTerms = new Set([
+  '什么', '么是', '什么是', '是什', '介绍', '一下', '解释',
+  '如何', '怎么', '为啥', '为什么', '请问', '告诉'
+]);
 
-  for (let index = 0; index < hanChars.length - 1; index += 1) {
-    terms.add(`${hanChars[index]}${hanChars[index + 1]}`);
+function tokenize(value) {
+  const normalized = normalizeText(value);
+  const terms = normalized.match(/[a-z0-9][a-z0-9_.+#-]*/g) || [];
+  const hanSequences = normalized.match(/[\u4e00-\u9fff]+/g) || [];
+
+  for (const sequence of hanSequences) {
+    if (sequence.length === 1) {
+      terms.push(sequence);
+      continue;
+    }
+
+    for (let index = 0; index < sequence.length - 1; index += 1) {
+      terms.push(sequence.slice(index, index + 2));
+    }
   }
 
-  if (hanChars.length === 1) {
-    terms.add(hanChars[0]);
+  return terms;
+}
+
+function countTerms(value) {
+  const frequency = new Map();
+
+  for (const term of tokenize(value)) {
+    frequency.set(term, (frequency.get(term) || 0) + 1);
   }
 
-  if (hanChars.length > 1) {
-    terms.add(hanChars.join(''));
+  return frequency;
+}
+
+function buildSearchIndex(chunks) {
+  const documents = [];
+  const documentFrequency = new Map();
+  let totalLength = 0;
+
+  for (const [position, chunk] of (chunks || []).entries()) {
+    const termFrequency = countTerms(chunk.content);
+    const length = Math.max(
+      Array.from(termFrequency.values()).reduce((total, count) => total + count, 0),
+      1
+    );
+    totalLength += length;
+
+    for (const term of termFrequency.keys()) {
+      documentFrequency.set(term, (documentFrequency.get(term) || 0) + 1);
+    }
+
+    documents.push({ chunk, position, termFrequency, length });
   }
 
-  return Array.from(terms).filter(Boolean);
+  return {
+    documents,
+    documentFrequency,
+    averageLength: documents.length ? totalLength / documents.length : 1
+  };
+}
+
+function getSearchIndex(chunks) {
+  if (!chunks || typeof chunks !== 'object') {
+    return buildSearchIndex([]);
+  }
+
+  if (!searchIndexes.has(chunks)) {
+    searchIndexes.set(chunks, buildSearchIndex(chunks));
+  }
+
+  return searchIndexes.get(chunks);
 }
 
 function detectMode(question) {
@@ -43,31 +97,60 @@ function detectMode(question) {
   return 'site';
 }
 
-function scoreChunk(chunk, question, mode, page) {
-  const haystack = normalizeText([
-    chunk.postTitle,
+function isDefinitionQuestion(question) {
+  return /什么是|是什么|定义|指什么|指的是/.test(String(question || ''));
+}
+
+function scoreChunk(document, searchIndex, question, mode, page) {
+  const { chunk, termFrequency, length } = document;
+  const title = normalizeText(chunk.postTitle);
+  const metadata = normalizeText([
     (chunk.tags || []).join(' '),
     (chunk.categories || []).join(' '),
-    chunk.content
+    chunk.sectionTitle
   ].join(' '));
-
-  const title = normalizeText(chunk.postTitle);
+  const content = normalizeText(chunk.content);
   const normalizedQuestion = normalizeText(question);
-  const terms = getTerms(question);
+  const terms = [...new Set(tokenize(question))]
+    .filter(term => !questionNoiseTerms.has(term));
   let score = 0;
 
-  if (normalizedQuestion && haystack.includes(normalizedQuestion)) {
+  if (normalizedQuestion && content.includes(normalizedQuestion)) {
+    score += 8;
+  }
+  if (normalizedQuestion && title.includes(normalizedQuestion)) {
     score += 12;
   }
 
-  for (const term of terms) {
-    const normalizedTerm = normalizeText(term);
-    if (!normalizedTerm) continue;
-    if (haystack.includes(normalizedTerm)) {
-      score += normalizedTerm.length > 1 ? 3 : 1;
+  if (isDefinitionQuestion(question)) {
+    if (/定义|简介|概述/.test(chunk.sectionTitle || '')) {
+      score += 5;
     }
-    if (title.includes(normalizedTerm)) {
-      score += 3;
+    if (/是一种|指的是|称为/.test(content)) {
+      score += 6;
+    }
+  }
+
+  for (const term of terms) {
+    const frequency = termFrequency.get(term) || 0;
+    if (frequency) {
+      const documentsWithTerm = searchIndex.documentFrequency.get(term) || 0;
+      const inverseDocumentFrequency = Math.log(
+        1 + (searchIndex.documents.length - documentsWithTerm + 0.5) /
+          (documentsWithTerm + 0.5)
+      );
+      const k1 = 1.2;
+      const b = 0.75;
+      const normalization = k1 * (1 - b + b * (length / searchIndex.averageLength));
+      score += inverseDocumentFrequency * (
+        (frequency * (k1 + 1)) / (frequency + normalization)
+      );
+    }
+    if (title.includes(term)) {
+      score += 4;
+    }
+    if (metadata.includes(term)) {
+      score += 2;
     }
   }
 
@@ -79,24 +162,30 @@ function scoreChunk(chunk, question, mode, page) {
 }
 
 function rankChunks(chunks, question, mode, page) {
+  const searchIndex = getSearchIndex(chunks);
   const ranked = [];
 
-  for (const chunk of chunks || []) {
-    const score = scoreChunk(chunk, question, mode, page);
+  for (const document of searchIndex.documents) {
+    const { chunk } = document;
+    const score = scoreChunk(document, searchIndex, question, mode, page);
 
     if (mode === 'page_summary' && page && page.url) {
       if (chunk.postUrl === page.url) {
-        ranked.push({ chunk, score });
+        ranked.push({ chunk, score, position: document.position });
       }
       continue;
     }
 
     if (score > 0) {
-      ranked.push({ chunk, score });
+      ranked.push({ chunk, score, position: document.position });
     }
   }
 
-  ranked.sort((left, right) => right.score - left.score);
+  if (mode === 'page_summary' && page && page.url) {
+    ranked.sort((left, right) => left.position - right.position);
+  } else {
+    ranked.sort((left, right) => right.score - left.score);
+  }
   return ranked;
 }
 
