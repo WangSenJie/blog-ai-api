@@ -17,6 +17,10 @@
     elements: null,
     mathJaxReady: null
   };
+  const questionNoiseTerms = new Set([
+    '什么', '么是', '什么是', '是什', '介绍', '一下', '解释',
+    '如何', '怎么', '为啥', '为什么', '请问', '告诉'
+  ]);
 
   function escapeHtml(value) {
     return String(value || '')
@@ -145,6 +149,15 @@
     return frequency;
   }
 
+  function getQuestionTerms(question) {
+    return [...new Set(tokenize(question))]
+      .filter(term => !questionNoiseTerms.has(term));
+  }
+
+  function isDefinitionQuestion(question) {
+    return /什么是|是什么|定义|指什么|指的是/.test(String(question || ''));
+  }
+
   function buildSearchIndex(chunks) {
     const documents = [];
     const documentFrequency = new Map();
@@ -220,7 +233,7 @@
     ].join(' '));
     const content = normalizeText(chunk.content);
     const normalizedQuestion = normalizeText(question);
-    const terms = [...new Set(tokenize(question))];
+    const terms = getQuestionTerms(question);
     let score = 0;
 
     if (normalizedQuestion && content.includes(normalizedQuestion)) {
@@ -228,6 +241,15 @@
     }
     if (normalizedQuestion && title.includes(normalizedQuestion)) {
       score += 12;
+    }
+
+    if (isDefinitionQuestion(question)) {
+      if (/定义|简介|概述/.test(chunk.sectionTitle || '')) {
+        score += 5;
+      }
+      if (/是一种|指的是|称为/.test(content)) {
+        score += 6;
+      }
     }
 
     for (const term of terms) {
@@ -357,6 +379,23 @@
     return `嘿嘿，向导来帮你划重点啦：\n- ${sentences.join('\n- ')}`;
   }
 
+  function definitionSnippet(chunk, question) {
+    const terms = getQuestionTerms(question);
+    const sentences = String(chunk.content || '')
+      .split(/[。！？\n]+/)
+      .map(sentence => sentence.trim())
+      .filter(sentence => sentence.length >= 8);
+    const includesQuestionTerm = sentence => {
+      const normalizedSentence = normalizeText(sentence);
+      return terms.some(term => normalizedSentence.includes(term));
+    };
+    const definition = sentences.find(sentence => (
+      includesQuestionTerm(sentence) && /是一种|指的是|称为/.test(sentence)
+    )) || sentences.find(includesQuestionTerm) || sentences[0] || chunk.content;
+
+    return snippet(definition, 280);
+  }
+
   function buildSearchAnswer(question, ranked) {
     const top = ranked[0] && ranked[0].chunk;
     const relatedCount = Math.min(ranked.length, 3);
@@ -368,6 +407,10 @@
     const lead = snippet(top.content, 180);
     if (/推荐|下一篇|延伸/.test(question)) {
       return `让我看看哦...我帮你翻到几篇更贴近的文章啦。排在最前面的是《${top.postTitle}》，内容重点大致是：${lead}`;
+    }
+
+    if (isDefinitionQuestion(question)) {
+      return `《${top.postTitle}》中介绍：${definitionSnippet(top, question)}`;
     }
 
     return `锵锵，向导在站内翻到了 ${relatedCount} 篇比较相关的内容。最贴近的是《${top.postTitle}》，先给你一个小结：${lead}`;

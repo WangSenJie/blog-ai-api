@@ -5,11 +5,18 @@ const { canUseModel, generateAnswer, getModelConfig } = require('../lib/generate
 const { buildResponse, detectMode, rankChunks } = require('../lib/retrieve');
 
 function applyCors(req, res) {
-  const allowedOrigin = process.env.ALLOWED_ORIGIN || 'https://wangsenjie.github.io';
+  const configuredOrigins = process.env.ALLOWED_ORIGINS || process.env.ALLOWED_ORIGIN || 'https://wangsenjie.github.io';
+  const allowedOrigins = configuredOrigins
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(Boolean);
+  allowedOrigins.push('http://localhost:4000', 'http://127.0.0.1:4000');
   const requestOrigin = req.headers.origin;
 
-  if (!requestOrigin || requestOrigin === allowedOrigin) {
-    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  if (!requestOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', allowedOrigins[0]);
+  } else if (allowedOrigins.includes(requestOrigin)) {
+    res.setHeader('Access-Control-Allow-Origin', requestOrigin);
   }
 
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');

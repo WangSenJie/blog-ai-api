@@ -55,8 +55,9 @@ apiBaseUrl: 'https://your-blog-ai-api.vercel.app'
 
 ## Environment variables
 
-- `ALLOWED_ORIGIN`
-  - Example: `https://wangsenjie.github.io`
+- `ALLOWED_ORIGIN` or `ALLOWED_ORIGINS`
+  - Use `ALLOWED_ORIGINS` for a comma-separated list of production origins.
+  - `http://localhost:4000` and `http://127.0.0.1:4000` are enabled for local preview.
 - `LLM_API_BASE_URL`
   - Example: `https://api.openai.com/v1`
 - `LLM_API_KEY`
