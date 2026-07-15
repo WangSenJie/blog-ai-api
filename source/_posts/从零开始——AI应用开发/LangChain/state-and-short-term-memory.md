@@ -855,7 +855,7 @@ graph.invoke(...)
 
 `SQLite` 是一个轻量级的关系型数据库, 它不需要像 `MySQL` 一样要开 `server`, 它通常只是一个本地文件 `state_db/example.db`.
 
-### 创建 `SQLite` 连接
+#### 创建 `SQLite` 连接
 
 先利用 `":memory:"` 创建一个内存 `SQLite` 数据库
 ```python
@@ -872,7 +872,7 @@ conn = sqlite3.connect(db_path, check_same_thread=False)
 ```
 只要文件 `state_db/example.db` 还在, `checkpoint` 就能保留.
 
-### 创建 `SqliteSaver`
+#### 创建 `SqliteSaver`
 
 ```python
 # Here is our checkpointer 
@@ -881,7 +881,7 @@ memory = SqliteSaver(conn)
 ```
 这里把 `SQLite` 连接包装成 LangGraph 的 `checkpointer`.
 
-## 6.2 创建 Chatbot
+### 6.2 创建 Chatbot
 
 同上一节的内容, 定义我们的 chatbot:
 
