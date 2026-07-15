@@ -231,7 +231,7 @@ type(result)
 `type(result)` 的返回为 `langchain_core.messages.ai.AIMessage`
 
 - `result.content` 为 AI 模型返回的正文内容
-- `result.content` 为模型元数据, 包含 模型名称、token数量、结束原因、服务商信息
+- `result.response_metadata` 为模型元数据, 包含 模型名称、token数量、结束原因、服务商信息
 
 ### 2.3 定义工具并绑定
 
@@ -629,7 +629,7 @@ sys_msg = SystemMessage(
 )
 ```
 
-`SystemMessage` 规定 Agent 得总体职责为 执行算术任务.
+`SystemMessage` 规定 Agent 的总体职责为 执行算术任务.
 
 模型节点:
 
@@ -807,7 +807,7 @@ react_graph_memory = builder.compile(
 ```
 
 - `MemorySaver` 是一个内存中的检查点存储
-- `checkpointer` 会在图执行过程中保存 State (是某个时刻保存下来的 State 快照), 包括:
+- `checkpointer` 会在图执行过程中保存 State (`checkpoint` 是某个时刻保存下来的 State 快照), 包括:
   - 消息历史
   - 当前节点位置
   - 节点执行结果
