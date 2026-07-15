@@ -58,3 +58,4 @@ window.__BLOG_AI_CONFIG__ = window.__BLOG_AI_CONFIG__ || {
 };
 </script>
 <script src="/js/blog-ai-agent.js"></script>
+<script src="/js/category-explorer.js"></script>
