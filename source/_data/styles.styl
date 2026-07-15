@@ -1046,8 +1046,7 @@ body::after
   color #5a666d
   padding 22px 18px 26px
 
-.site-author,
-.post-toc-wrap .post-toc
+.site-author
   background linear-gradient(180deg, rgba(255, 255, 255, .22), rgba(244, 247, 250, .14))
   border 1px solid rgba(255, 255, 255, .3)
   border-radius 8px
@@ -1062,7 +1061,12 @@ body::after
   text-align center
 
 .post-toc-wrap .post-toc
-  padding 16px 14px
+  background transparent
+  border 0
+  border-radius 0
+  box-shadow none
+  backdrop-filter none
+  padding 8px 4px
 
 .site-overview-wrap
   overflow hidden
@@ -1113,6 +1117,11 @@ body::after
 
 .post-toc .nav
   margin 0
+
+.post-toc .nav-child
+  background transparent
+  border 0
+  box-shadow none
 
 .post-toc .nav .nav-item
   margin 6px 0

@@ -35,6 +35,9 @@ reading_progress:
   color: "#a9c7dd"
   height: 2px
 
+toc:
+  number: false
+
 local_search:
   enable: true
   trigger: auto
