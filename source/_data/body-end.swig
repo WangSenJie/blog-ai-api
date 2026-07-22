@@ -54,8 +54,10 @@ document.addEventListener('click', async event => {
 <script>
 window.__BLOG_AI_CONFIG__ = window.__BLOG_AI_CONFIG__ || {
   apiBaseUrl: 'https://blog-ai-api.vercel.app',
-  dataBasePath: '/ai-data'
+  dataBasePath: '/ai-data',
+  apiTimeoutMs: 20000
 };
 </script>
+<script src="/js/blog-ai-retrieval.js"></script>
 <script src="/js/blog-ai-agent.js"></script>
 <script src="/js/category-explorer.js"></script>

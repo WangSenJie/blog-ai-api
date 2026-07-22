@@ -9,6 +9,7 @@
     "sync:corpus": "node scripts/sync-corpus.js",
     "test": "node --test",
     "eval:bm25": "node evals/run.js",
-    "eval:bm25:update": "node evals/run.js --output evals/reports/bm25-baseline.json"
+    "eval:bm25:update": "node evals/run.js --output evals/reports/bm25-baseline.json",
+    "eval:bm25:phase1": "node evals/run.js --output evals/reports/bm25-phase1.json"
   }
 }

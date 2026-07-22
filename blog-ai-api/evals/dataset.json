@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "description": "博客 BM25 文章级检索基线。正例按相关文章标题判断，无答案样例要求检索器不返回候选。",
+  "version": 2,
+  "description": "博客 BM25 文章级检索评测集。正例仅标注已发布文章并按标题判断，无答案样例要求检索器不返回候选。",
   "cases": [
     {
       "id": "exact-double-tower",
@@ -51,10 +51,10 @@
       "relevantPostTitles": ["积分因子法"]
     },
     {
-      "id": "exact-word-parser",
+      "id": "exact-agent-environment",
       "category": "exact",
-      "question": "报告生成Agent Word解析",
-      "relevantPostTitles": ["报告生成Agent——Word解析"]
+      "question": "报告生成Agent 环境配置",
+      "relevantPostTitles": ["报告生成Agent——环境配置"]
     },
     {
       "id": "exact-svd",
@@ -105,10 +105,10 @@
       "relevantPostTitles": ["UserCF"]
     },
     {
-      "id": "definition-ensemble",
+      "id": "definition-adaboost",
       "category": "definition",
-      "question": "集成学习是什么？",
-      "relevantPostTitles": ["集成学习"]
+      "question": "AdaBoost 是什么？",
+      "relevantPostTitles": ["AdaBoost"]
     },
     {
       "id": "semantic-double-tower",
@@ -165,10 +165,10 @@
       "relevantPostTitles": ["Deep Retrieval"]
     },
     {
-      "id": "semantic-agent-docx",
+      "id": "semantic-langchain-call",
       "category": "semantic",
-      "question": "报告生成智能体应该怎样读取和解析 docx 文档？",
-      "relevantPostTitles": ["报告生成Agent——Word解析"]
+      "question": "如何用 Prompt Template、聊天模型和输出解析器组成调用链？",
+      "relevantPostTitles": ["LangChain 基础"]
     },
     {
       "id": "current-page-double-tower",

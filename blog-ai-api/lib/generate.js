@@ -26,7 +26,7 @@ function canUseModel() {
 
 function buildPrompt(question, mode, page, citations) {
   const citationText = (citations || []).map((citation, index) => (
-    `[${index + 1}] 标题: ${citation.title}\n链接: ${citation.url}\n片段: ${citation.snippet}`
+    `[${index + 1}] chunkId: ${citation.chunkId || ''}\n标题: ${citation.title}\n章节: ${citation.section || ''}\n链接: ${citation.url}\n片段: ${citation.snippet}`
   )).join('\n\n');
 
   const pageText = page

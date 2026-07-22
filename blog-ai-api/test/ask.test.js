@@ -80,11 +80,14 @@ test('successful ask response includes trace metadata and retrieval timings', as
   assert.equal(res.getHeader('x-trace-id'), payload.meta.traceId);
   assert.equal(res.getHeader('access-control-expose-headers'), 'X-Trace-Id');
   assert.equal(payload.meta.mode, 'site');
+  assert.match(payload.meta.indexVersion, /^[a-f0-9]{64}$/);
   assert.equal(payload.meta.retrieval.strategy, 'bm25');
   assert.ok(payload.meta.retrieval.candidates > 0);
   assert.deepEqual(payload.meta.model, { attempted: false, answered: false });
   assert.equal(payload.meta.llmFallback, false);
   assert.ok(payload.citations.length > 0);
+  assert.equal(typeof payload.citations[0].chunkId, 'string');
+  assert.equal(typeof payload.citations[0].section, 'string');
 
   for (const value of Object.values(payload.meta.timings)) {
     assert.ok(Number.isFinite(value));

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "corpusVersion": "3e34f03e1b65b5253fc409369cc2110ae781d684bfb4af97401fe7c23323d50c",
+  "files": {
+    "posts": {
+      "sha256": "d1f40b540cd677e28ec95635637ad2a980ca4deff51d88e3514a098087b7b30c",
+      "count": 69
+    },
+    "chunks": {
+      "sha256": "09c923f6426477c67fa9cf6e6a3d8574510f5b9a475253589e5ddbf0cdf90e51",
+      "count": 886
+    }
+  },
+  "stats": {
+    "sourcePosts": 101,
+    "publishedPosts": 69,
+    "indexedPosts": 66,
+    "indexedChunks": 886,
+    "skippedUnpublishedPosts": 32,
+    "skippedPostsWithoutUrl": 0,
+    "skippedPostsWithoutIndexableContent": 3
+  },
+  "warnings": {
+    "postsWithoutUrl": [],
+    "postsWithoutIndexableContent": [
+      "Logistic Regression",
+      "MLP",
+      "支持向量机"
+    ]
+  }
+}

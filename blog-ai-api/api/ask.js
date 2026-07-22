@@ -84,7 +84,7 @@ module.exports = async (req, res) => {
     }
 
     const corpusStartedAt = trace.start();
-    const { chunks } = loadCorpus();
+    const { chunks, manifest } = loadCorpus();
     trace.end('corpusMs', corpusStartedAt);
 
     const retrievalStartedAt = trace.start();
@@ -127,6 +127,9 @@ module.exports = async (req, res) => {
     payload.meta = buildMeta(trace, Object.assign({}, payload.meta, {
       mode,
       llmFallback: modelAttempted && !modelAnswered,
+      indexVersion: manifest && manifest.corpusVersion
+        ? manifest.corpusVersion
+        : null,
       retrieval: {
         strategy: 'bm25',
         candidates: ranked.length
@@ -140,7 +143,7 @@ module.exports = async (req, res) => {
     if (process.env.NODE_ENV !== 'test') {
       console.info('ask.js completed', {
         traceId: trace.traceId,
-        route: mode,
+        mode,
         citations: payload.citations.length,
         candidates: ranked.length,
         modelAttempted,

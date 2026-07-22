@@ -1,0 +1,2077 @@
+{
+  "generatedAt": "2026-07-22T10:15:47.250Z",
+  "dataset": {
+    "version": 2,
+    "cases": 40,
+    "path": "evals/dataset.json"
+  },
+  "corpus": {
+    "posts": 69,
+    "postsWithUrl": 69,
+    "indexedPublishedPosts": 66,
+    "chunks": 886,
+    "publishedChunks": 886,
+    "chunksWithoutUrl": 0,
+    "sha256": "09c923f6426477c67fa9cf6e6a3d8574510f5b9a475253589e5ddbf0cdf90e51"
+  },
+  "retriever": {
+    "name": "bm25-custom",
+    "evaluationUnit": "unique normalized published post URL",
+    "tokenization": "latin tokens + Chinese bigrams",
+    "k1": 1.2,
+    "b": 0.75
+  },
+  "summary": {
+    "cases": 34,
+    "recallAt5": 0.9118,
+    "recallAt20": 0.9706,
+    "hitRateAt5": 0.9118,
+    "mrrAt20": 0.8258,
+    "ndcgAt20": 0.8602,
+    "noAnswerCases": 6,
+    "noAnswerAccuracy": 0,
+    "averageWarmRetrievalMs": 14.377,
+    "failedCases": 9
+  },
+  "byCategory": {
+    "exact": {
+      "cases": 10,
+      "recallAt5": 1,
+      "recallAt20": 1,
+      "hitRateAt5": 1,
+      "mrrAt20": 1,
+      "ndcgAt20": 1
+    },
+    "definition": {
+      "cases": 8,
+      "recallAt5": 0.75,
+      "recallAt20": 0.875,
+      "hitRateAt5": 0.75,
+      "mrrAt20": 0.7679,
+      "ndcgAt20": 0.7917
+    },
+    "semantic": {
+      "cases": 10,
+      "recallAt5": 0.9,
+      "recallAt20": 1,
+      "hitRateAt5": 0.9,
+      "mrrAt20": 0.5933,
+      "ndcgAt20": 0.6912
+    },
+    "current_page": {
+      "cases": 6,
+      "recallAt5": 1,
+      "recallAt20": 1,
+      "hitRateAt5": 1,
+      "mrrAt20": 1,
+      "ndcgAt20": 1
+    },
+    "no_answer": {
+      "cases": 6,
+      "rejectionAccuracy": 0
+    }
+  },
+  "failedCases": [
+    {
+      "id": "definition-svm",
+      "category": "definition",
+      "question": "什么是支持向量机？",
+      "expected": [
+        "支持向量机"
+      ],
+      "topResults": [
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 11
+        },
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 10.855
+        },
+        {
+          "title": "Transformer 架构 —— Attention Is All You Need",
+          "url": "https://wangsenjie.github.io/2025/10/16/transformer-architecture/",
+          "score": 8.718
+        },
+        {
+          "title": "LightFM",
+          "url": "https://wangsenjie.github.io/2026/03/30/lightfm/",
+          "score": 8.426
+        },
+        {
+          "title": "门控循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
+          "score": 8.088
+        }
+      ]
+    },
+    {
+      "id": "definition-usercf",
+      "category": "definition",
+      "question": "什么是 UserCF？",
+      "expected": [
+        "UserCF"
+      ],
+      "topResults": [
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 11
+        },
+        {
+          "title": "FRONTEND-BASIC",
+          "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+          "score": 6
+        },
+        {
+          "title": "LangGraph 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+          "score": 6
+        },
+        {
+          "title": "状态与短期记忆",
+          "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
+          "score": 6
+        },
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "id": "semantic-exposure-filter",
+      "category": "semantic",
+      "question": "推荐系统召回后，怎样过滤用户已经看过的内容？",
+      "expected": [
+        "曝光过滤"
+      ],
+      "topResults": [
+        {
+          "title": "UserCF",
+          "url": "https://wangsenjie.github.io/2026/03/29/usercf/",
+          "score": 30.336
+        },
+        {
+          "title": "BPR",
+          "url": "https://wangsenjie.github.io/2026/03/30/bpr/",
+          "score": 30.298
+        },
+        {
+          "title": "地理位置召回与作者召回",
+          "url": "https://wangsenjie.github.io/2026/04/02/post-20260402-1243e1/",
+          "score": 28.046
+        },
+        {
+          "title": "LightFM",
+          "url": "https://wangsenjie.github.io/2026/03/30/lightfm/",
+          "score": 27.098
+        },
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 26.882
+        }
+      ]
+    },
+    {
+      "id": "no-answer-kubernetes",
+      "category": "no_answer",
+      "question": "博客里讲过 Kubernetes Pod 调度机制吗？",
+      "expected": "no results",
+      "topResults": [
+        {
+          "title": "FRONTEND-BASIC",
+          "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+          "score": 7.935
+        },
+        {
+          "title": "门控循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
+          "score": 7.004
+        },
+        {
+          "title": "Basic Abstract Algebra Exercises Notes",
+          "url": "https://wangsenjie.github.io/2026/03/25/basic-abstract-algebra-exercises-notes/",
+          "score": 6.632
+        },
+        {
+          "title": "Transformer 架构 —— Attention Is All You Need",
+          "url": "https://wangsenjie.github.io/2025/10/16/transformer-architecture/",
+          "score": 5.751
+        },
+        {
+          "title": "地理位置召回与作者召回",
+          "url": "https://wangsenjie.github.io/2026/04/02/post-20260402-1243e1/",
+          "score": 4.424
+        }
+      ]
+    },
+    {
+      "id": "no-answer-rust",
+      "category": "no_answer",
+      "question": "Rust 的 borrow checker 和所有权生命周期怎么工作？",
+      "expected": "no results",
+      "topResults": [
+        {
+          "title": "函数的连续性",
+          "url": "https://wangsenjie.github.io/2025/09/07/2/",
+          "score": 10.866
+        },
+        {
+          "title": "高阶线性微分方程的一般理论",
+          "url": "https://wangsenjie.github.io/2025/09/03/4-2/",
+          "score": 8.693
+        },
+        {
+          "title": "一元积分学",
+          "url": "https://wangsenjie.github.io/2025/09/07/5/",
+          "score": 8.564
+        },
+        {
+          "title": "LeetCode Hot100 —— 滑动窗口",
+          "url": "https://wangsenjie.github.io/2026/04/17/leetcode-hot100-7/",
+          "score": 7.043
+        },
+        {
+          "title": "LangGraph 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+          "score": 6.662
+        }
+      ]
+    },
+    {
+      "id": "no-answer-quantum",
+      "category": "no_answer",
+      "question": "量子纠缠与贝尔不等式的推导是什么？",
+      "expected": "no results",
+      "topResults": [
+        {
+          "title": "一元微分学",
+          "url": "https://wangsenjie.github.io/2025/09/07/4/",
+          "score": 13.129
+        },
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 11
+        },
+        {
+          "title": "门控循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
+          "score": 9.63
+        },
+        {
+          "title": "解对初值与参数的连续性与可微性",
+          "url": "https://wangsenjie.github.io/2025/09/03/3-4/",
+          "score": 9.428
+        },
+        {
+          "title": "一元积分学",
+          "url": "https://wangsenjie.github.io/2025/09/07/5/",
+          "score": 9.327
+        }
+      ]
+    },
+    {
+      "id": "no-answer-kafka",
+      "category": "no_answer",
+      "question": "Kafka 消费者组重平衡的过程是什么？",
+      "expected": "no results",
+      "topResults": [
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 11.176
+        },
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 11
+        },
+        {
+          "title": "LeetCode Hot100 —— 二叉树",
+          "url": "https://wangsenjie.github.io/2026/04/20/leetcode-hot100/",
+          "score": 9.329
+        },
+        {
+          "title": "门控循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
+          "score": 8.59
+        },
+        {
+          "title": "GBDT",
+          "url": "https://wangsenjie.github.io/2025/10/15/gbdt/",
+          "score": 8.003
+        }
+      ]
+    },
+    {
+      "id": "no-answer-ddpm",
+      "category": "no_answer",
+      "question": "DDPM 扩散模型怎样完成加噪和去噪？",
+      "expected": "no results",
+      "topResults": [
+        {
+          "title": "双塔模型",
+          "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/",
+          "score": 10.19
+        },
+        {
+          "title": "ItemCF",
+          "url": "https://wangsenjie.github.io/2026/03/29/itemcf/",
+          "score": 7.3
+        },
+        {
+          "title": "状态与短期记忆",
+          "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
+          "score": 7.276
+        },
+        {
+          "title": "UserCF",
+          "url": "https://wangsenjie.github.io/2026/03/29/usercf/",
+          "score": 7.151
+        },
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 6.77
+        }
+      ]
+    },
+    {
+      "id": "no-answer-blockchain",
+      "category": "no_answer",
+      "question": "区块链共识协议 PBFT 的消息流程是什么？",
+      "expected": "no results",
+      "topResults": [
+        {
+          "title": "状态与短期记忆",
+          "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
+          "score": 13.478
+        },
+        {
+          "title": "FRONTEND-BASIC",
+          "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+          "score": 11.393
+        },
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 11
+        },
+        {
+          "title": "LangGraph 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+          "score": 10.236
+        },
+        {
+          "title": "LangChain 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langchain-basic/",
+          "score": 6.356
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "exact-double-tower",
+      "category": "exact",
+      "question": "双塔模型",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "双塔模型"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 87,
+      "durationMs": 12.917,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "双塔模型",
+          "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/",
+          "score": 57.753
+        },
+        {
+          "title": "Deep Retrieval",
+          "url": "https://wangsenjie.github.io/2026/04/01/deep-retrieval/",
+          "score": 23.757
+        },
+        {
+          "title": "BPR",
+          "url": "https://wangsenjie.github.io/2026/03/30/bpr/",
+          "score": 20.491
+        },
+        {
+          "title": "LangChain 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langchain-basic/",
+          "score": 5.932
+        },
+        {
+          "title": "LangGraph 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+          "score": 5.755
+        }
+      ]
+    },
+    {
+      "id": "exact-transformer",
+      "category": "exact",
+      "question": "Transformer 架构",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "Transformer 架构 —— Attention Is All You Need"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 15,
+      "durationMs": 10.723,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "Transformer 架构 —— Attention Is All You Need",
+          "url": "https://wangsenjie.github.io/2025/10/16/transformer-architecture/",
+          "score": 36.649
+        },
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 5.504
+        },
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 5.481
+        },
+        {
+          "title": "ResNet",
+          "url": "https://wangsenjie.github.io/2026/04/29/resnet/",
+          "score": 3.703
+        },
+        {
+          "title": "LightFM",
+          "url": "https://wangsenjie.github.io/2026/03/30/lightfm/",
+          "score": 3.524
+        }
+      ]
+    },
+    {
+      "id": "exact-picard",
+      "category": "exact",
+      "question": "Picard 存在唯一性定理",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "Picard 存在唯一性定理"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 151,
+      "durationMs": 13.667,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "Picard 存在唯一性定理",
+          "url": "https://wangsenjie.github.io/2025/09/03/3-1picard/",
+          "score": 78.113
+        },
+        {
+          "title": "解对初值与参数的连续性与可微性",
+          "url": "https://wangsenjie.github.io/2025/09/03/3-4/",
+          "score": 31.746
+        },
+        {
+          "title": "解的延拓",
+          "url": "https://wangsenjie.github.io/2025/09/03/3-3/",
+          "score": 24.638
+        },
+        {
+          "title": "高阶线性微分方程的一般理论",
+          "url": "https://wangsenjie.github.io/2025/09/03/4-2/",
+          "score": 20.855
+        },
+        {
+          "title": "不动点定理与解的存在性",
+          "url": "https://wangsenjie.github.io/2025/09/03/3-2/",
+          "score": 20.439
+        }
+      ]
+    },
+    {
+      "id": "exact-dynamic-programming",
+      "category": "exact",
+      "question": "LeetCode Hot100 动态规划",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "LeetCode Hot100 —— 动态规划"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 169,
+      "durationMs": 12.788,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "LeetCode Hot100 —— 动态规划",
+          "url": "https://wangsenjie.github.io/2026/04/22/post-20260422-47fa06/",
+          "score": 43.64
+        },
+        {
+          "title": "LeetCode Hot100 题解",
+          "url": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/",
+          "score": 30.029
+        },
+        {
+          "title": "LeetCode Hot100 —— 普通数组",
+          "url": "https://wangsenjie.github.io/2026/04/17/leetcode-hot100-6/",
+          "score": 18.945
+        },
+        {
+          "title": "LeetCode Hot100 —— 二叉树",
+          "url": "https://wangsenjie.github.io/2026/04/20/leetcode-hot100/",
+          "score": 12.235
+        },
+        {
+          "title": "Pandas数据分析题解汇总",
+          "url": "https://wangsenjie.github.io/2025/09/05/pandas/",
+          "score": 8.201
+        }
+      ]
+    },
+    {
+      "id": "exact-langgraph",
+      "category": "exact",
+      "question": "LangGraph 基础",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "LangGraph 基础"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 80,
+      "durationMs": 11.214,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "LangGraph 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+          "score": 28.466
+        },
+        {
+          "title": "LangChain 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langchain-basic/",
+          "score": 8.896
+        },
+        {
+          "title": "人机协作与执行控制",
+          "url": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+          "score": 7.466
+        },
+        {
+          "title": "状态与短期记忆",
+          "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
+          "score": 6.014
+        },
+        {
+          "title": "Basic Abstract Algebra Exercises Notes",
+          "url": "https://wangsenjie.github.io/2026/03/25/basic-abstract-algebra-exercises-notes/",
+          "score": 5.601
+        }
+      ]
+    },
+    {
+      "id": "exact-resnet",
+      "category": "exact",
+      "question": "ResNet",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "ResNet"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 3,
+      "durationMs": 10.002,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "ResNet",
+          "url": "https://wangsenjie.github.io/2026/04/29/resnet/",
+          "score": 34.855
+        }
+      ]
+    },
+    {
+      "id": "exact-itemcf",
+      "category": "exact",
+      "question": "ItemCF",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "ItemCF"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 10,
+      "durationMs": 11.135,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "ItemCF",
+          "url": "https://wangsenjie.github.io/2026/03/29/itemcf/",
+          "score": 27.636
+        },
+        {
+          "title": "SVD 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/svd/",
+          "score": 17.734
+        },
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 17.387
+        }
+      ]
+    },
+    {
+      "id": "exact-integrating-factor",
+      "category": "exact",
+      "question": "积分因子法",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "积分因子法"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 74,
+      "durationMs": 11.266,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "积分因子法",
+          "url": "https://wangsenjie.github.io/2025/09/03/2-3/",
+          "score": 50.756
+        },
+        {
+          "title": "一元积分学",
+          "url": "https://wangsenjie.github.io/2025/09/07/5/",
+          "score": 10.641
+        },
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 5.688
+        },
+        {
+          "title": "解对初值与参数的连续性与可微性",
+          "url": "https://wangsenjie.github.io/2025/09/03/3-4/",
+          "score": 4.607
+        },
+        {
+          "title": "参数法",
+          "url": "https://wangsenjie.github.io/2025/09/03/2-4/",
+          "score": 4.523
+        }
+      ]
+    },
+    {
+      "id": "exact-agent-environment",
+      "category": "exact",
+      "question": "报告生成Agent 环境配置",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "报告生成Agent——环境配置"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 39,
+      "durationMs": 13.37,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "报告生成Agent——环境配置",
+          "url": "https://wangsenjie.github.io/2026/05/17/agent-2/",
+          "score": 48.855
+        },
+        {
+          "title": "人机协作与执行控制",
+          "url": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+          "score": 8.839
+        },
+        {
+          "title": "Pandas数据分析题解汇总",
+          "url": "https://wangsenjie.github.io/2025/09/05/pandas/",
+          "score": 8.217
+        },
+        {
+          "title": "LeetCode Hot100 —— 回溯",
+          "url": "https://wangsenjie.github.io/2026/03/28/leetcode-hot100-11/",
+          "score": 8.133
+        },
+        {
+          "title": "Hexo 指令",
+          "url": "https://wangsenjie.github.io/2025/09/05/hexo/",
+          "score": 7.13
+        }
+      ]
+    },
+    {
+      "id": "exact-svd",
+      "category": "exact",
+      "question": "SVD 排序算法",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "SVD 排序算法"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 247,
+      "durationMs": 11.18,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "SVD 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/svd/",
+          "score": 43.654
+        },
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 23.992
+        },
+        {
+          "title": "BPR",
+          "url": "https://wangsenjie.github.io/2026/03/30/bpr/",
+          "score": 15.576
+        },
+        {
+          "title": "LightFM",
+          "url": "https://wangsenjie.github.io/2026/03/30/lightfm/",
+          "score": 12.155
+        },
+        {
+          "title": "LeetCode Hot100 —— 链表",
+          "url": "https://wangsenjie.github.io/2026/03/23/leetcode-hot100-9/",
+          "score": 10.12
+        }
+      ]
+    },
+    {
+      "id": "definition-embedding",
+      "category": "definition",
+      "question": "什么是 Embedding？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "离散特征的处理——Embedding"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 62,
+      "durationMs": 12.295,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "离散特征的处理——Embedding",
+          "url": "https://wangsenjie.github.io/2026/03/30/embedding/",
+          "score": 11.469
+        },
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 11
+        },
+        {
+          "title": "LightFM",
+          "url": "https://wangsenjie.github.io/2026/03/30/lightfm/",
+          "score": 6.132
+        },
+        {
+          "title": "双塔模型",
+          "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/",
+          "score": 6.029
+        },
+        {
+          "title": "FRONTEND-BASIC",
+          "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "id": "definition-gbdt",
+      "category": "definition",
+      "question": "GBDT 是什么？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "GBDT"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 61,
+      "durationMs": 10.809,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "GBDT",
+          "url": "https://wangsenjie.github.io/2025/10/15/gbdt/",
+          "score": 16.053
+        },
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 11
+        },
+        {
+          "title": "FRONTEND-BASIC",
+          "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+          "score": 6
+        },
+        {
+          "title": "LangGraph 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+          "score": 6
+        },
+        {
+          "title": "状态与短期记忆",
+          "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "id": "definition-svm",
+      "category": "definition",
+      "question": "什么是支持向量机？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "支持向量机"
+      ],
+      "relevantRanks": [],
+      "candidateChunks": 102,
+      "durationMs": 12.706,
+      "metrics": {
+        "recallAt5": 0,
+        "recallAt20": 0,
+        "hitAt5": 0,
+        "reciprocalRankAt20": 0,
+        "ndcgAt20": 0
+      },
+      "topResults": [
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 11
+        },
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 10.855
+        },
+        {
+          "title": "Transformer 架构 —— Attention Is All You Need",
+          "url": "https://wangsenjie.github.io/2025/10/16/transformer-architecture/",
+          "score": 8.718
+        },
+        {
+          "title": "LightFM",
+          "url": "https://wangsenjie.github.io/2026/03/30/lightfm/",
+          "score": 8.426
+        },
+        {
+          "title": "门控循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
+          "score": 8.088
+        }
+      ]
+    },
+    {
+      "id": "definition-bpr",
+      "category": "definition",
+      "question": "BPR 是什么排序方法？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "BPR"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 149,
+      "durationMs": 13.475,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "BPR",
+          "url": "https://wangsenjie.github.io/2026/03/30/bpr/",
+          "score": 19.874
+        },
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 12
+        },
+        {
+          "title": "SVD 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/svd/",
+          "score": 11.278
+        },
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 11
+        },
+        {
+          "title": "LightFM",
+          "url": "https://wangsenjie.github.io/2026/03/30/lightfm/",
+          "score": 10.145
+        }
+      ]
+    },
+    {
+      "id": "definition-cnn",
+      "category": "definition",
+      "question": "什么是卷积神经网络？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "卷积神经网络 CNN"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 104,
+      "durationMs": 13.338,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "卷积神经网络 CNN",
+          "url": "https://wangsenjie.github.io/2026/04/27/cnn/",
+          "score": 54.486
+        },
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 48.276
+        },
+        {
+          "title": "ResNet",
+          "url": "https://wangsenjie.github.io/2026/04/29/resnet/",
+          "score": 39.301
+        },
+        {
+          "title": "AlexNet",
+          "url": "https://wangsenjie.github.io/2026/04/28/alexnet/",
+          "score": 33.66
+        },
+        {
+          "title": "门控循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
+          "score": 32.428
+        }
+      ]
+    },
+    {
+      "id": "definition-short-term-memory",
+      "category": "definition",
+      "question": "LangGraph 的短期记忆是什么？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "状态与短期记忆"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 161,
+      "durationMs": 13.226,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "状态与短期记忆",
+          "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
+          "score": 23.412
+        },
+        {
+          "title": "LangGraph 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+          "score": 15.73
+        },
+        {
+          "title": "门控循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
+          "score": 12.042
+        },
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 11
+        },
+        {
+          "title": "人机协作与执行控制",
+          "url": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+          "score": 7.466
+        }
+      ]
+    },
+    {
+      "id": "definition-usercf",
+      "category": "definition",
+      "question": "什么是 UserCF？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "UserCF"
+      ],
+      "relevantRanks": [
+        7
+      ],
+      "candidateChunks": 58,
+      "durationMs": 10.013,
+      "metrics": {
+        "recallAt5": 0,
+        "recallAt20": 1,
+        "hitAt5": 0,
+        "reciprocalRankAt20": 0.1429,
+        "ndcgAt20": 0.3333
+      },
+      "topResults": [
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 11
+        },
+        {
+          "title": "FRONTEND-BASIC",
+          "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+          "score": 6
+        },
+        {
+          "title": "LangGraph 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+          "score": 6
+        },
+        {
+          "title": "状态与短期记忆",
+          "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
+          "score": 6
+        },
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "id": "definition-adaboost",
+      "category": "definition",
+      "question": "AdaBoost 是什么？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "AdaBoost"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 72,
+      "durationMs": 10.972,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "AdaBoost",
+          "url": "https://wangsenjie.github.io/2025/10/02/adaboost/",
+          "score": 13.46
+        },
+        {
+          "title": "GBDT",
+          "url": "https://wangsenjie.github.io/2025/10/15/gbdt/",
+          "score": 11.559
+        },
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 11
+        },
+        {
+          "title": "FRONTEND-BASIC",
+          "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+          "score": 6
+        },
+        {
+          "title": "LangGraph 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "id": "semantic-double-tower",
+      "category": "semantic",
+      "question": "哪种推荐模型会分别编码用户和物品，再计算两个表征的相似度？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "双塔模型"
+      ],
+      "relevantRanks": [
+        3
+      ],
+      "candidateChunks": 256,
+      "durationMs": 16.889,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 0.3333,
+        "ndcgAt20": 0.5
+      },
+      "topResults": [
+        {
+          "title": "UserCF",
+          "url": "https://wangsenjie.github.io/2026/03/29/usercf/",
+          "score": 38.621
+        },
+        {
+          "title": "SVD 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/svd/",
+          "score": 36.841
+        },
+        {
+          "title": "双塔模型",
+          "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/",
+          "score": 34.595
+        },
+        {
+          "title": "ItemCF",
+          "url": "https://wangsenjie.github.io/2026/03/29/itemcf/",
+          "score": 32.317
+        },
+        {
+          "title": "LightFM",
+          "url": "https://wangsenjie.github.io/2026/03/30/lightfm/",
+          "score": 27.35
+        }
+      ]
+    },
+    {
+      "id": "semantic-residual-network",
+      "category": "semantic",
+      "question": "如何利用残差连接训练更深的卷积网络？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "ResNet"
+      ],
+      "relevantRanks": [
+        2
+      ],
+      "candidateChunks": 227,
+      "durationMs": 15.42,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 0.5,
+        "ndcgAt20": 0.6309
+      },
+      "topResults": [
+        {
+          "title": "卷积神经网络 CNN",
+          "url": "https://wangsenjie.github.io/2026/04/27/cnn/",
+          "score": 41.789
+        },
+        {
+          "title": "ResNet",
+          "url": "https://wangsenjie.github.io/2026/04/29/resnet/",
+          "score": 37.405
+        },
+        {
+          "title": "AlexNet",
+          "url": "https://wangsenjie.github.io/2026/04/28/alexnet/",
+          "score": 33.631
+        },
+        {
+          "title": "Transformer 架构 —— Attention Is All You Need",
+          "url": "https://wangsenjie.github.io/2025/10/16/transformer-architecture/",
+          "score": 20.295
+        },
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 15.088
+        }
+      ]
+    },
+    {
+      "id": "semantic-gated-rnn",
+      "category": "semantic",
+      "question": "用门控机制缓解循环网络长期依赖问题的模型是什么？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "门控循环神经网络"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 227,
+      "durationMs": 16.098,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "门控循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
+          "score": 47.916
+        },
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 35.507
+        },
+        {
+          "title": "ResNet",
+          "url": "https://wangsenjie.github.io/2026/04/29/resnet/",
+          "score": 22.534
+        },
+        {
+          "title": "AlexNet",
+          "url": "https://wangsenjie.github.io/2026/04/28/alexnet/",
+          "score": 18.133
+        },
+        {
+          "title": "双塔模型",
+          "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/",
+          "score": 18.079
+        }
+      ]
+    },
+    {
+      "id": "semantic-item-similarity",
+      "category": "semantic",
+      "question": "如何根据物品之间的相似度做协同过滤推荐？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "ItemCF"
+      ],
+      "relevantRanks": [
+        4
+      ],
+      "candidateChunks": 137,
+      "durationMs": 15.438,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 0.25,
+        "ndcgAt20": 0.4307
+      },
+      "topResults": [
+        {
+          "title": "SVD 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/svd/",
+          "score": 47.848
+        },
+        {
+          "title": "BPR",
+          "url": "https://wangsenjie.github.io/2026/03/30/bpr/",
+          "score": 44.675
+        },
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 40.372
+        },
+        {
+          "title": "ItemCF",
+          "url": "https://wangsenjie.github.io/2026/03/29/itemcf/",
+          "score": 39.585
+        },
+        {
+          "title": "UserCF",
+          "url": "https://wangsenjie.github.io/2026/03/29/usercf/",
+          "score": 36.122
+        }
+      ]
+    },
+    {
+      "id": "semantic-user-similarity",
+      "category": "semantic",
+      "question": "如何寻找兴趣相近的用户并推荐他们喜欢的内容？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "UserCF"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 141,
+      "durationMs": 14.813,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "UserCF",
+          "url": "https://wangsenjie.github.io/2026/03/29/usercf/",
+          "score": 32.285
+        },
+        {
+          "title": "ItemCF",
+          "url": "https://wangsenjie.github.io/2026/03/29/itemcf/",
+          "score": 27.69
+        },
+        {
+          "title": "LightFM",
+          "url": "https://wangsenjie.github.io/2026/03/30/lightfm/",
+          "score": 24.441
+        },
+        {
+          "title": "离散特征的处理——Embedding",
+          "url": "https://wangsenjie.github.io/2026/03/30/embedding/",
+          "score": 21.942
+        },
+        {
+          "title": "SVD 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/svd/",
+          "score": 19.013
+        }
+      ]
+    },
+    {
+      "id": "semantic-vue",
+      "category": "semantic",
+      "question": "采用组件化和响应式数据的前端框架怎么使用？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "VUE-BASIC"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 169,
+      "durationMs": 18.333,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "VUE-BASIC",
+          "url": "https://wangsenjie.github.io/2026/05/11/vue/",
+          "score": 35.406
+        },
+        {
+          "title": "报告生成Agent——环境配置",
+          "url": "https://wangsenjie.github.io/2026/05/17/agent-2/",
+          "score": 17.626
+        },
+        {
+          "title": "FRONTEND-BASIC",
+          "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+          "score": 13.728
+        },
+        {
+          "title": "AdaBoost",
+          "url": "https://wangsenjie.github.io/2025/10/02/adaboost/",
+          "score": 10.099
+        },
+        {
+          "title": "Pandas数据分析题解汇总",
+          "url": "https://wangsenjie.github.io/2025/09/05/pandas/",
+          "score": 9.718
+        }
+      ]
+    },
+    {
+      "id": "semantic-self-attention",
+      "category": "semantic",
+      "question": "不依赖循环结构、主要使用自注意力处理序列的架构是什么？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "Transformer 架构 —— Attention Is All You Need"
+      ],
+      "relevantRanks": [
+        2
+      ],
+      "candidateChunks": 270,
+      "durationMs": 17.36,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 0.5,
+        "ndcgAt20": 0.6309
+      },
+      "topResults": [
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 40
+        },
+        {
+          "title": "Transformer 架构 —— Attention Is All You Need",
+          "url": "https://wangsenjie.github.io/2025/10/16/transformer-architecture/",
+          "score": 31.498
+        },
+        {
+          "title": "门控循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
+          "score": 29.959
+        },
+        {
+          "title": "LeetCode Hot100 —— 子串",
+          "url": "https://wangsenjie.github.io/2026/04/17/leetcode-hot100-5/",
+          "score": 18.368
+        },
+        {
+          "title": "LeetCode Hot100 —— Hash",
+          "url": "https://wangsenjie.github.io/2026/04/17/hash/",
+          "score": 17.012
+        }
+      ]
+    },
+    {
+      "id": "semantic-exposure-filter",
+      "category": "semantic",
+      "question": "推荐系统召回后，怎样过滤用户已经看过的内容？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "曝光过滤"
+      ],
+      "relevantRanks": [
+        10
+      ],
+      "candidateChunks": 156,
+      "durationMs": 16.29,
+      "metrics": {
+        "recallAt5": 0,
+        "recallAt20": 1,
+        "hitAt5": 0,
+        "reciprocalRankAt20": 0.1,
+        "ndcgAt20": 0.2891
+      },
+      "topResults": [
+        {
+          "title": "UserCF",
+          "url": "https://wangsenjie.github.io/2026/03/29/usercf/",
+          "score": 30.336
+        },
+        {
+          "title": "BPR",
+          "url": "https://wangsenjie.github.io/2026/03/30/bpr/",
+          "score": 30.298
+        },
+        {
+          "title": "地理位置召回与作者召回",
+          "url": "https://wangsenjie.github.io/2026/04/02/post-20260402-1243e1/",
+          "score": 28.046
+        },
+        {
+          "title": "LightFM",
+          "url": "https://wangsenjie.github.io/2026/03/30/lightfm/",
+          "score": 27.098
+        },
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 26.882
+        }
+      ]
+    },
+    {
+      "id": "semantic-deep-retrieval",
+      "category": "semantic",
+      "question": "把物品组织成路径并用 Beam Search 完成召回的方法是什么？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "Deep Retrieval"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 191,
+      "durationMs": 15.488,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "Deep Retrieval",
+          "url": "https://wangsenjie.github.io/2026/04/01/deep-retrieval/",
+          "score": 37.221
+        },
+        {
+          "title": "双塔模型",
+          "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/",
+          "score": 19.332
+        },
+        {
+          "title": "ItemCF",
+          "url": "https://wangsenjie.github.io/2026/03/29/itemcf/",
+          "score": 18.693
+        },
+        {
+          "title": "UserCF",
+          "url": "https://wangsenjie.github.io/2026/03/29/usercf/",
+          "score": 17.821
+        },
+        {
+          "title": "地理位置召回与作者召回",
+          "url": "https://wangsenjie.github.io/2026/04/02/post-20260402-1243e1/",
+          "score": 13.084
+        }
+      ]
+    },
+    {
+      "id": "semantic-langchain-call",
+      "category": "semantic",
+      "question": "如何用 Prompt Template、聊天模型和输出解析器组成调用链？",
+      "pageTitle": null,
+      "relevantPostTitles": [
+        "LangChain 基础"
+      ],
+      "relevantRanks": [
+        4
+      ],
+      "candidateChunks": 226,
+      "durationMs": 13.438,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 0.25,
+        "ndcgAt20": 0.4307
+      },
+      "topResults": [
+        {
+          "title": "状态与短期记忆",
+          "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
+          "score": 22.078
+        },
+        {
+          "title": "LangGraph 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+          "score": 17.477
+        },
+        {
+          "title": "双塔模型",
+          "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/",
+          "score": 14.732
+        },
+        {
+          "title": "LangChain 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langchain-basic/",
+          "score": 11.73
+        },
+        {
+          "title": "ResNet",
+          "url": "https://wangsenjie.github.io/2026/04/29/resnet/",
+          "score": 10.017
+        }
+      ]
+    },
+    {
+      "id": "current-page-double-tower",
+      "category": "current_page",
+      "question": "总结这篇文章",
+      "pageTitle": "双塔模型",
+      "relevantPostTitles": [
+        "双塔模型"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 11,
+      "durationMs": 17.978,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "双塔模型",
+          "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/",
+          "score": 20
+        }
+      ]
+    },
+    {
+      "id": "current-page-transformer",
+      "category": "current_page",
+      "question": "概括当前页",
+      "pageTitle": "Transformer 架构 —— Attention Is All You Need",
+      "relevantPostTitles": [
+        "Transformer 架构 —— Attention Is All You Need"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 10,
+      "durationMs": 19.256,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "Transformer 架构 —— Attention Is All You Need",
+          "url": "https://wangsenjie.github.io/2025/10/16/transformer-architecture/",
+          "score": 20
+        }
+      ]
+    },
+    {
+      "id": "current-page-langgraph",
+      "category": "current_page",
+      "question": "总结本文",
+      "pageTitle": "LangGraph 基础",
+      "relevantPostTitles": [
+        "LangGraph 基础"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 48,
+      "durationMs": 18.229,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "LangGraph 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+          "score": 20
+        }
+      ]
+    },
+    {
+      "id": "current-page-cnn",
+      "category": "current_page",
+      "question": "给这一页做摘要",
+      "pageTitle": "卷积神经网络 CNN",
+      "relevantPostTitles": [
+        "卷积神经网络 CNN"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 23,
+      "durationMs": 21.097,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "卷积神经网络 CNN",
+          "url": "https://wangsenjie.github.io/2026/04/27/cnn/",
+          "score": 20
+        }
+      ]
+    },
+    {
+      "id": "current-page-picard",
+      "category": "current_page",
+      "question": "概括这篇文章",
+      "pageTitle": "Picard 存在唯一性定理",
+      "relevantPostTitles": [
+        "Picard 存在唯一性定理"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 4,
+      "durationMs": 19.214,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "Picard 存在唯一性定理",
+          "url": "https://wangsenjie.github.io/2025/09/03/3-1picard/",
+          "score": 20
+        }
+      ]
+    },
+    {
+      "id": "current-page-pandas",
+      "category": "current_page",
+      "question": "总结当前页的内容",
+      "pageTitle": "Pandas数据分析题解汇总",
+      "relevantPostTitles": [
+        "Pandas数据分析题解汇总"
+      ],
+      "relevantRanks": [
+        1
+      ],
+      "candidateChunks": 18,
+      "durationMs": 22.337,
+      "metrics": {
+        "recallAt5": 1,
+        "recallAt20": 1,
+        "hitAt5": 1,
+        "reciprocalRankAt20": 1,
+        "ndcgAt20": 1
+      },
+      "topResults": [
+        {
+          "title": "Pandas数据分析题解汇总",
+          "url": "https://wangsenjie.github.io/2025/09/05/pandas/",
+          "score": 23.976
+        }
+      ]
+    },
+    {
+      "id": "no-answer-kubernetes",
+      "category": "no_answer",
+      "question": "博客里讲过 Kubernetes Pod 调度机制吗？",
+      "shouldReject": true,
+      "rejected": false,
+      "candidateChunks": 14,
+      "durationMs": 13.397,
+      "topResults": [
+        {
+          "title": "FRONTEND-BASIC",
+          "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+          "score": 7.935
+        },
+        {
+          "title": "门控循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
+          "score": 7.004
+        },
+        {
+          "title": "Basic Abstract Algebra Exercises Notes",
+          "url": "https://wangsenjie.github.io/2026/03/25/basic-abstract-algebra-exercises-notes/",
+          "score": 6.632
+        },
+        {
+          "title": "Transformer 架构 —— Attention Is All You Need",
+          "url": "https://wangsenjie.github.io/2025/10/16/transformer-architecture/",
+          "score": 5.751
+        },
+        {
+          "title": "地理位置召回与作者召回",
+          "url": "https://wangsenjie.github.io/2026/04/02/post-20260402-1243e1/",
+          "score": 4.424
+        }
+      ]
+    },
+    {
+      "id": "no-answer-rust",
+      "category": "no_answer",
+      "question": "Rust 的 borrow checker 和所有权生命周期怎么工作？",
+      "shouldReject": true,
+      "rejected": false,
+      "candidateChunks": 251,
+      "durationMs": 15.679,
+      "topResults": [
+        {
+          "title": "函数的连续性",
+          "url": "https://wangsenjie.github.io/2025/09/07/2/",
+          "score": 10.866
+        },
+        {
+          "title": "高阶线性微分方程的一般理论",
+          "url": "https://wangsenjie.github.io/2025/09/03/4-2/",
+          "score": 8.693
+        },
+        {
+          "title": "一元积分学",
+          "url": "https://wangsenjie.github.io/2025/09/07/5/",
+          "score": 8.564
+        },
+        {
+          "title": "LeetCode Hot100 —— 滑动窗口",
+          "url": "https://wangsenjie.github.io/2026/04/17/leetcode-hot100-7/",
+          "score": 7.043
+        },
+        {
+          "title": "LangGraph 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+          "score": 6.662
+        }
+      ]
+    },
+    {
+      "id": "no-answer-quantum",
+      "category": "no_answer",
+      "question": "量子纠缠与贝尔不等式的推导是什么？",
+      "shouldReject": true,
+      "rejected": false,
+      "candidateChunks": 82,
+      "durationMs": 13.454,
+      "topResults": [
+        {
+          "title": "一元微分学",
+          "url": "https://wangsenjie.github.io/2025/09/07/4/",
+          "score": 13.129
+        },
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 11
+        },
+        {
+          "title": "门控循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
+          "score": 9.63
+        },
+        {
+          "title": "解对初值与参数的连续性与可微性",
+          "url": "https://wangsenjie.github.io/2025/09/03/3-4/",
+          "score": 9.428
+        },
+        {
+          "title": "一元积分学",
+          "url": "https://wangsenjie.github.io/2025/09/07/5/",
+          "score": 9.327
+        }
+      ]
+    },
+    {
+      "id": "no-answer-kafka",
+      "category": "no_answer",
+      "question": "Kafka 消费者组重平衡的过程是什么？",
+      "shouldReject": true,
+      "rejected": false,
+      "candidateChunks": 71,
+      "durationMs": 12.409,
+      "topResults": [
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 11.176
+        },
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 11
+        },
+        {
+          "title": "LeetCode Hot100 —— 二叉树",
+          "url": "https://wangsenjie.github.io/2026/04/20/leetcode-hot100/",
+          "score": 9.329
+        },
+        {
+          "title": "门控循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
+          "score": 8.59
+        },
+        {
+          "title": "GBDT",
+          "url": "https://wangsenjie.github.io/2025/10/15/gbdt/",
+          "score": 8.003
+        }
+      ]
+    },
+    {
+      "id": "no-answer-ddpm",
+      "category": "no_answer",
+      "question": "DDPM 扩散模型怎样完成加噪和去噪？",
+      "shouldReject": true,
+      "rejected": false,
+      "candidateChunks": 99,
+      "durationMs": 14.259,
+      "topResults": [
+        {
+          "title": "双塔模型",
+          "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/",
+          "score": 10.19
+        },
+        {
+          "title": "ItemCF",
+          "url": "https://wangsenjie.github.io/2026/03/29/itemcf/",
+          "score": 7.3
+        },
+        {
+          "title": "状态与短期记忆",
+          "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
+          "score": 7.276
+        },
+        {
+          "title": "UserCF",
+          "url": "https://wangsenjie.github.io/2026/03/29/usercf/",
+          "score": 7.151
+        },
+        {
+          "title": "ALS 排序算法",
+          "url": "https://wangsenjie.github.io/2026/03/30/als/",
+          "score": 6.77
+        }
+      ]
+    },
+    {
+      "id": "no-answer-blockchain",
+      "category": "no_answer",
+      "question": "区块链共识协议 PBFT 的消息流程是什么？",
+      "shouldReject": true,
+      "rejected": false,
+      "candidateChunks": 85,
+      "durationMs": 13.097,
+      "topResults": [
+        {
+          "title": "状态与短期记忆",
+          "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
+          "score": 13.478
+        },
+        {
+          "title": "FRONTEND-BASIC",
+          "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+          "score": 11.393
+        },
+        {
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "score": 11
+        },
+        {
+          "title": "LangGraph 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+          "score": 10.236
+        },
+        {
+          "title": "LangChain 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langchain-basic/",
+          "score": 6.356
+        }
+      ]
+    }
+  ]
+}

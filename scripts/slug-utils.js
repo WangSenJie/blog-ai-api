@@ -21,7 +21,15 @@ function pad(number) {
 }
 
 function formatDatePrefix(date) {
+    if (typeof date === 'string') {
+        const calendarDate = date.trim().match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+        if (calendarDate) {
+            return [calendarDate[1], pad(calendarDate[2]), pad(calendarDate[3])].join('/');
+        }
+    }
+
     const d = date instanceof Date ? date : new Date(date);
+    if (Number.isNaN(d.getTime())) return '';
     return [d.getFullYear(), pad(d.getMonth() + 1), pad(d.getDate())].join('/');
 }
 
@@ -33,6 +41,7 @@ function sourceWithoutExt(source) {
 }
 
 const manualSlugByTitle = new Map([
+    ['Pandas数据分析题解汇总', 'pandas'],
     ['LeetCode Hot100 —— Hash', 'hash'],
     ['LeetCode Hot100 —— 二叉树', 'leetcode-hot100'],
     ['LeetCode Hot100 —— 双指针', 'leetcode-hot100-2'],

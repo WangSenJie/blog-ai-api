@@ -2,7 +2,7 @@
 
 > 记录日期：2026-07-22
 >
-> 状态：待实施
+> 状态：实施中（阶段 0、阶段 1 已完成）
 >
 > 范围：在现有 Hexo、Vercel 和 BM25 问答能力上，逐步升级为可检索、可判断、可重试、可验证的 Agentic RAG。
 
@@ -12,16 +12,17 @@
 
 ```text
 用户问题
-  -> 浏览器或 Vercel API 执行 BM25 检索
-  -> 返回最相关的文章切片、引用和相关文章
+  -> 浏览器优先请求 Vercel API
+  -> 服务端执行 BM25 检索并返回文章切片、引用和相关文章
   -> 可选调用 OpenAI 兼容模型组织答案
+  -> API 失败时浏览器使用共享检索核心执行本地 BM25 降级
 ```
 
 当前实现的主要特点：
 
-- 语料来自 `source/_posts/`，构建时导出为 `posts.json` 和 `chunks.json`。
-- 语料包含 101 条文章记录和 1029 个 chunk；其中 81 篇已发布文章实际产生了 969 个可检索 chunk。单个 chunk 最多约 700 个字符，重叠约 100 个字符。
-- 浏览器端和 API 端分别实现了一套中文二元词切分与 BM25 排序。
+- 语料来自 `source/_posts/`，构建时导出为 `posts.json`、`chunks.json` 和 `manifest.json`。
+- 当前共有 101 篇源文章；69 篇已发布，66 篇产生 886 个可检索 chunk；32 篇未发布文章被跳过，3 篇 PDF-only 文章没有可索引正文。单个 chunk 最多约 700 个字符，重叠约 100 个字符。
+- 浏览器降级路径与 API 使用同一套中文二元词切分、URL 规范化和 BM25 排序核心。
 - 标题、标签、分类、小节标题和当前页面会获得额外权重。
 - API 每次只处理一个问题，没有对话记忆、查询改写、向量召回、重排和证据验证。
 
@@ -30,6 +31,8 @@
 - `scripts/build-ai-corpus.js`：文章解析与切片。
 - `source/js/blog-ai-agent.js`：浏览器问答与本地 BM25 降级。
 - `blog-ai-api/api/ask.js`：服务端问答入口。
+- `blog-ai-api/lib/retrieval-core.js`：服务端与浏览器共用的检索核心源文件。
+- `blog-ai-api/lib/corpus-integrity.js`：manifest、SHA-256 与语料结构校验。
 - `blog-ai-api/lib/retrieve.js`：服务端 BM25 检索。
 - `blog-ai-api/lib/generate.js`：基于检索结果生成回答。
 
@@ -54,7 +57,7 @@
 | 阶段 | 交付结果 | 状态 |
 | --- | --- | --- |
 | 阶段 0 | 评测集、BM25 基线与 trace 日志 | 已完成（2026-07-22） |
-| 阶段 1 | 服务端统一检索与浏览器降级 | 未开始 |
+| 阶段 1 | 服务端统一检索与浏览器降级 | 已完成并验收（2026-07-22） |
 | 阶段 2 | BM25 + Vector + RRF + Reranker | 未开始 |
 | 阶段 3 | 多轮会话、Agent 工具与有限检索循环 | 未开始 |
 | 阶段 4 | 引用验证、拒答校准与质量闭环 | 未开始 |
@@ -363,13 +366,21 @@ route
 浏览器 -> Agent API -> 服务端检索、生成与验证
 ```
 
-浏览器本地 BM25继续保留为 API 不可用时的降级能力：
+浏览器本地 BM25 继续保留为 API 不可用时的降级能力：
 
 ```text
-Agent API 失败 -> 本地 BM25 -> 返回文章和片段，不调用模型
+网络错误 / 超时 / 非 2xx / 无效响应
+  -> 本地 BM25
+  -> 返回文章和片段，不调用模型
 ```
 
-服务端不信任客户端传入的候选片段。为避免两套 BM25 逻辑逐渐偏离，可以把通用分词和排序实现提取为共享模块；生产结果仍以服务端为准。
+前端正常请求只发送问题、模式和当前页面上下文，不再发送本地候选内容。服务端始终忽略旧客户端可能提交的候选片段，以自己的已校验索引作为唯一事实来源。合法的服务端拒答或不含引用的有效响应不会触发浏览器降级。
+
+通用分词、URL 规范化、有效 chunk 过滤和 BM25 排序已集中在 `blog-ai-api/lib/retrieval-core.js`。语料导出时将其复制为 `source/js/blog-ai-retrieval.js`，供浏览器故障路径使用，从而避免两套检索规则漂移。
+
+服务端引用契约为 `chunkId`、`title`、`url`、`section`、`snippet`。响应同时返回 `meta.indexVersion`，它等于 manifest 的 `corpusVersion`；只有将 `indexVersion` 与 `chunkId` 组合起来，才能追溯同一索引版本中的原始 chunk。跨版本稳定 chunk ID 不属于阶段 1，留到阶段 2 设计。
+
+`manifest.json` 对 `posts.json` 和 `chunks.json` 分别记录 SHA-256 与记录数，并汇总语料统计和完整性告警。构建、同步和服务端加载会强校验文件哈希、数组与计数、文章 URL 唯一性、chunk ID 唯一性、chunk 可索引性以及 chunk 与已发布文章的归属关系。
 
 ## 11. 安全与稳定性
 
@@ -510,11 +521,25 @@ BM25 基线：
 
 完成标准：线上引用均能由服务端 chunk ID 追溯，降级路径仍可使用。
 
+实施与验收结果（2026-07-22）：
+
+- 正常路径改为服务端 API 优先；成功响应不会下载浏览器静态语料或执行本地 BM25。
+- 浏览器仅在网络错误、20 秒请求超时、非 2xx 状态或无效响应时，按需加载 `chunks.json` 并执行 BM25 降级。
+- 前端请求不再包含 `retrieval.sources`；服务端忽略旧客户端可能发送的候选内容。
+- 服务端与浏览器通过共享检索核心保持分词、URL 规范化、有效 chunk 判断和 BM25 排序一致。
+- 引用完整返回 `chunkId`、`title`、`url`、`section`、`snippet`；`meta.indexVersion + chunkId` 可追溯到同一索引版本。
+- manifest 为 posts/chunks 提供 SHA-256、计数和语料版本，并在导出、同步与加载时执行结构强校验。
+- Hexo 构建会逐条核对导出的文章 URL 与实际生成路由；本阶段修正了 2 条历史 slug 偏差，验收结果为 69/69 文章链接可点击。
+- 当前验收语料统计为 69 篇 published posts、66 篇 indexed posts 和 886 个 chunks；32 篇 unpublished posts 已跳过；Logistic Regression、MLP、支持向量机 3 篇 PDF-only 文章因无可索引正文而没有 chunk。
+- 阶段 0 的基线报告与指标保留为历史比较基准；阶段 1 使用仅指向已发布文章的数据集 v2 另存 `bm25-phase1.json`，不覆盖历史报告。
+- 阶段 1 验收指标为 Recall@5 `0.9118`、Recall@20 `0.9706`、MRR@20 `0.8258`、nDCG@20 `0.8602`；无答案拒答准确率仍为 `0`，属于后续阶段的已知问题。
+- 跨版本稳定 chunk ID 明确留到阶段 2；阶段 1 的 `chunkId` 只保证在对应 `indexVersion` 内可追溯。
+
 ### 阶段 2：Hybrid RAG
 
 任务：
 
-- 增加稳定 chunk ID、`contentHash` 和索引 manifest。
+- 在现有 manifest 上增加 `contentHash`、embedding 元数据和增量索引信息，并设计跨版本稳定 chunk ID。
 - 为 PDF-only 页面生成至少包含标题、描述和资源链接的元数据 chunk；需要全文问答时增加 PDF 文本抽取。
 - 离线生成 embedding，并支持增量更新。
 - 实现 BM25 与向量双路召回。

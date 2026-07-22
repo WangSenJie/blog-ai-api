@@ -11,7 +11,7 @@
 - Markdown 写作、分类、标签、归档、站内搜索与 RSS。
 - MathJax 数学公式渲染。
 - PDF 文章内嵌预览。
-- 浏览器端 BM25 检索与 Vercel RAG API。
+- Vercel RAG API 服务端优先检索；浏览器 BM25 仅在 API 不可用时降级。
 - 可选 OpenAI 兼容模型回答，回答附带站内文章引用。
 - 静态资源内容哈希，降低 GitHub Pages 缓存导致的样式或脚本更新延迟。
 
@@ -20,7 +20,7 @@
 - Node.js、Hexo 7、NexT。
 - GitHub Pages：静态博客部署。
 - Vercel Serverless Functions：`blog-ai-api/api/ask.js`。
-- JSON 语料、中文二元词切分和 BM25 排序：站内检索。
+- JSON 语料、共享中文二元词切分和 BM25 排序核心：站内检索。
 
 ## 本地运行
 
@@ -82,19 +82,26 @@ source/_posts/*.md
         v
 scripts/export-ai-documents.js
         |
-        +--> data/posts.json, data/chunks.json
-        +--> source/ai-data/*.json       (浏览器本地检索)
+        +--> data/posts.json, data/chunks.json, data/manifest.json
+        +--> source/ai-data/*.json       (浏览器 BM25 降级)
+        +--> source/js/blog-ai-retrieval.js
         |
         v
 blog-ai-api/scripts/sync-corpus.js
         |
         v
-blog-ai-api/data/*.json                 (Vercel API 检索)
+blog-ai-api/data/*.json                 (Vercel API 权威检索)
 ```
 
-浏览器和 API 都使用 BM25 检索；标题、标签、分类和小节标题会获得额外权重。对于“什么是 X”“X 的定义”等问题，定义性段落会优先排序。
+正常请求只向 Vercel API 发送问题、模式和当前页面上下文，由服务端完成检索并返回引用。浏览器不再发送自行召回的候选内容；只有网络错误、请求超时、非 2xx 响应或无效响应时，才按需加载静态 `chunks.json` 并执行本地 BM25。服务端与浏览器降级路径共用 `blog-ai-api/lib/retrieval-core.js`；导出语料时，该核心会同步为浏览器脚本 `source/js/blog-ai-retrieval.js`。
 
-当前 BM25 基线使用 40 个固定问题评估，完整数据集和报告位于 `blog-ai-api/evals/`。后续检索改动应先运行 `npm run eval:ai`，与该基线比较后再上线。
+当前索引由 101 篇源文章生成：69 篇已发布文章进入公开语料，其中 66 篇产生 886 个 chunk；32 篇未发布文章被跳过，另有 3 篇 PDF-only 文章（Logistic Regression、MLP、支持向量机）没有可索引正文，因此暂不产生 chunk。
+
+每条服务端引用遵循 `chunkId`、`title`、`url`、`section`、`snippet` 契约。响应中的 `meta.indexVersion` 对应 manifest 的语料版本，必须与 `chunkId` 一起使用，才能追溯到同一索引版本中的原始 chunk。跨版本稳定 chunk ID 留到阶段 2 实现。
+
+`manifest.json` 分别记录 `posts.json` 和 `chunks.json` 的 SHA-256、记录数、语料版本与完整性统计。语料导出、同步和服务端加载会校验文件哈希及结构，包括 URL、chunk ID 唯一性、孤立 chunk 和计数一致性；Hexo 构建还会确认每篇语料文章都有实际生成页面，防止格式合法但点击 404 的引用进入索引。
+
+当前 BM25 使用 40 个固定问题评估，阶段 0 历史基线与阶段 1 验收报告均位于 `blog-ai-api/evals/reports/`。阶段 1 在 66 篇可检索文章和 886 个有效 chunk 上得到 Recall@5 `0.9118`、Recall@20 `0.9706`、MRR@20 `0.8258`、nDCG@20 `0.8602`；无答案拒答准确率仍为 `0`，将在后续拒答校准阶段解决。后续检索改动应先运行 `npm run eval:ai` 再上线。
 
 ### 更新语料
 
@@ -107,7 +114,7 @@ npm run sync:corpus
 cd ..
 ```
 
-然后提交并推送 `data/`、`source/ai-data/` 和 `blog-ai-api/data/` 的更新。Vercel 项目应以 `blog-ai-api` 为 Root Directory，并通过 Git 集成自动部署。
+然后提交并推送 `data/`、`source/ai-data/` 和 `blog-ai-api/data/` 中的 `posts.json`、`chunks.json`、`manifest.json` 更新。Vercel 项目应以 `blog-ai-api` 为 Root Directory，并通过 Git 集成自动部署。
 
 ### API 环境变量
 
@@ -153,8 +160,8 @@ npx vercel --prod
 ├── source/
 │   ├── _posts/             # Markdown 文章
 │   ├── _data/              # NexT 覆盖配置与页面注入
-│   ├── ai-data/            # 发布到静态站点的 RAG 语料
-│   └── js/blog-ai-agent.js # 浏览器端问答组件
+│   ├── ai-data/            # 发布到静态站点的 RAG 降级语料与 manifest
+│   └── js/                 # 浏览器问答组件与共享检索核心副本
 ├── scripts/                # Hexo、语料和缓存处理脚本
 ├── blog-ai-api/            # Vercel RAG API
 ├── data/                   # 本地导出的完整语料

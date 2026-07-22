@@ -14,6 +14,7 @@ const {
   summarizeNegativeCases,
   summarizePositiveCases
 } = require('./metrics');
+const { normalizePostUrl } = require('../lib/retrieval-core');
 
 const DEFAULT_DATASET_PATH = path.join(__dirname, 'dataset.json');
 const DEFAULT_CORPUS_PATH = path.join(__dirname, '..', 'data', 'chunks.json');
@@ -24,22 +25,6 @@ function readJson(filePath) {
 
 function hashFile(filePath) {
   return createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
-}
-
-function normalizePostUrl(value) {
-  const raw = String(value || '').trim();
-  if (!raw) return '';
-
-  try {
-    const url = new URL(raw);
-    url.hash = '';
-    const pathname = url.pathname === '/'
-      ? '/'
-      : `${url.pathname.replace(/\/+$/, '')}/`;
-    return `${url.protocol}//${url.host.toLowerCase()}${pathname}${url.search}`;
-  } catch (error) {
-    return raw === '/' ? '/' : `${raw.replace(/\/+$/, '')}/`;
-  }
 }
 
 function parseArgs(argv) {

@@ -4,24 +4,19 @@
   const config = Object.assign(
     {
       apiBaseUrl: '',
-      dataBasePath: '/ai-data'
+      dataBasePath: '/ai-data',
+      apiTimeoutMs: 20000
     },
     window.__BLOG_AI_CONFIG__ || {}
   );
+  const retrievalCore = window.BlogAIRetrieval || null;
 
   const state = {
-    posts: null,
     chunks: null,
-    searchIndex: null,
     loadingCorpus: null,
     elements: null,
     mathJaxReady: null
   };
-  const questionNoiseTerms = new Set([
-    '什么', '么是', '什么是', '是什', '介绍', '一下', '解释',
-    '如何', '怎么', '为啥', '为什么', '请问', '告诉'
-  ]);
-
   function escapeHtml(value) {
     return String(value || '')
       .replace(/&/g, '&amp;')
@@ -32,6 +27,7 @@
   }
 
   function normalizeText(value) {
+    if (retrievalCore) return retrievalCore.normalizeText(value);
     return String(value || '')
       .toLowerCase()
       .replace(/\s+/g, ' ')
@@ -39,12 +35,17 @@
   }
 
   function snippet(value, maxLength) {
+    if (retrievalCore) return retrievalCore.snippet(value, maxLength);
     const condensed = String(value || '')
       .replace(/\s+/g, ' ')
       .trim();
 
     if (condensed.length <= maxLength) return condensed;
     return `${condensed.slice(0, maxLength).trim()}...`;
+  }
+
+  function safePostUrl(value) {
+    return retrievalCore ? retrievalCore.normalizePostUrl(value) : '';
   }
 
   function ensureMathJaxLoaded() {
@@ -114,78 +115,27 @@
   function getCurrentContext() {
     const metaDescription = document.querySelector('meta[name="description"]');
     const pageTitle = document.querySelector('.post-title') || document.querySelector('.site-title');
+    const canonical = document.querySelector('link[rel="canonical"]');
 
     return {
       title: pageTitle ? pageTitle.textContent.trim() : document.title,
-      url: window.location.href,
+      url: canonical && canonical.href ? canonical.href : window.location.href,
       description: metaDescription ? metaDescription.getAttribute('content') : ''
     };
   }
 
-  function tokenize(value) {
-    const normalized = normalizeText(value);
-    const terms = normalized.match(/[a-z0-9][a-z0-9_.+#-]*/g) || [];
-    const hanSequences = normalized.match(/[\u4e00-\u9fff]+/g) || [];
-
-    for (const sequence of hanSequences) {
-      if (sequence.length === 1) {
-        terms.push(sequence);
-        continue;
-      }
-
-      for (let index = 0; index < sequence.length - 1; index += 1) {
-        terms.push(sequence.slice(index, index + 2));
-      }
-    }
-
-    return terms;
-  }
-
-  function countTerms(value) {
-    const frequency = new Map();
-    for (const term of tokenize(value)) {
-      frequency.set(term, (frequency.get(term) || 0) + 1);
-    }
-    return frequency;
-  }
-
   function getQuestionTerms(question) {
-    return [...new Set(tokenize(question))]
-      .filter(term => !questionNoiseTerms.has(term));
+    return retrievalCore ? retrievalCore.getQuestionTerms(question) : [];
   }
 
   function isDefinitionQuestion(question) {
-    return /什么是|是什么|定义|指什么|指的是/.test(String(question || ''));
-  }
-
-  function buildSearchIndex(chunks) {
-    const documents = [];
-    const documentFrequency = new Map();
-    let totalLength = 0;
-
-    for (const [position, chunk] of (chunks || []).entries()) {
-      const termFrequency = countTerms(chunk.content);
-      const length = Math.max(
-        Array.from(termFrequency.values()).reduce((total, count) => total + count, 0),
-        1
-      );
-      totalLength += length;
-
-      for (const term of termFrequency.keys()) {
-        documentFrequency.set(term, (documentFrequency.get(term) || 0) + 1);
-      }
-
-      documents.push({ chunk, position, termFrequency, length });
-    }
-
-    return {
-      documents,
-      documentFrequency,
-      averageLength: documents.length ? totalLength / documents.length : 1
-    };
+    return retrievalCore
+      ? retrievalCore.isDefinitionQuestion(question)
+      : /什么是|是什么|定义|指什么|指的是/.test(String(question || ''));
   }
 
   function detectMode(question) {
+    if (retrievalCore) return retrievalCore.detectMode(question);
     const text = String(question || '');
     if (/总结|概括|摘要/.test(text)) return 'page_summary';
     if (/这篇|本文|本页|当前页|这一页/.test(text)) return 'page';
@@ -193,8 +143,8 @@
   }
 
   async function loadCorpus() {
-    if (state.posts && state.chunks) {
-      return { posts: state.posts, chunks: state.chunks };
+    if (state.chunks) {
+      return { chunks: state.chunks };
     }
 
     if (state.loadingCorpus) {
@@ -203,117 +153,27 @@
 
     const basePath = String(config.dataBasePath || '/ai-data').replace(/\/$/, '');
 
-    state.loadingCorpus = Promise.all([
-      fetch(`${basePath}/posts.json`).then(response => {
-        if (!response.ok) throw new Error('Failed to load posts.json');
-        return response.json();
-      }),
-      fetch(`${basePath}/chunks.json`).then(response => {
+    state.loadingCorpus = fetch(`${basePath}/chunks.json`, { cache: 'no-cache' })
+      .then(response => {
         if (!response.ok) throw new Error('Failed to load chunks.json');
         return response.json();
       })
-    ]).then(([posts, chunks]) => {
-      state.posts = posts;
-      state.chunks = chunks;
-      state.searchIndex = buildSearchIndex(chunks);
-      return { posts, chunks };
-    });
+      .then(chunks => {
+        if (!retrievalCore) throw new Error('Local retrieval core is unavailable');
+        state.chunks = retrievalCore.filterIndexableChunks(chunks);
+        return { chunks: state.chunks };
+      })
+      .catch(error => {
+        state.loadingCorpus = null;
+        throw error;
+      });
 
     return state.loadingCorpus;
   }
 
-  function scoreChunk(document, question, mode, context) {
-    const { chunk, termFrequency, length } = document;
-    const index = state.searchIndex;
-    const title = normalizeText(chunk.postTitle);
-    const metadata = normalizeText([
-      (chunk.tags || []).join(' '),
-      (chunk.categories || []).join(' '),
-      chunk.sectionTitle
-    ].join(' '));
-    const content = normalizeText(chunk.content);
-    const normalizedQuestion = normalizeText(question);
-    const terms = getQuestionTerms(question);
-    let score = 0;
-
-    if (normalizedQuestion && content.includes(normalizedQuestion)) {
-      score += 8;
-    }
-    if (normalizedQuestion && title.includes(normalizedQuestion)) {
-      score += 12;
-    }
-
-    if (isDefinitionQuestion(question)) {
-      if (/定义|简介|概述/.test(chunk.sectionTitle || '')) {
-        score += 5;
-      }
-      if (/是一种|指的是|称为/.test(content)) {
-        score += 6;
-      }
-    }
-
-    for (const term of terms) {
-      const frequency = termFrequency.get(term) || 0;
-      if (frequency) {
-        const documentsWithTerm = index.documentFrequency.get(term) || 0;
-        const inverseDocumentFrequency = Math.log(1 + (index.documents.length - documentsWithTerm + 0.5) / (documentsWithTerm + 0.5));
-        const k1 = 1.2;
-        const b = 0.75;
-        const normalization = k1 * (1 - b + b * (length / index.averageLength));
-        score += inverseDocumentFrequency * ((frequency * (k1 + 1)) / (frequency + normalization));
-      }
-      if (title.includes(term)) {
-        score += 4;
-      }
-      if (metadata.includes(term)) {
-        score += 2;
-      }
-    }
-
-    if (context.url && chunk.postUrl === context.url) {
-      score += mode === 'page_summary' ? 20 : 8;
-    }
-
-    return score;
-  }
-
   function rankChunks(question, mode, context) {
-    const searchIndex = state.searchIndex || buildSearchIndex(state.chunks);
-    const ranked = [];
-
-    for (const document of searchIndex.documents) {
-      const { chunk } = document;
-      const score = scoreChunk(document, question, mode, context);
-
-      if (mode === 'page_summary' && context.url) {
-        if (chunk.postUrl === context.url) {
-          ranked.push({ chunk, score, position: document.position });
-        }
-        continue;
-      }
-
-      if (score > 0) {
-        ranked.push({ chunk, score, position: document.position });
-      }
-    }
-
-    if (mode === 'page_summary' && context.url) {
-      ranked.sort((left, right) => left.position - right.position);
-    } else {
-      ranked.sort((left, right) => right.score - left.score);
-    }
-    return ranked;
-  }
-
-  function buildRetrievalSources(ranked, limit) {
-    return (ranked || []).slice(0, limit).map(item => ({
-      id: item.chunk.id,
-      title: item.chunk.postTitle,
-      url: item.chunk.postUrl,
-      section: item.chunk.sectionTitle || '',
-      content: item.chunk.content,
-      score: Number(item.score.toFixed(3))
-    }));
+    if (!retrievalCore) throw new Error('Local retrieval core is unavailable');
+    return retrievalCore.rankChunks(state.chunks, question, mode, context);
   }
 
   function uniqueCitations(ranked, limit) {
@@ -322,12 +182,17 @@
 
     for (const item of ranked) {
       const chunk = item.chunk;
-      const key = `${chunk.postUrl}::${chunk.content.slice(0, 40)}`;
+      if (!retrievalCore || !retrievalCore.isIndexableChunk(chunk)) continue;
+      const postUrl = safePostUrl(chunk.postUrl);
+      if (!postUrl) continue;
+      const key = chunk.id;
       if (seen.has(key)) continue;
       seen.add(key);
       citations.push({
+        chunkId: chunk.id,
         title: chunk.postTitle,
-        url: chunk.postUrl,
+        url: postUrl,
+        section: chunk.sectionTitle || '',
         snippet: snippet(chunk.content, 140)
       });
       if (citations.length >= limit) break;
@@ -339,14 +204,16 @@
   function uniqueRelated(ranked, context, limit) {
     const seen = new Set();
     const related = [];
+    const currentUrl = safePostUrl(context && context.url);
 
     for (const item of ranked) {
       const chunk = item.chunk;
-      if (!chunk.postUrl || seen.has(chunk.postUrl) || chunk.postUrl === context.url) continue;
-      seen.add(chunk.postUrl);
+      const postUrl = safePostUrl(chunk && chunk.postUrl);
+      if (!postUrl || seen.has(postUrl) || postUrl === currentUrl) continue;
+      seen.add(postUrl);
       related.push({
         title: chunk.postTitle,
-        url: chunk.postUrl
+        url: postUrl
       });
       if (related.length >= limit) break;
     }
@@ -438,56 +305,68 @@
     };
   }
 
-  async function remoteAsk(question, mode, context, sources) {
+  async function remoteAsk(question, mode, context) {
     const apiBaseUrl = String(config.apiBaseUrl || '').replace(/\/$/, '');
-    if (!apiBaseUrl) return null;
+    if (!apiBaseUrl) throw new Error('Remote API is not configured');
+    const configuredTimeout = Number(config.apiTimeoutMs);
+    const timeoutMs = Number.isFinite(configuredTimeout) && configuredTimeout > 0
+      ? Math.min(Math.max(Math.round(configuredTimeout), 1000), 60000)
+      : 20000;
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
 
-    const response = await fetch(`${apiBaseUrl}/api/ask`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        question,
-        mode,
-        page: context,
-        retrieval: {
-          sources
-        }
-      })
-    });
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/ask`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          question,
+          mode,
+          page: context
+        }),
+        signal: controller.signal
+      });
+      if (!response.ok) {
+        throw new Error(`Remote API failed: ${response.status}`);
+      }
 
-    if (!response.ok) {
-      throw new Error(`Remote API failed: ${response.status}`);
+      const result = await response.json();
+      if (!result || typeof result.answer !== 'string' || !result.answer.trim()) {
+        throw new Error('Remote API returned an invalid response');
+      }
+
+      return {
+        answer: result.answer,
+        citations: Array.isArray(result.citations) ? result.citations : [],
+        related: Array.isArray(result.related) ? result.related : [],
+        meta: result.meta || null
+      };
+    } finally {
+      window.clearTimeout(timeoutId);
     }
-
-    return response.json();
-  }
-
-  function enrichRemoteResult(result, ranked, context) {
-    const answer = result && typeof result.answer === 'string' ? result.answer : '';
-    const safeRanked = ranked || [];
-    const citations = Array.isArray(result && result.citations) && result.citations.length
-      ? result.citations
-      : uniqueCitations(safeRanked, 3);
-    const related = Array.isArray(result && result.related) && result.related.length
-      ? result.related
-      : uniqueRelated(safeRanked, context, 3);
-
-    return { answer, citations, related };
   }
 
   function renderAssistantMessage(result, isFallback) {
-    const citationsHtml = (result.citations || []).map(citation => (
-      `<a class="blog-ai-agent__citation" href="${citation.url}" target="_blank" rel="noopener noreferrer">
+    const citationsHtml = (result.citations || []).map(citation => {
+      const url = safePostUrl(citation && citation.url);
+      if (!url) return '';
+      const section = citation.section
+        ? `<small>${escapeHtml(citation.section)}</small>`
+        : '';
+      return `<a class="blog-ai-agent__citation" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">
         <strong>${escapeHtml(citation.title)}</strong>
+        ${section}
         <span>${escapeHtml(citation.snippet || '')}</span>
-      </a>`
-    )).join('');
+      </a>`;
+    }).join('');
 
-    const relatedHtml = (result.related || []).map(item => (
-      `<a class="blog-ai-agent__related-link" href="${item.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a>`
-    )).join('');
+    const relatedHtml = (result.related || []).map(item => {
+      const url = safePostUrl(item && item.url);
+      if (!url) return '';
+      return `<a class="blog-ai-agent__related-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a>`;
+    }).join('');
 
     return `
       <div class="blog-ai-agent__message blog-ai-agent__message--assistant">
@@ -533,20 +412,11 @@
     try {
       let result = null;
       let usedFallback = false;
-      let ranked = null;
 
       try {
-        await loadCorpus();
-        ranked = rankChunks(trimmed, mode, context);
+        result = await remoteAsk(trimmed, mode, context);
       } catch (error) {
-        // The remote API can still answer when the static corpus is unavailable.
-      }
-
-      try {
-        result = await remoteAsk(trimmed, mode, context, buildRetrievalSources(ranked, mode === 'page_summary' ? 6 : 5));
-        result = enrichRemoteResult(result, ranked, context);
-      } catch (error) {
-        result = await localAsk(trimmed, mode, context, ranked);
+        result = await localAsk(trimmed, mode, context);
         usedFallback = true;
       }
 

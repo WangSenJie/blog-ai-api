@@ -29,7 +29,7 @@ function findPostFiles(dir) {
         }
     }
 
-    return files;
+    return files.sort();
 }
 
 function readPostFile(filePath) {
@@ -89,6 +89,26 @@ function toArray(value) {
     if (Array.isArray(value)) return value;
     if (!value) return [];
     return [value];
+}
+
+function isPublished(value) {
+    if (value === undefined || value === null || value === '') return true;
+    const normalized = String(value)
+        .trim()
+        .replace(/\s+#.*$/, '')
+        .replace(/^(['"])(.*)\1$/, '$2')
+        .trim();
+    return !/^(false|no|off|0)$/i.test(normalized);
+}
+
+function isDraft(value) {
+    if (value === undefined || value === null || value === '') return false;
+    const normalized = String(value)
+        .trim()
+        .replace(/\s+#.*$/, '')
+        .replace(/^(['"])(.*)\1$/, '$2')
+        .trim();
+    return /^(true|yes|on|1)$/i.test(normalized);
 }
 
 function buildPostUrl(siteUrl, date, slug) {
@@ -163,6 +183,7 @@ function buildPostObject(filePath, assignedSlugs) {
     const postFile = readPostFile(filePath);
     const meta = parseFrontMatter(postFile.frontMatterText);
     const source = filePath.replace(/^.*source[\\/]/, '');
+    const published = isPublished(meta.published) && !isDraft(meta.draft);
     const slug = resolveSlug(
         {
             title: meta.title,
@@ -179,13 +200,15 @@ function buildPostObject(filePath, assignedSlugs) {
         id: meta.title || filePath,
         title: meta.title || '',
         date: meta.date || '',
+        description: meta.description || '',
         tags: toArray(meta.tags),
         categories: toArray(meta.categories),
         filePath: filePath,
         body: postFile.body || '',
         contentText,
         slug: slug || '',
-        url: url
+        url: url,
+        published
     };
 }
 
@@ -281,6 +304,8 @@ function chunkPost(post) {
     const chunkSize = 700;
     const overlap = 100;
     const postUrl = post.url || '';
+    if (post.published === false || !postUrl) return chunks;
+
     const sections = splitMarkdownSections(post.body);
     const sourceSections = sections.length
         ? sections
@@ -311,18 +336,39 @@ function buildCorpus(postsDir) {
     const posts = [];
     const chunks = [];
     const assignedSlugs = new Set();
+    const diagnostics = {
+        sourcePosts: files.length,
+        unpublishedPosts: [],
+        postsWithoutUrl: [],
+        postsWithoutIndexableContent: []
+    };
 
     for (const filePath of files) {
         const post = buildPostObject(filePath, assignedSlugs);
+
+        if (!post.published) {
+            diagnostics.unpublishedPosts.push(post.title || post.id);
+            continue;
+        }
+
+        if (!post.url) {
+            diagnostics.postsWithoutUrl.push(post.title || post.id);
+            continue;
+        }
+
         posts.push(post);
 
         const postChunks = chunkPost(post);
+        if (!postChunks.length) {
+            diagnostics.postsWithoutIndexableContent.push(post.title || post.id);
+        }
         chunks.push(...postChunks);
     }
 
     return {
         posts: posts,
-        chunks: chunks
+        chunks: chunks,
+        diagnostics
     };
 }
 
@@ -330,6 +376,8 @@ module.exports = {
     findPostFiles,
     readPostFile,
     parseFrontMatter,
+    isPublished,
+    isDraft,
     buildPostObject,
     splitMarkdownSections,
     chunkSection,
