@@ -2,7 +2,13 @@
   "name": "blog-ai-api",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
-    "sync:corpus": "node scripts/sync-corpus.js"
+    "sync:corpus": "node scripts/sync-corpus.js",
+    "test": "node --test",
+    "eval:bm25": "node evals/run.js",
+    "eval:bm25:update": "node evals/run.js --output evals/reports/bm25-baseline.json"
   }
 }

@@ -1,5 +1,7 @@
 # 博客 AI Agent 实施方案
 
+> 当前实现已完成本文所述的早期站内检索问答闭环。后续向 Hybrid RAG 和 Agentic RAG 演进时，以 [`agentic-rag-upgrade-plan.zh-CN.md`](./agentic-rag-upgrade-plan.zh-CN.md) 为实施依据。
+
 ## 目标
 
 为当前 Hexo 博客建设一个基于站内内容的 AI 助手。这个助手的核心能力不是通用闲聊，而是：

@@ -5,12 +5,17 @@ function getModelConfig() {
   const apiKey = process.env.LLM_API_KEY || '';
   const model = process.env.LLM_MODEL || '';
   const apiPath = process.env.LLM_API_PATH || '/chat/completions';
+  const configuredTimeout = Number(process.env.LLM_TIMEOUT_MS);
+  const timeoutMs = Number.isFinite(configuredTimeout) && configuredTimeout > 0
+    ? Math.min(Math.max(Math.round(configuredTimeout), 1000), 60000)
+    : 15000;
 
   return {
     apiBaseUrl,
     apiKey,
     model,
-    apiPath
+    apiPath,
+    timeoutMs
   };
 }
 
@@ -60,34 +65,44 @@ function extractAnswer(content) {
 async function generateAnswer(question, mode, page, citations) {
   if (!canUseModel()) return null;
 
-  const { apiBaseUrl, apiKey, model, apiPath } = getModelConfig();
+  const { apiBaseUrl, apiKey, model, apiPath, timeoutMs } = getModelConfig();
   const endpoint = `${apiBaseUrl}${apiPath}`;
   const prompt = buildPrompt(question, mode, page, citations);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  let response;
 
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        {
-          role: 'system',
-          content: '请基于给定引用回答，并返回纯文本。'
-        },
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
-      temperature: 0.3
-    })
-  });
+  try {
+    response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          {
+            role: 'system',
+            content: '请基于给定引用回答，并返回纯文本。'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.3
+      }),
+      signal: controller.signal
+    });
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   if (!response.ok) {
-    const errorText = await response.text();
+    const errorText = String(await response.text())
+      .replace(/\s+/g, ' ')
+      .slice(0, 500);
     throw new Error(`LLM request failed: ${response.status} ${errorText}`);
   }
 

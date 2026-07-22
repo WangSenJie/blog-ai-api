@@ -8,7 +8,9 @@
     "clean": "hexo clean",
     "deploy": "hexo deploy",
     "server": "hexo server",
-    "export:ai": "node scripts/export-ai-documents.js"
+    "export:ai": "node scripts/export-ai-documents.js",
+    "test:ai": "npm --prefix blog-ai-api test",
+    "eval:ai": "npm --prefix blog-ai-api run eval:bm25"
   },
   "hexo": {
     "version": "7.3.0"

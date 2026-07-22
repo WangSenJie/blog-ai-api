@@ -39,6 +39,8 @@ npm run server
 | `npm run build` | 导出 AI 语料并生成静态站点到 `public/`。 |
 | `npm run clean` | 清理 Hexo 生成文件。 |
 | `npm run export:ai` | 从文章导出 `posts.json` 与 `chunks.json`。 |
+| `npm run test:ai` | 运行 RAG API、检索指标和 trace 测试。 |
+| `npm run eval:ai` | 使用固定问题集运行当前 BM25 基线评测。 |
 | `npm run deploy` | 部署 `public/` 到 GitHub Pages。 |
 
 ## 写文章
@@ -70,6 +72,8 @@ tags:
 
 ## RAG 问答
 
+后续 Hybrid RAG、Agent 工具、多轮会话、引用验证与评测建设见 [Agentic RAG 升级实施方案](docs/agentic-rag-upgrade-plan.zh-CN.md)。
+
 ### 架构
 
 ```text
@@ -89,6 +93,8 @@ blog-ai-api/data/*.json                 (Vercel API 检索)
 ```
 
 浏览器和 API 都使用 BM25 检索；标题、标签、分类和小节标题会获得额外权重。对于“什么是 X”“X 的定义”等问题，定义性段落会优先排序。
+
+当前 BM25 基线使用 40 个固定问题评估，完整数据集和报告位于 `blog-ai-api/evals/`。后续检索改动应先运行 `npm run eval:ai`，与该基线比较后再上线。
 
 ### 更新语料
 

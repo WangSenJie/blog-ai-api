@@ -4126,6 +4126,578 @@
     "content": "这篇文章里最重要的不是记住所有标签、属性和语法细节, 而是先建立一个最小认知框架:\nHTML 决定页面结构\nCSS 决定页面样式\nJavaScript 决定页面交互\n\n能把一个需求拆成这三部分时, 就具备和 AI 配合完成大多数简单前端页面的基础能力了."
   },
   {
+    "id": "人机协作与执行控制#0",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "",
+    "content": "这一章节将介绍 LangGraph 的人机协作调试能力: 暂停 graph、人工审批、修改状态、流式观察执行过程, 以及从历史 checkpoint 回放或分叉."
+  },
+  {
+    "id": "人机协作与执行控制#1",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "1. 静态断点",
+    "content": "这一节讲的是如何在 LangGraph 执行到某个节点前暂停, 让人类审批后再继续执行.\n实际场景中 Agent 调用工具可能存在风险, 所以希望先暂停, 让用户确认是否允许执行.\n例如真是项目里的工具可能是:\n发邮件\n转账\n删除文件\n提交订单\n修改数据库\n这种情况下不能让模型直接执行, 最好先暂停:\n``text\n模型准备调用工具\n↓\n暂停\n↓\n人类检查工具名称和参数\n↓\n批准后继续执行\n``"
+  },
+  {
+    "id": "人机协作与执行控制#2",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "定义工具并绑定到模型",
+    "content": "from langchain_openai import ChatOpenAI\n\ndef multiply(a: int, b: int) -> int:\n \"\"\"Multiply a and b.\n\nArgs:\n a: first int\n b: second int\n \"\"\"\n return a * b"
+  },
+  {
+    "id": "人机协作与执行控制#3",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "This will be a tool",
+    "content": "def add(a: int, b: int) -> int:\n \"\"\"Adds a and b.\n\nArgs:\n a: first int\n b: second int\n \"\"\"\n return a + b\n\ndef divide(a: int, b: int) -> float:\n \"\"\"Divide a by b.\n\nArgs:\n a: first int\n b: second int\n \"\"\"\n return a / b\n\ntools = [add, multiply, divide]"
+  },
+  {
+    "id": "人机协作与执行控制#4",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "llm = ChatOpenAI(model=\"gpt-4o\")",
+    "content": "llm = ChatOpenAI(\n model=\"deepseek-v4-flash\",\n api_key=os.environ.get(\"DEEPSEEK_API_KEY\"),\n temperature=0.0,\n base_url=\"https://api.deepseek.com\"\n)\nllm_with_tools = llm.bind_tools(tools)"
+  },
+  {
+    "id": "人机协作与执行控制#5",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "定义 Graph",
+    "content": "from IPython.display import Image, display\n\nfrom langgraph.checkpoint.memory import MemorySaver\nfrom langgraph.graph import MessagesState\nfrom langgraph.graph import START, StateGraph\nfrom langgraph.prebuilt import tools_condition, ToolNode\n\nfrom langchain_core.messages import AIMessage, HumanMessage, SystemMessage"
+  },
+  {
+    "id": "人机协作与执行控制#6",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "System message",
+    "content": "sys_msg = SystemMessage(content=\"You are a helpful assistant tasked with performing arithmetic on a set of inputs.\")"
+  },
+  {
+    "id": "人机协作与执行控制#7",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Node",
+    "content": "def assistant(state: MessagesState):\n return {\"messages\": [llm_with_tools.invoke([sys_msg] + state[\"messages\"])]}"
+  },
+  {
+    "id": "人机协作与执行控制#8",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Graph",
+    "content": "builder = StateGraph(MessagesState)"
+  },
+  {
+    "id": "人机协作与执行控制#9",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Define nodes: these do the work",
+    "content": "builder.add_node(\"assistant\", assistant)\nbuilder.add_node(\"tools\", ToolNode(tools))"
+  },
+  {
+    "id": "人机协作与执行控制#10",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Define edges: these determine the control flow",
+    "content": "builder.add_edge(START, \"assistant\")\nbuilder.add_conditional_edges(\n \"assistant\",\n # If the latest message (result) from assistant is a tool call -> tools_condition routes to tools\n # If the latest message (result) from assistant is a not a tool call -> tools_condition routes to END\n tools_condition,\n)\nbuilder.add_edge(\"tools\", \"assistant\")\n``\n\n流程如下:\n`text\nSTART\n ↓\nassistant\n ↓\n如果 assistant 生成 tool call\n ↓\ntools\n ↓\nassistant\n ↓\n最终回答\n``"
+  },
+  {
+    "id": "人机协作与执行控制#11",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "1.2 breakpoint 设置",
+    "content": "关键代码:\n``python\nmemory = MemorySaver()\ngraph = builder.compile(interrupt_before=[\"tools\"], checkpointer=memory)\n`\n其中 interrupt_before=[\"tools\"] 表示在执行 tools 节点之前暂停 (不是模型生成 tool call 之前).\n\n于是流程变为了:\n`text\n用户输入：Multiply 2 and 3\n ↓\nassistant 运行\n ↓\nassistant 生成 tool call: multiply(2, 3)\n ↓\n准备进入 tools 节点\n ↓\n因为 interrupt_before=[\"tools\"]，暂停\n`\n\n断点暂停后, LangGraph 要保存当前状态, 否则它不知道下次应该从哪里继续. 因此 breakpoint 通常配合 checkpointer 使用.\n\n执行:\n``python"
+  },
+  {
+    "id": "人机协作与执行控制#12",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Input",
+    "content": "initial_input = {\"messages\": HumanMessage(content=\"Multiply 2 and 3\")}"
+  },
+  {
+    "id": "人机协作与执行控制#13",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Thread",
+    "content": "thread = {\"configurable\": {\"thread_id\": \"1\"}}"
+  },
+  {
+    "id": "人机协作与执行控制#14",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Run the graph until the first interruption",
+    "content": "for event in graph.stream(initial_input, thread, stream_mode=\"values\"):\n event['messages'][-1].pretty_print()\n``\n`text\n================================ Human Message =================================\n\nMultiply 2 and 3\n================================== Ai Message ==================================\nTool Calls:\n multiply (call_00_LrVr9rLzm5VmgLI7SQup7576)\n Call ID: call_00_LrVr9rLzm5VmgLI7SQup7576\n Args:\n a: 2\n b: 3\n`\n可以发现 graph 不会完整跑完, 它会在执行到 tools 节点之前暂停.\n**Q: 如何确认 Graph 暂停了 ?**\n`python\nstate = graph.get_state(thread)\nstate.next\n`\n输出 (\"tools\",), 这表示 graph 当前停在 tools 节点之前.\n**Q: 如何继续执行 Graph ?**\n`python\nfor event in graph.stream(None, thread, stream_mode=\"values\"):\nevent['messages'][-1]."
+  },
+  {
+    "id": "人机协作与执行控制#15",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Run the graph until the first interruption",
+    "content": "ph ?**\n`python\nfor event in graph.stream(None, thread, stream_mode=\"values\"):\nevent['messages'][-1].\n\npretty_print()\n`\n`text\n================================== Ai Message ==================================\nTool Calls:\nmultiply (call_00_DANIdZu14KVIknUkLxNV5847)\nCall ID: call_00_DANIdZu14KVIknUkLxNV5847\nArgs:\na: 2\nb: 3\n================================= Tool Message =================================\nName: multiply\n6\n================================== Ai Message ==================================\nThe result of multiplying 2 and 3 is **6**.\n`\n注意输入是 None, 即不需要新的用户输入, 模型会从上一次 checkpoint` 停下来的地方继续执行."
+  },
+  {
+    "id": "人机协作与执行控制#16",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "1.3 人工审批",
+    "content": "使用最简单的 input() 来实现审批"
+  },
+  {
+    "id": "人机协作与执行控制#17",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Input",
+    "content": "initial_input = {\"messages\": HumanMessage(content=\"Multiply 2 and 3\")}"
+  },
+  {
+    "id": "人机协作与执行控制#18",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Thread",
+    "content": "thread = {\"configurable\": {\"thread_id\": \"2\"}}"
+  },
+  {
+    "id": "人机协作与执行控制#19",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Run the graph until the first interruption",
+    "content": "for event in graph.stream(initial_input, thread, stream_mode=\"values\"):\n event['messages'][-1].pretty_print()"
+  },
+  {
+    "id": "人机协作与执行控制#20",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Get user feedback",
+    "content": "user_approval = input(\"Do you want to call the tool? (yes/no): \")"
+  },
+  {
+    "id": "人机协作与执行控制#21",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Check approval",
+    "content": "if user_approval.lower() == \"yes\":\n\n# If approved, continue the graph execution\n for event in graph.stream(None, thread, stream_mode=\"values\"):\n event['messages'][-1].pretty_print()\n\nelse:\n print(\"Operation cancelled by user.\")\n``\n逻辑为\n`text\n运行到断点\n ↓\n问用户是否批准\n ↓\n如果 yes：继续执行 graph.stream(None, thread)\n ↓\n如果 no：停止，不执行工具\n``"
+  },
+  {
+    "id": "人机协作与执行控制#22",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "1.4 LangGraph API 调用",
+    "content": "``text\nlanggraph dev\n ↓\n读取 langgraph.json\n ↓\n发现 \"agent\": \"./agent.py:graph\"\n ↓\n加载 agent.py\n ↓\n找到 graph 对象\n ↓\n启动 API 服务 http://127.0.0.1:2024\n ↓\nnotebook 通过 get_client 连接 API\n ↓\nclient.runs.stream(... assistant_id=\"agent\" ...)\n ↓\nAPI 服务运行 agent.py 里的 graph\n``"
+  },
+  {
+    "id": "人机协作与执行控制#23",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "启动服务",
+    "content": "``bash\nlanggraph dev\n`\n启动之后会得到:\n`text\nAPI: http://127.0.0.1:2024\nStudio UI: https://smith.langchain.com/studio/?baseUrl=http://127.0.0.1:2024\nAPI Docs: http://127.0.0.1:2024/docs\n``"
+  },
+  {
+    "id": "人机协作与执行控制#24",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "使用 SDK 调用",
+    "content": "``python\nfrom langgraph_sdk import get_client\n\nclient = get_client(url=\"http://127.0.0.1:2024\")\n``"
+  },
+  {
+    "id": "人机协作与执行控制#25",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "创建 thread 并运行 graph",
+    "content": "``python\ninitial_input = {\"messages\": HumanMessage(content=\"Multiply 2 and 3\")}\nthread = await client.threads.create()\nasync for chunk in client.runs.stream(\n thread[\"thread_id\"],\n assistant_id=\"agent\",\n input=initial_input,\n stream_mode=\"values\",\n interrupt_before=[\"tools\"],\n):\n print(f\"Receiving new event of type: {chunk.event}...\")\n messages = chunk.data.get('messages', [])\n if messages:\n print(messages[-1])\n print(\"-\" * 50)\n``"
+  },
+  {
+    "id": "人机协作与执行控制#26",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "2. 动态断点",
+    "content": "上一节我们实现了静态断点, 它需要开发者提前指定在哪个节点暂停. \n这一节讲的是让 graph 在运行过程中根据条件自己暂停."
+  },
+  {
+    "id": "人机协作与执行控制#27",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "2.1 定义一个简单的 Graph",
+    "content": "这一小节我们定义一个简单的 graph, 它会根据输入字符串的长度来判断是否暂停.\n\nfrom IPython.display import Image, display\n\nfrom typing_extensions import TypedDict\nfrom langgraph.checkpoint.memory import MemorySaver\nfrom langgraph.errors import NodeInterrupt\nfrom langgraph.graph import START, END, StateGraph\n\nclass State(TypedDict):\n input: str\n\ndef step_1(state: State) -> State:\n print(\"---Step 1---\")\n return state\n\ndef step_2(state: State) -> State:\n # Let's optionally raise a NodeInterrupt if the length of the input is longer than 5 characters\n if len(state['input']) > 5:\n raise NodeInterrupt(f\"Received input that is longer than 5 characters: {state['input']}\")\n\nprint(\"---Step 2---\")\n return state"
+  },
+  {
+    "id": "人机协作与执行控制#28",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "2.1 定义一个简单的 Graph",
+    "content": "ived input that is longer than 5 characters: {state['input']}\")\n\nprint(\"---Step 2---\")\n return state\n\ndef step_3(state: State) -> State:\n print(\"---Step 3---\")\n return state\n\nbuilder = StateGraph(State)\nbuilder.add_node(\"step_1\", step_1)\nbuilder.add_node(\"step_2\", step_2)\nbuilder.add_node(\"step_3\", step_3)\nbuilder.add_edge(START, \"step_1\")\nbuilder.add_edge(\"step_1\", \"step_2\")\nbuilder.add_edge(\"step_2\", \"step_3\")\nbuilder.add_edge(\"step_3\", END)"
+  },
+  {
+    "id": "人机协作与执行控制#29",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Set up memory",
+    "content": "memory = MemorySaver()"
+  },
+  {
+    "id": "人机协作与执行控制#30",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Compile the graph with memory",
+    "content": "graph = builder.compile(checkpointer=memory)"
+  },
+  {
+    "id": "人机协作与执行控制#31",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "View",
+    "content": "display(Image(graph.get_graph().draw_mermaid_png()))\n``\n结构图为:\n`text\nSTART\n ↓\nstep_1\n ↓\nstep_2\n ↓\nstep_3\n ↓\nEND\n`\n执行流程为:\n`text\nSTART\n ↓\nstep_1\n ↓\nstep_2 检查 input 长度\n ↓\n如果 input 长度 > 5：暂停\n如果 input 长度 <= 5：继续 step_3\n``"
+  },
+  {
+    "id": "人机协作与执行控制#32",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "3. 编辑 Graph State",
+    "content": "之前我们介绍了断点, 并让人类审批是否继续. 而本节我们的重点是暂停 graph 后, 让人类修改 state, 再继续.\n**Q: 为什么要修改 state ?**\nAgent 在运行过程中, 模型可能会理解错用户的问题、生成错误的 tool call、填错参数、漏掉用户补充信息.\n这个时候希望可以直接修改当前 thread 的 state."
+  },
+  {
+    "id": "人机协作与执行控制#33",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "3.1 先搭建一个简单的带工具的 Agent",
+    "content": "from IPython.display import Image, display\n\nfrom langgraph.checkpoint.memory import MemorySaver\nfrom langgraph.graph import MessagesState\nfrom langgraph.graph import START, StateGraph\nfrom langgraph.prebuilt import tools_condition, ToolNode\n\nfrom langchain_core.messages import HumanMessage, SystemMessage"
+  },
+  {
+    "id": "人机协作与执行控制#34",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "System message",
+    "content": "sys_msg = SystemMessage(content=\"You are a helpful assistant tasked with performing arithmetic on a set of inputs.\")"
+  },
+  {
+    "id": "人机协作与执行控制#35",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Node",
+    "content": "def assistant(state: MessagesState):\n return {\"messages\": [llm_with_tools.invoke([sys_msg] + state[\"messages\"])]}"
+  },
+  {
+    "id": "人机协作与执行控制#36",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Graph",
+    "content": "builder = StateGraph(MessagesState)"
+  },
+  {
+    "id": "人机协作与执行控制#37",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Define nodes: these do the work",
+    "content": "builder.add_node(\"assistant\", assistant)\nbuilder.add_node(\"tools\", ToolNode(tools))"
+  },
+  {
+    "id": "人机协作与执行控制#38",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Define edges: these determine the control flow",
+    "content": "builder.add_edge(START, \"assistant\")\nbuilder.add_conditional_edges(\n \"assistant\",\n # If the latest message (result) from assistant is a tool call -> tools_condition routes to tools\n # If the latest message (result) from assistant is a not a tool call -> tools_condition routes to END\n tools_condition,\n)\nbuilder.add_edge(\"tools\", \"assistant\")\n\nmemory = MemorySaver()\ngraph = builder.compile(interrupt_before=[\"assistant\"], checkpointer=memory) # 每次执行 assistant 节点之前暂停"
+  },
+  {
+    "id": "人机协作与执行控制#39",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Show",
+    "content": "display(Image(graph.get_graph(xray=True).draw_mermaid_png()))\n``\n这个 Graph 结构为\n`text\nSTART\n ↓\nassistant\n ↓\n如果有 tool call → tools\n ↓\nassistant\n ↓\nEND\n``"
+  },
+  {
+    "id": "人机协作与执行控制#40",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Input",
+    "content": "initial_input = {\"messages\": \"Multiply 2 and 3\"}"
+  },
+  {
+    "id": "人机协作与执行控制#41",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Thread",
+    "content": "thread = {\"configurable\": {\"thread_id\": \"1\"}}"
+  },
+  {
+    "id": "人机协作与执行控制#42",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "Run the graph until the first interruption",
+    "content": "for event in graph.stream(initial_input, thread, stream_mode=\"values\"):\n event['messages'][-1].pretty_print()\n``\n`text\n================================ Human Message =================================\n\nMultiply 2 and 3\n`\n\n查看当前 state:\n`python\nstate = graph.get_state(thread)\nstate\n`\n从中可以看到当前 thread 状态, 包括\n当前 message\n下一步要执行的节点\ncheckpoint` 信息"
+  },
+  {
+    "id": "人机协作与执行控制#43",
+    "postUrl": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+    "postId": "人机协作与执行控制",
+    "postTitle": "人机协作与执行控制",
+    "tags": [],
+    "categories": [
+      "从零开始——AI应用开发",
+      "LangChain"
+    ],
+    "sectionTitle": "使用 update_state 修改 state",
+    "content": "``python\ngraph.update_state(\n thread,\n {\"messages\": [HumanMessage(content=\"No, actually multiply 3 and 3!\")]},\n)\n`\n即向当前 state 的 messages 中添加一条新的用户消息 (MessagesState 的 messages 字段默认使用 add_messages reducer).\n\n继续执行:\n`python\nnew_state = graph.get_state(thread).values\nfor m in new_state['messages']:\n m.pretty_print()\n`\n`text\n================================ Human Message =================================\n\nMultiply 2 and 3\n================================ Human Message =================================\n\nNo, actually multiply 3 and 3!\n`\n\n继续执行:\n`python\nfor event in graph.stream(None, thread, stream_mode=\"values\"):\n event['messages'][-1].pretty_print()\n``"
+  },
+  {
     "id": "LangChain 基础#0",
     "postUrl": "https://wangsenjie.github.io/2026/07/03/langchain-basic/",
     "postId": "LangChain 基础",

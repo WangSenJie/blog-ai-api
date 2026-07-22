@@ -384,6 +384,123 @@ step_2 检查 input 长度
 ```
 
 # 3. 编辑 Graph State
+之前我们介绍了断点, 并让人类审批是否继续. 而本节我们的重点是暂停 graph 后, 让人类修改 state, 再继续.
+
+> **Q: 为什么要修改 state ?**
+> - Agent 在运行过程中, 模型可能会理解错用户的问题、生成错误的 tool call、填错参数、漏掉用户补充信息.
+> - 这个时候希望可以直接修改当前 thread 的 state.
+
+## 3.1 先搭建一个简单的带工具的 Agent
+```python
+from IPython.display import Image, display
+
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph import MessagesState
+from langgraph.graph import START, StateGraph
+from langgraph.prebuilt import tools_condition, ToolNode
+
+from langchain_core.messages import HumanMessage, SystemMessage
+
+# System message
+sys_msg = SystemMessage(content="You are a helpful assistant tasked with performing arithmetic on a set of inputs.")
+
+# Node
+def assistant(state: MessagesState):
+   return {"messages": [llm_with_tools.invoke([sys_msg] + state["messages"])]}
+
+# Graph
+builder = StateGraph(MessagesState)
+
+# Define nodes: these do the work
+builder.add_node("assistant", assistant)
+builder.add_node("tools", ToolNode(tools))
+
+# Define edges: these determine the control flow
+builder.add_edge(START, "assistant")
+builder.add_conditional_edges(
+    "assistant",
+    # If the latest message (result) from assistant is a tool call -> tools_condition routes to tools
+    # If the latest message (result) from assistant is a not a tool call -> tools_condition routes to END
+    tools_condition,
+)
+builder.add_edge("tools", "assistant")
+
+memory = MemorySaver()
+graph = builder.compile(interrupt_before=["assistant"], checkpointer=memory) # 每次执行 assistant 节点之前暂停
+
+# Show
+display(Image(graph.get_graph(xray=True).draw_mermaid_png()))
+```
+这个 Graph 结构为
+```text
+START
+  ↓
+assistant
+  ↓
+如果有 tool call → tools
+  ↓
+assistant
+  ↓
+END
+```
+
+## 3.2 运行
+```python
+# Input
+initial_input = {"messages": "Multiply 2 and 3"}
+
+# Thread
+thread = {"configurable": {"thread_id": "1"}}
+
+# Run the graph until the first interruption
+for event in graph.stream(initial_input, thread, stream_mode="values"):
+    event['messages'][-1].pretty_print()
+```
+```text
+================================ Human Message =================================
+
+Multiply 2 and 3
+```
+
+查看当前 state:
+```python
+state = graph.get_state(thread)
+state
+```
+从中可以看到当前 `thread` 状态, 包括
+- 当前 `message`
+- 下一步要执行的节点
+- `checkpoint` 信息
+
+### 使用 `update_state` 修改 `state`
+```python
+graph.update_state(
+    thread,
+    {"messages": [HumanMessage(content="No, actually multiply 3 and 3!")]},
+)
+```
+即向当前 state 的 `messages` 中添加一条新的用户消息 (`MessagesState` 的 `messages` 字段默认使用 `add_messages` reducer).
+
+继续执行:
+```python
+new_state = graph.get_state(thread).values
+for m in new_state['messages']:
+    m.pretty_print()
+```
+```text
+================================ Human Message =================================
+
+Multiply 2 and 3
+================================ Human Message =================================
+
+No, actually multiply 3 and 3!
+```
+
+继续执行:
+```python
+for event in graph.stream(None, thread, stream_mode="values"):
+    event['messages'][-1].pretty_print()
+```
 
 
 # 4. 流式输出与中断

@@ -14,6 +14,13 @@ blog-ai-api/
   lib/
     corpus.js
     retrieve.js
+    generate.js
+    trace.js
+  evals/
+    dataset.json
+    run.js
+    reports/
+  test/
   scripts/
     sync-corpus.js
   package.json
@@ -66,6 +73,8 @@ apiBaseUrl: 'https://your-blog-ai-api.vercel.app'
   - Example: `gpt-4.1-mini`
 - `LLM_API_PATH`
   - Optional, defaults to `/chat/completions`
+- `LLM_TIMEOUT_MS`
+  - Optional model request timeout, defaults to `15000` and is clamped to 1–60 seconds.
 
 If `LLM_API_*` variables are not set, `/api/ask` will still work in retrieval-only mode.
 
@@ -102,9 +111,46 @@ If `LLM_API_*` variables are not set, `/api/ask` will still work in retrieval-on
       "title": "LightFM",
       "url": "https://wangsenjie.github.io/..."
     }
-  ]
+  ],
+  "meta": {
+    "traceId": "trace_...",
+    "mode": "site",
+    "llmFallback": false,
+    "retrieval": {
+      "strategy": "bm25",
+      "candidates": 12
+    },
+    "model": {
+      "attempted": true,
+      "answered": true
+    },
+    "timings": {
+      "corpusMs": 0.1,
+      "retrievalMs": 12.4,
+      "buildResponseMs": 0.2,
+      "generationMs": 650.8,
+      "totalMs": 663.9
+    }
+  }
 }
 ```
+
+The same trace ID is returned in the `X-Trace-Id` response header. Internal errors return a trace ID without exposing implementation details to the browser.
+
+## Tests and retrieval evaluation
+
+```bash
+npm test
+npm run eval:bm25
+```
+
+To intentionally refresh the committed baseline report after reviewing a retrieval change:
+
+```bash
+npm run eval:bm25:update
+```
+
+The evaluation runner reports article-level Recall@5/20, HitRate@5, MRR@20, nDCG@20, no-answer accuracy, per-category results, and failed cases. Results are deduplicated by normalized published post URL.
 
 ## Behavior
 

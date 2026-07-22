@@ -1,0 +1,252 @@
+{
+  "version": 1,
+  "description": "博客 BM25 文章级检索基线。正例按相关文章标题判断，无答案样例要求检索器不返回候选。",
+  "cases": [
+    {
+      "id": "exact-double-tower",
+      "category": "exact",
+      "question": "双塔模型",
+      "relevantPostTitles": ["双塔模型"]
+    },
+    {
+      "id": "exact-transformer",
+      "category": "exact",
+      "question": "Transformer 架构",
+      "relevantPostTitles": ["Transformer 架构 —— Attention Is All You Need"]
+    },
+    {
+      "id": "exact-picard",
+      "category": "exact",
+      "question": "Picard 存在唯一性定理",
+      "relevantPostTitles": ["Picard 存在唯一性定理"]
+    },
+    {
+      "id": "exact-dynamic-programming",
+      "category": "exact",
+      "question": "LeetCode Hot100 动态规划",
+      "relevantPostTitles": ["LeetCode Hot100 —— 动态规划"]
+    },
+    {
+      "id": "exact-langgraph",
+      "category": "exact",
+      "question": "LangGraph 基础",
+      "relevantPostTitles": ["LangGraph 基础"]
+    },
+    {
+      "id": "exact-resnet",
+      "category": "exact",
+      "question": "ResNet",
+      "relevantPostTitles": ["ResNet"]
+    },
+    {
+      "id": "exact-itemcf",
+      "category": "exact",
+      "question": "ItemCF",
+      "relevantPostTitles": ["ItemCF"]
+    },
+    {
+      "id": "exact-integrating-factor",
+      "category": "exact",
+      "question": "积分因子法",
+      "relevantPostTitles": ["积分因子法"]
+    },
+    {
+      "id": "exact-word-parser",
+      "category": "exact",
+      "question": "报告生成Agent Word解析",
+      "relevantPostTitles": ["报告生成Agent——Word解析"]
+    },
+    {
+      "id": "exact-svd",
+      "category": "exact",
+      "question": "SVD 排序算法",
+      "relevantPostTitles": ["SVD 排序算法"]
+    },
+    {
+      "id": "definition-embedding",
+      "category": "definition",
+      "question": "什么是 Embedding？",
+      "relevantPostTitles": ["离散特征的处理——Embedding"]
+    },
+    {
+      "id": "definition-gbdt",
+      "category": "definition",
+      "question": "GBDT 是什么？",
+      "relevantPostTitles": ["GBDT"]
+    },
+    {
+      "id": "definition-svm",
+      "category": "definition",
+      "question": "什么是支持向量机？",
+      "relevantPostTitles": ["支持向量机"]
+    },
+    {
+      "id": "definition-bpr",
+      "category": "definition",
+      "question": "BPR 是什么排序方法？",
+      "relevantPostTitles": ["BPR"]
+    },
+    {
+      "id": "definition-cnn",
+      "category": "definition",
+      "question": "什么是卷积神经网络？",
+      "relevantPostTitles": ["卷积神经网络 CNN"]
+    },
+    {
+      "id": "definition-short-term-memory",
+      "category": "definition",
+      "question": "LangGraph 的短期记忆是什么？",
+      "relevantPostTitles": ["状态与短期记忆"]
+    },
+    {
+      "id": "definition-usercf",
+      "category": "definition",
+      "question": "什么是 UserCF？",
+      "relevantPostTitles": ["UserCF"]
+    },
+    {
+      "id": "definition-ensemble",
+      "category": "definition",
+      "question": "集成学习是什么？",
+      "relevantPostTitles": ["集成学习"]
+    },
+    {
+      "id": "semantic-double-tower",
+      "category": "semantic",
+      "question": "哪种推荐模型会分别编码用户和物品，再计算两个表征的相似度？",
+      "relevantPostTitles": ["双塔模型"]
+    },
+    {
+      "id": "semantic-residual-network",
+      "category": "semantic",
+      "question": "如何利用残差连接训练更深的卷积网络？",
+      "relevantPostTitles": ["ResNet"]
+    },
+    {
+      "id": "semantic-gated-rnn",
+      "category": "semantic",
+      "question": "用门控机制缓解循环网络长期依赖问题的模型是什么？",
+      "relevantPostTitles": ["门控循环神经网络"]
+    },
+    {
+      "id": "semantic-item-similarity",
+      "category": "semantic",
+      "question": "如何根据物品之间的相似度做协同过滤推荐？",
+      "relevantPostTitles": ["ItemCF"]
+    },
+    {
+      "id": "semantic-user-similarity",
+      "category": "semantic",
+      "question": "如何寻找兴趣相近的用户并推荐他们喜欢的内容？",
+      "relevantPostTitles": ["UserCF"]
+    },
+    {
+      "id": "semantic-vue",
+      "category": "semantic",
+      "question": "采用组件化和响应式数据的前端框架怎么使用？",
+      "relevantPostTitles": ["VUE-BASIC"]
+    },
+    {
+      "id": "semantic-self-attention",
+      "category": "semantic",
+      "question": "不依赖循环结构、主要使用自注意力处理序列的架构是什么？",
+      "relevantPostTitles": ["Transformer 架构 —— Attention Is All You Need"]
+    },
+    {
+      "id": "semantic-exposure-filter",
+      "category": "semantic",
+      "question": "推荐系统召回后，怎样过滤用户已经看过的内容？",
+      "relevantPostTitles": ["曝光过滤"]
+    },
+    {
+      "id": "semantic-deep-retrieval",
+      "category": "semantic",
+      "question": "把物品组织成路径并用 Beam Search 完成召回的方法是什么？",
+      "relevantPostTitles": ["Deep Retrieval"]
+    },
+    {
+      "id": "semantic-agent-docx",
+      "category": "semantic",
+      "question": "报告生成智能体应该怎样读取和解析 docx 文档？",
+      "relevantPostTitles": ["报告生成Agent——Word解析"]
+    },
+    {
+      "id": "current-page-double-tower",
+      "category": "current_page",
+      "question": "总结这篇文章",
+      "pageTitle": "双塔模型",
+      "relevantPostTitles": ["双塔模型"]
+    },
+    {
+      "id": "current-page-transformer",
+      "category": "current_page",
+      "question": "概括当前页",
+      "pageTitle": "Transformer 架构 —— Attention Is All You Need",
+      "relevantPostTitles": ["Transformer 架构 —— Attention Is All You Need"]
+    },
+    {
+      "id": "current-page-langgraph",
+      "category": "current_page",
+      "question": "总结本文",
+      "pageTitle": "LangGraph 基础",
+      "relevantPostTitles": ["LangGraph 基础"]
+    },
+    {
+      "id": "current-page-cnn",
+      "category": "current_page",
+      "question": "给这一页做摘要",
+      "pageTitle": "卷积神经网络 CNN",
+      "relevantPostTitles": ["卷积神经网络 CNN"]
+    },
+    {
+      "id": "current-page-picard",
+      "category": "current_page",
+      "question": "概括这篇文章",
+      "pageTitle": "Picard 存在唯一性定理",
+      "relevantPostTitles": ["Picard 存在唯一性定理"]
+    },
+    {
+      "id": "current-page-pandas",
+      "category": "current_page",
+      "question": "总结当前页的内容",
+      "pageTitle": "Pandas数据分析题解汇总",
+      "relevantPostTitles": ["Pandas数据分析题解汇总"]
+    },
+    {
+      "id": "no-answer-kubernetes",
+      "category": "no_answer",
+      "question": "博客里讲过 Kubernetes Pod 调度机制吗？",
+      "shouldReject": true
+    },
+    {
+      "id": "no-answer-rust",
+      "category": "no_answer",
+      "question": "Rust 的 borrow checker 和所有权生命周期怎么工作？",
+      "shouldReject": true
+    },
+    {
+      "id": "no-answer-quantum",
+      "category": "no_answer",
+      "question": "量子纠缠与贝尔不等式的推导是什么？",
+      "shouldReject": true
+    },
+    {
+      "id": "no-answer-kafka",
+      "category": "no_answer",
+      "question": "Kafka 消费者组重平衡的过程是什么？",
+      "shouldReject": true
+    },
+    {
+      "id": "no-answer-ddpm",
+      "category": "no_answer",
+      "question": "DDPM 扩散模型怎样完成加噪和去噪？",
+      "shouldReject": true
+    },
+    {
+      "id": "no-answer-blockchain",
+      "category": "no_answer",
+      "question": "区块链共识协议 PBFT 的消息流程是什么？",
+      "shouldReject": true
+    }
+  ]
+}
