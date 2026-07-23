@@ -1,0 +1,728 @@
+{
+  "version": 4,
+  "description": "阶段 3 Agent 工作流离线评测集。使用真实博客语料、确定性路由/改写/证据评分和 BM25 工具，不调用外部模型。",
+  "strategy": "bm25_agent_workflow",
+  "stage2Implemented": false,
+  "cases": [
+    {
+      "id": "direct-greeting",
+      "category": "route",
+      "messages": [
+        {
+          "role": "user",
+          "content": "你好"
+        }
+      ],
+      "expected": {
+        "route": "direct",
+        "toolNames": [],
+        "retrievalAttempts": 0,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "legacy-double-tower",
+      "category": "legacy",
+      "question": "双塔模型如何线上召回？",
+      "expected": {
+        "route": "site_qa",
+        "requiredQueryTerms": [
+          "双塔模型",
+          "线上召回"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "relevantPostTitles": [
+          "双塔模型"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "site-langgraph",
+      "category": "site_qa",
+      "messages": [
+        {
+          "role": "user",
+          "content": "LangGraph 的 Router 和 Agent 有什么作用？"
+        }
+      ],
+      "expected": {
+        "route": "site_qa",
+        "requiredQueryTerms": [
+          "LangGraph",
+          "Router",
+          "Agent"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "relevantPostTitles": [
+          "LangGraph 基础"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "current-page-summary",
+      "category": "current_page",
+      "pageTitle": "双塔模型",
+      "messages": [
+        {
+          "role": "user",
+          "content": "总结这篇文章"
+        }
+      ],
+      "expected": {
+        "route": "page_summary",
+        "requiredQueryTerms": [
+          "双塔模型"
+        ],
+        "toolNames": [
+          "get_article"
+        ],
+        "relevantPostTitles": [
+          "双塔模型"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "explicit-title-summary",
+      "category": "current_page",
+      "messages": [
+        {
+          "role": "user",
+          "content": "总结双塔模型"
+        }
+      ],
+      "expected": {
+        "route": "page_summary",
+        "requiredQueryTerms": [
+          "双塔模型"
+        ],
+        "toolNames": [
+          "get_article"
+        ],
+        "relevantPostTitles": [
+          "双塔模型"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "current-page-followup",
+      "category": "current_page",
+      "pageTitle": "双塔模型",
+      "messages": [
+        {
+          "role": "user",
+          "content": "这篇文章如何线上召回？"
+        }
+      ],
+      "expected": {
+        "route": "page_qa",
+        "requiredQueryTerms": [
+          "双塔模型",
+          "线上召回"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "relevantPostTitles": [
+          "双塔模型"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "related-double-tower",
+      "category": "related",
+      "pageTitle": "双塔模型",
+      "messages": [
+        {
+          "role": "user",
+          "content": "推荐几篇相关文章"
+        }
+      ],
+      "expected": {
+        "route": "related_articles",
+        "toolNames": [
+          "get_related_articles"
+        ],
+        "relevantPostTitles": [
+          "BPR",
+          "Deep Retrieval"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "explicit-title-related-double-tower",
+      "category": "related",
+      "messages": [
+        {
+          "role": "user",
+          "content": "推荐双塔模型的相关文章"
+        }
+      ],
+      "expected": {
+        "route": "related_articles",
+        "requiredQueryTerms": [
+          "双塔模型"
+        ],
+        "toolNames": [
+          "get_related_articles"
+        ],
+        "relevantPostTitles": [
+          "BPR",
+          "Deep Retrieval"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "recommendation-domain-concept",
+      "category": "route",
+      "messages": [
+        {
+          "role": "user",
+          "content": "协同过滤推荐方法是什么"
+        }
+      ],
+      "expected": {
+        "route": "site_qa",
+        "requiredQueryTerms": [
+          "协同过滤",
+          "推荐方法"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "explicit-related-reading-request",
+      "category": "related",
+      "messages": [
+        {
+          "role": "user",
+          "content": "请推荐几篇协同过滤文章"
+        }
+      ],
+      "expected": {
+        "route": "related_articles",
+        "requiredQueryTerms": [
+          "协同过滤"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "single-topic-difference-wording",
+      "category": "route",
+      "messages": [
+        {
+          "role": "user",
+          "content": "协同过滤中的用户差异如何建模"
+        }
+      ],
+      "expected": {
+        "route": "site_qa",
+        "requiredQueryTerms": [
+          "协同过滤",
+          "用户差异"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "compare-itemcf-usercf",
+      "category": "comparison",
+      "messages": [
+        {
+          "role": "user",
+          "content": "比较 ItemCF 和 UserCF 的区别"
+        }
+      ],
+      "expected": {
+        "route": "article_compare",
+        "requiredQueryTerms": [
+          "ItemCF",
+          "UserCF"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "relevantPostTitles": [
+          "ItemCF",
+          "UserCF"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "compare-itemcf-usercf-punctuation",
+      "category": "comparison",
+      "messages": [
+        {
+          "role": "user",
+          "content": "ItemCF、UserCF 有何异同"
+        }
+      ],
+      "expected": {
+        "route": "article_compare",
+        "requiredQueryTerms": [
+          "ItemCF",
+          "UserCF"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "relevantPostTitles": [
+          "ItemCF",
+          "UserCF"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "compare-itemcf-usercf-former",
+      "category": "comparison",
+      "messages": [
+        {
+          "role": "user",
+          "content": "比较 ItemCF 和 UserCF，前者更适合什么场景？"
+        }
+      ],
+      "expected": {
+        "route": "article_compare",
+        "requiredQueryTerms": [
+          "ItemCF",
+          "UserCF"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "relevantPostTitles": [
+          "ItemCF",
+          "UserCF"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "same-message-ordinal-usercf",
+      "category": "multi_turn",
+      "messages": [
+        {
+          "role": "user",
+          "content": "ItemCF 和 UserCF，第二篇有什么特点？"
+        }
+      ],
+      "expected": {
+        "route": "page_qa",
+        "requiredQueryTerms": [
+          "UserCF"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "relevantPostTitles": [
+          "UserCF"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "same-message-compare-itemcf-usercf",
+      "category": "comparison",
+      "messages": [
+        {
+          "role": "user",
+          "content": "ItemCF 是什么？它和 UserCF 有什么区别？"
+        }
+      ],
+      "expected": {
+        "route": "article_compare",
+        "requiredQueryTerms": [
+          "ItemCF",
+          "UserCF"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "relevantPostTitles": [
+          "ItemCF",
+          "UserCF"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "same-message-pronoun-gru",
+      "category": "multi_turn",
+      "messages": [
+        {
+          "role": "user",
+          "content": "门控循环神经网络是什么？它如何工作？"
+        }
+      ],
+      "expected": {
+        "route": "site_qa",
+        "requiredQueryTerms": [
+          "门控循环神经网络"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "relevantPostTitles": [
+          "门控循环神经网络"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "same-message-pronoun-function-series",
+      "category": "multi_turn",
+      "messages": [
+        {
+          "role": "user",
+          "content": "函数项级数是什么？它有什么性质？"
+        }
+      ],
+      "expected": {
+        "route": "site_qa",
+        "requiredQueryTerms": [
+          "函数项级数"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "relevantPostTitles": [
+          "函数项级数"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "multi-turn-pronoun-double-tower",
+      "category": "multi_turn",
+      "messages": [
+        {
+          "role": "user",
+          "content": "什么是双塔模型？"
+        },
+        {
+          "role": "assistant",
+          "content": "双塔模型由用户塔和物品塔组成。",
+          "citationTitles": [
+            "双塔模型"
+          ],
+          "standaloneQuery": "双塔模型"
+        },
+        {
+          "role": "user",
+          "content": "它如何线上召回？"
+        }
+      ],
+      "expected": {
+        "route": "site_qa",
+        "requiredQueryTerms": [
+          "双塔模型",
+          "线上召回"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "relevantPostTitles": [
+          "双塔模型"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "multi-turn-pronoun-resnet",
+      "category": "multi_turn",
+      "messages": [
+        {
+          "role": "user",
+          "content": "什么是 ResNet？"
+        },
+        {
+          "role": "assistant",
+          "content": "ResNet 使用残差连接。",
+          "citationTitles": [
+            "ResNet"
+          ],
+          "standaloneQuery": "ResNet"
+        },
+        {
+          "role": "user",
+          "content": "它的残差连接解决什么问题？"
+        }
+      ],
+      "expected": {
+        "route": "site_qa",
+        "requiredQueryTerms": [
+          "ResNet",
+          "残差连接"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "relevantPostTitles": [
+          "ResNet"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "multi-turn-second-article",
+      "category": "multi_turn",
+      "messages": [
+        {
+          "role": "user",
+          "content": "推荐两篇 LangGraph 文章"
+        },
+        {
+          "role": "assistant",
+          "content": "第一篇《LangGraph 基础》，第二篇《状态与短期记忆》。",
+          "citationTitles": [
+            "LangGraph 基础",
+            "状态与短期记忆"
+          ]
+        },
+        {
+          "role": "user",
+          "content": "第二篇里的 Reducer 是什么？"
+        }
+      ],
+      "expected": {
+        "route": "page_qa",
+        "requiredQueryTerms": [
+          "状态与短期记忆",
+          "Reducer"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "relevantPostTitles": [
+          "状态与短期记忆"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "multi-turn-continue-usercf",
+      "category": "multi_turn",
+      "messages": [
+        {
+          "role": "user",
+          "content": "UserCF 怎么实现？"
+        },
+        {
+          "role": "assistant",
+          "content": "UserCF 根据相似用户进行推荐。",
+          "citationTitles": [
+            "UserCF"
+          ],
+          "standaloneQuery": "UserCF 的实现"
+        },
+        {
+          "role": "user",
+          "content": "继续解释相似度计算"
+        }
+      ],
+      "expected": {
+        "route": "site_qa",
+        "requiredQueryTerms": [
+          "UserCF",
+          "相似度计算"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "relevantPostTitles": [
+          "UserCF"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "multi-turn-empty-reference-barrier",
+      "category": "clarification",
+      "messages": [
+        {
+          "role": "user",
+          "content": "什么是双塔模型？"
+        },
+        {
+          "role": "assistant",
+          "content": "双塔模型由用户塔和物品塔组成。",
+          "citationTitles": [
+            "双塔模型"
+          ],
+          "standaloneQuery": "双塔模型"
+        },
+        {
+          "role": "user",
+          "content": "Kafka 重平衡是什么？"
+        },
+        {
+          "role": "assistant",
+          "content": "站内暂时没有足够信息。",
+          "standaloneQuery": "Kafka 重平衡"
+        },
+        {
+          "role": "user",
+          "content": "它有哪些步骤？"
+        }
+      ],
+      "expected": {
+        "route": "site_qa",
+        "toolNames": [],
+        "retrievalAttempts": 0,
+        "shouldReject": true,
+        "stopReason": "clarification_required"
+      }
+    },
+    {
+      "id": "compound-subquery-cap",
+      "category": "decomposition",
+      "messages": [
+        {
+          "role": "user",
+          "content": "双塔模型的结构是什么；如何训练；怎样线上召回；如何更新"
+        }
+      ],
+      "expected": {
+        "route": "site_qa",
+        "requiredQueryTerms": [
+          "双塔模型",
+          "线上召回"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "relevantPostTitles": [
+          "双塔模型"
+        ],
+        "retrievalAttempts": 1,
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "no-answer-kubernetes",
+      "category": "insufficient",
+      "messages": [
+        {
+          "role": "user",
+          "content": "博客里讲过 Kubernetes Pod 调度机制吗？"
+        }
+      ],
+      "expected": {
+        "route": "site_qa",
+        "requiredQueryTerms": [
+          "Kubernetes",
+          "Pod"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "retrievalAttempts": 2,
+        "shouldReject": true
+      }
+    },
+    {
+      "id": "no-answer-kafka",
+      "category": "insufficient",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Kafka 消费者组重平衡的过程是什么？"
+        }
+      ],
+      "expected": {
+        "route": "site_qa",
+        "requiredQueryTerms": [
+          "Kafka",
+          "消费者组"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "retrievalAttempts": 2,
+        "shouldReject": true
+      }
+    },
+    {
+      "id": "partial-unsupported-dssm",
+      "category": "insufficient",
+      "messages": [
+        {
+          "role": "user",
+          "content": "比较双塔模型和 DSSM 的区别"
+        }
+      ],
+      "expected": {
+        "route": "article_compare",
+        "requiredQueryTerms": [
+          "双塔模型",
+          "DSSM"
+        ],
+        "toolNames": [
+          "search_blog"
+        ],
+        "retrievalAttempts": 2,
+        "shouldReject": true
+      }
+    },
+    {
+      "id": "unresolved-current-article",
+      "category": "clarification",
+      "messages": [
+        {
+          "role": "user",
+          "content": "总结这篇文章"
+        }
+      ],
+      "expected": {
+        "route": "site_qa",
+        "toolNames": [],
+        "retrievalAttempts": 0,
+        "shouldReject": true,
+        "stopReason": "clarification_required"
+      }
+    }
+  ]
+}

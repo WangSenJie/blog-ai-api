@@ -1,6 +1,6 @@
 # 博客 AI Agent 实施方案
 
-> 当前实现已完成本文所述的早期站内检索问答闭环。后续向 Hybrid RAG 和 Agentic RAG 演进时，以 [`agentic-rag-upgrade-plan.zh-CN.md`](./agentic-rag-upgrade-plan.zh-CN.md) 为实施依据。
+> 本文保留第一版站内助手的设计背景。截至 2026-07-23，阶段 0、阶段 1 和阶段 3 已完成：当前实现已经具备短期多轮会话、受控 Agent 工具和有限检索循环；阶段 2 的 Hybrid RAG 尚未实施。最新状态与后续边界以 [`agentic-rag-upgrade-plan.zh-CN.md`](./agentic-rag-upgrade-plan.zh-CN.md) 为准。
 
 ## 目标
 

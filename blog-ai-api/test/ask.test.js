@@ -4,6 +4,8 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 
 const handler = require('../api/ask');
+const { loadCorpus } = require('../lib/corpus');
+const { REQUEST_LIMITS } = require('../memory/session');
 
 const MODEL_ENV_KEYS = [
   'LLM_API_BASE_URL',
@@ -68,7 +70,10 @@ test.after(() => {
 test('successful ask response includes trace metadata and retrieval timings', async () => {
   const req = {
     method: 'POST',
-    headers: { origin: 'http://localhost:4000' },
+    headers: {
+      origin: 'http://localhost:4000',
+      'content-type': 'application/json'
+    },
     body: { question: '双塔模型' }
   };
   const res = makeResponse();
@@ -95,6 +100,47 @@ test('successful ask response includes trace metadata and retrieval timings', as
   }
 });
 
+test('messages API resolves a trusted multi-turn reference and exposes Agent metadata', async () => {
+  const corpus = loadCorpus();
+  const towerChunk = corpus.chunks.find(chunk => chunk.postTitle === '双塔模型');
+  const req = {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: {
+      sessionId: 'session_api_multiturn',
+      messages: [
+        { role: 'user', content: '什么是双塔模型？' },
+        {
+          role: 'assistant',
+          content: '双塔模型由两个塔组成。',
+          citations: [{
+            chunkId: towerChunk.id,
+            title: '客户端伪造标题',
+            url: towerChunk.postUrl
+          }],
+          indexVersion: corpus.manifest.corpusVersion,
+          standaloneQuery: '双塔模型'
+        },
+        { role: 'user', content: '它如何用于线上召回？' }
+      ]
+    }
+  };
+  const res = makeResponse();
+
+  await handler(req, res);
+  const payload = parseBody(res);
+
+  assert.equal(res.statusCode, 200);
+  assert.equal(payload.meta.sessionId, 'session_api_multiturn');
+  assert.equal(payload.meta.route, 'site_qa');
+  assert.match(payload.meta.standaloneQuery, /双塔模型/);
+  assert.ok(payload.meta.retrievalAttempts <= 2);
+  assert.equal(payload.meta.evidenceGrading, 'structural_heuristic');
+  assert.ok(payload.meta.toolCalls.some(call => call.name === 'search_blog'));
+  assert.ok(payload.citations.some(citation => citation.title === '双塔模型'));
+  assert.equal(Object.prototype.hasOwnProperty.call(payload, 'messages'), false);
+});
+
 test('successful model generation is traced without changing citations', async () => {
   const originalFetch = global.fetch;
   process.env.LLM_API_BASE_URL = 'https://model.invalid/v1';
@@ -117,7 +163,7 @@ test('successful model generation is traced without changing citations', async (
     const res = makeResponse();
     await handler({
       method: 'POST',
-      headers: {},
+      headers: { 'content-type': 'application/json' },
       body: { question: '双塔模型' }
     }, res);
     const payload = parseBody(res);
@@ -151,7 +197,7 @@ test('model failures keep the retrieval answer and set fallback metadata', async
     const res = makeResponse();
     await handler({
       method: 'POST',
-      headers: {},
+      headers: { 'content-type': 'application/json' },
       body: { question: '双塔模型' }
     }, res);
     const payload = parseBody(res);
@@ -174,7 +220,7 @@ test('model failures keep the retrieval answer and set fallback metadata', async
 test('invalid JSON returns a traceable 400 without exposing parser details', async () => {
   const req = {
     method: 'POST',
-    headers: {},
+    headers: { 'content-type': 'application/json' },
     body: '{not-json'
   };
   const res = makeResponse();
@@ -188,9 +234,30 @@ test('invalid JSON returns a traceable 400 without exposing parser details', asy
   assert.equal(Object.prototype.hasOwnProperty.call(payload, 'message'), false);
 });
 
+test('declared request bodies above the wire-size limit return 413 before parsing', async () => {
+  const res = makeResponse();
+  await handler({
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'content-length': String(REQUEST_LIMITS.maxBodyBytes + 1)
+    },
+    body: { question: '双塔模型' }
+  }, res);
+  const payload = parseBody(res);
+
+  assert.equal(res.statusCode, 413);
+  assert.equal(payload.error, 'Request body is too large');
+  assert.match(payload.meta.traceId, /^trace_/);
+});
+
 test('missing questions and unsupported methods return trace metadata', async () => {
   const missingQuestionResponse = makeResponse();
-  await handler({ method: 'POST', headers: {}, body: {} }, missingQuestionResponse);
+  await handler({
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: {}
+  }, missingQuestionResponse);
   const missingQuestionPayload = parseBody(missingQuestionResponse);
 
   assert.equal(missingQuestionResponse.statusCode, 400);
@@ -204,4 +271,41 @@ test('missing questions and unsupported methods return trace metadata', async ()
   assert.equal(methodResponse.statusCode, 405);
   assert.equal(methodPayload.error, 'Method not allowed');
   assert.match(methodPayload.meta.traceId, /^trace_/);
+});
+
+test('disallowed browser origins and simple text requests are rejected', async () => {
+  const disallowedOriginResponse = makeResponse();
+  await handler({
+    method: 'POST',
+    headers: {
+      origin: 'https://attacker.example',
+      'content-type': 'application/json'
+    },
+    body: { question: '双塔模型' }
+  }, disallowedOriginResponse);
+  const disallowedOriginPayload = parseBody(disallowedOriginResponse);
+
+  assert.equal(disallowedOriginResponse.statusCode, 403);
+  assert.equal(disallowedOriginPayload.error, 'Origin is not allowed');
+  assert.equal(
+    disallowedOriginResponse.getHeader('access-control-allow-origin'),
+    undefined
+  );
+
+  const textRequestResponse = makeResponse();
+  await handler({
+    method: 'POST',
+    headers: {
+      origin: 'http://localhost:4000',
+      'content-type': 'text/plain'
+    },
+    body: JSON.stringify({ question: '双塔模型' })
+  }, textRequestResponse);
+  const textRequestPayload = parseBody(textRequestResponse);
+
+  assert.equal(textRequestResponse.statusCode, 415);
+  assert.equal(
+    textRequestPayload.error,
+    'Content-Type must be application/json'
+  );
 });

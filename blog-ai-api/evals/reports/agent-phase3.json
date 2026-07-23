@@ -1,0 +1,1205 @@
+{
+  "generatedAt": "2026-07-23T07:36:41.039Z",
+  "phase": 3,
+  "strategy": "bm25_agent_workflow",
+  "stage2Implemented": false,
+  "notes": [
+    "Phase 2 hybrid retrieval is not implemented; all Agent tools use the verified BM25 corpus.",
+    "The evaluation is fully offline and disables external model generation.",
+    "Latency is reported for warm local orchestration and is not a production network benchmark."
+  ],
+  "dataset": {
+    "version": 4,
+    "cases": 28,
+    "path": "evals/agent-dataset.json"
+  },
+  "corpus": {
+    "posts": 69,
+    "chunks": 886,
+    "indexVersion": "3e34f03e1b65b5253fc409369cc2110ae781d684bfb4af97401fe7c23323d50c"
+  },
+  "limits": {
+    "maxRetrievalAttempts": 2,
+    "maxSubqueries": 3,
+    "maxToolCalls": 6,
+    "maxContextChunks": 8,
+    "maxContextChars": 12000,
+    "maxContextTokens": 6000,
+    "maxModelCalls": 1,
+    "maxOutputTokens": 700,
+    "maxStandaloneQueryChars": 1000,
+    "maxSubqueryChars": 500,
+    "overallTimeoutMs": 17000,
+    "retrievalRoundTimeoutMs": 1200,
+    "generationTimeoutMs": 10000
+  },
+  "summary": {
+    "cases": 28,
+    "passedCases": 28,
+    "routeAccuracy": 1,
+    "rewriteAccuracy": 1,
+    "toolSelectionAccuracy": 1,
+    "articleCoverage": 1,
+    "referenceResolutionAccuracy": 1,
+    "comparisonCoverage": 1,
+    "safeStopAccuracy": 1,
+    "limitCompliance": 1,
+    "legacyCompatibility": 1,
+    "averageRetrievalAttempts": 1,
+    "maxRetrievalAttempts": 2,
+    "warmLatencyMs": {
+      "p50": 51.042,
+      "p95": 146.108,
+      "max": 265.041
+    }
+  },
+  "acceptance": {
+    "passed": true,
+    "metrics": {
+      "routeAccuracy": {
+        "target": 0.9,
+        "actual": 1,
+        "passed": true
+      },
+      "rewriteAccuracy": {
+        "target": 0.9,
+        "actual": 1,
+        "passed": true
+      },
+      "toolSelectionAccuracy": {
+        "target": 0.9,
+        "actual": 1,
+        "passed": true
+      },
+      "articleCoverage": {
+        "target": 0.9,
+        "actual": 1,
+        "passed": true
+      },
+      "referenceResolutionAccuracy": {
+        "target": 0.9,
+        "actual": 1,
+        "passed": true
+      },
+      "comparisonCoverage": {
+        "target": 0.9,
+        "actual": 1,
+        "passed": true
+      },
+      "safeStopAccuracy": {
+        "target": 1,
+        "actual": 1,
+        "passed": true
+      },
+      "limitCompliance": {
+        "target": 1,
+        "actual": 1,
+        "passed": true
+      },
+      "legacyCompatibility": {
+        "target": 1,
+        "actual": 1,
+        "passed": true
+      }
+    }
+  },
+  "failedCases": [],
+  "cases": [
+    {
+      "id": "direct-greeting",
+      "category": "route",
+      "question": "你好",
+      "expectedRoute": "direct",
+      "route": "direct",
+      "standaloneQuery": "你好",
+      "subqueries": [],
+      "expectedTools": [],
+      "toolNames": [],
+      "retrievalAttempts": 0,
+      "evidenceStatus": "not_required",
+      "evidenceReason": "direct_response",
+      "stopReason": "direct_response",
+      "relevantPostTitles": [],
+      "coveredPostTitles": [],
+      "articleCoverage": null,
+      "rejected": false,
+      "durationMs": 11.185,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "legacy-double-tower",
+      "category": "legacy",
+      "question": "双塔模型如何线上召回？",
+      "expectedRoute": "site_qa",
+      "route": "site_qa",
+      "standaloneQuery": "双塔模型如何线上召回？",
+      "subqueries": [
+        "双塔模型如何线上召回？"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "query_terms_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "双塔模型"
+      ],
+      "coveredPostTitles": [
+        "双塔模型"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 71.085,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "site-langgraph",
+      "category": "site_qa",
+      "question": "LangGraph 的 Router 和 Agent 有什么作用？",
+      "expectedRoute": "site_qa",
+      "route": "site_qa",
+      "standaloneQuery": "LangGraph 的 Router 和 Agent 有什么作用？",
+      "subqueries": [
+        "LangGraph 的 Router 和 Agent 有什么作用？"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "query_terms_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "LangGraph 基础"
+      ],
+      "coveredPostTitles": [
+        "LangGraph 基础"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 67.818,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "current-page-summary",
+      "category": "current_page",
+      "question": "总结这篇文章",
+      "expectedRoute": "page_summary",
+      "route": "page_summary",
+      "standaloneQuery": "总结《双塔模型》",
+      "subqueries": [
+        "总结《双塔模型》"
+      ],
+      "expectedTools": [
+        "get_article"
+      ],
+      "toolNames": [
+        "get_article"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "current_article_loaded",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "双塔模型"
+      ],
+      "coveredPostTitles": [
+        "双塔模型"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 9.524,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "explicit-title-summary",
+      "category": "current_page",
+      "question": "总结双塔模型",
+      "expectedRoute": "page_summary",
+      "route": "page_summary",
+      "standaloneQuery": "总结双塔模型",
+      "subqueries": [
+        "总结双塔模型"
+      ],
+      "expectedTools": [
+        "get_article"
+      ],
+      "toolNames": [
+        "get_article"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "current_article_loaded",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "双塔模型"
+      ],
+      "coveredPostTitles": [
+        "双塔模型"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 8.618,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "current-page-followup",
+      "category": "current_page",
+      "question": "这篇文章如何线上召回？",
+      "expectedRoute": "page_qa",
+      "route": "page_qa",
+      "standaloneQuery": "《双塔模型》如何线上召回？",
+      "subqueries": [
+        "《双塔模型》如何线上召回？"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "current_page_terms_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "双塔模型"
+      ],
+      "coveredPostTitles": [
+        "双塔模型"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 10.731,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "related-double-tower",
+      "category": "related",
+      "question": "推荐几篇相关文章",
+      "expectedRoute": "related_articles",
+      "route": "related_articles",
+      "standaloneQuery": "推荐几篇相关文章",
+      "subqueries": [
+        "推荐几篇相关文章"
+      ],
+      "expectedTools": [
+        "get_related_articles"
+      ],
+      "toolNames": [
+        "get_related_articles"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "related_articles_found",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "BPR",
+        "Deep Retrieval"
+      ],
+      "coveredPostTitles": [
+        "BPR",
+        "Deep Retrieval"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 19.755,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "explicit-title-related-double-tower",
+      "category": "related",
+      "question": "推荐双塔模型的相关文章",
+      "expectedRoute": "related_articles",
+      "route": "related_articles",
+      "standaloneQuery": "推荐双塔模型的相关文章",
+      "subqueries": [
+        "推荐双塔模型的相关文章"
+      ],
+      "expectedTools": [
+        "get_related_articles"
+      ],
+      "toolNames": [
+        "get_related_articles"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "related_articles_found",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "BPR",
+        "Deep Retrieval"
+      ],
+      "coveredPostTitles": [
+        "BPR",
+        "Deep Retrieval"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 17.118,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "recommendation-domain-concept",
+      "category": "route",
+      "question": "协同过滤推荐方法是什么",
+      "expectedRoute": "site_qa",
+      "route": "site_qa",
+      "standaloneQuery": "协同过滤推荐方法是什么",
+      "subqueries": [
+        "协同过滤推荐方法是什么"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "query_terms_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [],
+      "coveredPostTitles": [],
+      "articleCoverage": null,
+      "rejected": false,
+      "durationMs": 48.899,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "explicit-related-reading-request",
+      "category": "related",
+      "question": "请推荐几篇协同过滤文章",
+      "expectedRoute": "related_articles",
+      "route": "related_articles",
+      "standaloneQuery": "请推荐几篇协同过滤文章",
+      "subqueries": [
+        "请推荐几篇协同过滤文章"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "related_articles_found",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [],
+      "coveredPostTitles": [],
+      "articleCoverage": null,
+      "rejected": false,
+      "durationMs": 50.434,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "single-topic-difference-wording",
+      "category": "route",
+      "question": "协同过滤中的用户差异如何建模",
+      "expectedRoute": "site_qa",
+      "route": "site_qa",
+      "standaloneQuery": "协同过滤中的用户差异如何建模",
+      "subqueries": [
+        "协同过滤中的用户差异如何建模"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "query_terms_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [],
+      "coveredPostTitles": [],
+      "articleCoverage": null,
+      "rejected": false,
+      "durationMs": 56.935,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "compare-itemcf-usercf",
+      "category": "comparison",
+      "question": "比较 ItemCF 和 UserCF 的区别",
+      "expectedRoute": "article_compare",
+      "route": "article_compare",
+      "standaloneQuery": "比较 ItemCF 和 UserCF 的区别",
+      "subqueries": [
+        "ItemCF",
+        "UserCF",
+        "比较 ItemCF 和 UserCF 的区别"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "comparison_targets_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "ItemCF",
+        "UserCF"
+      ],
+      "coveredPostTitles": [
+        "ItemCF",
+        "UserCF"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 146.108,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "compare-itemcf-usercf-punctuation",
+      "category": "comparison",
+      "question": "ItemCF、UserCF 有何异同",
+      "expectedRoute": "article_compare",
+      "route": "article_compare",
+      "standaloneQuery": "ItemCF、UserCF 有何异同",
+      "subqueries": [
+        "ItemCF",
+        "UserCF",
+        "ItemCF、UserCF 有何异同"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "comparison_targets_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "ItemCF",
+        "UserCF"
+      ],
+      "coveredPostTitles": [
+        "ItemCF",
+        "UserCF"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 139.893,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "compare-itemcf-usercf-former",
+      "category": "comparison",
+      "question": "比较 ItemCF 和 UserCF，前者更适合什么场景？",
+      "expectedRoute": "article_compare",
+      "route": "article_compare",
+      "standaloneQuery": "比较 ItemCF 和 UserCF，《ItemCF》更适合什么场景？",
+      "subqueries": [
+        "ItemCF",
+        "UserCF",
+        "比较 ItemCF 和 UserCF，《ItemCF》更适合什么场景？"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "comparison_targets_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "ItemCF",
+        "UserCF"
+      ],
+      "coveredPostTitles": [
+        "ItemCF",
+        "UserCF"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 140.912,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "same-message-ordinal-usercf",
+      "category": "multi_turn",
+      "question": "ItemCF 和 UserCF，第二篇有什么特点？",
+      "expectedRoute": "page_qa",
+      "route": "page_qa",
+      "standaloneQuery": "《UserCF》有什么特点？",
+      "subqueries": [
+        "《UserCF》有什么特点？"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "current_page_terms_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "UserCF"
+      ],
+      "coveredPostTitles": [
+        "UserCF"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 8.409,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "same-message-compare-itemcf-usercf",
+      "category": "comparison",
+      "question": "ItemCF 是什么？它和 UserCF 有什么区别？",
+      "expectedRoute": "article_compare",
+      "route": "article_compare",
+      "standaloneQuery": "ItemCF 是什么？《ItemCF》和 UserCF 有什么区别？",
+      "subqueries": [
+        "ItemCF",
+        "UserCF",
+        "ItemCF 是什么？《ItemCF》和 UserCF 有什么区别？"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "comparison_targets_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "ItemCF",
+        "UserCF"
+      ],
+      "coveredPostTitles": [
+        "ItemCF",
+        "UserCF"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 143.563,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "same-message-pronoun-gru",
+      "category": "multi_turn",
+      "question": "门控循环神经网络是什么？它如何工作？",
+      "expectedRoute": "site_qa",
+      "route": "site_qa",
+      "standaloneQuery": "门控循环神经网络是什么？《门控循环神经网络》如何工作？",
+      "subqueries": [
+        "门控循环神经网络是什么",
+        "《门控循环神经网络》如何工作？"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "all_subqueries_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "门控循环神经网络"
+      ],
+      "coveredPostTitles": [
+        "门控循环神经网络"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 98.356,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "same-message-pronoun-function-series",
+      "category": "multi_turn",
+      "question": "函数项级数是什么？它有什么性质？",
+      "expectedRoute": "site_qa",
+      "route": "site_qa",
+      "standaloneQuery": "函数项级数是什么？《函数项级数》有什么性质？",
+      "subqueries": [
+        "函数项级数是什么",
+        "《函数项级数》有什么性质？"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "all_subqueries_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "函数项级数"
+      ],
+      "coveredPostTitles": [
+        "函数项级数"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 97.185,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "multi-turn-pronoun-double-tower",
+      "category": "multi_turn",
+      "question": "它如何线上召回？",
+      "expectedRoute": "site_qa",
+      "route": "site_qa",
+      "standaloneQuery": "《双塔模型》如何线上召回？",
+      "subqueries": [
+        "《双塔模型》如何线上召回？"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "query_terms_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "双塔模型"
+      ],
+      "coveredPostTitles": [
+        "双塔模型"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 44.118,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "multi-turn-pronoun-resnet",
+      "category": "multi_turn",
+      "question": "它的残差连接解决什么问题？",
+      "expectedRoute": "site_qa",
+      "route": "site_qa",
+      "standaloneQuery": "《ResNet》的残差连接解决什么问题？",
+      "subqueries": [
+        "《ResNet》的残差连接解决什么问题？"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "query_terms_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "ResNet"
+      ],
+      "coveredPostTitles": [
+        "ResNet"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 51.042,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "multi-turn-second-article",
+      "category": "multi_turn",
+      "question": "第二篇里的 Reducer 是什么？",
+      "expectedRoute": "page_qa",
+      "route": "page_qa",
+      "standaloneQuery": "《状态与短期记忆》里的 Reducer 是什么？",
+      "subqueries": [
+        "《状态与短期记忆》里的 Reducer 是什么？"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "current_page_terms_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "状态与短期记忆"
+      ],
+      "coveredPostTitles": [
+        "状态与短期记忆"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 9.283,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "multi-turn-continue-usercf",
+      "category": "multi_turn",
+      "question": "继续解释相似度计算",
+      "expectedRoute": "site_qa",
+      "route": "site_qa",
+      "standaloneQuery": "UserCF 的实现 继续解释相似度计算",
+      "subqueries": [
+        "UserCF 的实现 继续解释相似度计算"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "query_terms_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "UserCF"
+      ],
+      "coveredPostTitles": [
+        "UserCF"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 53.865,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "multi-turn-empty-reference-barrier",
+      "category": "clarification",
+      "question": "它有哪些步骤？",
+      "expectedRoute": "site_qa",
+      "route": "site_qa",
+      "standaloneQuery": "它有哪些步骤？",
+      "subqueries": [
+        "它有哪些步骤？"
+      ],
+      "expectedTools": [],
+      "toolNames": [],
+      "retrievalAttempts": 0,
+      "evidenceStatus": "insufficient",
+      "evidenceReason": "unresolved_reference",
+      "stopReason": "clarification_required",
+      "relevantPostTitles": [],
+      "coveredPostTitles": [],
+      "articleCoverage": null,
+      "rejected": true,
+      "durationMs": 4.582,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "compound-subquery-cap",
+      "category": "decomposition",
+      "question": "双塔模型的结构是什么；如何训练；怎样线上召回；如何更新",
+      "expectedRoute": "site_qa",
+      "route": "site_qa",
+      "standaloneQuery": "双塔模型的结构是什么；如何训练；怎样线上召回；如何更新",
+      "subqueries": [
+        "双塔模型的结构是什么",
+        "如何训练",
+        "怎样线上召回；如何更新"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "all_subqueries_covered",
+      "stopReason": "evidence_sufficient",
+      "relevantPostTitles": [
+        "双塔模型"
+      ],
+      "coveredPostTitles": [
+        "双塔模型"
+      ],
+      "articleCoverage": 1,
+      "rejected": false,
+      "durationMs": 139.099,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "no-answer-kubernetes",
+      "category": "insufficient",
+      "question": "博客里讲过 Kubernetes Pod 调度机制吗？",
+      "expectedRoute": "site_qa",
+      "route": "site_qa",
+      "standaloneQuery": "博客里讲过 Kubernetes Pod 调度机制吗？",
+      "subqueries": [
+        "博客里讲过 Kubernetes Pod 调度机制吗？"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 2,
+      "evidenceStatus": "insufficient",
+      "evidenceReason": "query_terms_not_covered",
+      "stopReason": "attempt_limit",
+      "relevantPostTitles": [],
+      "coveredPostTitles": [],
+      "articleCoverage": null,
+      "rejected": true,
+      "durationMs": 97.529,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "no-answer-kafka",
+      "category": "insufficient",
+      "question": "Kafka 消费者组重平衡的过程是什么？",
+      "expectedRoute": "site_qa",
+      "route": "site_qa",
+      "standaloneQuery": "Kafka 消费者组重平衡的过程是什么？",
+      "subqueries": [
+        "Kafka 消费者组重平衡的过程是什么？"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 2,
+      "evidenceStatus": "insufficient",
+      "evidenceReason": "query_terms_not_covered",
+      "stopReason": "attempt_limit",
+      "relevantPostTitles": [],
+      "coveredPostTitles": [],
+      "articleCoverage": null,
+      "rejected": true,
+      "durationMs": 101.638,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "partial-unsupported-dssm",
+      "category": "insufficient",
+      "question": "比较双塔模型和 DSSM 的区别",
+      "expectedRoute": "article_compare",
+      "route": "article_compare",
+      "standaloneQuery": "比较双塔模型和 DSSM 的区别",
+      "subqueries": [
+        "双塔模型",
+        "DSSM",
+        "比较双塔模型和 DSSM 的区别"
+      ],
+      "expectedTools": [
+        "search_blog"
+      ],
+      "toolNames": [
+        "search_blog"
+      ],
+      "retrievalAttempts": 2,
+      "evidenceStatus": "insufficient",
+      "evidenceReason": "comparison_target_missing",
+      "stopReason": "attempt_limit",
+      "relevantPostTitles": [],
+      "coveredPostTitles": [],
+      "articleCoverage": null,
+      "rejected": true,
+      "durationMs": 265.041,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    },
+    {
+      "id": "unresolved-current-article",
+      "category": "clarification",
+      "question": "总结这篇文章",
+      "expectedRoute": "site_qa",
+      "route": "site_qa",
+      "standaloneQuery": "总结这篇文章",
+      "subqueries": [
+        "总结这篇文章"
+      ],
+      "expectedTools": [],
+      "toolNames": [],
+      "retrievalAttempts": 0,
+      "evidenceStatus": "insufficient",
+      "evidenceReason": "unresolved_reference",
+      "stopReason": "clarification_required",
+      "relevantPostTitles": [],
+      "coveredPostTitles": [],
+      "articleCoverage": null,
+      "rejected": true,
+      "durationMs": 4.69,
+      "checks": {
+        "route": true,
+        "rewrite": true,
+        "tools": true,
+        "retrievalAttempts": true,
+        "rejection": true,
+        "stopReason": true,
+        "limits": true
+      },
+      "passed": true
+    }
+  ]
+}

@@ -98,6 +98,18 @@ function definitionSnippet(chunk, question) {
   return snippet(definition, 280);
 }
 
+function isRelatedArticleRequest(question) {
+  const text = String(question || '');
+  if (/相关文章|相关推荐|延伸阅读|下一篇|类似文章/.test(text)) {
+    return true;
+  }
+  return (
+    /(?:请|帮我|给我|能否|可以|我想(?:看|读))[^。！？?!]{0,20}推荐/.test(text) ||
+    /推荐(?:给我)?\s*(?:几|一|两|三|一些|若干)(?:篇|个|本)?/.test(text) ||
+    /推荐(?:给我)?\s*(?:文章|阅读|一下)/.test(text)
+  );
+}
+
 function buildSearchAnswer(question, ranked) {
   const top = ranked[0] && ranked[0].chunk;
   const relatedCount = Math.min(ranked.length, 3);
@@ -107,12 +119,12 @@ function buildSearchAnswer(question, ranked) {
   }
 
   const lead = snippet(top.content, 180);
-  if (/推荐|下一篇|延伸/.test(question)) {
-    return `让我看看哦...我帮你翻到几篇更贴近的文章啦。排在最前面的是《${top.postTitle}》，内容重点大致是：${lead}`;
-  }
-
   if (isDefinitionQuestion(question)) {
     return `《${top.postTitle}》中介绍：${definitionSnippet(top, question)}`;
+  }
+
+  if (isRelatedArticleRequest(question)) {
+    return `让我看看哦...我帮你翻到几篇更贴近的文章啦。排在最前面的是《${top.postTitle}》，内容重点大致是：${lead}`;
   }
 
   return `锵锵，我在站内翻到了 ${relatedCount} 篇比较相关的内容。最贴近的是《${top.postTitle}》，先给你一个小结：${lead}`;
@@ -139,5 +151,6 @@ function buildResponse(question, ranked, page, mode) {
 module.exports = {
   buildResponse,
   detectMode,
+  isRelatedArticleRequest,
   rankChunks
 };

@@ -1831,3 +1831,30 @@ body::after
   font-weight 600
   justify-self end
   padding 10px 16px
+
+.blog-ai-agent__header-actions
+  align-items center
+  display flex
+  flex-shrink 0
+  gap 6px
+
+.blog-ai-agent__new-conversation
+  background rgba(248, 252, 253, .12)
+  border 1px solid rgba(248, 252, 253, .28)
+  border-radius 999px
+  color rgba(248, 252, 253, .9)
+  cursor pointer
+  font-size .72rem
+  line-height 1
+  padding 7px 10px
+
+  &:hover
+    background rgba(248, 252, 253, .2)
+    color #fff
+
+.blog-ai-agent__suggestions button:disabled
+  cursor wait
+  opacity .58
+
+.blog-ai-agent__messages[aria-busy='true']
+  cursor progress

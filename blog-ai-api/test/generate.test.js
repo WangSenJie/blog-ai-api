@@ -28,3 +28,24 @@ test('model timeout uses a bounded default and clamps configured values', () => 
     }
   }
 });
+
+test('model output tokens use a bounded default and clamp configured values', () => {
+  const originalValue = process.env.LLM_MAX_OUTPUT_TOKENS;
+
+  try {
+    delete process.env.LLM_MAX_OUTPUT_TOKENS;
+    assert.equal(getModelConfig().maxOutputTokens, 700);
+
+    process.env.LLM_MAX_OUTPUT_TOKENS = '20';
+    assert.equal(getModelConfig().maxOutputTokens, 128);
+
+    process.env.LLM_MAX_OUTPUT_TOKENS = '5000';
+    assert.equal(getModelConfig().maxOutputTokens, 1200);
+  } finally {
+    if (originalValue === undefined) {
+      delete process.env.LLM_MAX_OUTPUT_TOKENS;
+    } else {
+      process.env.LLM_MAX_OUTPUT_TOKENS = originalValue;
+    }
+  }
+});

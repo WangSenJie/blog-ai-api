@@ -185,6 +185,25 @@ test('buildResponse exposes a resolvable chunk ID and section for citations', ()
   assert.equal(normalizePostUrl(sourceChunk.postUrl), response.citations[0].url);
 });
 
+test('recommendation-domain definitions do not use reading-list copy', () => {
+  const chunk = makeChunk({
+    id: 'cf#0',
+    postTitle: '协同过滤',
+    postUrl: '/collaborative-filtering/',
+    sectionTitle: '定义',
+    content: '协同过滤是一种根据用户或物品相似性进行推荐的方法。'
+  });
+  const response = buildResponse(
+    '协同过滤推荐方法是什么',
+    [{ chunk, score: 10, position: 0 }],
+    null,
+    'site'
+  );
+
+  assert.match(response.answer, /《协同过滤》中介绍/);
+  assert.doesNotMatch(response.answer, /帮你翻到几篇|继续看看这些文章/);
+});
+
 test('citations returned from the deployed corpus resolve to their source chunks', () => {
   const corpus = loadCorpus();
   const seedChunk = corpus.chunks.find(chunk => chunk.sectionTitle && chunk.postTitle);

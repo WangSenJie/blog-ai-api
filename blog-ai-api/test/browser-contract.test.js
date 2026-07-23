@@ -56,7 +56,7 @@ test('remote requests do not load or send browser-side retrieval candidates', ()
   const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
   const remoteAsk = sourceSection(
     agent,
-    'async function remoteAsk(question, mode, context)',
+    'async function remoteAsk(question, mode, context, messages)',
     'function renderAssistantMessage'
   );
 
@@ -67,6 +67,120 @@ test('remote requests do not load or send browser-side retrieval candidates', ()
   assert.doesNotMatch(remoteAsk, /chunks\.json|loadCorpus\s*\(|rankChunks\s*\(/);
 });
 
+test('remote requests carry bounded conversation state without duplicating the current user', () => {
+  const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
+  const remoteAsk = sourceSection(
+    agent,
+    'async function remoteAsk(question, mode, context, messages)',
+    'function renderAssistantMessage'
+  );
+  const ask = sourceSection(agent, 'async function ask(question)', 'function renderConversationHistory');
+
+  assert.match(agent, /const MAX_HISTORY_MESSAGES = 8;/);
+  assert.match(remoteAsk, /\bquestion,/);
+  assert.match(remoteAsk, /\bsessionId:\s*state\.sessionId,/);
+  assert.match(remoteAsk, /\bmessages,/);
+  assert.match(remoteAsk, /\bmode,/);
+  assert.match(remoteAsk, /\bpage:\s*context/);
+  assert.match(
+    ask,
+    /trimConversationMessages\(\[\s*\.\.\.state\.messages,\s*\{\s*role:\s*'user',\s*content:\s*trimmed\s*\}/
+  );
+  assert.match(ask, /remoteAsk\(trimmed,\s*mode,\s*context,\s*requestMessages\)/);
+
+  const currentUserOccurrences = (
+    ask.match(/\{\s*role:\s*'user',\s*content:\s*trimmed\s*\}/g) || []
+  ).length;
+  assert.equal(currentUserOccurrences, 1, 'the current user must enter request history exactly once');
+});
+
+test('assistant conversation history keeps only compact article references', () => {
+  const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
+  const normalizeMessage = sourceSection(
+    agent,
+    'function normalizeHistoryMessage(value)',
+    'function trimConversationMessages'
+  );
+  const commitConversation = sourceSection(
+    agent,
+    'function commitConversation(requestMessages, result, standaloneQuery)',
+    'async function ask(question)'
+  );
+
+  assert.match(normalizeMessage, /message\.citations/);
+  assert.match(normalizeMessage, /message\.related/);
+  assert.match(normalizeMessage, /message\.indexVersion/);
+  assert.doesNotMatch(normalizeMessage, /\bsnippet\b/);
+  assert.match(commitConversation, /citations:\s*result\.citations/);
+  assert.match(commitConversation, /related:\s*result\.related/);
+  assert.match(commitConversation, /indexVersion:\s*result\.meta && result\.meta\.indexVersion/);
+});
+
+test('conversation storage is versioned, expiring, bounded, and session scoped', () => {
+  const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
+  const saveConversation = sourceSection(
+    agent,
+    'function saveConversation()',
+    'function restoreConversation()'
+  );
+  const restoreConversation = sourceSection(
+    agent,
+    'function restoreConversation()',
+    'function ensureMathJaxLoaded()'
+  );
+
+  assert.match(agent, /blog-ai-agent-conversation-v1/);
+  assert.match(agent, /const CONVERSATION_SCHEMA_VERSION = 1;/);
+  assert.match(agent, /const CONVERSATION_TTL_MS = 2 \* 60 \* 60 \* 1000;/);
+  assert.match(agent, /window\.sessionStorage/);
+  assert.doesNotMatch(agent, /window\.localStorage/);
+  assert.match(saveConversation, /expiresAt:\s*Date\.now\(\) \+ CONVERSATION_TTL_MS/);
+  assert.match(saveConversation, /trimConversationMessages\(state\.messages\)/);
+  assert.match(restoreConversation, /serialized\.length <= MAX_STORED_CONVERSATION_CHARACTERS/);
+  assert.match(restoreConversation, /payload\.expiresAt <= Date\.now\(\)/);
+  assert.match(restoreConversation, /isValidSessionId\(payload\.sessionId\)/);
+});
+
+test('local fallback conservatively rewrites ordinal and pronoun follow-ups', () => {
+  const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
+  const rewrite = sourceSection(
+    agent,
+    'function rewriteFollowUpQuestion(question, mode, context)',
+    'function storage()'
+  );
+  const ask = sourceSection(agent, 'async function ask(question)', 'function renderConversationHistory');
+
+  assert.match(rewrite, /getOrdinalReferences\(question,\s*references\)/);
+  assert.match(rewrite, /我还没有足够的文章顺序/);
+  assert.match(rewrite, /继续\|接着\|展开/);
+  assert.match(rewrite, /它\|这个\|那个\|上述/);
+  assert.match(rewrite, /我还不确定你指的是哪个概念或哪篇文章/);
+  assert.match(ask, /fallbackPlan\.clarification/);
+  assert.match(ask, /fallbackPlan\.question/);
+  assert.match(ask, /await localAsk\(/);
+});
+
+test('new conversation aborts stale work and busy state disables suggestions', () => {
+  const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
+  const setBusy = sourceSection(agent, 'function setBusy(isBusy)', 'function commitConversation');
+  const resetConversation = sourceSection(
+    agent,
+    'function resetConversation()',
+    'function togglePanel'
+  );
+
+  assert.match(setBusy, /state\.busy = isBusy/);
+  assert.match(setBusy, /state\.elements\.suggestionButtons\.forEach/);
+  assert.match(setBusy, /button\.disabled = isBusy/);
+  assert.match(resetConversation, /state\.requestEpoch \+= 1/);
+  assert.match(resetConversation, /state\.activeController\.abort\(\)/);
+  assert.match(resetConversation, /state\.sessionId = createSessionId\(\)/);
+  assert.match(resetConversation, /state\.messages = \[\]/);
+  assert.match(resetConversation, /state\.lastArticleRefs = \[\]/);
+  assert.match(resetConversation, /saveConversation\(\)/);
+  assert.match(agent, /blog-ai-agent__new-conversation/);
+});
+
 test('chunks.json is loaded only by the local fallback implementation', () => {
   const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
   const loadCorpusStart = agent.indexOf('async function loadCorpus()');
@@ -75,7 +189,7 @@ test('chunks.json is loaded only by the local fallback implementation', () => {
   const localAsk = sourceSection(
     agent,
     'async function localAsk(question, mode, context, ranked)',
-    'async function remoteAsk(question, mode, context)'
+    'async function remoteAsk(question, mode, context, messages)'
   );
   const outsideLoadCorpus = agent.slice(0, loadCorpusStart) + agent.slice(rankChunksStart);
 

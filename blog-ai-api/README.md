@@ -8,6 +8,17 @@ Minimal external backend for the blog guide widget.
 blog-ai-api/
   api/
     ask.js
+  agent/
+    run.js
+    state.js
+    config.js
+    nodes/
+  tools/
+    search-blog.js
+    get-article.js
+    get-related-articles.js
+  memory/
+    session.js
   data/
     posts.json
     chunks.json
@@ -21,7 +32,9 @@ blog-ai-api/
     trace.js
   evals/
     dataset.json
+    agent-dataset.json
     run.js
+    agent-run.js
     reports/
   test/
   scripts/
@@ -80,6 +93,10 @@ apiBaseUrl: 'https://your-blog-ai-api.vercel.app'
   - Optional, defaults to `/chat/completions`
 - `LLM_TIMEOUT_MS`
   - Optional model request timeout, defaults to `15000` and is clamped to 1–60 seconds.
+- `LLM_MAX_OUTPUT_TOKENS`
+  - Optional generation ceiling, defaults to `700` and is clamped to 128–1,200 tokens.
+- `LLM_MAX_REQUEST_COST_USD`, `LLM_INPUT_COST_PER_MILLION_TOKENS`, and `LLM_OUTPUT_COST_PER_MILLION_TOKENS`
+  - Optional cost guard. All three must be configured before the API estimates and enforces a per-request model cost ceiling.
 
 If `LLM_API_*` variables are not set, `/api/ask` will still work in retrieval-only mode.
 
@@ -89,8 +106,31 @@ If `LLM_API_*` variables are not set, `/api/ask` will still work in retrieval-on
 
 ```json
 {
-  "question": "这个站里有讲双塔模型吗？",
-  "mode": "site",
+  "question": "它如何用于线上召回？",
+  "sessionId": "session_8a430443-97b9-4cf1-82ad-00f83f08e195",
+  "messages": [
+    {
+      "role": "user",
+      "content": "什么是双塔模型？"
+    },
+    {
+      "role": "assistant",
+      "content": "双塔模型由用户塔和物品塔组成。",
+      "citations": [
+        {
+          "chunkId": "双塔模型#0",
+          "title": "双塔模型",
+          "url": "https://wangsenjie.github.io/..."
+        }
+      ],
+      "indexVersion": "<corpus-version-sha256>",
+      "standaloneQuery": "双塔模型"
+    },
+    {
+      "role": "user",
+      "content": "它如何用于线上召回？"
+    }
+  ],
   "page": {
     "title": "双塔模型",
     "url": "https://wangsenjie.github.io/2026/03/31/...",
@@ -99,7 +139,13 @@ If `LLM_API_*` variables are not set, `/api/ask` will still work in retrieval-on
 }
 ```
 
+`question` remains supported for legacy callers. The current frontend also sends at most eight recent `user`/`assistant` messages. `sessionId` is a correlation identifier, not an authentication token or server-side persistent session. Historical citations are untrusted reference hints: the API resolves their chunk IDs and URLs against the current corpus before using them for reference resolution, and never treats prior assistant text as factual evidence.
+
 The frontend does not send locally retrieved candidates. If an older client includes a `retrieval.sources` field, the API ignores it and always retrieves against its own verified corpus.
+
+The handler rejects a declared or parsed/serialized request body above 32 KiB, questions above 1,000 characters, individual messages above 2,000 characters, and retained history above 8,000 characters. POST requests must use `application/json`. A request carrying a browser `Origin` outside the allow-list is rejected with 403 instead of merely omitting the CORS response header. Because a hosting platform may parse a request before invoking this handler, configure an equal or stricter request-size limit at the production gateway as well.
+
+Only the most recent assistant turn contributes article-reference and standalone-query metadata. An empty or invalid latest reference list forms a safety barrier and cannot fall through to an older cited article.
 
 ## Response
 
@@ -124,11 +170,21 @@ The frontend does not send locally retrieved candidates. If an older client incl
   "meta": {
     "traceId": "trace_...",
     "mode": "site",
+    "route": "site_qa",
+    "standaloneQuery": "双塔模型如何用于线上召回？",
+    "subqueries": ["双塔模型如何用于线上召回？"],
+    "sessionId": "session_...",
+    "retrievalAttempts": 1,
+    "evidenceStatus": "sufficient",
+    "evidenceReason": "query_terms_covered",
+    "evidenceGrading": "structural_heuristic",
+    "stopReason": "evidence_sufficient",
     "llmFallback": false,
     "indexVersion": "<corpus-version-sha256>",
     "retrieval": {
       "strategy": "bm25",
-      "candidates": 12
+      "candidates": 12,
+      "selectedChunks": 8
     },
     "model": {
       "attempted": true,
@@ -136,7 +192,11 @@ The frontend does not send locally retrieved candidates. If an older client incl
     },
     "timings": {
       "corpusMs": 0.1,
-      "retrievalMs": 12.4,
+      "routeMs": 0.1,
+      "rewriteMs": 0.2,
+      "retrievalAttempt1Ms": 12.4,
+      "gradeEvidenceAttempt1Ms": 0.2,
+      "retrievalMs": 12.8,
       "buildResponseMs": 0.2,
       "generationMs": 650.8,
       "totalMs": 663.9
@@ -146,6 +206,26 @@ The frontend does not send locally retrieved candidates. If an older client incl
 ```
 
 The same trace ID is returned in the `X-Trace-Id` response header. Internal errors return a trace ID without exposing implementation details to the browser.
+
+## Controlled Agent workflow
+
+The phase 3 server path is an explicit JavaScript state machine:
+
+```text
+route -> rewrite -> split (<= 3) -> retrieve -> grade
+                                      ^          |
+                                      | retry <= 1
+                                      +----------+
+                              -> answer or safe stop
+```
+
+It has fixed routes for direct replies, current-page summary and Q&A, related articles, article comparison, and site-wide Q&A. Only three allow-listed, read-only tools are callable: `search_blog`, `get_article`, and `get_related_articles`. Retrieval is capped at two rounds, six tool calls, eight complete context chunks, a conservatively estimated 6,000 context tokens, one model call, and a 17-second overall server deadline. The current estimate counts at most one token per Unicode character; it is a safety bound, not the provider model's tokenizer.
+
+The generator receives the selected full chunks rather than UI snippets. Retrieved text and conversation history are explicitly marked as untrusted data, while citations and URLs are always rebuilt from server corpus chunks. An evidence-insufficient 200 response is a valid safe stop and is not a browser-fallback trigger.
+
+Phase 2 is not implemented yet. All three Agent tools currently use BM25; `bm25_multi_query` means several BM25 queries were merged inside the workflow and does not mean vector, RRF, reranking, or Hybrid RAG.
+
+The endpoint does not yet provide user authentication, distributed per-IP/session rate limiting, or a cross-instance global cost ledger. CORS and JSON content-type enforcement reduce browser-origin abuse but are not authentication. Before exposing a paid model publicly, add gateway/WAF or durable-store rate limiting and abuse protection, plus provider-side budget alerts. The optional per-request cost guard is not a replacement for those controls.
 
 ## Retrieval ownership and browser fallback
 
@@ -184,6 +264,7 @@ The current corpus contains 69 published posts, 66 indexed posts, and 886 chunks
 ```bash
 npm test
 npm run eval:bm25
+npm run eval:agent
 ```
 
 To intentionally refresh the committed baseline report after reviewing a retrieval change:
@@ -200,6 +281,8 @@ npm run eval:bm25:phase1
 
 The committed reports are `evals/reports/bm25-baseline.json` (phase 0) and `evals/reports/bm25-phase1.json` (phase 1, dataset version 2).
 
+The phase 3 workflow dataset and report are `evals/agent-dataset.json` and `evals/reports/agent-phase3.json`. They are separate from the phase 0/1 BM25 reports and run fully offline with model generation disabled.
+
 The evaluation runner reports article-level Recall@5/20, HitRate@5, MRR@20, nDCG@20, no-answer accuracy, per-category results, and failed cases. Results are deduplicated by normalized published post URL.
 
 ## Behavior
@@ -207,9 +290,11 @@ The evaluation runner reports article-level Recall@5/20, HitRate@5, MRR@20, nDCG
 - Without model environment variables:
   - `/api/ask` returns a retrieval-only answer using local `chunks.json`
 - With model environment variables:
-  - `/api/ask` first retrieves citations, then asks the model to rewrite the answer
+  - `/api/ask` routes, rewrites, retrieves and grades evidence before asking the model to write the answer
+  - the model receives bounded full chunks, not only 140-character display snippets
   - citations and related links still come from local retrieval
 - In all cases:
+  - the workflow is controlled by server code; the model cannot choose arbitrary tools or create an unbounded loop
   - retrieval is performed against the server corpus; client candidates are ignored
   - citations follow the `chunkId`/`title`/`url`/`section`/`snippet` contract
   - `meta.indexVersion` identifies the exact corpus version used by the response

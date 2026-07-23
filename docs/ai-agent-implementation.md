@@ -1,5 +1,7 @@
 # Blog AI Agent Implementation Draft
 
+> This document preserves the original first-version design. As of 2026-07-23, phases 0, 1, and 3 are implemented, including short multi-turn history, allow-listed Agent tools, and a bounded retrieval loop. Phase 2 Hybrid RAG is not implemented; see `docs/agentic-rag-upgrade-plan.zh-CN.md` for the current status and boundaries.
+
 ## Goal
 
 Build a retrieval-based AI assistant for this Hexo blog. The assistant should answer questions from site content, recommend related posts, and summarize the current article without exposing model credentials in the browser.

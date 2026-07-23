@@ -10,6 +10,8 @@
     "test": "node --test",
     "eval:bm25": "node evals/run.js",
     "eval:bm25:update": "node evals/run.js --output evals/reports/bm25-baseline.json",
-    "eval:bm25:phase1": "node evals/run.js --output evals/reports/bm25-phase1.json"
+    "eval:bm25:phase1": "node evals/run.js --output evals/reports/bm25-phase1.json",
+    "eval:agent": "node evals/agent-run.js",
+    "eval:agent:phase3": "node evals/agent-run.js --output evals/reports/agent-phase3.json"
   }
 }
