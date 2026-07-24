@@ -11,14 +11,15 @@ const {
 function createAgentTools(corpus) {
   const posts = corpus && corpus.posts;
   const chunks = corpus && corpus.chunks;
+  const vectors = corpus && corpus.vectors;
   if (!Array.isArray(posts) || !Array.isArray(chunks)) {
     throw new TypeError('createAgentTools requires posts and chunks arrays');
   }
 
   const tools = Object.freeze({
-    search_blog: createSearchBlogTool({ chunks }),
+    search_blog: createSearchBlogTool({ chunks, vectors }),
     get_article: createGetArticleTool({ posts, chunks }),
-    get_related_articles: createGetRelatedArticlesTool({ posts, chunks })
+    get_related_articles: createGetRelatedArticlesTool({ posts, chunks, vectors })
   });
 
   return Object.freeze({

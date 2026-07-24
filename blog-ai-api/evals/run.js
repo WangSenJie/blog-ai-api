@@ -120,11 +120,11 @@ function validateDataset(dataset, postsByTitle) {
   }
 }
 
-function evaluateCase(testCase, chunks, postsByTitle) {
+function evaluateCase(testCase, chunks, postsByTitle, ranker) {
   const page = resolvePage(testCase, postsByTitle);
   const mode = testCase.mode || detectMode(testCase.question);
   const startedAt = process.hrtime.bigint();
-  const ranked = rankChunks(chunks, testCase.question, mode, page);
+  const ranked = ranker(testCase.question, mode, page);
   const durationMs = Number(process.hrtime.bigint() - startedAt) / 1e6;
   const rankedPosts = uniqueRankedPosts(ranked);
   const topResults = rankedPosts.slice(0, 5);
@@ -173,6 +173,9 @@ function evaluateCase(testCase, chunks, postsByTitle) {
 
 function buildReport(dataset, corpus, metadata) {
   const reportMetadata = metadata || {};
+  const ranker = reportMetadata.ranker || ((question, mode, page) => (
+    rankChunks(corpus.chunks, question, mode, page)
+  ));
   const postsByTitle = new Map(corpus.posts.map(post => [post.title, post]));
   const indexedPublishedPostUrls = new Set(
     corpus.chunks
@@ -181,11 +184,11 @@ function buildReport(dataset, corpus, metadata) {
   );
   validateDataset(dataset, postsByTitle);
 
-  // Warm the cached BM25 index before recording per-case latency.
-  rankChunks(corpus.chunks, '__warmup__', 'site', null);
+  // Warm the active retriever before recording per-case latency.
+  ranker('__warmup__', 'site', null);
 
   const results = dataset.cases.map(testCase => (
-    evaluateCase(testCase, corpus.chunks, postsByTitle)
+    evaluateCase(testCase, corpus.chunks, postsByTitle, ranker)
   ));
   const positiveResults = results.filter(result => !result.shouldReject);
   const negativeResults = results.filter(result => result.shouldReject);
@@ -232,13 +235,13 @@ function buildReport(dataset, corpus, metadata) {
       chunksWithoutUrl: corpus.chunks.filter(chunk => !normalizePostUrl(chunk.postUrl)).length,
       sha256: reportMetadata.corpusHash || null
     },
-    retriever: {
+    retriever: Object.assign({
       name: 'bm25-custom',
       evaluationUnit: 'unique normalized published post URL',
       tokenization: 'latin tokens + Chinese bigrams',
       k1: 1.2,
       b: 0.75
-    },
+    }, reportMetadata.retriever || {}),
     summary: Object.assign({}, summarizePositiveCases(positiveResults), {
       noAnswerCases: negativeResults.length,
       noAnswerAccuracy: summarizeNegativeCases(negativeResults).rejectionAccuracy,

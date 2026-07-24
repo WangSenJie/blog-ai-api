@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "description": "阶段 2 Hybrid RAG 评测集。精确题验证关键词召回不退化；语义改写题验证向量、RRF 与重排相对 BM25 的提升。所有标注均对应已发布文章。",
+  "cases": [
+    {
+      "id": "exact-double-tower",
+      "category": "exact",
+      "question": "双塔模型",
+      "relevantPostTitles": ["双塔模型"]
+    },
+    {
+      "id": "exact-transformer",
+      "category": "exact",
+      "question": "Transformer 架构",
+      "relevantPostTitles": ["Transformer 架构 —— Attention Is All You Need"]
+    },
+    {
+      "id": "exact-picard",
+      "category": "exact",
+      "question": "Picard 存在唯一性定理",
+      "relevantPostTitles": ["Picard 存在唯一性定理"]
+    },
+    {
+      "id": "exact-dynamic-programming",
+      "category": "exact",
+      "question": "LeetCode Hot100 动态规划",
+      "relevantPostTitles": ["LeetCode Hot100 —— 动态规划"]
+    },
+    {
+      "id": "exact-langgraph",
+      "category": "exact",
+      "question": "LangGraph 基础",
+      "relevantPostTitles": ["LangGraph 基础"]
+    },
+    {
+      "id": "exact-resnet",
+      "category": "exact",
+      "question": "ResNet",
+      "relevantPostTitles": ["ResNet"]
+    },
+    {
+      "id": "exact-itemcf",
+      "category": "exact",
+      "question": "ItemCF",
+      "relevantPostTitles": ["ItemCF"]
+    },
+    {
+      "id": "exact-integrating-factor",
+      "category": "exact",
+      "question": "积分因子法",
+      "relevantPostTitles": ["积分因子法"]
+    },
+    {
+      "id": "exact-agent-environment",
+      "category": "exact",
+      "question": "报告生成Agent 环境配置",
+      "relevantPostTitles": ["报告生成Agent——环境配置"]
+    },
+    {
+      "id": "exact-svd",
+      "category": "exact",
+      "question": "SVD 排序算法",
+      "relevantPostTitles": ["SVD 排序算法"]
+    },
+    {
+      "id": "semantic-two-encoders",
+      "category": "semantic",
+      "question": "把请求侧和候选侧映射到同一表征空间的召回架构是什么？",
+      "relevantPostTitles": ["双塔模型"]
+    },
+    {
+      "id": "semantic-residual-network",
+      "category": "semantic",
+      "question": "用跳跃通道绕开若干网络层以训练很深卷积模型的方法是什么？",
+      "relevantPostTitles": ["ResNet"]
+    },
+    {
+      "id": "semantic-gated-rnn",
+      "category": "semantic",
+      "question": "依靠更新门和重置门保留序列长期信息的网络是什么？",
+      "relevantPostTitles": ["门控循环神经网络"]
+    },
+    {
+      "id": "semantic-item-similarity",
+      "category": "semantic",
+      "question": "按照商品之间共同交互行为来推送近似商品，属于哪种协同过滤？",
+      "relevantPostTitles": ["ItemCF"]
+    },
+    {
+      "id": "semantic-user-similarity",
+      "category": "semantic",
+      "question": "从爱好相近的人群中发现尚未消费内容的推荐方法是什么？",
+      "relevantPostTitles": ["UserCF"]
+    },
+    {
+      "id": "semantic-attention-sequence",
+      "category": "semantic",
+      "question": "用注意力并行处理序列而不是按循环顺序计算的架构是什么？",
+      "relevantPostTitles": ["Transformer 架构 —— Attention Is All You Need"]
+    },
+    {
+      "id": "semantic-exposure-filter",
+      "category": "semantic",
+      "question": "在候选集合中排除已经展示给用户的条目，应采用什么策略？",
+      "relevantPostTitles": ["曝光过滤"]
+    },
+    {
+      "id": "semantic-tree-retrieval",
+      "category": "semantic",
+      "question": "把候选组织为路径并使用束搜索完成召回的技术是什么？",
+      "relevantPostTitles": ["Deep Retrieval"]
+    },
+    {
+      "id": "semantic-chain-composition",
+      "category": "semantic",
+      "question": "怎样把提示词模板、聊天模型和结果解析组合成一个应用调用链？",
+      "relevantPostTitles": ["LangChain 基础"]
+    },
+    {
+      "id": "semantic-component-framework",
+      "category": "semantic",
+      "question": "具备组件化开发和响应式状态管理能力的前端框架怎么入门？",
+      "relevantPostTitles": ["VUE-BASIC"]
+    }
+  ]
+}

@@ -223,7 +223,7 @@ It has fixed routes for direct replies, current-page summary and Q&A, related ar
 
 The generator receives the selected full chunks rather than UI snippets. Retrieved text and conversation history are explicitly marked as untrusted data, while citations and URLs are always rebuilt from server corpus chunks. An evidence-insufficient 200 response is a valid safe stop and is not a browser-fallback trigger.
 
-Phase 2 is not implemented yet. All three Agent tools currently use BM25; `bm25_multi_query` means several BM25 queries were merged inside the workflow and does not mean vector, RRF, reranking, or Hybrid RAG.
+Phase 2 is complete. `search_blog` and `get_related_articles` perform BM25 Top 20 plus 384-dimensional local-vector Top 20 retrieval, Reciprocal Rank Fusion (`k=60`), and semantic/lexical reranking. `get_article` intentionally remains a source-order reader. `bm25_multi_query` now only means the Agent issued multiple subqueries; a normal Hybrid result reports `meta.retrieval.strategy: "hybrid_rrf_rerank"`.
 
 The endpoint does not yet provide user authentication, distributed per-IP/session rate limiting, or a cross-instance global cost ledger. CORS and JSON content-type enforcement reduce browser-origin abuse but are not authentication. Before exposing a paid model publicly, add gateway/WAF or durable-store rate limiting and abuse protection, plus provider-side budget alerts. The optional per-request cost guard is not a replacement for those controls.
 
@@ -243,27 +243,29 @@ Every citation has these fields:
 - `section`: section heading, or an empty string;
 - `snippet`: display excerpt derived from the chunk.
 
-`meta.indexVersion` is the manifest `corpusVersion`. Consumers must treat `(indexVersion, chunkId)` as the trace key: `chunkId` is traceable only within the same index version. Cross-version stable chunk identifiers are intentionally deferred to phase 2.
+`meta.indexVersion` is the manifest `corpusVersion`. Consumers should retain it with `chunkId` for an exact serving-index trace. Phase 2 chunk IDs are stable structural identifiers derived from the public article URL, heading path, repeated-heading occurrence, and section offset; `contentHash` distinguishes changed content across corpus versions.
 
 ## Corpus integrity
 
-`manifest.json` contains the SHA-256 and record count for `posts.json` and `chunks.json`, plus corpus statistics and warnings. Export, synchronization, and manifest-backed API loading perform strong validation:
+`manifest.json` contains the SHA-256 and record count for `posts.json`, `chunks.json`, and `vectors.json`, plus corpus statistics, embedding metadata, and warnings. Export, synchronization, and manifest-backed API loading perform strong validation:
 
 - both JSON values must be arrays and match manifest counts;
 - published post URLs must be valid and unique;
 - chunks must have non-empty content, valid published URLs, and unique non-empty IDs;
 - every chunk must belong to a published post;
+- every vector must have the manifest dimension and match an existing chunk's `id` and `contentHash`;
 - the file SHA-256 values must match the manifest.
 
 The Hexo `after_generate` check also requires every exported post URL to resolve to a generated route, preventing syntactically valid dead links from becoming citations.
 
-The current corpus contains 69 published posts, 66 indexed posts, and 886 chunks. The exporter skips 32 unpublished posts. Three published PDF-only posts—Logistic Regression, MLP, and 支持向量机—have no indexable text and therefore produce no chunks.
+The current acceptance corpus contains 71 published/indexed posts and 964 chunks. The exporter skips 32 unpublished posts and 4 sources without public URLs. Published PDF-only posts produce a metadata-only chunk with their title, description, and resource links; PDF full-text extraction remains a future corpus enhancement.
 
 ## Tests and retrieval evaluation
 
 ```bash
 npm test
 npm run eval:bm25
+npm run eval:hybrid
 npm run eval:agent
 ```
 
@@ -281,14 +283,14 @@ npm run eval:bm25:phase1
 
 The committed reports are `evals/reports/bm25-baseline.json` (phase 0) and `evals/reports/bm25-phase1.json` (phase 1, dataset version 2).
 
-The phase 3 workflow dataset and report are `evals/agent-dataset.json` and `evals/reports/agent-phase3.json`. They are separate from the phase 0/1 BM25 reports and run fully offline with model generation disabled.
+The phase 2 Hybrid dataset and report are `evals/hybrid-dataset.json` and `evals/reports/hybrid-phase2.json`. It compares BM25 with Hybrid RAG on the same exact and semantic cases, and fails the command unless semantic retrieval improves while exact retrieval does not regress. The phase 3 workflow dataset and report are `evals/agent-dataset.json` and `evals/reports/agent-phase3.json`; they run fully offline with model generation disabled against the Hybrid tool path.
 
 The evaluation runner reports article-level Recall@5/20, HitRate@5, MRR@20, nDCG@20, no-answer accuracy, per-category results, and failed cases. Results are deduplicated by normalized published post URL.
 
 ## Behavior
 
 - Without model environment variables:
-  - `/api/ask` returns a retrieval-only answer using local `chunks.json`
+  - `/api/ask` returns a retrieval-only answer using the verified local corpus and vector index
 - With model environment variables:
   - `/api/ask` routes, rewrites, retrieves and grades evidence before asking the model to write the answer
   - the model receives bounded full chunks, not only 140-character display snippets

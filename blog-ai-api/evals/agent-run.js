@@ -14,15 +14,15 @@ const {
 } = require('../lib/corpus');
 const {
   normalizePostUrl,
-  normalizeText,
-  rankChunks
+  normalizeText
 } = require('../lib/retrieval-core');
+const { hybridRankChunks } = require('../lib/hybrid-retrieve');
 const {
   normalizeAskRequest
 } = require('../memory/session');
 
 const DEFAULT_DATASET_PATH = path.join(__dirname, 'agent-dataset.json');
-const STRATEGY = 'bm25_agent_workflow';
+const STRATEGY = 'hybrid_agent_workflow';
 const ACCEPTANCE_TARGETS = Object.freeze({
   routeAccuracy: 0.9,
   rewriteAccuracy: 0.9,
@@ -107,8 +107,11 @@ function validateDataset(dataset, corpus) {
   if (!dataset || dataset.strategy !== STRATEGY) {
     throw new Error(`Agent dataset strategy must be ${STRATEGY}`);
   }
-  if (dataset.stage2Implemented !== false) {
-    throw new Error('Phase 3 dataset must explicitly record stage2Implemented=false');
+  if (dataset.stage2Implemented !== true) {
+    throw new Error('Phase 2 Agent dataset must explicitly record stage2Implemented=true');
+  }
+  if (!corpus.manifest || corpus.manifest.schemaVersion < 2 || !Array.isArray(corpus.vectors)) {
+    throw new Error('Phase 2 Agent evaluation requires a verified vector corpus');
   }
   if (!Array.isArray(dataset.cases) || !dataset.cases.length) {
     throw new Error('Agent dataset must contain cases');
@@ -323,8 +326,14 @@ function buildAcceptance(summary) {
 async function buildAgentReport(dataset, corpus) {
   validateDataset(dataset, corpus);
 
-  // Warm the cached BM25 index before measuring orchestration latency.
-  rankChunks(corpus.chunks, '__agent_eval_warmup__', 'site', null);
+  // Warm the hybrid index before measuring orchestration latency.
+  hybridRankChunks(
+    corpus.chunks,
+    corpus.vectors,
+    '__agent_eval_warmup__',
+    'site',
+    null
+  );
   const results = [];
   for (const testCase of dataset.cases) {
     results.push(await evaluateCase(testCase, corpus));
@@ -408,9 +417,9 @@ async function buildAgentReport(dataset, corpus) {
     generatedAt: new Date().toISOString(),
     phase: 3,
     strategy: STRATEGY,
-    stage2Implemented: false,
+    stage2Implemented: true,
     notes: [
-      'Phase 2 hybrid retrieval is not implemented; all Agent tools use the verified BM25 corpus.',
+      'search_blog and get_related_articles use BM25 plus local vector recall, RRF fusion, and reranking; get_article remains a source-order reader.',
       'The evaluation is fully offline and disables external model generation.',
       'Latency is reported for warm local orchestration and is not a production network benchmark.'
     ],

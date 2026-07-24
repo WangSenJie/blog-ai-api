@@ -33,7 +33,16 @@ function candidateCoverage(candidate, query) {
   if (!terms.length) return candidate ? 1 : 0;
   const text = searchableCandidateText(candidate);
   const covered = terms.filter(term => text.includes(normalizeText(term)));
-  return covered.length / terms.length;
+  const lexical = covered.length / terms.length;
+  const vectorScore = Number(
+    candidate && candidate.ranking && candidate.ranking.vectorScore
+  );
+  // A vector result is only used as evidence when its semantic similarity is
+  // well above the retrieval floor. This keeps no-answer behavior conservative.
+  const semantic = Number.isFinite(vectorScore) && vectorScore >= 0.3
+    ? Math.min(1, vectorScore / 0.6)
+    : 0;
+  return Math.max(lexical, semantic);
 }
 
 function bestCoverage(candidates, query) {
@@ -179,11 +188,17 @@ function gradeEvidence(state) {
 function selectContext(state) {
   const selected = [];
   const seen = new Set();
+  const seenContent = new Set();
+  const perPost = new Map();
   let characters = 0;
   const limits = state.budget.limits;
 
   function add(candidate) {
     if (!candidate || seen.has(candidate.chunk.id)) return;
+    const contentKey = normalizeText(candidate.chunk.content);
+    const postUrl = normalizePostUrl(candidate.chunk.postUrl);
+    const postCount = perPost.get(postUrl) || 0;
+    if (seenContent.has(contentKey) || postCount >= 3) return;
     const chunkCharacters = String(candidate.chunk.content || '').length;
     const nextCharacters = characters + chunkCharacters;
     const nextTokens = estimateTokens(nextCharacters);
@@ -195,6 +210,8 @@ function selectContext(state) {
       return;
     }
     seen.add(candidate.chunk.id);
+    seenContent.add(contentKey);
+    perPost.set(postUrl, postCount + 1);
     selected.push(candidate);
     characters = nextCharacters;
   }

@@ -58,6 +58,18 @@ function responseMode(route) {
 }
 
 function finishPayload(state) {
+  const retrievalStrategies = [...new Set(
+    state.toolCalls
+      .map(call => String(call.strategy || '').trim())
+      .filter(Boolean)
+  )];
+  const retrievalStrategy = state.retrievalAttempts === 0
+    ? 'none'
+    : retrievalStrategies.includes('hybrid_rrf_rerank')
+      ? 'hybrid_rrf_rerank'
+      : state.subqueries.length > 1 || state.retrievalAttempts > 1
+        ? 'bm25_multi_query'
+        : retrievalStrategies[0] || 'bm25';
   return {
     answer: state.answer,
     citations: state.citations,
@@ -74,11 +86,8 @@ function finishPayload(state) {
       evidenceGrading: 'structural_heuristic',
       stopReason: state.stopReason,
       retrieval: {
-        strategy: state.retrievalAttempts === 0
-          ? 'none'
-          : state.subqueries.length > 1 || state.retrievalAttempts > 1
-            ? 'bm25_multi_query'
-            : 'bm25',
+        strategy: retrievalStrategy,
+        toolStrategies: retrievalStrategies,
         candidates: state.retrievedChunks.length,
         selectedChunks: state.selectedChunks.length
       },

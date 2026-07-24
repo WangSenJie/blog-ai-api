@@ -29,25 +29,30 @@ function readJson(filePath) {
 const sourcePostsPath = path.join(sourceDataDir, 'posts.json');
 const sourceChunksPath = path.join(sourceDataDir, 'chunks.json');
 const sourceManifestPath = path.join(sourceDataDir, 'manifest.json');
+const sourceVectorsPath = path.join(sourceDataDir, 'vectors.json');
 const manifest = readJson(sourceManifestPath);
 
 verifyManifestFiles(manifest, {
   postsPath: sourcePostsPath,
-  chunksPath: sourceChunksPath
+  chunksPath: sourceChunksPath,
+  vectorsPath: sourceVectorsPath
 });
 validateCorpusData(
   readJson(sourcePostsPath),
   readJson(sourceChunksPath),
-  manifest
+  manifest,
+  manifest.schemaVersion >= 2 ? readJson(sourceVectorsPath) : []
 );
 
 const postsPath = copyFile('posts.json');
 const chunksPath = copyFile('chunks.json');
 const manifestPath = copyFile('manifest.json');
+const vectorsPath = manifest.schemaVersion >= 2 ? copyFile('vectors.json') : '';
 
-verifyManifestFiles(readJson(manifestPath), { postsPath, chunksPath });
+verifyManifestFiles(readJson(manifestPath), { postsPath, chunksPath, vectorsPath });
 
 console.log(`Synced corpus to ${targetDataDir}`);
 console.log(`Posts file: ${postsPath}`);
 console.log(`Chunks file: ${chunksPath}`);
 console.log(`Manifest file: ${manifestPath}`);
+if (vectorsPath) console.log(`Vectors file: ${vectorsPath}`);

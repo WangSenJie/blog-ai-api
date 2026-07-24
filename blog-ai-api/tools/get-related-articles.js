@@ -1,9 +1,9 @@
 'use strict';
 
 const {
-  normalizePostUrl,
-  rankChunks
+  normalizePostUrl
 } = require('../lib/retrieval-core');
+const { hybridRankChunks } = require('../lib/hybrid-retrieve');
 const {
   TOOL_SCHEMAS,
   validateGetRelatedArticlesArgs
@@ -27,6 +27,7 @@ function cloneChunk(chunk) {
 function createGetRelatedArticlesTool(options) {
   const posts = options && options.posts;
   const chunks = options && options.chunks;
+  const vectors = options && options.vectors;
   if (!Array.isArray(posts) || !Array.isArray(chunks)) {
     throw new TypeError(
       'createGetRelatedArticlesTool requires posts and chunks arrays'
@@ -60,11 +61,11 @@ function createGetRelatedArticlesTool(options) {
         (sourcePost.tags || []).join(' '),
         (sourcePost.categories || []).join(' ')
       ].filter(Boolean).join(' ');
-      const ranked = rankChunks(chunks, query, 'site', null);
+      const retrieval = hybridRankChunks(chunks, vectors, query, 'site', null);
       const seenUrls = new Set();
       const related = [];
 
-      for (const item of ranked) {
+      for (const item of retrieval.ranked) {
         const postUrl = normalizePostUrl(item.chunk && item.chunk.postUrl);
         if (!postUrl || postUrl === sourceUrl || seenUrls.has(postUrl)) continue;
 
@@ -72,15 +73,21 @@ function createGetRelatedArticlesTool(options) {
         related.push({
           chunk: cloneChunk(item.chunk),
           score: item.score,
-          rank: related.length + 1
+          rank: related.length + 1,
+          bm25Rank: item.bm25Rank,
+          vectorRank: item.vectorRank,
+          vectorScore: item.vectorScore,
+          rrfScore: item.rrfScore,
+          rerankScore: item.rerankScore
         });
       }
 
       return {
-        strategy: 'bm25',
+        strategy: retrieval.strategy,
         sourceArticle: clonePost(sourcePost),
         query,
         total: related.length,
+        retrieval: retrieval.stats,
         results: related.slice(0, args.topK)
       };
     }

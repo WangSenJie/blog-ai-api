@@ -9,6 +9,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const SITE_URL = 'https://wangsenjie.github.io';
 const { resolveSlug, formatDatePrefix } = require('./slug-utils');
 
@@ -179,6 +180,24 @@ function markdownToText(markdown) {
     return text;
 }
 
+function extractResourceLinks(markdown) {
+    const links = new Set();
+    const source = String(markdown || '');
+    const add = value => {
+        const link = String(value || '').trim().replace(/^['"]|['"]$/g, '');
+        if (link) links.add(link);
+    };
+
+    for (const match of source.matchAll(/\{%-?\s*(?:pdf|asset_link)\s+([^\s%}]+)/gi)) {
+        add(match[1]);
+    }
+    for (const match of source.matchAll(/\[[^\]]*\]\(([^)]+)\)/g)) {
+        add(match[1]);
+    }
+
+    return [...links];
+}
+
 function buildPostObject(filePath, assignedSlugs) {
     const postFile = readPostFile(filePath);
     const meta = parseFrontMatter(postFile.frontMatterText);
@@ -206,6 +225,7 @@ function buildPostObject(filePath, assignedSlugs) {
         filePath: filePath,
         body: postFile.body || '',
         contentText,
+        resourceLinks: extractResourceLinks(postFile.body),
         slug: slug || '',
         url: url,
         published
@@ -215,21 +235,31 @@ function buildPostObject(filePath, assignedSlugs) {
 function splitMarkdownSections(markdown) {
     const sections = [];
     let sectionTitle = '';
+    let headingPath = [];
+    const headingStack = [];
     let lines = [];
 
     function flush() {
         const content = markdownToText(lines.join('\n'));
         if (content) {
-            sections.push({ sectionTitle, content });
+            sections.push({
+                sectionTitle,
+                headingPath: headingPath.slice(),
+                content
+            });
         }
         lines = [];
     }
 
     for (const line of String(markdown || '').split('\n')) {
-        const heading = line.match(/^#{1,6}\s+(.+?)\s*#*$/);
+        const heading = line.match(/^(#{1,6})\s+(.+?)\s*#*$/);
         if (heading) {
             flush();
-            sectionTitle = markdownToText(heading[1]);
+            const level = heading[1].length;
+            sectionTitle = markdownToText(heading[2]);
+            headingStack.length = level - 1;
+            headingStack[level - 1] = sectionTitle;
+            headingPath = headingStack.filter(Boolean);
             continue;
         }
         lines.push(line);
@@ -299,6 +329,89 @@ function chunkSection(text, chunkSize, overlap) {
     return chunks;
 }
 
+function stableChunkId(post, headingPath, sectionChunkIndex, sectionOccurrence) {
+    const stableLocation = [
+        String(post.url || '').trim().toLowerCase(),
+        (headingPath || []).map(value => String(value || '').trim()).join(' > '),
+        String(sectionOccurrence || 0),
+        String(sectionChunkIndex)
+    ].join('\u0000');
+    const digest = crypto
+        .createHash('sha256')
+        .update(stableLocation)
+        .digest('hex');
+    return `chunk_${digest.slice(0, 24)}`;
+}
+
+function contentHashForChunk(chunk) {
+    const fingerprint = {
+        postTitle: String(chunk.postTitle || '').trim(),
+        postUrl: String(chunk.postUrl || '').trim(),
+        tags: (chunk.tags || []).map(value => String(value || '').trim()),
+        categories: (chunk.categories || []).map(value => String(value || '').trim()),
+        headingPath: (chunk.headingPath || []).map(value => String(value || '').trim()),
+        content: String(chunk.content || '')
+            .replace(/\r\n/g, '\n')
+            .replace(/\s+/g, ' ')
+            .trim(),
+        resourceLinks: (chunk.resourceLinks || []).map(value => String(value || '').trim())
+    };
+    return `sha256:${crypto
+        .createHash('sha256')
+        .update(JSON.stringify(fingerprint))
+        .digest('hex')}`;
+}
+
+function createChunk(post, values) {
+    const chunk = {
+        postUrl: post.url || '',
+        postId: post.id,
+        postTitle: post.title,
+        tags: post.tags || [],
+        categories: post.categories || [],
+        sectionTitle: values.sectionTitle || '',
+        headingPath: (values.headingPath || []).slice(),
+        chunkIndex: values.chunkIndex,
+        sectionOccurrence: values.sectionOccurrence || 0,
+        content: values.content,
+        resourceLinks: (values.resourceLinks || []).slice(),
+        metadataOnly: values.metadataOnly === true
+    };
+    chunk.id = stableChunkId(
+        post,
+        chunk.headingPath,
+        values.sectionChunkIndex || 0,
+        values.sectionOccurrence || 0
+    );
+    chunk.contentHash = contentHashForChunk(chunk);
+    return chunk;
+}
+
+function buildPdfMetadataChunk(post) {
+    const resourceSummary = post.resourceLinks && post.resourceLinks.length
+        ? `资源链接：${post.resourceLinks.join(' ')}`
+        : '资源链接未在正文中解析到。';
+    const content = [
+        post.title,
+        post.description,
+        (post.tags || []).join(' '),
+        (post.categories || []).join(' '),
+        '本文以 PDF 或其他外部文档资源形式发布，当前站内索引仅提供文章元数据与资源链接。',
+        resourceSummary
+    ].filter(Boolean).join('\n');
+
+    return createChunk(post, {
+        sectionTitle: '文章元数据',
+        headingPath: ['文章元数据'],
+        chunkIndex: 0,
+        sectionChunkIndex: 0,
+        sectionOccurrence: 0,
+        content,
+        resourceLinks: post.resourceLinks || [],
+        metadataOnly: true
+    });
+}
+
 function chunkPost(post) {
     const chunks = [];
     const chunkSize = 700;
@@ -312,20 +425,28 @@ function chunkPost(post) {
         : [{ sectionTitle: '', content: post.contentText || '' }];
     let index = 0;
 
+    const headingOccurrences = new Map();
     for (const section of sourceSections) {
-        for (const content of chunkSection(section.content, chunkSize, overlap)) {
-            chunks.push({
-                id: `${post.id}#${index}`,
-                postUrl,
-                postId: post.id,
-                postTitle: post.title,
-                tags: post.tags || [],
-                categories: post.categories || [],
+        const headingKey = (section.headingPath || []).join('\u0000');
+        const sectionOccurrence = headingOccurrences.get(headingKey) || 0;
+        headingOccurrences.set(headingKey, sectionOccurrence + 1);
+        const sectionChunks = chunkSection(section.content, chunkSize, overlap);
+        for (const [sectionChunkIndex, content] of sectionChunks.entries()) {
+            chunks.push(createChunk(post, {
                 sectionTitle: section.sectionTitle,
-                content
-            });
+                headingPath: section.headingPath || [],
+                chunkIndex: index,
+                sectionChunkIndex,
+                sectionOccurrence,
+                content,
+                resourceLinks: post.resourceLinks || []
+            }));
             index += 1;
         }
+    }
+
+    if (!chunks.length) {
+        chunks.push(buildPdfMetadataChunk(post));
     }
 
     return chunks;
@@ -381,6 +502,9 @@ module.exports = {
     buildPostObject,
     splitMarkdownSections,
     chunkSection,
+    contentHashForChunk,
+    extractResourceLinks,
+    stableChunkId,
     chunkPost,
     buildCorpus
 };

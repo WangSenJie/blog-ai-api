@@ -2,7 +2,7 @@
 
 > 记录日期：2026-07-22
 >
-> 状态：实施中（阶段 0、阶段 1、阶段 3 已完成；阶段 2 尚未实施）
+> 状态：实施中（阶段 0、阶段 1、阶段 2、阶段 3 已完成）
 >
 > 范围：在现有 Hexo、Vercel 和 BM25 问答能力上，逐步升级为可检索、可判断、可重试、可验证的 Agentic RAG。
 
@@ -13,7 +13,7 @@
 ```text
 用户问题
   -> 浏览器优先请求 Vercel API
-  -> 服务端执行受控路由、查询改写、BM25 工具检索和证据评分
+  -> 服务端执行受控路由、查询改写、Hybrid RAG 工具检索和证据评分
   -> 必要时有限重试，并返回文章切片、引用和相关文章
   -> 可选调用 OpenAI 兼容模型组织答案
   -> API 失败时浏览器使用共享检索核心执行本地 BM25 降级
@@ -21,11 +21,11 @@
 
 当前实现的主要特点：
 
-- 语料来自 `source/_posts/`，构建时导出为 `posts.json`、`chunks.json` 和 `manifest.json`。
-- 当前共有 101 篇源文章；69 篇已发布，66 篇产生 886 个可检索 chunk；32 篇未发布文章被跳过，3 篇 PDF-only 文章没有可索引正文。单个 chunk 最多约 700 个字符，重叠约 100 个字符。
+- 语料来自 `source/_posts/`，构建时导出为 `posts.json`、`chunks.json`、`vectors.json` 和 `manifest.json`。
+- 当前验收构建共有 107 篇源文章；71 篇已发布，全部产生可检索 chunk，共 964 个；32 篇未发布文章和 4 篇缺少公开 URL 的文章被跳过。PDF-only 页面会生成标题、描述和资源链接组成的元数据 chunk。单个正文 chunk 最多约 700 个字符，重叠约 100 个字符。
 - 浏览器降级路径与 API 使用同一套中文二元词切分、URL 规范化和 BM25 排序核心。
 - 标题、标签、分类、小节标题和当前页面会获得额外权重。
-- API 已支持由浏览器携带的短对话历史、查询改写、任务路由、只读工具和有限检索重试；当前仍没有向量召回、RRF、reranker 和阶段 4 的引用一致性验证。
+- API 已支持由浏览器携带的短对话历史、查询改写、任务路由、只读工具、Hybrid RAG 与有限检索重试；阶段 4 的逐结论引用一致性验证尚未实施。
 
 关键实现位置：
 
@@ -33,6 +33,7 @@
 - `source/js/blog-ai-agent.js`：浏览器问答与本地 BM25 降级。
 - `blog-ai-api/api/ask.js`：服务端问答入口。
 - `blog-ai-api/lib/retrieval-core.js`：服务端与浏览器共用的检索核心源文件。
+- `blog-ai-api/lib/embedding.js`、`blog-ai-api/lib/hybrid-retrieve.js`：离线向量、RRF 融合和重排序。
 - `blog-ai-api/lib/corpus-integrity.js`：manifest、SHA-256 与语料结构校验。
 - `blog-ai-api/lib/retrieve.js`：服务端 BM25 检索。
 - `blog-ai-api/lib/generate.js`：基于检索结果生成回答。
@@ -62,8 +63,8 @@
 | --- | --- | --- |
 | 阶段 0 | 评测集、BM25 基线与 trace 日志 | 已完成（2026-07-22） |
 | 阶段 1 | 服务端统一检索与浏览器降级 | 已完成并验收（2026-07-22） |
-| 阶段 2 | BM25 + Vector + RRF + Reranker | 未开始 |
-| 阶段 3 | 多轮会话、Agent 工具与有限检索循环 | 已完成并验收（2026-07-23，当前由 BM25 提供检索） |
+| 阶段 2 | BM25 + Vector + RRF + Reranker | 已完成并验收（2026-07-24） |
+| 阶段 3 | 多轮会话、Agent 工具与有限检索循环 | 已完成并回归验收（2026-07-24，当前由 Hybrid RAG 提供检索） |
 | 阶段 4 | 引用验证、拒答校准与质量闭环 | 未开始 |
 | 阶段 5 | 多文章对比、学习路径等扩展能力 | 未开始 |
 
@@ -541,16 +542,17 @@ BM25 基线：
 
 ### 阶段 2：Hybrid RAG
 
-任务：
+实施与验收结果（2026-07-24）：
 
-- 在现有 manifest 上增加 `contentHash`、embedding 元数据和增量索引信息，并设计跨版本稳定 chunk ID。
-- 为 PDF-only 页面生成至少包含标题、描述和资源链接的元数据 chunk；需要全文问答时增加 PDF 文本抽取。
-- 离线生成 embedding，并支持增量更新。
-- 实现 BM25 与向量双路召回。
-- 使用 RRF 合并候选，并增加 reranker。
-- 增加去重、当前页保留和 token 预算控制。
+- chunk ID 以文章公开 URL、标题路径、重复标题出现序号和小节内序号为定位键；正文或元数据变化不会改变同一结构位置的 ID。每个 chunk 同时具有覆盖正文、标题、分类、标签和资源链接的 `contentHash`。
+- manifest 升级为 schema v2，完整性校验同时覆盖 `posts.json`、`chunks.json` 和 `vectors.json` 的 SHA-256、条数、embedding 维度与每个 vector 对应的 `chunkId + contentHash`。`corpusVersion` 也包含 vector 文件哈希。
+- 构建期使用依赖零外部服务的 `local-semantic-hash-v1` 离线 embedding（384 维、概念簇加权）；增量构建仅复用同一 `contentHash` 且 embedding 版本一致的向量。当前报告为 964 个新增向量、0 个失败。后续可替换该 provider，而不改变 vectors 文件、Hybrid 工具或 Agent 契约。
+- `search_blog` 与 `get_related_articles` 分别取得 BM25 Top 20 和 Vector Top 20，以 `k=60` 的 Reciprocal Rank Fusion 合并；随后使用语义相似度、词项覆盖、标题命中和当前页信号重排。相同正文去重，每篇文章最多保留 3 个候选；当前页候选会保留。`get_article` 继续按源文顺序读取，不参与排序。
+- Agent 上下文选择继续强制 8 个完整 chunk、12,000 字符和保守 6,000 token 上限，并新增正文去重和单文章 3 个 chunk 配额。
+- PDF-only 页面现在产生 `文章元数据` chunk，至少包含文章标题、描述、标签/分类和站内资源链接；PDF 全文抽取仍属于后续语料增强工作。
+- 独立 Hybrid 数据集 `evals/hybrid-dataset.json` 对同一批题目分别运行 BM25 与 Hybrid：语义题 Recall@5 从 `0.6000` 升至 `0.9000`，MRR@20 从 `0.4035` 升至 `0.5917`；精确题 Recall@5 与 MRR@20 均保持 `1.0000`。验收通过。
 
-完成标准：语义改写类问题的召回明显优于基线，精确关键词问题不退化。
+完成标准：已满足。语义改写类问题的召回明显优于基线，精确关键词问题未退化。
 
 ### 阶段 3：多轮会话与 Agent 工作流
 
@@ -564,7 +566,7 @@ BM25 基线：
 
 完成标准：能够正确处理多轮指代、文章比较和证据不足后的有限重试。
 
-实施与验收结果（2026-07-23）：
+实施与验收结果（2026-07-23，2026-07-24 Hybrid 回归）：
 
 - `/api/ask` 同时兼容旧 `question` 请求和新的 `messages + sessionId + page` 请求。`sessionId` 只用于请求关联，不代表认证或服务端持久会话；浏览器携带最近最多 8 条消息，服务端不使用不可靠的 Vercel 进程内会话 Map。
 - API handler 会同时检查 `Content-Length` 与已解析/序列化请求体，应用层上限为 32 KB；当前问题限制为 1,000 字，单条历史限制为 2,000 字，历史总量限制为 8,000 字，只接受 `user` 和 `assistant` 角色。POST 必须使用 `application/json`，带有非白名单浏览器 Origin 的请求会直接返回 403，而不是只依赖浏览器隐藏响应。客户端历史引用必须重新映射到当前 corpus，且只读取最近一个 assistant turn 的引用和独立查询元数据：最近一轮没有引用时会形成安全屏障，不会回退到更早文章；历史回答正文不能作为事实证据。由于托管平台可能先于 handler 解析请求体，生产环境仍需在网关或平台层配置同等或更严格的上游大小限制。
@@ -577,11 +579,11 @@ BM25 基线：
 - 浏览器使用带 2 小时 TTL 的 `sessionStorage` 保存短会话，并提供“新对话”按钮；重置会中止当前请求并忽略迟到响应，busy 状态会阻止重复提交。合法的服务端拒答仍不会触发本地 BM25 降级。
 - trace 增加路由、改写、逐轮检索、逐轮证据评分和生成耗时；响应增加 `route`、`standaloneQuery`、`subqueries`、`retrievalAttempts`、`evidenceStatus`、`stopReason`、工具调用摘要和预算快照。
 - 新增独立阶段 3 离线数据集与报告，不覆盖阶段 0/1 的 BM25 历史。全量 Node 测试通过，其中浏览器运行时测试实际覆盖合法服务端拒答不触发本地降级、重置后忽略迟到响应、会话 TTL 过期清理和空引用轮次清除旧锚点；真实语料验收为 28/28 用例通过，并覆盖消息内指代、嵌套文章标题、显式标题总结/相关文章工具、推荐领域概念与阅读推荐的路由消歧、顿号/前者形式的文章比较，以及“第二篇”问答只检索所选文章；路由、改写、工具选择、文章覆盖、多轮指代、文章比较、安全停止、限制遵守和旧请求兼容指标均为 `1.0`，平均检索轮数 `1.0`、最大轮数 `2`。
-- 阶段 1 BM25 回归保持不变：Recall@5 `0.9118`、Recall@20 `0.9706`、MRR@20 `0.8258`、nDCG@20 `0.8602`。
+- 阶段 3 Agent 离线回归为 28/28 用例通过，路由、改写、工具选择、文章覆盖、多轮指代、文章比较、安全停止、限制遵守和旧请求兼容指标均为 `1.0`；`search_blog` 与 `get_related_articles` 已报告 `hybrid_rrf_rerank`，而 `get_article` 保持源文顺序读取。
 
 阶段边界与未解决问题：
 
-- 阶段 2 仍未实施。当前工具只调用 BM25；`bm25_multi_query` 仅表示合并多个 BM25 查询，不是 Vector、RRF、reranker 或 Hybrid RAG。
+- 阶段 2 已实施。浏览器 API 正常路径使用服务端 Hybrid RAG；浏览器本地降级继续使用 BM25，以保持无网络、无向量下载场景的轻量和可预测性。`bm25_multi_query` 仅表示多子查询，正常单查询的 API 元数据会标记为 `hybrid_rrf_rerank`。
 - 阶段 4 的逐结论引用验证、拒答阈值校准和反馈闭环仍未实施；当前证据评分只保证受控重试与安全停止路径。
 - 当前是单标签页短期记忆，不支持跨设备或长期账户会话；阶段 5 再评估持久存储。
 - 阶段 3 提供的是基础双文章比较；更复杂的多文章维度对齐、学习路径和依赖图仍属于阶段 5。
@@ -589,6 +591,8 @@ BM25 基线：
 
 评测数据与报告：
 
+- `blog-ai-api/evals/hybrid-dataset.json`
+- `blog-ai-api/evals/reports/hybrid-phase2.json`
 - `blog-ai-api/evals/agent-dataset.json`
 - `blog-ai-api/evals/reports/agent-phase3.json`
 
@@ -634,7 +638,7 @@ BM25 基线：
 4. Agent 使用受控状态图，最多进行两轮检索。
 5. 先用现有 JavaScript 技术栈实现，复杂度达到需要时再引入工作流框架。
 6. 先建立评测基线，再更换召回、模型或存储方案。
-7. 阶段 3 已先在 BM25 上建立可替换的 Agent 工具和工作流接口；阶段 2 实施后替换检索工具内部实现，不改多轮请求与受控循环契约。
+7. 阶段 3 先建立了可替换的 Agent 工具和工作流接口；阶段 2 已替换 `search_blog` 与 `get_related_articles` 的内部检索实现，不改多轮请求与受控循环契约。
 
 ## 17. 参考资料
 

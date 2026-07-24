@@ -9,6 +9,10 @@ const {
   serializeJson,
   validateCorpusData
 } = require('../blog-ai-api/lib/corpus-integrity');
+const {
+  buildVectorIndex,
+  embeddingMetadata
+} = require('../blog-ai-api/lib/embedding');
 
 const rootDir = process.cwd();
 const postsDir = path.join(rootDir, 'source', '_posts');
@@ -27,9 +31,37 @@ function serializePost(post) {
     description: post.description || '',
     tags: post.tags || [],
     categories: post.categories || [],
+    resourceLinks: post.resourceLinks || [],
     slug: post.slug,
     url: post.url
   };
+}
+
+function readExistingVectorIndex(outputDir) {
+  const vectorPath = path.join(outputDir, 'vectors.json');
+  const manifestPath = path.join(outputDir, 'manifest.json');
+  if (!fs.existsSync(vectorPath) || !fs.existsSync(manifestPath)) {
+    return { vectors: [], embedding: null };
+  }
+  try {
+    const vectors = JSON.parse(fs.readFileSync(vectorPath, 'utf8'));
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    return {
+      vectors: Array.isArray(vectors) ? vectors : [],
+      embedding: manifest && manifest.embedding ? manifest.embedding : null
+    };
+  } catch (error) {
+    console.warn(`Ignoring unreadable previous vector index: ${vectorPath}`);
+    return { vectors: [], embedding: null };
+  }
+}
+
+function embeddingMatches(left, right) {
+  return Boolean(left && right) &&
+    left.model === right.model &&
+    left.dimensions === right.dimensions &&
+    left.version === right.version &&
+    left.provider === right.provider;
 }
 
 function writeJson(outputDir, filename, value) {
@@ -41,13 +73,26 @@ function writeJson(outputDir, filename, value) {
 
 const publicPosts = corpus.posts.map(serializePost);
 validateCorpusData(publicPosts, corpus.chunks);
-const manifest = buildManifest(publicPosts, corpus.chunks, corpus.diagnostics);
+const expectedEmbedding = embeddingMetadata();
+const existingVectorIndex = readExistingVectorIndex(dataOutputDir);
+const vectorBuild = buildVectorIndex(corpus.chunks, embeddingMatches(
+  existingVectorIndex.embedding,
+  expectedEmbedding
+) ? existingVectorIndex.vectors : []);
+const manifest = buildManifest(publicPosts, corpus.chunks, corpus.diagnostics, {
+  vectors: vectorBuild.vectors,
+  embedding: vectorBuild.embedding,
+  vectorBuild: vectorBuild.build
+});
+validateCorpusData(publicPosts, corpus.chunks, manifest, vectorBuild.vectors);
 const postsOutputPath = writeJson(dataOutputDir, 'posts.json', publicPosts);
 const chunksOutputPath = writeJson(dataOutputDir, 'chunks.json', corpus.chunks);
 const manifestOutputPath = writeJson(dataOutputDir, 'manifest.json', manifest);
+const vectorsOutputPath = writeJson(dataOutputDir, 'vectors.json', vectorBuild.vectors);
 const publishedPostsPath = writeJson(publishOutputDir, 'posts.json', publicPosts);
 const publishedChunksPath = writeJson(publishOutputDir, 'chunks.json', corpus.chunks);
 const publishedManifestPath = writeJson(publishOutputDir, 'manifest.json', manifest);
+const publishedVectorsPath = writeJson(publishOutputDir, 'vectors.json', vectorBuild.vectors);
 
 fs.copyFileSync(retrievalCorePath, browserRetrievalPath);
 
@@ -75,9 +120,17 @@ console.log(`Exported ${corpus.chunks.length} chunks`);
 console.log(`Data posts file: ${postsOutputPath}`);
 console.log(`Data chunks file: ${chunksOutputPath}`);
 console.log(`Data manifest file: ${manifestOutputPath}`);
+console.log(`Data vectors file: ${vectorsOutputPath}`);
 console.log(`Published posts file: ${publishedPostsPath}`);
 console.log(`Published chunks file: ${publishedChunksPath}`);
 console.log(`Published manifest file: ${publishedManifestPath}`);
+console.log(`Published vectors file: ${publishedVectorsPath}`);
+console.log(
+  `Embedding index: model=${vectorBuild.embedding.model} ` +
+  `added=${vectorBuild.build.added} updated=${vectorBuild.build.updated} ` +
+  `reused=${vectorBuild.build.reused} deleted=${vectorBuild.build.deleted} ` +
+  `failed=${vectorBuild.build.failed}`
+);
 console.log(`Browser retrieval core: ${browserRetrievalPath}`);
 
 if (manifest.stats.skippedPostsWithoutUrl) {

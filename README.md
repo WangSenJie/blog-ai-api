@@ -82,8 +82,8 @@ source/_posts/*.md
         v
 scripts/export-ai-documents.js
         |
-        +--> data/posts.json, data/chunks.json, data/manifest.json
-        +--> source/ai-data/*.json       (浏览器 BM25 降级)
+        +--> data/posts.json, data/chunks.json, data/vectors.json, data/manifest.json
+        +--> source/ai-data/*.json       (浏览器 BM25 降级与语料发布)
         +--> source/js/blog-ai-retrieval.js
         |
         v
@@ -95,13 +95,13 @@ blog-ai-api/data/*.json                 (Vercel API 权威检索)
 
 正常请求只向 Vercel API 发送问题、模式和当前页面上下文，由服务端完成检索并返回引用。浏览器不再发送自行召回的候选内容；只有网络错误、请求超时、非 2xx 响应或无效响应时，才按需加载静态 `chunks.json` 并执行本地 BM25。服务端与浏览器降级路径共用 `blog-ai-api/lib/retrieval-core.js`；导出语料时，该核心会同步为浏览器脚本 `source/js/blog-ai-retrieval.js`。
 
-当前索引由 101 篇源文章生成：69 篇已发布文章进入公开语料，其中 66 篇产生 886 个 chunk；32 篇未发布文章被跳过，另有 3 篇 PDF-only 文章（Logistic Regression、MLP、支持向量机）没有可索引正文，因此暂不产生 chunk。
+当前验收索引由 107 篇源文章生成：71 篇已发布文章进入公开语料并产生 964 个 chunk；32 篇未发布文章和 4 篇缺少公开 URL 的文章被跳过。PDF-only 页面会生成包含标题、描述和资源链接的元数据 chunk。
 
-每条服务端引用遵循 `chunkId`、`title`、`url`、`section`、`snippet` 契约。响应中的 `meta.indexVersion` 对应 manifest 的语料版本，必须与 `chunkId` 一起使用，才能追溯到同一索引版本中的原始 chunk。跨版本稳定 chunk ID 留到阶段 2 实现。
+每条服务端引用遵循 `chunkId`、`title`、`url`、`section`、`snippet` 契约。响应中的 `meta.indexVersion` 对应 manifest 的语料版本；阶段 2 的稳定 chunk ID 由文章 URL、标题路径与结构位置生成，`contentHash` 用于识别内容变化和向量更新。
 
-`manifest.json` 分别记录 `posts.json` 和 `chunks.json` 的 SHA-256、记录数、语料版本与完整性统计。语料导出、同步和服务端加载会校验文件哈希及结构，包括 URL、chunk ID 唯一性、孤立 chunk 和计数一致性；Hexo 构建还会确认每篇语料文章都有实际生成页面，防止格式合法但点击 404 的引用进入索引。
+`manifest.json` 分别记录 `posts.json`、`chunks.json` 和 `vectors.json` 的 SHA-256、记录数、语料版本与完整性统计。语料导出、同步和服务端加载会校验文件哈希及结构，包括 URL、chunk ID 唯一性、`contentHash`、vector 维度、孤立 chunk 和计数一致性；Hexo 构建还会确认每篇语料文章都有实际生成页面，防止格式合法但点击 404 的引用进入索引。
 
-当前 BM25 使用 40 个固定问题评估，阶段 0 历史基线与阶段 1 验收报告均位于 `blog-ai-api/evals/reports/`。阶段 1 在 66 篇可检索文章和 886 个有效 chunk 上得到 Recall@5 `0.9118`、Recall@20 `0.9706`、MRR@20 `0.8258`、nDCG@20 `0.8602`；无答案拒答准确率仍为 `0`，将在后续拒答校准阶段解决。后续检索改动应先运行 `npm run eval:ai` 再上线。
+正常 API 路径中的 `search_blog` 和 `get_related_articles` 会执行 BM25 与 384 维本地向量的双路 Top 20 召回、RRF 融合和重排；浏览器故障降级继续使用轻量 BM25。阶段 2 独立评测中，语义题 Recall@5 从 `0.6000` 提升至 `0.9000`、MRR@20 从 `0.4035` 提升至 `0.5917`，精确题 Recall@5 与 MRR@20 均保持 `1.0000`。后续检索改动应先运行 `npm --prefix blog-ai-api run eval:hybrid` 再上线。
 
 ### 更新语料
 
@@ -114,7 +114,7 @@ npm run sync:corpus
 cd ..
 ```
 
-然后提交并推送 `data/`、`source/ai-data/` 和 `blog-ai-api/data/` 中的 `posts.json`、`chunks.json`、`manifest.json` 更新。Vercel 项目应以 `blog-ai-api` 为 Root Directory，并通过 Git 集成自动部署。
+然后提交并推送 `data/`、`source/ai-data/` 和 `blog-ai-api/data/` 中的 `posts.json`、`chunks.json`、`vectors.json`、`manifest.json` 更新。Vercel 项目应以 `blog-ai-api` 为 Root Directory，并通过 Git 集成自动部署。
 
 ### API 环境变量
 

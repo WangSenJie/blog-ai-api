@@ -66,6 +66,23 @@ function normalizeToolItem(item, query, toolName, fallbackRank) {
     sourcePosition: Number.isFinite(Number(item.position))
       ? Number(item.position)
       : rank - 1,
+    ranking: {
+      bm25Rank: Number.isFinite(Number(item.bm25Rank))
+        ? Number(item.bm25Rank)
+        : null,
+      vectorRank: Number.isFinite(Number(item.vectorRank))
+        ? Number(item.vectorRank)
+        : null,
+      vectorScore: Number.isFinite(Number(item.vectorScore))
+        ? Number(item.vectorScore)
+        : 0,
+      rrfScore: Number.isFinite(Number(item.rrfScore))
+        ? Number(item.rrfScore)
+        : 0,
+      rerankScore: Number.isFinite(Number(item.rerankScore))
+        ? Number(item.rerankScore)
+        : 0
+    },
     matchedQueries: [query],
     tools: [toolName]
   };
@@ -79,7 +96,8 @@ function mergeCandidates(existing, incoming) {
     if (!byChunkId.has(chunkId)) {
       byChunkId.set(chunkId, Object.assign({}, candidate, {
         matchedQueries: candidate.matchedQueries.slice(),
-        tools: candidate.tools.slice()
+        tools: candidate.tools.slice(),
+        ranking: Object.assign({}, candidate.ranking)
       }));
       continue;
     }
@@ -91,6 +109,17 @@ function mergeCandidates(existing, incoming) {
       current.sourcePosition,
       candidate.sourcePosition
     );
+    current.ranking = Object.assign({}, current.ranking, {
+      bm25Rank: [current.ranking.bm25Rank, candidate.ranking.bm25Rank]
+        .filter(Number.isFinite)
+        .sort((left, right) => left - right)[0] || null,
+      vectorRank: [current.ranking.vectorRank, candidate.ranking.vectorRank]
+        .filter(Number.isFinite)
+        .sort((left, right) => left - right)[0] || null,
+      vectorScore: Math.max(current.ranking.vectorScore, candidate.ranking.vectorScore),
+      rrfScore: Math.max(current.ranking.rrfScore, candidate.ranking.rrfScore),
+      rerankScore: Math.max(current.ranking.rerankScore, candidate.ranking.rerankScore)
+    });
     current.matchedQueries = [...new Set(
       current.matchedQueries.concat(candidate.matchedQueries)
     )];
@@ -220,6 +249,10 @@ async function retrieveEvidence(state, tools, queries, attempt) {
         )
       );
       const items = toolResultItems(result);
+      summary.strategy = String(result && result.strategy || 'unknown');
+      if (result && result.retrieval && typeof result.retrieval === 'object') {
+        summary.retrieval = Object.assign({}, result.retrieval);
+      }
       summary.resultCount = items.length;
       const normalized = items
         .map((item, index) => normalizeToolItem(

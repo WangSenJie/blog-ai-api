@@ -20,12 +20,12 @@ function readDataset() {
   return JSON.parse(fs.readFileSync(datasetPath, 'utf8'));
 }
 
-test('phase 3 dataset is independent and explicitly records the BM25 workflow', () => {
+test('Agent dataset records the completed phase 2 hybrid workflow', () => {
   const dataset = readDataset();
 
-  assert.equal(dataset.version, 4);
+  assert.equal(dataset.version, 5);
   assert.equal(dataset.strategy, STRATEGY);
-  assert.equal(dataset.stage2Implemented, false);
+  assert.equal(dataset.stage2Implemented, true);
   assert.ok(dataset.cases.length >= 15);
   assert.equal(
     new Set(dataset.cases.map(testCase => testCase.id)).size,
@@ -37,8 +37,8 @@ test('phase 3 dataset is independent and explicitly records the BM25 workflow', 
 test('offline Agent report passes workflow, reference, safety, and limit gates', async () => {
   const report = await buildAgentReport(readDataset(), loadCorpus());
 
-  assert.equal(report.strategy, 'bm25_agent_workflow');
-  assert.equal(report.stage2Implemented, false);
+  assert.equal(report.strategy, 'hybrid_agent_workflow');
+  assert.equal(report.stage2Implemented, true);
   assert.equal(report.acceptance.passed, true);
   assert.equal(report.summary.passedCases, report.summary.cases);
   assert.equal(report.summary.referenceResolutionAccuracy, 1);
@@ -49,13 +49,13 @@ test('offline Agent report passes workflow, reference, safety, and limit gates',
   assert.deepEqual(report.failedCases, []);
 });
 
-test('Agent dataset validation rejects phase-2 claims and unknown article labels', () => {
+test('Agent dataset validation rejects missing phase-2 claims and unknown article labels', () => {
   const corpus = loadCorpus();
   const stageTwoClaim = readDataset();
-  stageTwoClaim.stage2Implemented = true;
+  stageTwoClaim.stage2Implemented = false;
   assert.throws(
     () => validateDataset(stageTwoClaim, corpus),
-    /stage2Implemented=false/
+    /stage2Implemented=true/
   );
 
   const unknownTitle = readDataset();

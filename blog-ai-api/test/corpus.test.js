@@ -12,6 +12,7 @@ const {
   validateCorpusData,
   verifyManifestFiles
 } = require('../lib/corpus-integrity');
+const { buildVectorIndex } = require('../lib/embedding');
 const { loadCorpusFromDir } = require('../lib/corpus');
 
 function makePost(values) {
@@ -98,6 +99,44 @@ test('verifyManifestFiles detects a corpus file hash mismatch', t => {
   assert.throws(
     () => verifyManifestFiles(manifest, { postsPath, chunksPath }),
     /chunks\.json hash mismatch/
+  );
+});
+
+test('schema v2 manifest validates vectors against stable chunk IDs and content hashes', t => {
+  const directory = makeTempDir(t, 'blog-ai-hybrid-corpus-');
+  const posts = [makePost()];
+  const chunks = [makeChunk({
+    id: 'chunk_aaaaaaaaaaaaaaaaaaaaaaaa',
+    contentHash: 'sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+    headingPath: ['Introduction'],
+    chunkIndex: 0
+  })];
+  const vectorBuild = buildVectorIndex(chunks, []);
+  const manifest = buildManifest(posts, chunks, {}, {
+    vectors: vectorBuild.vectors,
+    embedding: vectorBuild.embedding,
+    vectorBuild: vectorBuild.build
+  });
+  const postsPath = writeJson(directory, 'posts.json', posts);
+  const chunksPath = writeJson(directory, 'chunks.json', chunks);
+  const vectorsPath = writeJson(directory, 'vectors.json', vectorBuild.vectors);
+
+  assert.equal(manifest.schemaVersion, 2);
+  assert.equal(
+    verifyManifestFiles(manifest, { postsPath, chunksPath, vectorsPath }),
+    true
+  );
+  assert.equal(
+    validateCorpusData(posts, chunks, manifest, vectorBuild.vectors).indexedVectors,
+    1
+  );
+
+  const staleVectors = vectorBuild.vectors.map(vector => Object.assign({}, vector, {
+    contentHash: 'sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+  }));
+  assert.throws(
+    () => validateCorpusData(posts, chunks, manifest, staleVectors),
+    /stale or orphaned/
   );
 });
 

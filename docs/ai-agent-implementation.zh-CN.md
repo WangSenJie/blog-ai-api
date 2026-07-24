@@ -1,6 +1,6 @@
 # 博客 AI Agent 实施方案
 
-> 本文保留第一版站内助手的设计背景。截至 2026-07-23，阶段 0、阶段 1 和阶段 3 已完成：当前实现已经具备短期多轮会话、受控 Agent 工具和有限检索循环；阶段 2 的 Hybrid RAG 尚未实施。最新状态与后续边界以 [`agentic-rag-upgrade-plan.zh-CN.md`](./agentic-rag-upgrade-plan.zh-CN.md) 为准。
+> 本文保留第一版站内助手的设计背景。截至 2026-07-24，阶段 0、阶段 1、阶段 2 和阶段 3 已完成：当前实现具备短期多轮会话、受控 Agent 工具、有限检索循环，以及 BM25 + Vector + RRF + Reranker 的 Hybrid RAG。最新状态与后续边界以 [`agentic-rag-upgrade-plan.zh-CN.md`](./agentic-rag-upgrade-plan.zh-CN.md) 为准。
 
 ## 目标
 

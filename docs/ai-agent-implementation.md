@@ -1,6 +1,6 @@
 # Blog AI Agent Implementation Draft
 
-> This document preserves the original first-version design. As of 2026-07-23, phases 0, 1, and 3 are implemented, including short multi-turn history, allow-listed Agent tools, and a bounded retrieval loop. Phase 2 Hybrid RAG is not implemented; see `docs/agentic-rag-upgrade-plan.zh-CN.md` for the current status and boundaries.
+> This document preserves the original first-version design. As of 2026-07-24, phases 0, 1, 2, and 3 are implemented, including short multi-turn history, allow-listed Agent tools, a bounded retrieval loop, and Hybrid RAG (BM25 + Vector + RRF + reranking). See `docs/agentic-rag-upgrade-plan.zh-CN.md` for the current status and boundaries.
 
 ## Goal
 

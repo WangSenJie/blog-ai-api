@@ -2,9 +2,9 @@
 
 const {
   normalizePostUrl,
-  normalizeText,
-  rankChunks
+  normalizeText
 } = require('../lib/retrieval-core');
+const { hybridRankChunks } = require('../lib/hybrid-retrieve');
 const {
   TOOL_SCHEMAS,
   validateSearchBlogArgs
@@ -25,6 +25,7 @@ function matchesMetadataFilter(values, requestedValues) {
 
 function createSearchBlogTool(options) {
   const chunks = options && options.chunks;
+  const vectors = options && options.vectors;
   if (!Array.isArray(chunks)) {
     throw new TypeError('createSearchBlogTool requires a chunks array');
   }
@@ -45,17 +46,29 @@ function createSearchBlogTool(options) {
         return true;
       });
       const page = args.pageUrl ? { url: args.pageUrl } : null;
-      const ranked = rankChunks(candidates, args.query, 'site', page);
-      const results = ranked.slice(0, args.topK).map((item, index) => ({
+      const retrieval = hybridRankChunks(
+        candidates,
+        vectors,
+        args.query,
+        'site',
+        page
+      );
+      const results = retrieval.ranked.slice(0, args.topK).map((item, index) => ({
         chunk: cloneChunk(item.chunk),
         score: item.score,
-        rank: index + 1
+        rank: index + 1,
+        bm25Rank: item.bm25Rank,
+        vectorRank: item.vectorRank,
+        vectorScore: item.vectorScore,
+        rrfScore: item.rrfScore,
+        rerankScore: item.rerankScore
       }));
 
       return {
-        strategy: 'bm25',
+        strategy: retrieval.strategy,
         query: args.query,
-        total: ranked.length,
+        total: retrieval.ranked.length,
+        retrieval: retrieval.stats,
         results
       };
     }

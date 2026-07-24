@@ -76,15 +76,22 @@ slug: pdf-only
     new Set(['Published False', 'Quoted False', 'Draft Post'])
   );
   assert.deepEqual(corpus.diagnostics.postsWithoutUrl, ['Missing URL']);
-  assert.deepEqual(corpus.diagnostics.postsWithoutIndexableContent, ['PDF Only']);
+  assert.deepEqual(corpus.diagnostics.postsWithoutIndexableContent, []);
   assert.deepEqual(
     [...new Set(corpus.chunks.map(chunk => chunk.postTitle))],
-    ['Published Post']
+    ['Published Post', 'PDF Only']
   );
 
   const pdfOnlyPost = corpus.posts.find(post => post.title === 'PDF Only');
+  const pdfOnlyChunk = corpus.chunks.find(chunk => chunk.postTitle === 'PDF Only');
   assert.equal(corpus.posts.some(post => post.title === 'Missing URL'), false);
   assert.match(pdfOnlyPost.url, /\/2026\/07\/06\/pdf-only\/$/);
+  assert.equal(pdfOnlyChunk.metadataOnly, true);
+  assert.equal(pdfOnlyChunk.sectionTitle, '文章元数据');
+  assert.match(pdfOnlyChunk.content, /PDF 或其他外部文档资源/);
+  assert.deepEqual(pdfOnlyChunk.resourceLinks, ['/assets/paper.pdf']);
+  assert.match(pdfOnlyChunk.id, /^chunk_[a-f0-9]{24}$/);
+  assert.match(pdfOnlyChunk.contentHash, /^sha256:[a-f0-9]{64}$/);
 });
 
 test('unpublished sources still reserve slugs to match Hexo route generation', t => {

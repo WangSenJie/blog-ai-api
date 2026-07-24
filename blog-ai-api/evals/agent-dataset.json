@@ -1,8 +1,8 @@
 {
-  "version": 4,
-  "description": "阶段 3 Agent 工作流离线评测集。使用真实博客语料、确定性路由/改写/证据评分和 BM25 工具，不调用外部模型。",
-  "strategy": "bm25_agent_workflow",
-  "stage2Implemented": false,
+  "version": 5,
+  "description": "阶段 2 完成后的 Agent 工作流离线评测集。使用真实博客语料、确定性路由/改写/证据评分和 Hybrid RAG 工具，不调用外部模型。",
+  "strategy": "hybrid_agent_workflow",
+  "stage2Implemented": true,
   "cases": [
     {
       "id": "direct-greeting",

@@ -1,22 +1,22 @@
 {
-  "generatedAt": "2026-07-23T07:36:41.039Z",
+  "generatedAt": "2026-07-24T08:08:56.355Z",
   "phase": 3,
-  "strategy": "bm25_agent_workflow",
-  "stage2Implemented": false,
+  "strategy": "hybrid_agent_workflow",
+  "stage2Implemented": true,
   "notes": [
-    "Phase 2 hybrid retrieval is not implemented; all Agent tools use the verified BM25 corpus.",
+    "search_blog and get_related_articles use BM25 plus local vector recall, RRF fusion, and reranking; get_article remains a source-order reader.",
     "The evaluation is fully offline and disables external model generation.",
     "Latency is reported for warm local orchestration and is not a production network benchmark."
   ],
   "dataset": {
-    "version": 4,
+    "version": 5,
     "cases": 28,
     "path": "evals/agent-dataset.json"
   },
   "corpus": {
-    "posts": 69,
-    "chunks": 886,
-    "indexVersion": "3e34f03e1b65b5253fc409369cc2110ae781d684bfb4af97401fe7c23323d50c"
+    "posts": 71,
+    "chunks": 964,
+    "indexVersion": "60aa9c14b08cd17c66c6e401a70ef2f252251a5b3754c6bf339ceb61344cfb46"
   },
   "limits": {
     "maxRetrievalAttempts": 2,
@@ -48,9 +48,9 @@
     "averageRetrievalAttempts": 1,
     "maxRetrievalAttempts": 2,
     "warmLatencyMs": {
-      "p50": 51.042,
-      "p95": 146.108,
-      "max": 265.041
+      "p50": 56.974,
+      "p95": 170.924,
+      "max": 275.04
     }
   },
   "acceptance": {
@@ -123,7 +123,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": false,
-      "durationMs": 11.185,
+      "durationMs": 6.18,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -163,7 +163,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 71.085,
+      "durationMs": 71.442,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -203,7 +203,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 67.818,
+      "durationMs": 63.972,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -243,7 +243,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 9.524,
+      "durationMs": 7.56,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -283,7 +283,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 8.618,
+      "durationMs": 6.518,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -323,7 +323,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 10.731,
+      "durationMs": 8.756,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -365,7 +365,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 19.755,
+      "durationMs": 28.119,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -407,7 +407,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 17.118,
+      "durationMs": 26.241,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -443,7 +443,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": false,
-      "durationMs": 48.899,
+      "durationMs": 56.974,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -479,7 +479,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": false,
-      "durationMs": 50.434,
+      "durationMs": 57.066,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -515,7 +515,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": false,
-      "durationMs": 56.935,
+      "durationMs": 58.126,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -559,7 +559,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 146.108,
+      "durationMs": 170.924,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -603,7 +603,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 139.893,
+      "durationMs": 162.611,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -647,7 +647,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 140.912,
+      "durationMs": 154.74,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -687,7 +687,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 8.409,
+      "durationMs": 6.703,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -731,7 +731,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 143.563,
+      "durationMs": 166.237,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -772,7 +772,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 98.356,
+      "durationMs": 106.652,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -813,7 +813,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 97.185,
+      "durationMs": 107.409,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -853,7 +853,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 44.118,
+      "durationMs": 56.392,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -893,7 +893,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 51.042,
+      "durationMs": 56.031,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -933,7 +933,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 9.283,
+      "durationMs": 9.685,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -973,7 +973,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 53.865,
+      "durationMs": 56.69,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -1005,7 +1005,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": true,
-      "durationMs": 4.582,
+      "durationMs": 4.348,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -1047,7 +1047,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 139.099,
+      "durationMs": 143.091,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -1083,7 +1083,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": true,
-      "durationMs": 97.529,
+      "durationMs": 95.086,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -1119,7 +1119,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": true,
-      "durationMs": 101.638,
+      "durationMs": 93.803,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -1157,7 +1157,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": true,
-      "durationMs": 265.041,
+      "durationMs": 275.04,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -1189,7 +1189,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": true,
-      "durationMs": 4.69,
+      "durationMs": 4.315,
       "checks": {
         "route": true,
         "rewrite": true,
