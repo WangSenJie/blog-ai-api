@@ -5,13 +5,20 @@ const test = require('node:test');
 
 const handler = require('../api/ask');
 const { loadCorpus } = require('../lib/corpus');
+const { verifyFeedbackReceipt } = require('../lib/feedback-receipt');
 const { REQUEST_LIMITS } = require('../memory/session');
 
 const MODEL_ENV_KEYS = [
   'LLM_API_BASE_URL',
   'LLM_API_KEY',
   'LLM_MODEL',
-  'LLM_API_PATH'
+  'LLM_API_PATH',
+  'FEEDBACK_RECEIPT_SECRET',
+  'FEEDBACK_REVIEW_CONTEXT_SECRET',
+  'FEEDBACK_INCLUDE_REVIEW_CONTEXT',
+  'FEEDBACK_WEBHOOK_URL',
+  'FEEDBACK_WEBHOOK_SECRET',
+  'FEEDBACK_WEBHOOK_TIMEOUT_MS'
 ];
 const savedEnvironment = {};
 
@@ -88,15 +95,61 @@ test('successful ask response includes trace metadata and retrieval timings', as
   assert.match(payload.meta.indexVersion, /^[a-f0-9]{64}$/);
   assert.equal(payload.meta.retrieval.strategy, 'hybrid_rrf_rerank');
   assert.ok(payload.meta.retrieval.candidates > 0);
-  assert.deepEqual(payload.meta.model, { attempted: false, answered: false });
+  assert.deepEqual(payload.meta.model, {
+    attempted: false,
+    answered: false,
+    accepted: false,
+    rejectionReason: ''
+  });
   assert.equal(payload.meta.llmFallback, false);
   assert.ok(payload.citations.length > 0);
+  assert.ok(payload.claims.length > 0);
+  assert.equal(payload.meta.citationVerification.status, 'verified');
+  assert.equal(payload.meta.citationVerification.citationCompleteness, 1);
   assert.equal(typeof payload.citations[0].chunkId, 'string');
   assert.equal(typeof payload.citations[0].section, 'string');
 
   for (const value of Object.values(payload.meta.timings)) {
     assert.ok(Number.isFinite(value));
     assert.ok(value >= 0);
+  }
+});
+
+test('ask returns a signed feedback receipt only for a configured collection', async () => {
+  const receiptSecret = 'ask-feedback-receipt-secret-for-tests-1234';
+  const webhookSecret = 'ask-feedback-webhook-secret-for-tests-1234';
+  const question = '双塔模型如何用于线上召回？';
+  process.env.FEEDBACK_RECEIPT_SECRET = receiptSecret;
+  process.env.FEEDBACK_WEBHOOK_URL = 'https://feedback.example.test/collect';
+  process.env.FEEDBACK_WEBHOOK_SECRET = webhookSecret;
+
+  try {
+    const res = makeResponse();
+    await handler({
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: { question }
+    }, res);
+    const payload = parseBody(res);
+    const receiptPayload = JSON.parse(Buffer.from(
+      payload.feedback.receipt.split('.')[1],
+      'base64url'
+    ).toString('utf8'));
+    const receipt = verifyFeedbackReceipt(payload.feedback.receipt, {
+      secret: receiptSecret
+    });
+
+    assert.equal(res.statusCode, 200);
+    assert.ok(payload.feedback);
+    assert.match(payload.feedback.expiresAt, /^\d{4}-\d{2}-\d{2}T/);
+    assert.equal(Object.hasOwn(receiptPayload, 'reviewContext'), false);
+    assert.equal(JSON.stringify(receiptPayload).includes(question), false);
+    assert.equal(receipt.traceId, payload.meta.traceId);
+    assert.equal(receipt.reviewQuestion, '');
+  } finally {
+    delete process.env.FEEDBACK_RECEIPT_SECRET;
+    delete process.env.FEEDBACK_WEBHOOK_URL;
+    delete process.env.FEEDBACK_WEBHOOK_SECRET;
   }
 });
 
@@ -135,13 +188,14 @@ test('messages API resolves a trusted multi-turn reference and exposes Agent met
   assert.equal(payload.meta.route, 'site_qa');
   assert.match(payload.meta.standaloneQuery, /双塔模型/);
   assert.ok(payload.meta.retrievalAttempts <= 2);
-  assert.equal(payload.meta.evidenceGrading, 'structural_heuristic');
+  assert.equal(payload.meta.evidenceGrading, 'calibrated_structural_v1');
+  assert.equal(payload.meta.evidenceCalibration.version, 'phase4-v1');
   assert.ok(payload.meta.toolCalls.some(call => call.name === 'search_blog'));
   assert.ok(payload.citations.some(citation => citation.title === '双塔模型'));
   assert.equal(Object.prototype.hasOwnProperty.call(payload, 'messages'), false);
 });
 
-test('successful model generation is traced without changing citations', async () => {
+test('successful structured model generation is traced and citation-verified', async () => {
   const originalFetch = global.fetch;
   process.env.LLM_API_BASE_URL = 'https://model.invalid/v1';
   process.env.LLM_API_KEY = 'test-key';
@@ -149,11 +203,29 @@ test('successful model generation is traced without changing citations', async (
   global.fetch = async (url, options) => {
     assert.equal(url, 'https://model.invalid/v1/chat/completions');
     assert.ok(options.signal);
+    const request = JSON.parse(options.body);
+    const prompt = request.messages[1].content;
+    const chunkId = prompt.match(/chunkId: ([^\n]+)/)[1].trim();
+    const evidence = prompt.match(/正文:\n([\s\S]*?)\n<\/evidence>/)[1]
+      .trim();
+    const quote = evidence.split(/[。！？\n]+/)
+      .find(sentence => sentence.trim().length >= 6)
+      .trim();
     return {
       ok: true,
       async json() {
         return {
-          choices: [{ message: { content: '这是模型基于引用生成的回答。' } }]
+          choices: [{
+            message: {
+              content: JSON.stringify({
+                claims: [{
+                  text: quote,
+                  citationIds: [chunkId],
+                  quote
+                }]
+              })
+            }
+          }]
         };
       }
     };
@@ -169,9 +241,16 @@ test('successful model generation is traced without changing citations', async (
     const payload = parseBody(res);
 
     assert.equal(res.statusCode, 200);
-    assert.equal(payload.answer, '这是模型基于引用生成的回答。');
-    assert.deepEqual(payload.meta.model, { attempted: true, answered: true });
+    assert.match(payload.answer, /\[1\]/);
+    assert.deepEqual(payload.meta.model, {
+      attempted: true,
+      answered: true,
+      accepted: true,
+      rejectionReason: ''
+    });
     assert.equal(payload.meta.llmFallback, false);
+    assert.equal(payload.meta.citationVerification.status, 'verified');
+    assert.equal(payload.meta.citationVerification.source, 'model');
     assert.ok(Number.isFinite(payload.meta.timings.generationMs));
     assert.ok(payload.citations.length > 0);
   } finally {
@@ -204,7 +283,12 @@ test('model failures keep the retrieval answer and set fallback metadata', async
 
     assert.equal(res.statusCode, 200);
     assert.match(payload.answer, /双塔模型/);
-    assert.deepEqual(payload.meta.model, { attempted: true, answered: false });
+    assert.deepEqual(payload.meta.model, {
+      attempted: true,
+      answered: false,
+      accepted: false,
+      rejectionReason: ''
+    });
     assert.equal(payload.meta.llmFallback, true);
     assert.ok(Number.isFinite(payload.meta.timings.generationMs));
     assert.ok(payload.citations.length > 0);

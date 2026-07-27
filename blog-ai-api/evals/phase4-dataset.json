@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "strategy": "grounded_agent_quality_phase4",
+  "description": "阶段 4 离线质量集。校准集只用于选择拒答门槛；holdout 只用于验收。正例要求每条关键结论有可验证的站内 citation，负例覆盖站外主题、缺失比较对象和标题锚定但正文未覆盖的细节。",
+  "thresholdGrid": [0.15, 0.2, 0.23, 0.26, 0.3],
+  "cases": [
+    {
+      "id": "cal-exact-double-tower",
+      "split": "calibration",
+      "category": "exact",
+      "question": "双塔模型",
+      "expected": {
+        "answerability": "answer",
+        "route": "site_qa",
+        "citationTitles": ["双塔模型"]
+      }
+    },
+    {
+      "id": "cal-borderline-function-series-properties",
+      "split": "calibration",
+      "category": "borderline_positive",
+      "question": "函数项级数有哪些性质",
+      "expected": {
+        "answerability": "answer",
+        "route": "site_qa",
+        "citationTitles": ["函数项级数"]
+      }
+    },
+    {
+      "id": "cal-page-double-tower-recall",
+      "split": "calibration",
+      "category": "page_qa",
+      "pageTitle": "双塔模型",
+      "question": "这篇文章如何线上召回？",
+      "expected": {
+        "answerability": "answer",
+        "route": "page_qa",
+        "citationTitles": ["双塔模型"]
+      }
+    },
+    {
+      "id": "cal-compare-itemcf-usercf",
+      "split": "calibration",
+      "category": "comparison",
+      "question": "比较 ItemCF 和 UserCF 的区别",
+      "expected": {
+        "answerability": "answer",
+        "route": "article_compare",
+        "citationTitles": ["ItemCF", "UserCF"]
+      }
+    },
+    {
+      "id": "cal-no-kubernetes",
+      "split": "calibration",
+      "category": "no_answer",
+      "question": "博客里讲过 Kubernetes Pod 调度机制吗？",
+      "expected": {
+        "answerability": "reject",
+        "route": "site_qa"
+      }
+    },
+    {
+      "id": "cal-title-anchored-missing-detail",
+      "split": "calibration",
+      "category": "hard_negative",
+      "question": "双塔模型文章中是否讲了对比学习的温度系数？",
+      "expected": {
+        "answerability": "reject",
+        "route": "site_qa"
+      }
+    },
+    {
+      "id": "cal-page-anchored-missing-detail",
+      "split": "calibration",
+      "category": "hard_negative",
+      "pageTitle": "双塔模型",
+      "question": "这篇双塔模型文章是否讲过量子纠缠？",
+      "expected": {
+        "answerability": "reject",
+        "route": "page_qa"
+      }
+    },
+    {
+      "id": "cal-missing-comparison-target",
+      "split": "calibration",
+      "category": "partial",
+      "question": "比较双塔模型和 DSSM 的区别",
+      "expected": {
+        "answerability": "reject",
+        "route": "article_compare"
+      }
+    },
+    {
+      "id": "holdout-exact-resnet",
+      "split": "holdout",
+      "category": "exact",
+      "question": "ResNet",
+      "expected": {
+        "answerability": "answer",
+        "route": "site_qa",
+        "citationTitles": ["ResNet"]
+      }
+    },
+    {
+      "id": "holdout-exact-transformer",
+      "split": "holdout",
+      "category": "exact",
+      "question": "Transformer 架构",
+      "expected": {
+        "answerability": "answer",
+        "route": "site_qa",
+        "citationTitles": ["Transformer 架构 —— Attention Is All You Need"]
+      }
+    },
+    {
+      "id": "holdout-page-summary",
+      "split": "holdout",
+      "category": "page_summary",
+      "pageTitle": "双塔模型",
+      "question": "总结这篇文章",
+      "expected": {
+        "answerability": "answer",
+        "route": "page_summary",
+        "citationTitles": ["双塔模型"]
+      }
+    },
+    {
+      "id": "holdout-compound",
+      "split": "holdout",
+      "category": "compound",
+      "question": "双塔模型的结构是什么；UserCF 的原理是什么",
+      "expected": {
+        "answerability": "answer",
+        "route": "site_qa",
+        "citationTitles": ["双塔模型", "UserCF"]
+      }
+    },
+    {
+      "id": "holdout-no-graphql",
+      "split": "holdout",
+      "category": "no_answer",
+      "question": "GraphQL 联邦网关如何做查询规划？",
+      "expected": {
+        "answerability": "reject",
+        "route": "site_qa"
+      }
+    },
+    {
+      "id": "holdout-no-kafka",
+      "split": "holdout",
+      "category": "no_answer",
+      "question": "Kafka 消费者组重平衡的过程是什么？",
+      "expected": {
+        "answerability": "reject",
+        "route": "site_qa"
+      }
+    }
+  ]
+}

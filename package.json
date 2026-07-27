@@ -11,7 +11,10 @@
     "export:ai": "node scripts/export-ai-documents.js",
     "test:ai": "npm --prefix blog-ai-api test",
     "eval:ai": "npm --prefix blog-ai-api run eval:bm25",
-    "eval:agent": "npm --prefix blog-ai-api run eval:agent"
+    "eval:agent": "npm --prefix blog-ai-api run eval:agent",
+    "eval:hybrid": "npm --prefix blog-ai-api run eval:hybrid",
+    "eval:phase4": "npm --prefix blog-ai-api run eval:phase4 --",
+    "eval:phase4:update": "npm --prefix blog-ai-api run eval:phase4:update --"
   },
   "hexo": {
     "version": "7.3.0"

@@ -216,6 +216,53 @@ test('a valid evidence-insufficient server response never enters local fallback'
   );
 });
 
+test('a structured server answer renders inline citations and keeps feedback receipts out of storage', async () => {
+  const receipt = 'f1.feedback_payload.feedback_signature';
+  const harness = createHarness(async url => {
+    assert.equal(url, 'https://api.example/api/ask');
+    return {
+      ok: true,
+      async json() {
+        return {
+          answer: '此字段只用作无结构化客户端的后备展示。',
+          claims: [{
+            text: '双塔模型由用户塔和物品塔组成。',
+            citationIds: ['tower#0']
+          }],
+          citations: [{
+            chunkId: 'tower#0',
+            title: '双塔模型',
+            url: 'https://wangsenjie.github.io/double-tower/',
+            section: '结构',
+            snippet: '双塔模型由用户塔和物品塔组成。'
+          }],
+          related: [],
+          feedback: {
+            receipt,
+            expiresAt: new Date(Date.now() + 60_000).toISOString()
+          },
+          meta: { standaloneQuery: '双塔模型' }
+        };
+      }
+    };
+  });
+  harness.api.restoreConversation();
+
+  await harness.api.ask('双塔模型');
+
+  assert.match(harness.elements.messages.innerHTML, /双塔模型由用户塔和物品塔组成。/);
+  assert.match(harness.elements.messages.innerHTML, /blog-ai-agent__claim-citation/);
+  assert.match(harness.elements.messages.innerHTML, /data-feedback-receipt/);
+  const stored = harness.sessionStorage.values.get(
+    'blog-ai-agent-conversation-v1'
+  );
+  assert.ok(stored);
+  assert.equal(stored.includes(receipt), false);
+  assert.equal(JSON.parse(stored).messages.some(message => (
+    Object.hasOwn(message, 'feedback')
+  )), false);
+});
+
 test('reset ignores a late server response and does not recommit stale messages', async () => {
   let resolveFetch;
   const harness = createHarness(() => new Promise(resolve => {

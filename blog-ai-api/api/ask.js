@@ -3,40 +3,20 @@
 const { runAgent } = require('../agent/run');
 const { loadCorpus } = require('../lib/corpus');
 const { getModelConfig } = require('../lib/generate');
+const { issueFeedbackReceipt } = require('../lib/feedback-receipt');
+const { feedbackCollectionConfigured } = require('../lib/feedback-sink');
+const {
+  applyCors,
+  contentType,
+  declaredContentLength,
+  sendJson
+} = require('../lib/http');
 const { createRequestTrace } = require('../lib/trace');
 const {
   normalizeAskRequest,
   REQUEST_LIMITS,
   RequestValidationError
 } = require('../memory/session');
-
-function applyCors(req, res) {
-  const configuredOrigins = process.env.ALLOWED_ORIGINS || process.env.ALLOWED_ORIGIN || 'https://wangsenjie.github.io';
-  const allowedOrigins = configuredOrigins
-    .split(',')
-    .map(origin => origin.trim())
-    .filter(Boolean);
-  allowedOrigins.push('http://localhost:4000', 'http://127.0.0.1:4000');
-  const requestOrigin = req.headers && req.headers.origin;
-  const originAllowed = !requestOrigin || allowedOrigins.includes(requestOrigin);
-
-  if (!requestOrigin) {
-    res.setHeader('Access-Control-Allow-Origin', allowedOrigins[0]);
-  } else if (originAllowed) {
-    res.setHeader('Access-Control-Allow-Origin', requestOrigin);
-  }
-
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Expose-Headers', 'X-Trace-Id');
-  return originAllowed;
-}
-
-function sendJson(res, statusCode, payload) {
-  res.statusCode = statusCode;
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.end(JSON.stringify(payload));
-}
 
 function buildMeta(trace, values) {
   return Object.assign({}, values, {
@@ -79,10 +59,7 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const contentType = String(
-    req.headers && req.headers['content-type'] || ''
-  ).split(';', 1)[0].trim().toLowerCase();
-  if (contentType !== 'application/json') {
+  if (contentType(req) !== 'application/json') {
     sendJson(res, 415, {
       error: 'Content-Type must be application/json',
       meta: buildMeta(trace, {})
@@ -90,9 +67,7 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const contentLength = Number(
-    req.headers && req.headers['content-length']
-  );
+  const contentLength = declaredContentLength(req);
   if (
     Number.isFinite(contentLength) &&
     contentLength > REQUEST_LIMITS.maxBodyBytes
@@ -134,10 +109,27 @@ module.exports = async (req, res) => {
         : null
     }));
 
+    if (feedbackCollectionConfigured()) {
+      const feedback = issueFeedbackReceipt({
+        traceId: trace.traceId,
+        indexVersion: payload.meta.indexVersion,
+        route: payload.meta.route,
+        evidenceStatus: payload.meta.evidenceStatus,
+        verificationStatus: payload.meta.citationVerification &&
+          payload.meta.citationVerification.status,
+        retrievalStrategy: payload.meta.retrieval && payload.meta.retrieval.strategy,
+        citationChunkIds: payload.citations.map(citation => citation.chunkId),
+        modelAnswered: payload.meta.model && payload.meta.model.answered,
+        answer: payload.answer,
+        reviewQuestion: input.question
+      });
+      if (feedback) payload.feedback = feedback;
+    }
+
     if (process.env.NODE_ENV !== 'test') {
       console.info('ask.js completed', {
         traceId: trace.traceId,
-        sessionId: input.sessionId,
+        sessionPresent: Boolean(input.sessionId),
         route: payload.meta.route,
         mode: payload.meta.mode,
         citations: payload.citations.length,
@@ -145,6 +137,9 @@ module.exports = async (req, res) => {
         retrievalAttempts: payload.meta.retrievalAttempts,
         modelAttempted: payload.meta.model.attempted,
         modelAnswered: payload.meta.model.answered,
+        citationVerification: payload.meta.citationVerification &&
+          payload.meta.citationVerification.status,
+        feedbackEnabled: Boolean(payload.feedback),
         timings: payload.meta.timings
       });
     }

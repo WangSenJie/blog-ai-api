@@ -6,7 +6,8 @@ const {
   normalizeText
 } = require('../../lib/retrieval-core');
 const {
-  estimateTokens
+  estimateTokens,
+  EVIDENCE_CALIBRATION
 } = require('../config');
 const {
   ROUTES
@@ -28,7 +29,37 @@ function meaningfulTerms(query) {
     .filter(term => !/^(文章|相关|内容|博客|继续|展开)$/.test(term));
 }
 
-function candidateCoverage(candidate, query) {
+function knownArticleTitles(state) {
+  const references = []
+    .concat(state.currentQuestionRefs || [])
+    .concat(state.resolvedArticleRefs || [])
+    .concat(state.history && state.history.pageRef || [])
+    .concat(state.history && state.history.articleRefs || []);
+  return [...new Set(references
+    .map(reference => normalizeText(reference && reference.title))
+    .filter(title => title.length >= 2))]
+    .sort((left, right) => right.length - left.length);
+}
+
+function removeKnownArticleTitles(query, state) {
+  let normalized = normalizeText(query);
+  for (const title of knownArticleTitles(state || {})) {
+    normalized = normalized.split(title).join(' ');
+  }
+  return normalized.replace(/\s+/g, ' ').trim();
+}
+
+function isGenericArticleDetailQuery(query) {
+  const normalized = normalizeText(query)
+    .replace(/[《》：:，,。！？?!\s]/g, '');
+  return /^(?:的)?(?:结构|原理|定义|实现|特点|内容|作用|性质)?(?:什么是|是什么|介绍一下|讲了什么|主要内容|核心观点|有什么特点|有何特点|有什么性质|它有什么性质|如何工作)?$/.test(
+    normalized
+  );
+}
+
+function candidateCoverage(candidate, query, calibration, options) {
+  const policy = Object.assign({}, EVIDENCE_CALIBRATION, calibration || {});
+  const settings = Object.assign({ allowSemantic: true }, options || {});
   const terms = meaningfulTerms(query);
   if (!terms.length) return candidate ? 1 : 0;
   const text = searchableCandidateText(candidate);
@@ -39,15 +70,19 @@ function candidateCoverage(candidate, query) {
   );
   // A vector result is only used as evidence when its semantic similarity is
   // well above the retrieval floor. This keeps no-answer behavior conservative.
-  const semantic = Number.isFinite(vectorScore) && vectorScore >= 0.3
+  const semantic = settings.allowSemantic && Number.isFinite(vectorScore) &&
+    vectorScore >= policy.vectorEvidenceFloor
     ? Math.min(1, vectorScore / 0.6)
     : 0;
   return Math.max(lexical, semantic);
 }
 
-function bestCoverage(candidates, query) {
+function bestCoverage(candidates, query, calibration, options) {
   return candidates.reduce(
-    (best, candidate) => Math.max(best, candidateCoverage(candidate, query)),
+    (best, candidate) => Math.max(
+      best,
+      candidateCoverage(candidate, query, calibration, options)
+    ),
     0
   );
 }
@@ -62,21 +97,26 @@ function matchingQueryCandidates(candidates, query) {
   ));
 }
 
-function bestQueryCandidate(candidates, query) {
+function bestQueryCandidate(candidates, query, calibration) {
   return matchingQueryCandidates(candidates, query)
     .slice()
     .sort((left, right) => (
-      candidateCoverage(right, query) - candidateCoverage(left, query) ||
+      candidateCoverage(right, query, calibration) -
+        candidateCoverage(left, query, calibration) ||
       (right.score || 0) - (left.score || 0) ||
       (left.rank || Number.MAX_SAFE_INTEGER) -
         (right.rank || Number.MAX_SAFE_INTEGER)
     ))[0] || null;
 }
 
-function bestTargetCandidate(candidates, target) {
+function bestTargetCandidate(candidates, target, calibration) {
+  const policy = Object.assign({}, EVIDENCE_CALIBRATION, calibration || {});
   const normalizedTarget = normalizeText(target);
   return candidates
-    .filter(candidate => candidateCoverage(candidate, target) >= 0.45)
+    .filter(candidate => (
+      candidateCoverage(candidate, target, policy) >=
+        policy.compareTargetMinCoverage
+    ))
     .sort((left, right) => {
       const leftTitle = normalizeText(left.chunk.postTitle);
       const rightTitle = normalizeText(right.chunk.postTitle);
@@ -86,14 +126,40 @@ function bestTargetCandidate(candidates, target) {
       const rightContains = rightTitle.includes(normalizedTarget) ? 1 : 0;
       return rightExact - leftExact ||
         rightContains - leftContains ||
-        candidateCoverage(right, target) - candidateCoverage(left, target) ||
+      candidateCoverage(right, target, policy) -
+        candidateCoverage(left, target, policy) ||
         right.score - left.score ||
         left.rank - right.rank;
     })[0] || null;
 }
 
+function gradeResult(status, reason, score, threshold, features) {
+  return {
+    status,
+    reason,
+    score: Number.isFinite(score) ? score : 0,
+    threshold: Number.isFinite(threshold) ? threshold : 0,
+    features: Object.assign({}, features || {})
+  };
+}
+
 function gradeEvidence(state) {
+  const calibration = Object.assign(
+    {},
+    EVIDENCE_CALIBRATION,
+    state.evidenceCalibration || {}
+  );
   const candidates = state.retrievedChunks;
+  const coverageQuery = removeKnownArticleTitles(
+    state.standaloneQuery,
+    state
+  ) || state.standaloneQuery;
+  const coverageUsesArticleAnchor = normalizeText(coverageQuery) !==
+    normalizeText(state.standaloneQuery);
+  const coverageOptions = {
+    allowSemantic: !coverageUsesArticleAnchor ||
+      isGenericArticleDetailQuery(coverageQuery)
+  };
   const primaryReference = state.resolvedArticleRefs[0] ||
     state.history.pageRef ||
     state.history.articleRefs[0] ||
@@ -101,23 +167,43 @@ function gradeEvidence(state) {
   const primaryUrl = normalizePostUrl(primaryReference && primaryReference.url);
 
   if (!candidates.length) {
-    return { status: 'insufficient', reason: 'no_candidates' };
+    return gradeResult(
+      'insufficient',
+      'no_candidates',
+      0,
+      calibration.siteQaMinCoverage,
+      {
+        candidates: 0,
+        coverageQuery,
+        semanticAllowed: coverageOptions.allowSemantic,
+        calibrationVersion: calibration.version
+      }
+    );
   }
 
   if (state.route === ROUTES.PAGE_SUMMARY) {
     const hasPage = candidates.some(candidate => (
       normalizePostUrl(candidate.chunk.postUrl) === primaryUrl
     ));
-    return hasPage
-      ? { status: 'sufficient', reason: 'current_article_loaded' }
-      : { status: 'insufficient', reason: 'current_article_missing' };
+    return gradeResult(
+      hasPage ? 'sufficient' : 'insufficient',
+      hasPage ? 'current_article_loaded' : 'current_article_missing',
+      hasPage ? 1 : 0,
+      1,
+      { hasPage, candidates: candidates.length, calibrationVersion: calibration.version }
+    );
   }
 
   if (state.route === ROUTES.PAGE_QA) {
     const pageCandidates = candidates.filter(candidate => (
       normalizePostUrl(candidate.chunk.postUrl) === primaryUrl
     ));
-    const coverage = bestCoverage(pageCandidates, state.standaloneQuery);
+    const coverage = bestCoverage(
+      pageCandidates,
+      coverageQuery,
+      calibration,
+      coverageOptions
+    );
     const genericArticleQuestion = (
       primaryReference &&
       normalizeText(state.standaloneQuery).includes(
@@ -127,12 +213,26 @@ function gradeEvidence(state) {
         state.standaloneQuery
       )
     );
-    return pageCandidates.length && (
-      coverage >= 0.35 ||
+    const sufficient = pageCandidates.length && (
+      coverage >= calibration.pageQaMinCoverage ||
       genericArticleQuestion
-    )
-      ? { status: 'sufficient', reason: 'current_page_terms_covered' }
-      : { status: 'insufficient', reason: 'current_page_terms_not_covered' };
+    );
+    return gradeResult(
+      sufficient ? 'sufficient' : 'insufficient',
+      sufficient
+        ? 'current_page_terms_covered'
+        : 'current_page_terms_not_covered',
+      genericArticleQuestion ? 1 : coverage,
+      calibration.pageQaMinCoverage,
+      {
+        coverage,
+        coverageQuery,
+        semanticAllowed: coverageOptions.allowSemantic,
+        genericArticleQuestion,
+        pageCandidates: pageCandidates.length,
+        calibrationVersion: calibration.version
+      }
+    );
   }
 
   if (state.route === ROUTES.RELATED_ARTICLES) {
@@ -141,9 +241,16 @@ function gradeEvidence(state) {
         .map(candidate => normalizePostUrl(candidate.chunk.postUrl))
         .filter(url => url && url !== primaryUrl)
     );
-    return urls.size
-      ? { status: 'sufficient', reason: 'related_articles_found' }
-      : { status: 'insufficient', reason: 'related_articles_missing' };
+    return gradeResult(
+      urls.size ? 'sufficient' : 'insufficient',
+      urls.size ? 'related_articles_found' : 'related_articles_missing',
+      urls.size ? 1 : 0,
+      1,
+      {
+        relatedUrls: urls.size,
+        calibrationVersion: calibration.version
+      }
+    );
   }
 
   if (state.route === ROUTES.ARTICLE_COMPARE) {
@@ -155,7 +262,8 @@ function gradeEvidence(state) {
         normalizeText(query) === normalizeText(target) ||
         normalizeText(query).startsWith(`${normalizeText(target)} `)
       ))),
-      target
+      target,
+      calibration
     ));
     const distinctUrls = new Set(
       targetCandidates
@@ -165,24 +273,82 @@ function gradeEvidence(state) {
     const allTargetsCovered = targets.length >= 2 &&
       targetCandidates.every(Boolean);
 
-    return distinctUrls.size >= 2 && allTargetsCovered
-      ? { status: 'sufficient', reason: 'comparison_targets_covered' }
-      : { status: 'insufficient', reason: 'comparison_target_missing' };
+    const sufficient = distinctUrls.size >= 2 && allTargetsCovered;
+    return gradeResult(
+      sufficient ? 'sufficient' : 'insufficient',
+      sufficient ? 'comparison_targets_covered' : 'comparison_target_missing',
+      targets.length ? distinctUrls.size / targets.length : 0,
+      1,
+      {
+        targets: targets.length,
+        coveredTargets: targetCandidates.filter(Boolean).length,
+        distinctUrls: distinctUrls.size,
+        targetMinCoverage: calibration.compareTargetMinCoverage,
+        calibrationVersion: calibration.version
+      }
+    );
   }
 
   if (state.subqueries.length > 1) {
-    const allSubqueriesCovered = state.subqueries.every(query => (
-      bestCoverage(matchingQueryCandidates(candidates, query), query) >= 0.23
+    const coverageBySubquery = state.subqueries.map(query => {
+      const subqueryCoverageQuery = removeKnownArticleTitles(query, state) || query;
+      const matchingCandidates = matchingQueryCandidates(candidates, query);
+      const genericArticleQuestion = isGenericArticleDetailQuery(
+        subqueryCoverageQuery
+      );
+      const coverage = bestCoverage(
+        matchingCandidates,
+        subqueryCoverageQuery,
+        calibration,
+        {
+          allowSemantic: normalizeText(subqueryCoverageQuery) ===
+            normalizeText(query) || genericArticleQuestion
+        }
+      );
+      return genericArticleQuestion && matchingCandidates.length
+        ? 1
+        : coverage;
+    });
+    const allSubqueriesCovered = coverageBySubquery.every(coverage => (
+      coverage >= calibration.compoundMinCoverage
     ));
-    return allSubqueriesCovered
-      ? { status: 'sufficient', reason: 'all_subqueries_covered' }
-      : { status: 'insufficient', reason: 'subquery_evidence_missing' };
+    return gradeResult(
+      allSubqueriesCovered ? 'sufficient' : 'insufficient',
+      allSubqueriesCovered
+        ? 'all_subqueries_covered'
+        : 'subquery_evidence_missing',
+      coverageBySubquery.length ? Math.min(...coverageBySubquery) : 0,
+      calibration.compoundMinCoverage,
+      {
+        coverageBySubquery,
+        coverageQuery,
+        semanticAllowed: coverageOptions.allowSemantic,
+        calibrationVersion: calibration.version
+      }
+    );
   }
 
-  const coverage = bestCoverage(candidates.slice(0, 5), state.standaloneQuery);
-  return coverage >= 0.23
-    ? { status: 'sufficient', reason: 'query_terms_covered' }
-    : { status: 'insufficient', reason: 'query_terms_not_covered' };
+  const coverage = bestCoverage(
+    candidates.slice(0, 5),
+    coverageQuery,
+    calibration,
+    coverageOptions
+  );
+  return gradeResult(
+    coverage >= calibration.siteQaMinCoverage ? 'sufficient' : 'insufficient',
+    coverage >= calibration.siteQaMinCoverage
+      ? 'query_terms_covered'
+      : 'query_terms_not_covered',
+    coverage,
+    calibration.siteQaMinCoverage,
+    {
+      coverage,
+      coverageQuery,
+      semanticAllowed: coverageOptions.allowSemantic,
+      candidates: candidates.length,
+      calibrationVersion: calibration.version
+    }
+  );
 }
 
 function selectContext(state) {
@@ -225,12 +391,17 @@ function selectContext(state) {
             normalizeText(query).startsWith(`${normalizeText(target)} `)
           ))
         )),
-        target
+        target,
+        state.evidenceCalibration
       ));
     }
   } else if (state.subqueries.length > 1) {
     for (const query of state.subqueries) {
-      add(bestQueryCandidate(state.retrievedChunks, query));
+      add(bestQueryCandidate(
+        state.retrievedChunks,
+        query,
+        state.evidenceCalibration
+      ));
     }
   }
 
@@ -247,8 +418,12 @@ module.exports = {
   bestQueryCandidate,
   bestTargetCandidate,
   candidateCoverage,
+  gradeResult,
   gradeEvidence,
+  isGenericArticleDetailQuery,
+  knownArticleTitles,
   meaningfulTerms,
   matchingQueryCandidates,
+  removeKnownArticleTitles,
   selectContext
 };

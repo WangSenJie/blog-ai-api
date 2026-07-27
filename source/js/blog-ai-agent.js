@@ -738,8 +738,10 @@
       return {
         answer: result.answer,
         citations: Array.isArray(result.citations) ? result.citations : [],
+        claims: Array.isArray(result.claims) ? result.claims : [],
         related: Array.isArray(result.related) ? result.related : [],
-        meta: result.meta || null
+        meta: result.meta || null,
+        feedback: result.feedback || null
       };
     } finally {
       window.clearTimeout(timeoutId);
@@ -747,6 +749,70 @@
         state.activeController = null;
       }
     }
+  }
+
+  function validFeedbackReceipt(value) {
+    const feedback = value && typeof value === 'object' ? value : null;
+    const receipt = feedback && String(feedback.receipt || '').trim();
+    const expiresAt = feedback && String(feedback.expiresAt || '').trim();
+    if (!/^f1\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(receipt || '')) {
+      return null;
+    }
+    if (!Number.isFinite(Date.parse(expiresAt)) || Date.parse(expiresAt) <= Date.now()) {
+      return null;
+    }
+    return { receipt, expiresAt };
+  }
+
+  function renderAnswerBody(result) {
+    const citations = Array.isArray(result.citations) ? result.citations : [];
+    const citationsById = new Map(citations.map((citation, index) => [
+      String(citation && citation.chunkId || ''),
+      { citation, index: index + 1 }
+    ]));
+    const claims = (Array.isArray(result.claims) ? result.claims : [])
+      .map(claim => {
+        const text = compactText(claim && claim.text, 600);
+        const citationId = Array.isArray(claim && claim.citationIds)
+          ? String(claim.citationIds[0] || '')
+          : '';
+        const linked = citationsById.get(citationId);
+        if (!text || !linked) return '';
+        const url = safePostUrl(linked.citation && linked.citation.url);
+        const citationLink = url
+          ? `<a class="blog-ai-agent__claim-citation" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="查看结论引用 ${linked.index}">[${linked.index}]</a>`
+          : `<span class="blog-ai-agent__claim-citation">[${linked.index}]</span>`;
+        return `<p class="blog-ai-agent__claim">${escapeHtml(text)} ${citationLink}</p>`;
+      })
+      .filter(Boolean);
+
+    if (claims.length) return claims.join('');
+    return escapeHtml(result.answer || '');
+  }
+
+  function feedbackHtml(result, isFallback) {
+    const feedback = !isFallback && validFeedbackReceipt(result.feedback);
+    if (!feedback) return '';
+
+    return `
+      <div class="blog-ai-agent__feedback" data-feedback-receipt="${escapeHtml(feedback.receipt)}">
+        <span class="blog-ai-agent__feedback-question">这个回答有帮助吗？</span>
+        <div class="blog-ai-agent__feedback-actions">
+          <button type="button" data-feedback-rating="helpful">有帮助</button>
+          <button type="button" data-feedback-rating="not_helpful">需要改进</button>
+        </div>
+        <label class="blog-ai-agent__feedback-reason-label">改进原因
+          <select class="blog-ai-agent__feedback-reason" aria-label="选择需要改进的原因">
+            <option value="answer_incorrect">内容不准确</option>
+            <option value="citation_mismatch">引用不匹配</option>
+            <option value="should_have_refused">本应拒答</option>
+            <option value="should_have_answer">本应回答</option>
+            <option value="missing_content">缺少内容</option>
+          </select>
+        </label>
+        <span class="blog-ai-agent__feedback-status" aria-live="polite"></span>
+      </div>
+    `;
   }
 
   function renderAssistantMessage(result, isFallback) {
@@ -775,9 +841,10 @@
     return `
       <div class="blog-ai-agent__message blog-ai-agent__message--assistant">
         <div class="blog-ai-agent__message-label">向导${isFallback ? ' · 本地检索' : ''}</div>
-        <div class="blog-ai-agent__message-body">${escapeHtml(result.answer || '')}</div>
+        <div class="blog-ai-agent__message-body">${renderAnswerBody(result)}</div>
         ${citationsHtml ? `<div class="blog-ai-agent__citation-list">${citationsHtml}</div>` : ''}
         ${relatedHtml ? `<div class="blog-ai-agent__related">${relatedHtml}</div>` : ''}
+        ${feedbackHtml(result, isFallback)}
       </div>
     `;
   }
@@ -797,6 +864,66 @@
     state.elements.messages.scrollTop = state.elements.messages.scrollHeight;
     typesetMath(message);
     return message;
+  }
+
+  async function submitFeedback(container, rating) {
+    if (!container || container.classList.contains('is-pending') ||
+      container.classList.contains('is-submitted')) {
+      return false;
+    }
+    const receipt = String(container.getAttribute('data-feedback-receipt') || '').trim();
+    if (!validFeedbackReceipt({
+      receipt,
+      expiresAt: new Date(Date.now() + 1).toISOString()
+    })) {
+      return false;
+    }
+    if (rating !== 'helpful' && rating !== 'not_helpful') return false;
+
+    const apiBaseUrl = String(config.apiBaseUrl || '').replace(/\/$/, '');
+    if (!apiBaseUrl) return false;
+    const reasonElement = container.querySelector('.blog-ai-agent__feedback-reason');
+    const reason = rating === 'not_helpful' && reasonElement
+      ? String(reasonElement.value || '')
+      : '';
+    const status = container.querySelector('.blog-ai-agent__feedback-status');
+    const buttons = Array.from(
+      container.querySelectorAll('button[data-feedback-rating]')
+    );
+    container.classList.add('is-pending');
+    buttons.forEach(button => {
+      button.disabled = true;
+    });
+    if (status) status.textContent = '正在发送反馈…';
+
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/feedback`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'omit',
+        keepalive: true,
+        body: JSON.stringify({ receipt, rating, reason })
+      });
+      if (!response.ok) throw new Error(`Feedback API failed: ${response.status}`);
+
+      container.classList.remove('is-pending');
+      container.classList.add('is-submitted');
+      if (status) {
+        status.textContent = rating === 'helpful'
+          ? '收到，感谢你的反馈。'
+          : '收到，我们会据此改进。';
+      }
+      return true;
+    } catch (error) {
+      container.classList.remove('is-pending');
+      buttons.forEach(button => {
+        button.disabled = false;
+      });
+      if (status) status.textContent = '反馈暂时未送达，可以稍后重试。';
+      return false;
+    }
   }
 
   function setBusy(isBusy) {
@@ -994,6 +1121,12 @@
     state.elements.toggle.addEventListener('click', () => togglePanel());
     state.elements.close.addEventListener('click', () => togglePanel(false));
     state.elements.newConversation.addEventListener('click', resetConversation);
+    state.elements.messages.addEventListener('click', event => {
+      const button = event.target.closest('button[data-feedback-rating]');
+      if (!button) return;
+      const container = button.closest('.blog-ai-agent__feedback');
+      submitFeedback(container, button.getAttribute('data-feedback-rating'));
+    });
 
     state.elements.form.addEventListener('submit', event => {
       event.preventDefault();
@@ -1035,6 +1168,7 @@
       ask,
       resetConversation,
       restoreConversation,
+      submitFeedback,
       setElements(elements) {
         state.elements = elements;
       },

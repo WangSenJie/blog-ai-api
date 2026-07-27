@@ -16,6 +16,36 @@ const AGENT_LIMITS = Object.freeze({
   generationTimeoutMs: 10000
 });
 
+// These values are selected by the Phase 4 offline calibration runner. They
+// are retrieval/evidence gates, not probabilities or user-facing confidence.
+const EVIDENCE_CALIBRATION = Object.freeze({
+  version: 'phase4-v1',
+  vectorEvidenceFloor: 0.3,
+  siteQaMinCoverage: 0.23,
+  pageQaMinCoverage: 0.35,
+  compoundMinCoverage: 0.23,
+  compareTargetMinCoverage: 0.45
+});
+
+function createEvidenceCalibration(overrides) {
+  const settings = Object.assign({}, EVIDENCE_CALIBRATION, overrides || {});
+  for (const key of [
+    'vectorEvidenceFloor',
+    'siteQaMinCoverage',
+    'pageQaMinCoverage',
+    'compoundMinCoverage',
+    'compareTargetMinCoverage'
+  ]) {
+    const value = Number(settings[key]);
+    if (!Number.isFinite(value) || value < 0 || value > 1) {
+      throw new TypeError(`Invalid evidence calibration value: ${key}`);
+    }
+    settings[key] = value;
+  }
+  settings.version = String(settings.version || EVIDENCE_CALIBRATION.version);
+  return settings;
+}
+
 function estimateTokens(value) {
   const characters = typeof value === 'number'
     ? Math.max(0, value)
@@ -105,6 +135,8 @@ function snapshotBudget(budget) {
 
 module.exports = {
   AGENT_LIMITS,
+  EVIDENCE_CALIBRATION,
+  createEvidenceCalibration,
   createBudget,
   estimatedGenerationCost,
   estimateTokens,

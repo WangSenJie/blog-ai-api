@@ -13,6 +13,8 @@
     "eval:bm25:phase1": "node evals/run.js --output evals/reports/bm25-phase1.json",
     "eval:agent": "node evals/agent-run.js",
     "eval:agent:phase3": "node evals/agent-run.js --output evals/reports/agent-phase3.json",
-    "eval:hybrid": "node evals/hybrid-run.js"
+    "eval:hybrid": "node evals/hybrid-run.js",
+    "eval:phase4": "node evals/phase4-run.js",
+    "eval:phase4:update": "node evals/phase4-run.js --output evals/reports/phase4.json"
   }
 }

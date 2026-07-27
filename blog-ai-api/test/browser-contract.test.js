@@ -116,6 +116,56 @@ test('assistant conversation history keeps only compact article references', () 
   assert.match(commitConversation, /indexVersion:\s*result\.meta && result\.meta\.indexVersion/);
 });
 
+test('structured claims render with server-owned inline citations', () => {
+  const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
+  const renderAnswerBody = sourceSection(
+    agent,
+    'function renderAnswerBody(result)',
+    'function feedbackHtml'
+  );
+
+  assert.match(renderAnswerBody, /result\.claims/);
+  assert.match(renderAnswerBody, /claim\.citationIds/);
+  assert.match(renderAnswerBody, /citationsById/);
+  assert.match(renderAnswerBody, /blog-ai-agent__claim-citation/);
+  assert.match(renderAnswerBody, /escapeHtml\(text\)/);
+  assert.match(renderAnswerBody, /safePostUrl/);
+});
+
+test('feedback is signed server state, omitted from fallback and never persisted', () => {
+  const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
+  const remoteAsk = sourceSection(
+    agent,
+    'async function remoteAsk(question, mode, context, messages)',
+    'function renderAssistantMessage'
+  );
+  const feedbackHtml = sourceSection(
+    agent,
+    'function feedbackHtml(result, isFallback)',
+    'function renderAssistantMessage'
+  );
+  const submitFeedback = sourceSection(
+    agent,
+    'async function submitFeedback(container, rating)',
+    'function setBusy'
+  );
+  const commitConversation = sourceSection(
+    agent,
+    'function commitConversation(requestMessages, result, standaloneQuery)',
+    'async function ask(question)'
+  );
+
+  assert.match(remoteAsk, /feedback:\s*result\.feedback \|\| null/);
+  assert.match(feedbackHtml, /!isFallback/);
+  assert.match(feedbackHtml, /validFeedbackReceipt/);
+  assert.match(feedbackHtml, /data-feedback-receipt/);
+  assert.match(submitFeedback, /\/api\/feedback/);
+  assert.match(submitFeedback, /credentials:\s*'omit'/);
+  assert.match(submitFeedback, /keepalive:\s*true/);
+  assert.match(submitFeedback, /JSON\.stringify\(\{ receipt, rating, reason \}\)/);
+  assert.doesNotMatch(commitConversation, /feedback/);
+});
+
 test('conversation storage is versioned, expiring, bounded, and session scoped', () => {
   const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
   const saveConversation = sourceSection(

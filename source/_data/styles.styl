@@ -1858,3 +1858,67 @@ body::after
 
 .blog-ai-agent__messages[aria-busy='true']
   cursor progress
+
+.blog-ai-agent__claim
+  margin 0 0 8px
+
+  &:last-child
+    margin-bottom 0
+
+.blog-ai-agent__claim-citation
+  color #178f92
+  font-size .78rem
+  font-weight 700
+  text-decoration none
+
+.blog-ai-agent__feedback
+  align-items center
+  border-top 1px solid rgba(205, 226, 230, .8)
+  display flex
+  flex-wrap wrap
+  gap 7px
+  margin-top 12px
+  padding-top 10px
+
+.blog-ai-agent__feedback-question,
+.blog-ai-agent__feedback-status,
+.blog-ai-agent__feedback-reason-label
+  color #607080
+  font-size .72rem
+
+.blog-ai-agent__feedback-actions
+  display flex
+  gap 6px
+
+  button
+    background #fff
+    border 1px solid rgba(23, 143, 146, .25)
+    border-radius 999px
+    color #178f92
+    cursor pointer
+    font-size .72rem
+    padding 4px 8px
+
+    &:disabled
+      cursor default
+      opacity .55
+
+.blog-ai-agent__feedback-reason-label
+  align-items center
+  display flex
+  gap 4px
+
+.blog-ai-agent__feedback-reason
+  background #fff
+  border 1px solid rgba(205, 226, 230, .95)
+  border-radius 5px
+  color #475569
+  font-size .72rem
+  max-width 112px
+  padding 3px 4px
+
+.blog-ai-agent__feedback-status
+  flex-basis 100%
+
+.blog-ai-agent__feedback.is-submitted .blog-ai-agent__feedback-reason-label
+  display none

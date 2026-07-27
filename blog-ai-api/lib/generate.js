@@ -82,6 +82,10 @@ function buildGroundedPrompt(input) {
     : '当前没有页面上下文。';
 
   return [
+    '你必须只返回一个合法 JSON 对象，不能使用 Markdown、代码围栏或额外解释。',
+    'JSON 格式严格为：{"claims":[{"text":"结论","citationIds":["证据 chunkId"],"quote":"该 chunk 正文中的连续原文短引文"}]}。',
+    '每条 claim 必须且只能引用一个给出的 chunkId；quote 必须逐字来自同一 chunk 的正文，且 text 必须与 quote 完全相同。不要改写、解释、补全、加标题或合并多个句子。',
+    '最多输出 6 条结论。证据不足时返回 {"claims":[]}，不要用常识补齐。',
     `路由: ${input.route || 'site_qa'}`,
     pageText,
     `用户原问题: ${input.question || ''}`,
@@ -95,23 +99,40 @@ function buildGroundedPrompt(input) {
   ].join('\n\n');
 }
 
+function parseJsonResponse(content) {
+  const text = String(content || '').trim();
+  if (!text) return null;
+  const withoutFence = text
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/\s*```$/, '')
+    .trim();
+
+  try {
+    return JSON.parse(withoutFence);
+  } catch (error) {
+    return null;
+  }
+}
+
 function extractAnswer(content) {
   const text = String(content || '').trim();
   if (!text) return '';
-
-  try {
-    const parsed = JSON.parse(text);
-    if (parsed && typeof parsed.answer === 'string') {
-      return parsed.answer.trim();
-    }
-  } catch (error) {
-    // Ignore JSON parse errors and fall back to raw text.
+  const parsed = parseJsonResponse(text);
+  if (parsed && typeof parsed.answer === 'string') {
+    return parsed.answer.trim();
   }
 
   return text;
 }
 
-async function requestGeneratedAnswer(prompt, options) {
+function extractStructuredAnswer(content) {
+  const parsed = parseJsonResponse(content);
+  if (!parsed || !Array.isArray(parsed.claims)) return null;
+
+  return { claims: parsed.claims };
+}
+
+async function requestGeneratedAnswer(prompt, options, extract) {
   if (!canUseModel()) return null;
 
   const {
@@ -183,13 +204,12 @@ async function requestGeneratedAnswer(prompt, options) {
     }
 
     const payload = await response.json();
-    const answer = extractAnswer(
-      payload &&
-        payload.choices &&
-        payload.choices[0] &&
-        payload.choices[0].message &&
-        payload.choices[0].message.content
-    );
+    const content = payload &&
+      payload.choices &&
+      payload.choices[0] &&
+      payload.choices[0].message &&
+      payload.choices[0].message.content;
+    const answer = (extract || extractAnswer)(content);
 
     return answer || null;
   } finally {
@@ -201,7 +221,11 @@ async function requestGeneratedAnswer(prompt, options) {
 }
 
 async function generateGroundedAnswer(input, options) {
-  return requestGeneratedAnswer(buildGroundedPrompt(input), options);
+  return requestGeneratedAnswer(
+    buildGroundedPrompt(input),
+    options,
+    extractStructuredAnswer
+  );
 }
 
 async function generateAnswer(question, mode, page, citations) {
@@ -211,6 +235,7 @@ async function generateAnswer(question, mode, page, citations) {
 module.exports = {
   buildGroundedPrompt,
   canUseModel,
+  extractStructuredAnswer,
   getModelConfig,
   generateAnswer,
   generateGroundedAnswer

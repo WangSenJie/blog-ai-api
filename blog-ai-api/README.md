@@ -8,6 +8,7 @@ Minimal external backend for the blog guide widget.
 blog-ai-api/
   api/
     ask.js
+    feedback.js
   agent/
     run.js
     state.js
@@ -19,6 +20,7 @@ blog-ai-api/
     get-related-articles.js
   memory/
     session.js
+    feedback.js
   data/
     posts.json
     chunks.json
@@ -29,12 +31,16 @@ blog-ai-api/
     retrieval-core.js
     retrieve.js
     generate.js
+    feedback-receipt.js
+    feedback-sink.js
     trace.js
   evals/
     dataset.json
     agent-dataset.json
+    phase4-dataset.json
     run.js
     agent-run.js
+    phase4-run.js
     reports/
   test/
   scripts/
@@ -97,8 +103,22 @@ apiBaseUrl: 'https://your-blog-ai-api.vercel.app'
   - Optional generation ceiling, defaults to `700` and is clamped to 128–1,200 tokens.
 - `LLM_MAX_REQUEST_COST_USD`, `LLM_INPUT_COST_PER_MILLION_TOKENS`, and `LLM_OUTPUT_COST_PER_MILLION_TOKENS`
   - Optional cost guard. All three must be configured before the API estimates and enforces a per-request model cost ceiling.
+- `FEEDBACK_RECEIPT_SECRET`
+  - Optional secret of at least 32 characters. Together with the webhook settings, it enables short-lived signed feedback receipts.
+- `FEEDBACK_WEBHOOK_URL`
+  - Optional HTTPS URL for the operator-controlled feedback receiver. URLs with embedded user names or passwords are rejected.
+- `FEEDBACK_WEBHOOK_SECRET`
+  - Optional secret of at least 32 characters used to authenticate outbound feedback events.
+- `FEEDBACK_WEBHOOK_TIMEOUT_MS`
+  - Optional webhook deadline. Defaults to 3,000 ms and is clamped to 500–5,000 ms.
+- `FEEDBACK_INCLUDE_REVIEW_CONTEXT`
+  - Optional and disabled by default. Set to `true`, `1`, or `yes` together with `FEEDBACK_REVIEW_CONTEXT_SECRET` to include a bounded current question for negative-feedback review.
+- `FEEDBACK_REVIEW_CONTEXT_SECRET`
+  - Optional independent secret of at least 32 characters. It encrypts the opt-in review context inside the browser receipt; do not reuse the receipt or webhook secret.
 
 If `LLM_API_*` variables are not set, `/api/ask` will still work in retrieval-only mode.
+
+Feedback is disabled unless `FEEDBACK_RECEIPT_SECRET`, `FEEDBACK_WEBHOOK_URL`, and `FEEDBACK_WEBHOOK_SECRET` are all valid. It is independent of whether an external generation model is configured. The review-context switch does not enable feedback by itself and remains disabled unless both of its settings are valid.
 
 ## Request
 
@@ -151,7 +171,16 @@ Only the most recent assistant turn contributes article-reference and standalone
 
 ```json
 {
-  "answer": "锵锵，我在站内翻到了 3 篇比较相关的内容。",
+  "answer": "- 双塔模型由用户塔和物品塔组成。 [1]",
+  "claims": [
+    {
+      "id": "claim_1",
+      "text": "双塔模型由用户塔和物品塔组成。",
+      "citationIds": ["post-id#0"],
+      "citationIndexes": [1],
+      "quote": "双塔模型模型由用户塔和物品塔两部分组成"
+    }
+  ],
   "citations": [
     {
       "chunkId": "post-id#0",
@@ -167,6 +196,10 @@ Only the most recent assistant turn contributes article-reference and standalone
       "url": "https://wangsenjie.github.io/..."
     }
   ],
+  "feedback": {
+    "receipt": "f1.<signed-payload>.<signature>",
+    "expiresAt": "2026-07-28T00:00:00.000Z"
+  },
   "meta": {
     "traceId": "trace_...",
     "mode": "site",
@@ -177,7 +210,22 @@ Only the most recent assistant turn contributes article-reference and standalone
     "retrievalAttempts": 1,
     "evidenceStatus": "sufficient",
     "evidenceReason": "query_terms_covered",
-    "evidenceGrading": "structural_heuristic",
+    "evidenceGrading": "calibrated_structural_v1",
+    "evidenceCalibration": {
+      "version": "phase4-v1",
+      "score": 0.62,
+      "threshold": 0.23,
+      "features": {}
+    },
+    "citationVerification": {
+      "status": "verified",
+      "totalClaims": 1,
+      "supportedClaims": 1,
+      "citationCompleteness": 1,
+      "citationSupport": 1,
+      "unsupportedClaimRate": 0,
+      "source": "deterministic"
+    },
     "stopReason": "evidence_sufficient",
     "llmFallback": false,
     "indexVersion": "<corpus-version-sha256>",
@@ -188,7 +236,9 @@ Only the most recent assistant turn contributes article-reference and standalone
     },
     "model": {
       "attempted": true,
-      "answered": true
+      "answered": true,
+      "accepted": true,
+      "rejectionReason": ""
     },
     "timings": {
       "corpusMs": 0.1,
@@ -199,11 +249,14 @@ Only the most recent assistant turn contributes article-reference and standalone
       "retrievalMs": 12.8,
       "buildResponseMs": 0.2,
       "generationMs": 650.8,
+      "citationVerificationMs": 0.3,
       "totalMs": 663.9
     }
   }
 }
 ```
+
+`claims` is an array of the factual statements that form the answer. Every returned factual claim has exactly one `citationIds` entry and a `quote` whose normalized text occurs in that selected server chunk. The public statement is extractive: a model claim `text` must equal its `quote`; a deterministic claim may only add the server-owned `《title》：` prefix to that exact quote. `answer` is a display rendering of those verified claims; consumers that need claim-level UI should use `claims` and the server-generated `citations`, not invent citation metadata from model text. `feedback` is omitted unless feedback collection is fully configured.
 
 The same trace ID is returned in the `X-Trace-Id` response header. Internal errors return a trace ID without exposing implementation details to the browser.
 
@@ -222,6 +275,14 @@ route -> rewrite -> split (<= 3) -> retrieve -> grade
 It has fixed routes for direct replies, current-page summary and Q&A, related articles, article comparison, and site-wide Q&A. Only three allow-listed, read-only tools are callable: `search_blog`, `get_article`, and `get_related_articles`. Retrieval is capped at two rounds, six tool calls, eight complete context chunks, a conservatively estimated 6,000 context tokens, one model call, and a 17-second overall server deadline. The current estimate counts at most one token per Unicode character; it is a safety bound, not the provider model's tokenizer.
 
 The generator receives the selected full chunks rather than UI snippets. Retrieved text and conversation history are explicitly marked as untrusted data, while citations and URLs are always rebuilt from server corpus chunks. An evidence-insufficient 200 response is a valid safe stop and is not a browser-fallback trigger.
+
+### Phase 4 claim verification and calibrated refusal
+
+For a factual answer, the deterministic builder and optional model must produce a bounded `claims` array. A claim has one selected chunk ID and an evidence quote. The verifier rejects unknown or unselected IDs, missing/oversized claims, and quotes absent from the source chunk. Published factual claims are deliberately extractive: model `text` must equal the normalized `quote`; a deterministic response may add only `《title》：`, where `title` is server-owned metadata from that cited chunk. Only after this check does the server rebuild citations from corpus metadata and render the public answer.
+
+This is a structural evidence check, not a semantic proof or a probability-valued confidence score. If a model draft fails, the server tries the deterministic claim set; if no claim set can be verified, it returns a conservative no-citation refusal. `meta.citationVerification` reports the outcome and metrics, while `meta.evidenceCalibration` exposes the selected structural score/threshold for diagnostics.
+
+The phase 4 dataset separates calibration cases from holdout cases. The runner selects the evidence coverage threshold from calibration cases only, then validates citation completeness, source support, provenance, unsupported-claim rate, rejection recall/precision, answer acceptance, and routing on holdout. It runs with external generation disabled against the exact serving corpus.
 
 Phase 2 is complete. `search_blog` and `get_related_articles` perform BM25 Top 20 plus 384-dimensional local-vector Top 20 retrieval, Reciprocal Rank Fusion (`k=60`), and semantic/lexical reranking. `get_article` intentionally remains a source-order reader. `bm25_multi_query` now only means the Agent issued multiple subqueries; a normal Hybrid result reports `meta.retrieval.strategy: "hybrid_rrf_rerank"`.
 
@@ -245,6 +306,33 @@ Every citation has these fields:
 
 `meta.indexVersion` is the manifest `corpusVersion`. Consumers should retain it with `chunkId` for an exact serving-index trace. Phase 2 chunk IDs are stable structural identifiers derived from the public article URL, heading path, repeated-heading occurrence, and section offset; `contentHash` distinguishes changed content across corpus versions.
 
+## Optional feedback webhook
+
+`POST /api/feedback` is available only when the three required feedback settings are valid. The normal answer endpoint issues a short-lived signed receipt and the browser sends exactly this bounded payload:
+
+```json
+{
+  "receipt": "f1.<signed-payload>.<signature>",
+  "rating": "not_helpful",
+  "reason": "citation_mismatch"
+}
+```
+
+`rating` is `helpful` or `not_helpful`. A negative rating may use one of `answer_incorrect`, `citation_mismatch`, `should_have_refused`, `should_have_answer`, or `missing_content`; free-form comments are intentionally not accepted. The receipt expires after 24 hours by default (at most 48 hours). The API validates its signature and expiry, then sends the receiver a minimal event containing the receipt ID, rating/reason, index version, route, evidence/verification state, retrieval strategy, citation chunk IDs, model-answer flag, and an SHA-256 answer digest.
+
+By default, the event has no user question. Operators that need limited negative-feedback triage can explicitly set both `FEEDBACK_INCLUDE_REVIEW_CONTEXT=true` (also accepts `1` or `yes`) and an independent `FEEDBACK_REVIEW_CONTEXT_SECRET` of at least 32 characters. On `/api/ask`, only the normalized current `question` of at most 320 characters is encrypted with AES-256-GCM inside the signed browser receipt. The encryption is bound to that receipt ID; the browser sees only ciphertext. On `/api/feedback`, the server decrypts it and adds `reviewQuestion` to the outgoing event only when `rating` is `not_helpful`. It is omitted for helpful feedback, missing/invalid context, and whenever the feature is not configured. It never includes the raw answer, `sessionId`, message history, IP address, or browser identifier.
+
+The receiver request has these relevant headers:
+
+- `Idempotency-Key`: the signed receipt ID;
+- `X-Blog-AI-Feedback-Version: 1`;
+- `X-Blog-AI-Feedback-Timestamp`: sender time in milliseconds;
+- `X-Blog-AI-Feedback-Signature: v1=<base64url-hmac>`.
+
+The signature is HMAC-SHA256 with `FEEDBACK_WEBHOOK_SECRET` over the exact string `v1.<timestamp>.<raw JSON body>`. The receiver must use constant-time verification, reject stale timestamps, and retain/deduplicate `receiptId` durably before treating an event as new. The API deliberately has no receipt-use database: an upstream timeout, client retry, or replay of a still-valid bearer receipt can result in more than one delivery. HMAC authenticates the sender but does not itself supply replay protection.
+
+For privacy, the receipt and forwarded event omit the raw answer, session ID, IP address, and browser identifier; the answer is represented only by a digest. The raw question is also omitted by default. The opt-in `reviewQuestion` exception is deliberately limited to one current question and negative feedback, not a conversation transcript. Before enabling it, publish the purpose to users and configure the receiver with least-privilege access, encryption at rest, a short retention window, and deletion procedures. Even when enabled, it cannot reconstruct the answer or full conversation; do not use the event transport as a general trace store.
+
 ## Corpus integrity
 
 `manifest.json` contains the SHA-256 and record count for `posts.json`, `chunks.json`, and `vectors.json`, plus corpus statistics, embedding metadata, and warnings. Export, synchronization, and manifest-backed API loading perform strong validation:
@@ -267,6 +355,7 @@ npm test
 npm run eval:bm25
 npm run eval:hybrid
 npm run eval:agent
+npm run eval:phase4
 ```
 
 To intentionally refresh the committed baseline report after reviewing a retrieval change:
@@ -285,6 +374,8 @@ The committed reports are `evals/reports/bm25-baseline.json` (phase 0) and `eval
 
 The phase 2 Hybrid dataset and report are `evals/hybrid-dataset.json` and `evals/reports/hybrid-phase2.json`. It compares BM25 with Hybrid RAG on the same exact and semantic cases, and fails the command unless semantic retrieval improves while exact retrieval does not regress. The phase 3 workflow dataset and report are `evals/agent-dataset.json` and `evals/reports/agent-phase3.json`; they run fully offline with model generation disabled against the Hybrid tool path.
 
+Phase 4 uses `evals/phase4-dataset.json`. Its calibration split selects the configured structural evidence coverage threshold; its holdout split is never used for selection and must meet the all-or-nothing acceptance targets for claim citation completeness/support/provenance, unsupported claims, answerability, rejection, and route. `npm run eval:phase4` prints the report without modifying the working tree. After review, `npm run eval:phase4:update` writes `evals/reports/phase4.json` deliberately. The `RAG quality` GitHub Actions workflow runs API tests plus Hybrid, Agent, and phase 4 evaluations on every push and pull request.
+
 The evaluation runner reports article-level Recall@5/20, HitRate@5, MRR@20, nDCG@20, no-answer accuracy, per-category results, and failed cases. Results are deduplicated by normalized published post URL.
 
 ## Behavior
@@ -294,9 +385,10 @@ The evaluation runner reports article-level Recall@5/20, HitRate@5, MRR@20, nDCG
 - With model environment variables:
   - `/api/ask` routes, rewrites, retrieves and grades evidence before asking the model to write the answer
   - the model receives bounded full chunks, not only 140-character display snippets
+  - a model draft is published only after its structured claims pass server-side verification; otherwise the verified deterministic answer or a safe refusal is used
   - citations and related links still come from local retrieval
 - In all cases:
   - the workflow is controlled by server code; the model cannot choose arbitrary tools or create an unbounded loop
   - retrieval is performed against the server corpus; client candidates are ignored
-  - citations follow the `chunkId`/`title`/`url`/`section`/`snippet` contract
+  - factual claims follow the `text`/single-`citationIds`/`quote` contract, and citations follow the `chunkId`/`title`/`url`/`section`/`snippet` contract
   - `meta.indexVersion` identifies the exact corpus version used by the response

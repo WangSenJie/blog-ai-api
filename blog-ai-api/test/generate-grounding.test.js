@@ -53,6 +53,10 @@ test('grounded prompt contains complete chunk content and explicit trust boundar
   assert.ok(prompt.includes(longTail));
   assert.match(prompt, /delete_article/);
   assert.match(prompt, /<\/evidence>/);
+  assert.match(prompt, /"claims"/);
+  assert.match(prompt, /citationIds/);
+  assert.match(prompt, /quote/);
+  assert.match(prompt, /text 必须与 quote 完全相同/);
 });
 
 test('runAgent passes selected full chunks to one bounded model call', async () => {
@@ -65,15 +69,29 @@ test('runAgent passes selected full chunks to one bounded model call', async () 
     async generate(input, options) {
       capturedInput = input;
       capturedOptions = options;
-      return '模型只基于完整证据生成的回答。';
+      const chunk = input.evidence[0].chunk;
+      const quote = String(chunk.content).split(/[。！？\n]+/)
+        .find(sentence => sentence.trim().length >= 6)
+        .trim();
+      return {
+        claims: [{
+          text: quote,
+          citationIds: [chunk.id],
+          quote
+        }]
+      };
     }
   });
 
-  assert.equal(payload.answer, '模型只基于完整证据生成的回答。');
+  assert.match(payload.answer, /\[1\]/);
   assert.deepEqual(payload.meta.model, {
     attempted: true,
-    answered: true
+    answered: true,
+    accepted: true,
+    rejectionReason: ''
   });
+  assert.equal(payload.meta.citationVerification.status, 'verified');
+  assert.equal(payload.meta.citationVerification.source, 'model');
   assert.equal(payload.meta.budget.used.modelCalls, 1);
   assert.ok(capturedInput.evidence.length > 0);
   assert.ok(capturedInput.evidence.length <= AGENT_LIMITS.maxContextChunks);
@@ -147,7 +165,9 @@ test('model generation is skipped when context budget selects no complete chunk'
     }
   });
 
-  assert.equal(payload.meta.evidenceStatus, 'sufficient');
+  assert.equal(payload.meta.evidenceStatus, 'insufficient');
+  assert.equal(payload.meta.evidenceReason, 'citation_verification_failed');
+  assert.equal(payload.meta.citationVerification.status, 'failed');
   assert.equal(payload.meta.budget.used.contextChunks, 0);
   assert.equal(payload.meta.model.attempted, false);
   assert.equal(payload.meta.budget.used.modelCalls, 0);
@@ -199,6 +219,7 @@ test('generation timeout aborts the model path and keeps the grounded fallback',
 
   assert.equal(payload.meta.model.attempted, true);
   assert.equal(payload.meta.model.answered, false);
+  assert.equal(payload.meta.model.accepted, false);
   assert.equal(payload.meta.llmFallback, true);
   assert.equal(payload.meta.budget.used.modelCalls, 1);
   assert.equal(signal.aborted, true);

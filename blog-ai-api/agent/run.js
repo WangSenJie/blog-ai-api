@@ -9,6 +9,7 @@ const {
 } = require('../tools');
 const {
   AGENT_LIMITS,
+  createEvidenceCalibration,
   estimatedGenerationCost,
   estimateTokens,
   snapshotBudget
@@ -19,6 +20,10 @@ const {
 const {
   buildDeterministicResponse
 } = require('./nodes/generate-answer');
+const {
+  notRequiredVerification,
+  verifyStructuredResponse
+} = require('./nodes/verify-citations');
 const {
   gradeEvidence,
   selectContext
@@ -73,6 +78,7 @@ function finishPayload(state) {
   return {
     answer: state.answer,
     citations: state.citations,
+    claims: state.claims,
     related: state.related,
     meta: {
       mode: responseMode(state.route),
@@ -83,7 +89,14 @@ function finishPayload(state) {
       retrievalAttempts: state.retrievalAttempts,
       evidenceStatus: state.evidenceStatus,
       evidenceReason: state.evidenceReason,
-      evidenceGrading: 'structural_heuristic',
+      evidenceGrading: 'calibrated_structural_v1',
+      evidenceCalibration: {
+        version: state.evidenceCalibration && state.evidenceCalibration.version,
+        score: state.evidenceScore,
+        threshold: state.evidenceThreshold,
+        features: Object.assign({}, state.evidenceFeatures)
+      },
+      citationVerification: state.citationVerification,
       stopReason: state.stopReason,
       retrieval: {
         strategy: retrievalStrategy,
@@ -178,8 +191,20 @@ async function maybeGenerateWithModel(state, dependencies, trace) {
     const generated = await Promise.race([generation, timeout]);
 
     if (generated) {
-      state.answer = generated;
       state.model.answered = true;
+      if (
+        typeof generated === 'object' &&
+        !Array.isArray(generated) &&
+        Array.isArray(generated.claims)
+      ) {
+        state.modelResponse = generated;
+      } else {
+        state.model.rejectionReason = 'invalid_model_schema';
+        state.llmFallback = true;
+      }
+    } else {
+      state.model.rejectionReason = 'invalid_model_schema';
+      state.llmFallback = true;
     }
   } catch (error) {
     state.llmFallback = true;
@@ -190,6 +215,109 @@ async function maybeGenerateWithModel(state, dependencies, trace) {
     clearTimeout(timeoutId);
     traceEnd(trace, 'generationMs', generationStartedAt);
   }
+}
+
+function applyVerifiedResponse(state, response, source) {
+  const claims = response && response.claims;
+  if (!Array.isArray(claims) || !claims.length) {
+    if (state.evidenceStatus !== 'sufficient') {
+      state.answer = response && response.answer || state.answer;
+      state.citations = [];
+      state.claims = [];
+      state.related = response && response.related || state.related;
+      state.citationVerification = notRequiredVerification(
+        state.needsClarification
+          ? 'clarification_response'
+          : state.route === ROUTES.DIRECT
+            ? 'direct_response'
+            : 'evidence_insufficient'
+      );
+      return { valid: true };
+    }
+
+    return {
+      valid: false,
+      reason: 'missing_claims',
+      verification: {
+        status: 'rejected',
+        totalClaims: 0,
+        supportedClaims: 0,
+        rejectedClaims: 0,
+        citationCompleteness: 0,
+        citationSupport: 0,
+        unsupportedClaimRate: 0,
+        reasons: ['missing_claims'],
+        source
+      }
+    };
+  }
+
+  const verified = verifyStructuredResponse(
+    claims,
+    state.selectedChunks,
+    { source }
+  );
+  if (!verified.valid) return verified;
+
+  state.answer = verified.answer;
+  state.claims = verified.claims;
+  state.citations = verified.citations;
+  state.related = Array.isArray(response.related)
+    ? response.related
+    : state.related;
+  state.citationVerification = verified.verification;
+  return verified;
+}
+
+function applyCitationVerificationRefusal(state, verification) {
+  state.evidenceStatus = 'insufficient';
+  state.evidenceReason = 'citation_verification_failed';
+  state.stopReason = 'citation_verification_failed';
+  state.answer = '站内暂时无法为这个问题生成带可验证引用的回答。你可以补充文章标题或更具体的关键词。';
+  state.citations = [];
+  state.claims = [];
+  state.related = [];
+  state.citationVerification = Object.assign({}, verification || {}, {
+    status: 'failed'
+  });
+}
+
+function finalizeAnswer(state, trace) {
+  const verificationStartedAt = traceStart(trace);
+  let result;
+
+  if (state.modelResponse) {
+    result = applyVerifiedResponse(state, state.modelResponse, 'model');
+    if (result.valid) {
+      state.model.accepted = true;
+    } else {
+      state.llmFallback = true;
+      state.model.accepted = false;
+      state.model.rejectionReason = result.reason || 'citation_verification_failed';
+      result = applyVerifiedResponse(
+        state,
+        state.deterministicResponse,
+        'deterministic_fallback'
+      );
+    }
+  } else {
+    result = applyVerifiedResponse(
+      state,
+      state.deterministicResponse,
+      'deterministic'
+    );
+  }
+
+  if (!result.valid) {
+    applyCitationVerificationRefusal(
+      state,
+      result.verification || {
+        reasons: [result.reason || 'citation_verification_failed']
+      }
+    );
+  }
+
+  traceEnd(trace, 'citationVerificationMs', verificationStartedAt);
 }
 
 async function runAgent(input, options) {
@@ -204,6 +332,9 @@ async function runAgent(input, options) {
   }
 
   const limits = Object.assign({}, AGENT_LIMITS, settings.limits || {});
+  const evidenceCalibration = createEvidenceCalibration(
+    settings.evidenceCalibration
+  );
   const trace = settings.trace || null;
   const dependencies = {
     canUseModel: settings.canUseModel || canUseModel,
@@ -215,6 +346,7 @@ async function runAgent(input, options) {
     corpus,
     indexVersion: settings.indexVersion,
     limits,
+    evidenceCalibration,
     costControls: settings.costControls
   });
 
@@ -228,6 +360,8 @@ async function runAgent(input, options) {
     state.stopReason = 'direct_response';
     const direct = buildDeterministicResponse(state);
     Object.assign(state, direct);
+    state.deterministicResponse = direct;
+    finalizeAnswer(state, trace);
     return finishPayload(state);
   }
 
@@ -296,6 +430,11 @@ async function runAgent(input, options) {
       const grade = gradeEvidence(state);
       state.evidenceStatus = grade.status;
       state.evidenceReason = grade.reason;
+      state.evidenceScore = grade.score;
+      state.evidenceThreshold = grade.threshold;
+      state.evidenceFeatures = grade.features;
+      state.evidenceQuery = grade.features && grade.features.coverageQuery ||
+        state.standaloneQuery;
       traceEnd(trace, `gradeEvidenceAttempt${attempt}Ms`, startedAt);
 
       if (grade.status === 'sufficient') {
@@ -330,14 +469,18 @@ async function runAgent(input, options) {
   startedAt = traceStart(trace);
   const deterministic = buildDeterministicResponse(state);
   Object.assign(state, deterministic);
+  state.deterministicResponse = deterministic;
   traceEnd(trace, 'buildResponseMs', startedAt);
 
   await maybeGenerateWithModel(state, dependencies, trace);
+  finalizeAnswer(state, trace);
   return finishPayload(state);
 }
 
 module.exports = {
   finishPayload,
+  applyVerifiedResponse,
+  finalizeAnswer,
   responseMode,
   runAgent
 };
