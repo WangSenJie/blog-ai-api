@@ -1,7 +1,10 @@
 'use strict';
 
+const { createCompareArticlesTool } = require('./compare-articles');
+const { createExplainCodeBlockTool } = require('./explain-code-block');
 const { createGetArticleTool } = require('./get-article');
 const { createGetRelatedArticlesTool } = require('./get-related-articles');
+const { createRecommendLearningPathTool } = require('./recommend-learning-path');
 const { createSearchBlogTool } = require('./search-blog');
 const {
   TOOL_NAMES,
@@ -12,6 +15,8 @@ function createAgentTools(corpus) {
   const posts = corpus && corpus.posts;
   const chunks = corpus && corpus.chunks;
   const vectors = corpus && corpus.vectors;
+  const codeBlocks = corpus && corpus.codeBlocks || [];
+  const learningGraph = corpus && corpus.learningGraph || null;
   if (!Array.isArray(posts) || !Array.isArray(chunks)) {
     throw new TypeError('createAgentTools requires posts and chunks arrays');
   }
@@ -19,7 +24,17 @@ function createAgentTools(corpus) {
   const tools = Object.freeze({
     search_blog: createSearchBlogTool({ chunks, vectors }),
     get_article: createGetArticleTool({ posts, chunks }),
-    get_related_articles: createGetRelatedArticlesTool({ posts, chunks, vectors })
+    get_related_articles: createGetRelatedArticlesTool({ posts, chunks, vectors }),
+    compare_articles: createCompareArticlesTool({ posts, chunks, vectors }),
+    recommend_learning_path: createRecommendLearningPathTool({
+      posts,
+      learningGraph
+    }),
+    explain_code_block: createExplainCodeBlockTool({
+      codeBlocks,
+      chunks,
+      vectors
+    })
   });
 
   return Object.freeze({

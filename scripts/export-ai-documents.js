@@ -3,7 +3,11 @@
 const fs = require('fs');
 const path = require('path');
 
-const { buildCorpus } = require('./build-ai-corpus');
+const {
+  buildCorpus,
+  buildLearningGraph,
+  extractCodeBlocks
+} = require('./build-ai-corpus');
 const {
   buildManifest,
   serializeJson,
@@ -22,6 +26,8 @@ const retrievalCorePath = path.join(rootDir, 'blog-ai-api', 'lib', 'retrieval-co
 const browserRetrievalPath = path.join(rootDir, 'source', 'js', 'blog-ai-retrieval.js');
 
 const corpus = buildCorpus(postsDir);
+const codeBlocks = extractCodeBlocks(corpus.posts, corpus.chunks);
+const learningGraph = buildLearningGraph(corpus.posts);
 
 function serializePost(post) {
   return {
@@ -72,6 +78,7 @@ function writeJson(outputDir, filename, value) {
 }
 
 const publicPosts = corpus.posts.map(serializePost);
+const phase5Artifacts = { codeBlocks, learningGraph };
 validateCorpusData(publicPosts, corpus.chunks);
 const expectedEmbedding = embeddingMetadata();
 const existingVectorIndex = readExistingVectorIndex(dataOutputDir);
@@ -82,17 +89,29 @@ const vectorBuild = buildVectorIndex(corpus.chunks, embeddingMatches(
 const manifest = buildManifest(publicPosts, corpus.chunks, corpus.diagnostics, {
   vectors: vectorBuild.vectors,
   embedding: vectorBuild.embedding,
-  vectorBuild: vectorBuild.build
+  vectorBuild: vectorBuild.build,
+  codeBlocks,
+  learningGraph
 });
-validateCorpusData(publicPosts, corpus.chunks, manifest, vectorBuild.vectors);
+validateCorpusData(
+  publicPosts,
+  corpus.chunks,
+  manifest,
+  vectorBuild.vectors,
+  phase5Artifacts
+);
 const postsOutputPath = writeJson(dataOutputDir, 'posts.json', publicPosts);
 const chunksOutputPath = writeJson(dataOutputDir, 'chunks.json', corpus.chunks);
 const manifestOutputPath = writeJson(dataOutputDir, 'manifest.json', manifest);
 const vectorsOutputPath = writeJson(dataOutputDir, 'vectors.json', vectorBuild.vectors);
+const codeBlocksOutputPath = writeJson(dataOutputDir, 'code-blocks.json', codeBlocks);
+const learningGraphOutputPath = writeJson(dataOutputDir, 'learning-graph.json', learningGraph);
 const publishedPostsPath = writeJson(publishOutputDir, 'posts.json', publicPosts);
 const publishedChunksPath = writeJson(publishOutputDir, 'chunks.json', corpus.chunks);
 const publishedManifestPath = writeJson(publishOutputDir, 'manifest.json', manifest);
 const publishedVectorsPath = writeJson(publishOutputDir, 'vectors.json', vectorBuild.vectors);
+const publishedCodeBlocksPath = writeJson(publishOutputDir, 'code-blocks.json', codeBlocks);
+const publishedLearningGraphPath = writeJson(publishOutputDir, 'learning-graph.json', learningGraph);
 
 fs.copyFileSync(retrievalCorePath, browserRetrievalPath);
 
@@ -121,10 +140,14 @@ console.log(`Data posts file: ${postsOutputPath}`);
 console.log(`Data chunks file: ${chunksOutputPath}`);
 console.log(`Data manifest file: ${manifestOutputPath}`);
 console.log(`Data vectors file: ${vectorsOutputPath}`);
+console.log(`Data code blocks file: ${codeBlocksOutputPath}`);
+console.log(`Data learning graph file: ${learningGraphOutputPath}`);
 console.log(`Published posts file: ${publishedPostsPath}`);
 console.log(`Published chunks file: ${publishedChunksPath}`);
 console.log(`Published manifest file: ${publishedManifestPath}`);
 console.log(`Published vectors file: ${publishedVectorsPath}`);
+console.log(`Published code blocks file: ${publishedCodeBlocksPath}`);
+console.log(`Published learning graph file: ${publishedLearningGraphPath}`);
 console.log(
   `Embedding index: model=${vectorBuild.embedding.model} ` +
   `added=${vectorBuild.build.added} updated=${vectorBuild.build.updated} ` +

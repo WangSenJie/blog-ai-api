@@ -38,6 +38,9 @@ const {
   splitStandaloneQuery
 } = require('./nodes/rewrite-query');
 const {
+  createPhase5Request
+} = require('./nodes/phase5-request');
+const {
   ROUTES,
   routeQuestion
 } = require('./nodes/route');
@@ -62,6 +65,14 @@ function responseMode(route) {
   return 'site';
 }
 
+function isSpecialistRoute(route) {
+  return [
+    ROUTES.ARTICLE_COMPARE,
+    ROUTES.LEARNING_PATH,
+    ROUTES.CODE_EXPLANATION
+  ].includes(route);
+}
+
 function finishPayload(state) {
   const retrievalStrategies = [...new Set(
     state.toolCalls
@@ -80,6 +91,9 @@ function finishPayload(state) {
     citations: state.citations,
     claims: state.claims,
     related: state.related,
+    comparison: state.comparison,
+    learningPath: state.learningPath,
+    codeExplanation: state.codeExplanation,
     meta: {
       mode: responseMode(state.route),
       route: state.route,
@@ -104,6 +118,11 @@ function finishPayload(state) {
         candidates: state.retrievedChunks.length,
         selectedChunks: state.selectedChunks.length
       },
+      phase5: {
+        comparison: Boolean(state.comparison),
+        learningPath: Boolean(state.learningPath),
+        codeExplanation: Boolean(state.codeExplanation)
+      },
       toolCalls: state.toolCalls.slice(),
       budget: snapshotBudget(state.budget),
       model: Object.assign({}, state.model),
@@ -115,11 +134,13 @@ function finishPayload(state) {
 
 async function maybeGenerateWithModel(state, dependencies, trace) {
   if (
+    isSpecialistRoute(state.route) ||
     state.evidenceStatus !== 'sufficient' ||
     !state.selectedChunks.length ||
     !dependencies.canUseModel() ||
     state.budget.used.modelCalls >= state.budget.limits.maxModelCalls
   ) {
+    if (isSpecialistRoute(state.route)) state.model.skipped = 'specialist_deterministic';
     return;
   }
 
@@ -220,13 +241,17 @@ async function maybeGenerateWithModel(state, dependencies, trace) {
 function applyVerifiedResponse(state, response, source) {
   const claims = response && response.claims;
   if (!Array.isArray(claims) || !claims.length) {
-    if (state.evidenceStatus !== 'sufficient') {
+    const navigationOnly = response && response.navigationOnly === true &&
+      state.route === ROUTES.LEARNING_PATH;
+    if (state.evidenceStatus !== 'sufficient' || navigationOnly) {
       state.answer = response && response.answer || state.answer;
       state.citations = [];
       state.claims = [];
       state.related = response && response.related || state.related;
       state.citationVerification = notRequiredVerification(
-        state.needsClarification
+        navigationOnly
+          ? 'learning_navigation_metadata'
+          : state.needsClarification
           ? 'clarification_response'
           : state.route === ROUTES.DIRECT
             ? 'direct_response'
@@ -277,6 +302,9 @@ function applyCitationVerificationRefusal(state, verification) {
   state.citations = [];
   state.claims = [];
   state.related = [];
+  state.comparison = null;
+  state.learningPath = null;
+  state.codeExplanation = null;
   state.citationVerification = Object.assign({}, verification || {}, {
     status: 'failed'
   });
@@ -368,6 +396,7 @@ async function runAgent(input, options) {
   startedAt = traceStart(trace);
   const rewritten = rewriteStandaloneQuery(state);
   Object.assign(state, rewritten);
+  state.phase5Request = createPhase5Request(state);
   if (
     state.resolvedArticleRefs[0] &&
     [
@@ -441,6 +470,10 @@ async function runAgent(input, options) {
         state.stopReason = 'evidence_sufficient';
         break;
       }
+      if (isSpecialistRoute(state.route)) {
+        state.stopReason = 'specialist_result_missing';
+        break;
+      }
       if (attempt >= limits.maxRetrievalAttempts) {
         state.stopReason = 'attempt_limit';
         break;
@@ -482,5 +515,6 @@ module.exports = {
   applyVerifiedResponse,
   finalizeAnswer,
   responseMode,
+  isSpecialistRoute,
   runAgent
 };

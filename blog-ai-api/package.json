@@ -15,6 +15,7 @@
     "eval:agent:phase3": "node evals/agent-run.js --output evals/reports/agent-phase3.json",
     "eval:hybrid": "node evals/hybrid-run.js",
     "eval:phase4": "node evals/phase4-run.js",
-    "eval:phase4:update": "node evals/phase4-run.js --output evals/reports/phase4.json"
+    "eval:phase4:update": "node evals/phase4-run.js --output evals/reports/phase4.json",
+    "eval:phase5": "node evals/phase5-run.js"
   }
 }

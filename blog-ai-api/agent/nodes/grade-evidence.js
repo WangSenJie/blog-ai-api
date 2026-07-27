@@ -165,6 +165,69 @@ function gradeEvidence(state) {
     state.history.articleRefs[0] ||
     null;
   const primaryUrl = normalizePostUrl(primaryReference && primaryReference.url);
+  const specialist = state.specialistResults || {};
+
+  if (state.route === ROUTES.LEARNING_PATH) {
+    const result = specialist.learningPath;
+    const terminal = result && result.status === 'terminal';
+    const found = result && result.status === 'found' &&
+      Array.isArray(result.items) && result.items.length > 0;
+    return gradeResult(
+      found || terminal ? 'sufficient' : 'insufficient',
+      found
+        ? 'learning_path_found'
+        : terminal
+          ? 'learning_path_terminal'
+          : result && result.status === 'not_configured'
+            ? 'learning_path_not_configured'
+            : result && result.status || 'learning_path_missing',
+      found || terminal ? 1 : 0,
+      1,
+      {
+        graphVersion: result && result.graphVersion || '',
+        learningStatus: result && result.status || 'missing',
+        calibrationVersion: calibration.version
+      }
+    );
+  }
+
+  if (state.route === ROUTES.CODE_EXPLANATION) {
+    const result = specialist.codeExplanation;
+    const found = result && result.status === 'found' &&
+      result.codeExplanation && candidates.length > 0;
+    return gradeResult(
+      found ? 'sufficient' : 'insufficient',
+      found ? 'code_block_found' : result && result.status || 'code_block_missing',
+      found ? 1 : 0,
+      1,
+      {
+        codeStatus: result && result.status || 'missing',
+        calibrationVersion: calibration.version
+      }
+    );
+  }
+
+  if (state.route === ROUTES.ARTICLE_COMPARE && specialist.comparison) {
+    const result = specialist.comparison;
+    const complete = ['complete', 'partial'].includes(result.status) &&
+      Array.isArray(result.articles) && result.articles.length >= 2 &&
+      Array.isArray(result.comparison && result.comparison.rows) &&
+      result.comparison.rows.length > 0;
+    return gradeResult(
+      complete ? 'sufficient' : 'insufficient',
+      complete ? 'comparison_dimensions_covered' : result.status || 'comparison_target_missing',
+      complete ? 1 : 0,
+      1,
+      {
+        articles: Array.isArray(result.articles) ? result.articles.length : 0,
+        dimensions: Array.isArray(result.comparison && result.comparison.rows)
+          ? result.comparison.rows.length
+          : 0,
+        comparisonStatus: result.status || 'missing',
+        calibrationVersion: calibration.version
+      }
+    );
+  }
 
   if (!candidates.length) {
     return gradeResult(

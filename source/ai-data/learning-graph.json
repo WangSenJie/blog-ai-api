@@ -1,0 +1,622 @@
+{
+  "schemaVersion": 1,
+  "version": "author-curated-v1",
+  "policy": "explicit_author_curated_only",
+  "nodes": [
+    {
+      "trackId": "agent-development",
+      "id": "agent-langchain-basic",
+      "postId": "LangChain 基础",
+      "title": "LangChain 基础",
+      "url": "https://wangsenjie.github.io/2026/07/03/langchain-basic/",
+      "order": 1,
+      "level": "beginner",
+      "aliases": [
+        "模型",
+        "消息",
+        "工具"
+      ]
+    },
+    {
+      "trackId": "agent-development",
+      "id": "agent-langgraph-foundations",
+      "postId": "LangGraph 基础",
+      "title": "LangGraph 基础",
+      "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+      "order": 2,
+      "level": "beginner",
+      "aliases": [
+        "state",
+        "node",
+        "edge",
+        "工作流"
+      ]
+    },
+    {
+      "trackId": "agent-development",
+      "id": "agent-state-memory",
+      "postId": "状态与短期记忆",
+      "title": "状态与短期记忆",
+      "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
+      "order": 3,
+      "level": "intermediate",
+      "aliases": [
+        "状态",
+        "短期记忆",
+        "reducer",
+        "checkpoint"
+      ]
+    },
+    {
+      "trackId": "agent-development",
+      "id": "agent-human-in-the-loop",
+      "postId": "人机协作与执行控制",
+      "title": "人机协作与执行控制",
+      "url": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+      "order": 4,
+      "level": "intermediate",
+      "aliases": [
+        "人机协作",
+        "断点",
+        "审批",
+        "执行控制"
+      ]
+    },
+    {
+      "trackId": "mathematical-analysis",
+      "id": "analysis-limits",
+      "postId": "数列极限与函数极限",
+      "title": "数列极限与函数极限",
+      "url": "https://wangsenjie.github.io/2025/09/07/1/",
+      "order": 1,
+      "level": "beginner",
+      "aliases": [
+        "极限"
+      ]
+    },
+    {
+      "trackId": "mathematical-analysis",
+      "id": "analysis-continuity",
+      "postId": "函数的连续性",
+      "title": "函数的连续性",
+      "url": "https://wangsenjie.github.io/2025/09/07/2/",
+      "order": 2,
+      "level": "beginner",
+      "aliases": [
+        "连续性"
+      ]
+    },
+    {
+      "trackId": "mathematical-analysis",
+      "id": "analysis-completeness",
+      "postId": "实数完备性",
+      "title": "实数完备性",
+      "url": "https://wangsenjie.github.io/2025/09/07/3/",
+      "order": 3,
+      "level": "intermediate",
+      "aliases": [
+        "完备性"
+      ]
+    },
+    {
+      "trackId": "mathematical-analysis",
+      "id": "analysis-differentiation",
+      "postId": "一元微分学",
+      "title": "一元微分学",
+      "url": "https://wangsenjie.github.io/2025/09/07/4/",
+      "order": 4,
+      "level": "intermediate",
+      "aliases": [
+        "微分"
+      ]
+    },
+    {
+      "trackId": "mathematical-analysis",
+      "id": "analysis-integration",
+      "postId": "一元积分学",
+      "title": "一元积分学",
+      "url": "https://wangsenjie.github.io/2025/09/07/5/",
+      "order": 5,
+      "level": "intermediate",
+      "aliases": [
+        "积分"
+      ]
+    },
+    {
+      "trackId": "mathematical-analysis",
+      "id": "analysis-number-series",
+      "postId": "数项级数",
+      "title": "数项级数",
+      "url": "https://wangsenjie.github.io/2025/09/07/6/",
+      "order": 6,
+      "level": "advanced",
+      "aliases": [
+        "数项级数"
+      ]
+    },
+    {
+      "trackId": "mathematical-analysis",
+      "id": "analysis-function-series",
+      "postId": "函数项级数",
+      "title": "函数项级数",
+      "url": "https://wangsenjie.github.io/2025/09/07/7/",
+      "order": 7,
+      "level": "advanced",
+      "aliases": [
+        "函数项级数"
+      ]
+    },
+    {
+      "trackId": "frontend-vue",
+      "id": "frontend-basics",
+      "postId": "FRONTEND-BASIC",
+      "title": "FRONTEND-BASIC",
+      "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+      "order": 1,
+      "level": "beginner",
+      "aliases": [
+        "html",
+        "css",
+        "javascript"
+      ]
+    },
+    {
+      "trackId": "frontend-vue",
+      "id": "vue-basics",
+      "postId": "VUE-BASIC",
+      "title": "VUE-BASIC",
+      "url": "https://wangsenjie.github.io/2026/05/11/vue/",
+      "order": 2,
+      "level": "intermediate",
+      "aliases": [
+        "vue",
+        "组件",
+        "数据驱动"
+      ]
+    },
+    {
+      "trackId": "recurrent-neural-networks",
+      "id": "rnn-basics",
+      "postId": "循环神经网络",
+      "title": "循环神经网络",
+      "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+      "order": 1,
+      "level": "beginner",
+      "aliases": [
+        "rnn",
+        "循环神经网络"
+      ]
+    },
+    {
+      "trackId": "recurrent-neural-networks",
+      "id": "rnn-gated",
+      "postId": "门控循环神经网络",
+      "title": "门控循环神经网络",
+      "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
+      "order": 2,
+      "level": "intermediate",
+      "aliases": [
+        "lstm",
+        "gru",
+        "门控循环神经网络"
+      ]
+    }
+  ],
+  "tracks": [
+    {
+      "id": "agent-development",
+      "title": "Agent 开发基础路线",
+      "aliases": [
+        "agent",
+        "agent开发",
+        "ai应用开发",
+        "langchain",
+        "langgraph"
+      ],
+      "description": "从模型、消息和工具，逐步进入图工作流、状态与执行控制。",
+      "nodes": [
+        {
+          "id": "agent-langchain-basic",
+          "postId": "LangChain 基础",
+          "title": "LangChain 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langchain-basic/",
+          "order": 1,
+          "level": "beginner",
+          "aliases": [
+            "模型",
+            "消息",
+            "工具"
+          ]
+        },
+        {
+          "id": "agent-langgraph-foundations",
+          "postId": "LangGraph 基础",
+          "title": "LangGraph 基础",
+          "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+          "order": 2,
+          "level": "beginner",
+          "aliases": [
+            "state",
+            "node",
+            "edge",
+            "工作流"
+          ]
+        },
+        {
+          "id": "agent-state-memory",
+          "postId": "状态与短期记忆",
+          "title": "状态与短期记忆",
+          "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
+          "order": 3,
+          "level": "intermediate",
+          "aliases": [
+            "状态",
+            "短期记忆",
+            "reducer",
+            "checkpoint"
+          ]
+        },
+        {
+          "id": "agent-human-in-the-loop",
+          "postId": "人机协作与执行控制",
+          "title": "人机协作与执行控制",
+          "url": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
+          "order": 4,
+          "level": "intermediate",
+          "aliases": [
+            "人机协作",
+            "断点",
+            "审批",
+            "执行控制"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mathematical-analysis",
+      "title": "数学分析习题路线",
+      "aliases": [
+        "数学分析",
+        "极限",
+        "微积分",
+        "级数"
+      ],
+      "description": "按已维护的 1–7 题集顺序阅读。",
+      "nodes": [
+        {
+          "id": "analysis-limits",
+          "postId": "数列极限与函数极限",
+          "title": "数列极限与函数极限",
+          "url": "https://wangsenjie.github.io/2025/09/07/1/",
+          "order": 1,
+          "level": "beginner",
+          "aliases": [
+            "极限"
+          ]
+        },
+        {
+          "id": "analysis-continuity",
+          "postId": "函数的连续性",
+          "title": "函数的连续性",
+          "url": "https://wangsenjie.github.io/2025/09/07/2/",
+          "order": 2,
+          "level": "beginner",
+          "aliases": [
+            "连续性"
+          ]
+        },
+        {
+          "id": "analysis-completeness",
+          "postId": "实数完备性",
+          "title": "实数完备性",
+          "url": "https://wangsenjie.github.io/2025/09/07/3/",
+          "order": 3,
+          "level": "intermediate",
+          "aliases": [
+            "完备性"
+          ]
+        },
+        {
+          "id": "analysis-differentiation",
+          "postId": "一元微分学",
+          "title": "一元微分学",
+          "url": "https://wangsenjie.github.io/2025/09/07/4/",
+          "order": 4,
+          "level": "intermediate",
+          "aliases": [
+            "微分"
+          ]
+        },
+        {
+          "id": "analysis-integration",
+          "postId": "一元积分学",
+          "title": "一元积分学",
+          "url": "https://wangsenjie.github.io/2025/09/07/5/",
+          "order": 5,
+          "level": "intermediate",
+          "aliases": [
+            "积分"
+          ]
+        },
+        {
+          "id": "analysis-number-series",
+          "postId": "数项级数",
+          "title": "数项级数",
+          "url": "https://wangsenjie.github.io/2025/09/07/6/",
+          "order": 6,
+          "level": "advanced",
+          "aliases": [
+            "数项级数"
+          ]
+        },
+        {
+          "id": "analysis-function-series",
+          "postId": "函数项级数",
+          "title": "函数项级数",
+          "url": "https://wangsenjie.github.io/2025/09/07/7/",
+          "order": 7,
+          "level": "advanced",
+          "aliases": [
+            "函数项级数"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "frontend-vue",
+      "title": "前端与 Vue 入门路线",
+      "aliases": [
+        "前端",
+        "vue",
+        "html",
+        "css",
+        "javascript"
+      ],
+      "description": "先掌握前端三件套，再进入 Vue 的组织方式。",
+      "nodes": [
+        {
+          "id": "frontend-basics",
+          "postId": "FRONTEND-BASIC",
+          "title": "FRONTEND-BASIC",
+          "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+          "order": 1,
+          "level": "beginner",
+          "aliases": [
+            "html",
+            "css",
+            "javascript"
+          ]
+        },
+        {
+          "id": "vue-basics",
+          "postId": "VUE-BASIC",
+          "title": "VUE-BASIC",
+          "url": "https://wangsenjie.github.io/2026/05/11/vue/",
+          "order": 2,
+          "level": "intermediate",
+          "aliases": [
+            "vue",
+            "组件",
+            "数据驱动"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "recurrent-neural-networks",
+      "title": "循环神经网络路线",
+      "aliases": [
+        "rnn",
+        "循环神经网络",
+        "lstm",
+        "gru"
+      ],
+      "description": "先理解基础循环网络，再学习门控变体。",
+      "nodes": [
+        {
+          "id": "rnn-basics",
+          "postId": "循环神经网络",
+          "title": "循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+          "order": 1,
+          "level": "beginner",
+          "aliases": [
+            "rnn",
+            "循环神经网络"
+          ]
+        },
+        {
+          "id": "rnn-gated",
+          "postId": "门控循环神经网络",
+          "title": "门控循环神经网络",
+          "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
+          "order": 2,
+          "level": "intermediate",
+          "aliases": [
+            "lstm",
+            "gru",
+            "门控循环神经网络"
+          ]
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "agent-development:next:agent-langchain-basic:agent-langgraph-foundations",
+      "trackId": "agent-development",
+      "from": "agent-langchain-basic",
+      "to": "agent-langgraph-foundations",
+      "relation": "next",
+      "reason": "作者维护的「Agent 开发基础路线」阅读顺序"
+    },
+    {
+      "id": "agent-development:prerequisite:agent-langchain-basic:agent-langgraph-foundations",
+      "trackId": "agent-development",
+      "from": "agent-langchain-basic",
+      "to": "agent-langgraph-foundations",
+      "relation": "prerequisite",
+      "reason": "作者维护的「Agent 开发基础路线」阅读顺序"
+    },
+    {
+      "id": "agent-development:next:agent-langgraph-foundations:agent-state-memory",
+      "trackId": "agent-development",
+      "from": "agent-langgraph-foundations",
+      "to": "agent-state-memory",
+      "relation": "next",
+      "reason": "作者维护的「Agent 开发基础路线」阅读顺序"
+    },
+    {
+      "id": "agent-development:prerequisite:agent-langgraph-foundations:agent-state-memory",
+      "trackId": "agent-development",
+      "from": "agent-langgraph-foundations",
+      "to": "agent-state-memory",
+      "relation": "prerequisite",
+      "reason": "作者维护的「Agent 开发基础路线」阅读顺序"
+    },
+    {
+      "id": "agent-development:next:agent-state-memory:agent-human-in-the-loop",
+      "trackId": "agent-development",
+      "from": "agent-state-memory",
+      "to": "agent-human-in-the-loop",
+      "relation": "next",
+      "reason": "作者维护的「Agent 开发基础路线」阅读顺序"
+    },
+    {
+      "id": "agent-development:prerequisite:agent-state-memory:agent-human-in-the-loop",
+      "trackId": "agent-development",
+      "from": "agent-state-memory",
+      "to": "agent-human-in-the-loop",
+      "relation": "prerequisite",
+      "reason": "作者维护的「Agent 开发基础路线」阅读顺序"
+    },
+    {
+      "id": "mathematical-analysis:next:analysis-limits:analysis-continuity",
+      "trackId": "mathematical-analysis",
+      "from": "analysis-limits",
+      "to": "analysis-continuity",
+      "relation": "next",
+      "reason": "作者维护的「数学分析习题路线」阅读顺序"
+    },
+    {
+      "id": "mathematical-analysis:prerequisite:analysis-limits:analysis-continuity",
+      "trackId": "mathematical-analysis",
+      "from": "analysis-limits",
+      "to": "analysis-continuity",
+      "relation": "prerequisite",
+      "reason": "作者维护的「数学分析习题路线」阅读顺序"
+    },
+    {
+      "id": "mathematical-analysis:next:analysis-continuity:analysis-completeness",
+      "trackId": "mathematical-analysis",
+      "from": "analysis-continuity",
+      "to": "analysis-completeness",
+      "relation": "next",
+      "reason": "作者维护的「数学分析习题路线」阅读顺序"
+    },
+    {
+      "id": "mathematical-analysis:prerequisite:analysis-continuity:analysis-completeness",
+      "trackId": "mathematical-analysis",
+      "from": "analysis-continuity",
+      "to": "analysis-completeness",
+      "relation": "prerequisite",
+      "reason": "作者维护的「数学分析习题路线」阅读顺序"
+    },
+    {
+      "id": "mathematical-analysis:next:analysis-completeness:analysis-differentiation",
+      "trackId": "mathematical-analysis",
+      "from": "analysis-completeness",
+      "to": "analysis-differentiation",
+      "relation": "next",
+      "reason": "作者维护的「数学分析习题路线」阅读顺序"
+    },
+    {
+      "id": "mathematical-analysis:prerequisite:analysis-completeness:analysis-differentiation",
+      "trackId": "mathematical-analysis",
+      "from": "analysis-completeness",
+      "to": "analysis-differentiation",
+      "relation": "prerequisite",
+      "reason": "作者维护的「数学分析习题路线」阅读顺序"
+    },
+    {
+      "id": "mathematical-analysis:next:analysis-differentiation:analysis-integration",
+      "trackId": "mathematical-analysis",
+      "from": "analysis-differentiation",
+      "to": "analysis-integration",
+      "relation": "next",
+      "reason": "作者维护的「数学分析习题路线」阅读顺序"
+    },
+    {
+      "id": "mathematical-analysis:prerequisite:analysis-differentiation:analysis-integration",
+      "trackId": "mathematical-analysis",
+      "from": "analysis-differentiation",
+      "to": "analysis-integration",
+      "relation": "prerequisite",
+      "reason": "作者维护的「数学分析习题路线」阅读顺序"
+    },
+    {
+      "id": "mathematical-analysis:next:analysis-integration:analysis-number-series",
+      "trackId": "mathematical-analysis",
+      "from": "analysis-integration",
+      "to": "analysis-number-series",
+      "relation": "next",
+      "reason": "作者维护的「数学分析习题路线」阅读顺序"
+    },
+    {
+      "id": "mathematical-analysis:prerequisite:analysis-integration:analysis-number-series",
+      "trackId": "mathematical-analysis",
+      "from": "analysis-integration",
+      "to": "analysis-number-series",
+      "relation": "prerequisite",
+      "reason": "作者维护的「数学分析习题路线」阅读顺序"
+    },
+    {
+      "id": "mathematical-analysis:next:analysis-number-series:analysis-function-series",
+      "trackId": "mathematical-analysis",
+      "from": "analysis-number-series",
+      "to": "analysis-function-series",
+      "relation": "next",
+      "reason": "作者维护的「数学分析习题路线」阅读顺序"
+    },
+    {
+      "id": "mathematical-analysis:prerequisite:analysis-number-series:analysis-function-series",
+      "trackId": "mathematical-analysis",
+      "from": "analysis-number-series",
+      "to": "analysis-function-series",
+      "relation": "prerequisite",
+      "reason": "作者维护的「数学分析习题路线」阅读顺序"
+    },
+    {
+      "id": "frontend-vue:next:frontend-basics:vue-basics",
+      "trackId": "frontend-vue",
+      "from": "frontend-basics",
+      "to": "vue-basics",
+      "relation": "next",
+      "reason": "作者维护的「前端与 Vue 入门路线」阅读顺序"
+    },
+    {
+      "id": "frontend-vue:prerequisite:frontend-basics:vue-basics",
+      "trackId": "frontend-vue",
+      "from": "frontend-basics",
+      "to": "vue-basics",
+      "relation": "prerequisite",
+      "reason": "作者维护的「前端与 Vue 入门路线」阅读顺序"
+    },
+    {
+      "id": "recurrent-neural-networks:next:rnn-basics:rnn-gated",
+      "trackId": "recurrent-neural-networks",
+      "from": "rnn-basics",
+      "to": "rnn-gated",
+      "relation": "next",
+      "reason": "作者维护的「循环神经网络路线」阅读顺序"
+    },
+    {
+      "id": "recurrent-neural-networks:prerequisite:rnn-basics:rnn-gated",
+      "trackId": "recurrent-neural-networks",
+      "from": "rnn-basics",
+      "to": "rnn-gated",
+      "relation": "prerequisite",
+      "reason": "作者维护的「循环神经网络路线」阅读顺序"
+    }
+  ]
+}

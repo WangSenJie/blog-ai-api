@@ -10,8 +10,16 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const MarkdownIt = require('markdown-it');
 const SITE_URL = 'https://wangsenjie.github.io';
 const { resolveSlug, formatDatePrefix } = require('./slug-utils');
+const { LEARNING_TRACKS } = require('./learning-graph-config');
+
+const markdownParser = new MarkdownIt({
+    html: false,
+    linkify: false,
+    typographer: false
+});
 
 function findPostFiles(dir) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -362,6 +370,204 @@ function contentHashForChunk(chunk) {
         .digest('hex')}`;
 }
 
+function sha256(value) {
+    return crypto
+        .createHash('sha256')
+        .update(value)
+        .digest('hex');
+}
+
+function headingKey(headingPath) {
+    return (headingPath || [])
+        .map(value => String(value || '').trim())
+        .join('\u0000');
+}
+
+function stableCodeBlockId(post, headingPath, ordinal) {
+    const stableLocation = [
+        String(post && post.url || '').trim().toLowerCase(),
+        headingKey(headingPath),
+        String(ordinal)
+    ].join('\u0000');
+    return `code_${sha256(stableLocation).slice(0, 24)}`;
+}
+
+function contentHashForCodeBlock(block) {
+    const fingerprint = {
+        postId: String(block.postId || '').trim(),
+        postTitle: String(block.postTitle || '').trim(),
+        postUrl: String(block.postUrl || '').trim(),
+        headingPath: (block.headingPath || []).map(value => String(value || '').trim()),
+        ordinal: Number(block.ordinal) || 0,
+        language: String(block.language || '').trim(),
+        code: String(block.code || '').replace(/\r\n/g, '\n')
+    };
+    return `sha256:${sha256(JSON.stringify(fingerprint))}`;
+}
+
+function normalizeCodeLanguage(value) {
+    const language = String(value || '')
+        .trim()
+        .split(/\s+/)[0]
+        .toLowerCase()
+        .replace(/[^a-z0-9_+-]/g, '');
+    return language.slice(0, 40) || 'text';
+}
+
+function extractCodeBlocksForPost(post, postChunks) {
+    if (!post || !post.url || !post.body) return [];
+
+    const tokens = markdownParser.parse(String(post.body), {});
+    const blocks = [];
+    const headingStack = [];
+    const occurrences = new Map();
+
+    for (let index = 0; index < tokens.length; index += 1) {
+        const token = tokens[index];
+        if (token.type === 'heading_open') {
+            const inline = tokens[index + 1];
+            const level = Number(String(token.tag || '').slice(1));
+            const title = markdownToText(inline && inline.content || '');
+            if (Number.isSafeInteger(level) && level >= 1 && title) {
+                headingStack.length = level - 1;
+                headingStack[level - 1] = title;
+            }
+            continue;
+        }
+        if (token.type !== 'fence') continue;
+
+        const headingPath = headingStack.filter(Boolean);
+        const sectionTitle = headingPath[headingPath.length - 1] || '';
+        const key = headingKey(headingPath);
+        const ordinal = (occurrences.get(key) || 0) + 1;
+        occurrences.set(key, ordinal);
+        const exactContext = (postChunks || []).filter(chunk => (
+            headingKey(chunk && chunk.headingPath) === key
+        ));
+        const fallbackContext = exactContext.length
+            ? exactContext
+            : (postChunks || []).filter(chunk => (
+                String(chunk && chunk.sectionTitle || '') === sectionTitle
+            ));
+        const id = stableCodeBlockId(post, headingPath, ordinal);
+        const lineMap = Array.isArray(token.map) ? token.map : [0, 0];
+        const block = {
+            id,
+            anchor: `blog-ai-code-${id.slice('code_'.length)}`,
+            postId: post.id,
+            postTitle: post.title,
+            postUrl: post.url,
+            sectionTitle,
+            headingPath,
+            ordinal,
+            language: normalizeCodeLanguage(token.info),
+            code: String(token.content || '').replace(/\r\n/g, '\n'),
+            sourceLineStart: Math.max(1, Number(lineMap[0]) + 1),
+            sourceLineEnd: Math.max(1, Number(lineMap[1])),
+            contextChunkIds: fallbackContext
+                .map(chunk => String(chunk && chunk.id || '').trim())
+                .filter(Boolean)
+                .slice(0, 6)
+        };
+        block.contentHash = contentHashForCodeBlock(block);
+        blocks.push(block);
+    }
+
+    return blocks;
+}
+
+function extractCodeBlocks(posts, chunks) {
+    const chunksByUrl = new Map();
+    for (const chunk of chunks || []) {
+        const url = String(chunk && chunk.postUrl || '').trim();
+        if (!url) continue;
+        if (!chunksByUrl.has(url)) chunksByUrl.set(url, []);
+        chunksByUrl.get(url).push(chunk);
+    }
+    return (posts || []).flatMap(post => (
+        extractCodeBlocksForPost(post, chunksByUrl.get(post.url) || [])
+    ));
+}
+
+function buildLearningGraph(posts, tracks) {
+    const postsBySlug = new Map();
+    for (const post of posts || []) {
+        const slug = String(post && post.slug || '').trim();
+        if (slug && !postsBySlug.has(slug)) postsBySlug.set(slug, post);
+    }
+
+    const graphTracks = [];
+    const graphNodes = [];
+    const graphEdges = [];
+    const seenNodes = new Set();
+    for (const track of tracks || LEARNING_TRACKS) {
+        const trackId = String(track && track.id || '').trim();
+        if (!trackId) throw new Error('Learning graph track is missing an id');
+        const nodes = [];
+        for (const [index, step] of (track.steps || []).entries()) {
+            const post = postsBySlug.get(String(step && step.slug || '').trim());
+            if (!post) {
+                throw new Error(
+                    `Learning graph references a missing published slug: ${step && step.slug || ''}`
+                );
+            }
+            const id = String(step && step.id || '').trim();
+            if (!id || seenNodes.has(id)) {
+                throw new Error(`Learning graph node id is missing or duplicated: ${id || '(empty)'}`);
+            }
+            seenNodes.add(id);
+            const node = {
+                id,
+                postId: post.id,
+                title: post.title,
+                url: post.url,
+                order: index + 1,
+                level: String(step.level || 'beginner'),
+                aliases: (step.aliases || []).map(value => String(value || '').trim()).filter(Boolean)
+            };
+            nodes.push(node);
+            graphNodes.push(Object.assign({ trackId }, node));
+        }
+        for (let index = 0; index < nodes.length - 1; index += 1) {
+            const from = nodes[index];
+            const to = nodes[index + 1];
+            const reason = `作者维护的「${track.title}」阅读顺序`;
+            graphEdges.push({
+                id: `${trackId}:next:${from.id}:${to.id}`,
+                trackId,
+                from: from.id,
+                to: to.id,
+                relation: 'next',
+                reason
+            });
+            graphEdges.push({
+                id: `${trackId}:prerequisite:${from.id}:${to.id}`,
+                trackId,
+                from: from.id,
+                to: to.id,
+                relation: 'prerequisite',
+                reason
+            });
+        }
+        graphTracks.push({
+            id: trackId,
+            title: String(track.title || '').trim(),
+            aliases: (track.aliases || []).map(value => String(value || '').trim()).filter(Boolean),
+            description: String(track.description || '').trim(),
+            nodes
+        });
+    }
+
+    return {
+        schemaVersion: 1,
+        version: 'author-curated-v1',
+        policy: 'explicit_author_curated_only',
+        nodes: graphNodes,
+        tracks: graphTracks,
+        edges: graphEdges
+    };
+}
+
 function createChunk(post, values) {
     const chunk = {
         postUrl: post.url || '',
@@ -503,7 +709,12 @@ module.exports = {
     splitMarkdownSections,
     chunkSection,
     contentHashForChunk,
+    contentHashForCodeBlock,
     extractResourceLinks,
+    extractCodeBlocks,
+    extractCodeBlocksForPost,
+    buildLearningGraph,
+    stableCodeBlockId,
     stableChunkId,
     chunkPost,
     buildCorpus

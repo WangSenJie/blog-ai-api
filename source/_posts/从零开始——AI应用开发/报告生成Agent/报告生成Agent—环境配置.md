@@ -1,6 +1,7 @@
 ---
 title: 报告生成Agent——环境配置
 date: 2026-05-17
+slug: agent-2
 description: 报告生成Agent的环境配置说明，包括开发环境、运行环境和依赖项。
 categories:
   - 从零开始——AI应用开发

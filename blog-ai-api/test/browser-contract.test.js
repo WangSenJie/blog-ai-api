@@ -132,6 +132,51 @@ test('structured claims render with server-owned inline citations', () => {
   assert.match(renderAnswerBody, /safePostUrl/);
 });
 
+test('Phase 5 artifacts are escaped and never masquerade as local BM25 fallback', () => {
+  const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
+  const renderComparison = sourceSection(
+    agent,
+    'function renderComparison(result)',
+    'function renderLearningPath'
+  );
+  const renderLearningPath = sourceSection(
+    agent,
+    'function renderLearningPath(result)',
+    'function renderCodeExplanation'
+  );
+  const renderCodeExplanation = sourceSection(
+    agent,
+    'function renderCodeExplanation(result)',
+    'function renderPhase5Artifacts'
+  );
+  const localAsk = sourceSection(
+    agent,
+    'async function localAsk(question, mode, context, ranked)',
+    'async function remoteAsk(question, mode, context, messages)'
+  );
+
+  assert.match(renderComparison, /escapeHtml\(compactText\(cell\.text, 800\)\)/);
+  assert.match(renderComparison, /safePostUrl\(article && article\.url\)/);
+  assert.match(renderLearningPath, /作者维护的站内学习图谱/);
+  assert.match(renderLearningPath, /不由相关文章相似度推断/);
+  assert.match(renderCodeExplanation, /safeCodeAnchor\(block\.anchor\)/);
+  assert.match(renderCodeExplanation, /safePostUrl\(block\.postUrl\)/);
+  assert.match(renderCodeExplanation, /<pre><code class="language-\$\{escapeHtml\(language\)\}">\$\{escapeHtml\(code\)\}<\/code><\/pre>/);
+  assert.doesNotMatch(renderCodeExplanation, /\$\{code\}(?!\))/);
+
+  const guardPosition = localAsk.indexOf('if (requiresServerPhase5Feature(question))');
+  const corpusLoadPosition = localAsk.indexOf('await loadCorpus()');
+  assert.notEqual(guardPosition, -1);
+  assert.notEqual(corpusLoadPosition, -1);
+  assert.ok(guardPosition < corpusLoadPosition);
+  assert.match(localAsk, /answer: unavailablePhase5Answer\(question\)/);
+  assert.match(localAsk, /citations: \[\]/);
+  assert.match(localAsk, /related: \[\]/);
+  assert.match(agent, /对比|比较|有何异同/);
+  assert.match(agent, /学习路径|学习路线|阅读顺序/);
+  assert.match(agent, /代码块|这段代码/);
+});
+
 test('feedback is signed server state, omitted from fallback and never persisted', () => {
   const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
   const remoteAsk = sourceSection(

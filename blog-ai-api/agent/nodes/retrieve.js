@@ -83,9 +83,22 @@ function normalizeToolItem(item, query, toolName, fallbackRank) {
         ? Number(item.rerankScore)
         : 0
     },
-    matchedQueries: [query],
+    matchedQueries: [String(item && item.query || query)],
     tools: [toolName]
   };
+}
+
+function captureSpecialistResult(state, name, result) {
+  if (!state || !state.specialistResults || !result || typeof result !== 'object') {
+    return;
+  }
+  if (name === 'compare_articles') {
+    state.specialistResults.comparison = result;
+  } else if (name === 'recommend_learning_path') {
+    state.specialistResults.learningPath = result;
+  } else if (name === 'explain_code_block') {
+    state.specialistResults.codeExplanation = result;
+  }
 }
 
 function mergeCandidates(existing, incoming) {
@@ -168,6 +181,53 @@ function routeToolRequests(state, queries) {
     null;
   const pageUrl = primaryReference && primaryReference.url;
   const topK = Math.min(state.budget.limits.maxContextChunks * 2, 16);
+  const phase5 = state.phase5Request || {};
+
+  if (state.route === ROUTES.ARTICLE_COMPARE) {
+    const comparison = phase5.comparison || {};
+    return comparison.urls && comparison.urls.length >= 2
+      ? [{
+        name: 'compare_articles',
+        args: {
+          urls: comparison.urls,
+          dimensions: comparison.dimensions,
+          query: state.standaloneQuery,
+          topK: Math.min(comparison.dimensions && comparison.dimensions.length || 1, 3)
+        },
+        query: state.standaloneQuery
+      }]
+      : [];
+  }
+  if (state.route === ROUTES.LEARNING_PATH) {
+    const learning = phase5.learning || {};
+    return learning.topic || learning.goal || learning.currentPostUrl
+      ? [{
+        name: 'recommend_learning_path',
+        args: Object.assign({
+          level: learning.level,
+          completedUrls: learning.completedUrls,
+          topK: Math.min(topK, 8)
+        }, learning.topic ? { topic: learning.topic } : {},
+        learning.goal ? { goal: learning.goal } : {},
+        learning.currentPostUrl ? { currentPostUrl: learning.currentPostUrl } : {}),
+        query: state.standaloneQuery
+      }]
+      : [];
+  }
+  if (state.route === ROUTES.CODE_EXPLANATION) {
+    const code = phase5.code || {};
+    return code.url
+      ? [{
+        name: 'explain_code_block',
+        args: Object.assign(
+          { url: code.url, query: code.query },
+          code.blockId ? { blockId: code.blockId } : {},
+          code.ordinal ? { ordinal: code.ordinal } : {}
+        ),
+        query: state.standaloneQuery
+      }]
+      : [];
+  }
 
   if (state.route === ROUTES.PAGE_SUMMARY) {
     return pageUrl
@@ -249,6 +309,7 @@ async function retrieveEvidence(state, tools, queries, attempt) {
         )
       );
       const items = toolResultItems(result);
+      captureSpecialistResult(state, request.name, result);
       summary.strategy = String(result && result.strategy || 'unknown');
       if (result && result.retrieval && typeof result.retrieval === 'object') {
         summary.retrieval = Object.assign({}, result.retrieval);
@@ -282,6 +343,7 @@ async function retrieveEvidence(state, tools, queries, attempt) {
 module.exports = {
   AgentDeadlineError,
   assertWithinDeadline,
+  captureSpecialistResult,
   mergeCandidates,
   normalizeToolItem,
   retrieveEvidence,

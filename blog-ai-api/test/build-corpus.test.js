@@ -6,7 +6,11 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
-const { buildCorpus } = require('../../scripts/build-ai-corpus');
+const {
+  buildCorpus,
+  buildLearningGraph,
+  extractCodeBlocks
+} = require('../../scripts/build-ai-corpus');
 
 function makeTempDir(t) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'blog-ai-build-corpus-'));
@@ -116,4 +120,97 @@ slug: shared-route
   assert.equal(corpus.posts[0].title, 'Visible Post');
   assert.equal(corpus.posts[0].slug, 'shared-route-2');
   assert.match(corpus.posts[0].url, /\/2026\/07\/02\/shared-route-2\/$/);
+});
+
+test('Phase 5 extracts stable fenced code blocks and builds only explicit learning tracks', t => {
+  const postsDirectory = makeTempDir(t);
+
+  writePost(postsDirectory, '01-code-basics.md', `
+title: Code Basics
+date: 2026-07-01
+slug: code-basics
+  `, `# Overview
+
+The overview gives the prose context for the code.
+
+- Nested example:
+
+  \`\`\`JavaScript extra-info
+  const fromList = true;
+  \`\`\`
+
+## Details
+
+The details provide a second source context.
+
+\`\`\`ts
+const typed: number = 1;
+\`\`\``);
+
+  writePost(postsDirectory, '02-code-advanced.md', `
+title: Code Advanced
+date: 2026-07-02
+slug: code-advanced
+  `, '# Advanced\n\nThis is the second explicitly configured learning step.');
+
+  const corpus = buildCorpus(postsDirectory);
+  const firstExtraction = extractCodeBlocks(corpus.posts, corpus.chunks);
+  const secondExtraction = extractCodeBlocks(corpus.posts, corpus.chunks);
+
+  assert.equal(firstExtraction.length, 2);
+  assert.deepEqual(secondExtraction, firstExtraction);
+  assert.deepEqual(firstExtraction.map(block => block.headingPath), [
+    ['Overview'],
+    ['Overview', 'Details']
+  ]);
+  assert.deepEqual(firstExtraction.map(block => block.language), ['javascript', 'ts']);
+  assert.deepEqual(firstExtraction.map(block => block.code), [
+    'const fromList = true;\n',
+    'const typed: number = 1;\n'
+  ]);
+  for (const block of firstExtraction) {
+    assert.match(block.id, /^code_[a-f0-9]{24}$/);
+    assert.equal(block.anchor, `blog-ai-code-${block.id.slice('code_'.length)}`);
+    assert.match(block.contentHash, /^sha256:[a-f0-9]{64}$/);
+    assert.ok(block.sourceLineStart >= 1);
+    assert.ok(block.sourceLineEnd >= block.sourceLineStart);
+    assert.equal(block.contextChunkIds.length >= 1, true);
+    assert.equal(
+      block.contextChunkIds.every(id => corpus.chunks.some(chunk => chunk.id === id)),
+      true
+    );
+  }
+
+  const graph = buildLearningGraph(corpus.posts, [{
+    id: 'code-track',
+    title: 'Code Track',
+    aliases: ['code learning'],
+    description: 'A test-only author-maintained order.',
+    steps: [
+      {
+        id: 'code-basics',
+        slug: 'code-basics',
+        level: 'beginner',
+        aliases: ['basics']
+      },
+      {
+        id: 'code-advanced',
+        slug: 'code-advanced',
+        level: 'intermediate',
+        aliases: ['advanced']
+      }
+    ]
+  }]);
+
+  assert.equal(graph.policy, 'explicit_author_curated_only');
+  assert.deepEqual(graph.tracks.map(track => track.id), ['code-track']);
+  assert.deepEqual(graph.tracks[0].nodes.map(node => node.id), [
+    'code-basics',
+    'code-advanced'
+  ]);
+  assert.deepEqual(graph.edges.map(edge => edge.relation), [
+    'next',
+    'prerequisite'
+  ]);
+  assert.equal(graph.nodes.every(node => node.trackId === 'code-track'), true);
 });

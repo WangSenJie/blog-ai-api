@@ -4,7 +4,8 @@ const {
   normalizeText
 } = require('../../lib/retrieval-core');
 const {
-  ROUTES
+  ROUTES,
+  hasExplicitLearningTopic
 } = require('./route');
 
 const CHINESE_NUMBERS = Object.freeze({
@@ -173,7 +174,9 @@ function rewriteStandaloneQuery(state) {
     [
       ROUTES.PAGE_SUMMARY,
       ROUTES.PAGE_QA,
-      ROUTES.RELATED_ARTICLES
+      ROUTES.RELATED_ARTICLES,
+      ROUTES.LEARNING_PATH,
+      ROUTES.CODE_EXPLANATION
     ].includes(state.route)
   ) {
     resolveReference(explicitCurrentAnchor);
@@ -265,6 +268,15 @@ function rewriteStandaloneQuery(state) {
   ) {
     unresolved = true;
   }
+  if (
+    state.route === ROUTES.LEARNING_PATH &&
+    !pageReference &&
+    !articleReferences.length &&
+    !explicitCurrentAnchor &&
+    !hasExplicitLearningTopic(state.question)
+  ) {
+    unresolved = true;
+  }
 
   return {
     standaloneQuery: standaloneQuery || state.question,
@@ -273,6 +285,8 @@ function rewriteStandaloneQuery(state) {
     clarificationReason: unresolved
       ? state.route === ROUTES.RELATED_ARTICLES
         ? 'missing_related_topic'
+        : state.route === ROUTES.LEARNING_PATH
+          ? 'missing_learning_topic_or_anchor'
         : 'unresolved_reference'
       : ''
   };

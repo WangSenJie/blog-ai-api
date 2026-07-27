@@ -54,24 +54,39 @@ function loadCorpusFromDir(dataDir, options) {
   const chunksPath = path.join(dataDir, 'chunks.json');
   const manifestPath = path.join(dataDir, 'manifest.json');
   const vectorsPath = path.join(dataDir, 'vectors.json');
+  const codeBlocksPath = path.join(dataDir, 'code-blocks.json');
+  const learningGraphPath = path.join(dataDir, 'learning-graph.json');
   const manifest = fs.existsSync(manifestPath) ? readJson(manifestPath) : null;
   let posts;
   let chunks;
   let vectors = [];
+  let codeBlocks = [];
+  let learningGraph = null;
   let integrity;
 
   if (manifest) {
-    verifyManifestFiles(manifest, { postsPath, chunksPath, vectorsPath });
+    verifyManifestFiles(manifest, {
+      postsPath,
+      chunksPath,
+      vectorsPath,
+      codeBlocksPath,
+      learningGraphPath
+    });
     posts = readJson(postsPath);
     chunks = readJson(chunksPath);
     vectors = manifest.schemaVersion >= 2 ? readJson(vectorsPath) : [];
+    codeBlocks = manifest.schemaVersion >= 3 ? readJson(codeBlocksPath) : [];
+    learningGraph = manifest.schemaVersion >= 3 ? readJson(learningGraphPath) : null;
     integrity = Object.assign(
       {
         sourcePosts: posts.length,
         sourceChunks: chunks.length,
         manifestVerified: true
       },
-      validateCorpusData(posts, chunks, manifest, vectors)
+      validateCorpusData(posts, chunks, manifest, vectors, {
+        codeBlocks,
+        learningGraph
+      })
     );
   } else {
     const rawPosts = readJson(postsPath);
@@ -98,6 +113,8 @@ function loadCorpusFromDir(dataDir, options) {
     posts,
     chunks,
     vectors,
+    codeBlocks,
+    learningGraph,
     manifest,
     integrity
   };

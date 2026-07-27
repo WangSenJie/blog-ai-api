@@ -155,7 +155,130 @@ function relatedFromCandidates(candidates, page, limit) {
   return related;
 }
 
+function proseQuoteFromChunk(chunk, query, limit) {
+  const maximum = Number.isFinite(limit) ? limit : 280;
+  const lines = String(chunk && chunk.content || '')
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(line => line.length >= 6 && /[\u4e00-\u9fff]/.test(line))
+    .filter(line => !/^(?:from |import |def |class |return |if |else\b|for |while |#)/i.test(line));
+  const normalizedQuery = normalizeText(query);
+  const selected = lines
+    .map((line, index) => ({
+      line,
+      index,
+      score: normalizedQuery && normalizeText(line).includes(normalizedQuery) ? 1 : 0
+    }))
+    .sort((left, right) => right.score - left.score || left.index - right.index)[0];
+  const quote = selected && selected.line || '';
+  return quote.length <= maximum ? quote : quote.slice(0, maximum).trim();
+}
+
+function codeContextClaim(candidate, query) {
+  const chunk = candidate && candidate.chunk;
+  if (!isIndexableChunk(chunk)) return null;
+  const quote = proseQuoteFromChunk(chunk, query);
+  if (!quote) return null;
+  return {
+    text: quote,
+    citationIds: [chunk.id],
+    quote
+  };
+}
+
+function buildAlignedComparisonAnswer(state) {
+  const result = state.specialistResults && state.specialistResults.comparison;
+  if (!result || !result.comparison || !Array.isArray(result.comparison.rows)) {
+    return null;
+  }
+  const candidatesById = new Map(
+    state.selectedChunks.map(candidate => [candidate.chunk.id, candidate])
+  );
+  const articlesByUrl = new Map((result.articles || []).map(article => [
+    normalizePostUrl(article && article.url),
+    article
+  ]));
+  const claims = [];
+  const rows = result.comparison.rows.map(row => ({
+    id: row.id,
+    label: row.label,
+    cells: (row.cells || []).map(cell => {
+      const article = articlesByUrl.get(normalizePostUrl(cell.articleUrl));
+      const candidate = cell.available && candidatesById.get(cell.chunkId);
+      const claim = candidate
+        ? claimFromCandidate(candidate, row.label, {
+          prefix: `《${candidate.chunk.postTitle}》：`
+        })
+        : null;
+      if (claim && claims.length < 6) claims.push(claim);
+      return {
+        articleUrl: normalizePostUrl(cell.articleUrl),
+        articleTitle: article && article.title || '',
+        available: Boolean(claim),
+        citationId: claim && claim.citationIds[0] || '',
+        text: claim && claim.text || '',
+        quote: claim && claim.quote || ''
+      };
+    })
+  }));
+  const related = (result.articles || []).map(article => ({
+    title: article.title,
+    url: normalizePostUrl(article.url)
+  })).filter(item => item.title && item.url);
+  return {
+    answer: '我按相同维度并列展示站内原文证据；没有原文证据的单元格不会补写推断。',
+    citations: citationsFromCandidates(state.selectedChunks, 6),
+    related,
+    claims,
+    comparison: {
+      articles: related,
+      rows
+    }
+  };
+}
+
+function buildLearningPathAnswer(state) {
+  const result = state.specialistResults && state.specialistResults.learningPath;
+  const path = result && result.learningPath;
+  const steps = path && Array.isArray(path.steps) ? path.steps : [];
+  const terminal = result && result.status === 'terminal';
+  return {
+    answer: terminal
+      ? '这篇文章在已配置的站内学习图谱中已经没有下一步；你可以换一个主题继续规划。'
+      : '已按作者维护的站内学习图谱整理阅读顺序。这个顺序是导航元数据，不由相关文章相似度推断。',
+    citations: [],
+    related: steps.map(step => ({ title: step.title, url: step.url })),
+    claims: [],
+    learningPath: path ? Object.assign({}, path, {
+      steps: steps.map(step => Object.assign({}, step))
+    }) : null,
+    navigationOnly: true
+  };
+}
+
+function buildCodeExplanationAnswer(state) {
+  const result = state.specialistResults && state.specialistResults.codeExplanation;
+  const explanation = result && result.codeExplanation;
+  const block = explanation && explanation.block;
+  const candidate = state.selectedChunks.find(item => (
+    item && item.chunk && item.chunk.id === (explanation && explanation.contextChunkId)
+  )) || state.selectedChunks[0];
+  const claim = codeContextClaim(candidate, state.standaloneQuery);
+  return {
+    answer: '以下代码逐字来自站内文章；正文说明只展示同一文章中可追溯的原文，不执行代码，也不补充站外语义。',
+    citations: citationsFromCandidates(candidate ? [candidate] : [], 1),
+    related: [],
+    claims: claim ? [claim] : [],
+    codeExplanation: block ? {
+      block: Object.assign({}, block),
+      contextChunkId: explanation && explanation.contextChunkId || ''
+    } : null
+  };
+}
+
 function buildCompareAnswer(state) {
+  const aligned = buildAlignedComparisonAnswer(state);
+  if (aligned) return aligned;
   const byUrl = new Map();
 
   for (const candidate of state.selectedChunks) {
@@ -321,6 +444,8 @@ function buildDeterministicResponse(state) {
   }
 
   if (state.route === ROUTES.ARTICLE_COMPARE) return buildCompareAnswer(state);
+  if (state.route === ROUTES.LEARNING_PATH) return buildLearningPathAnswer(state);
+  if (state.route === ROUTES.CODE_EXPLANATION) return buildCodeExplanationAnswer(state);
   if (state.route === ROUTES.RELATED_ARTICLES) return buildRelatedAnswer(state);
   if (state.subqueries.length > 1) return buildCompoundAnswer(state);
 
@@ -346,9 +471,12 @@ function buildDeterministicResponse(state) {
 }
 
 module.exports = {
+  buildAlignedComparisonAnswer,
   buildCompareAnswer,
   buildCompoundAnswer,
+  buildCodeExplanationAnswer,
   buildDeterministicResponse,
+  buildLearningPathAnswer,
   bestEvidenceCandidate,
   claimFromCandidate,
   claimsFromSummaryCandidates,
@@ -356,5 +484,6 @@ module.exports = {
   citationsFromCandidates,
   hasUsableQuote,
   quoteFromChunk,
+  proseQuoteFromChunk,
   relatedFromCandidates
 };

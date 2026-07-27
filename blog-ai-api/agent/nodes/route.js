@@ -6,6 +6,8 @@ const ROUTES = Object.freeze({
   PAGE_QA: 'page_qa',
   RELATED_ARTICLES: 'related_articles',
   ARTICLE_COMPARE: 'article_compare',
+  LEARNING_PATH: 'learning_path',
+  CODE_EXPLANATION: 'code_explanation',
   SITE_QA: 'site_qa'
 });
 
@@ -72,7 +74,7 @@ function isDirectQuestion(question) {
 
 function isRelatedArticlesQuestion(question) {
   const text = String(question || '');
-  if (/相关文章|相关推荐|延伸阅读|下一篇|类似文章/.test(text)) {
+  if (/相关文章|相关推荐|延伸阅读|类似文章/.test(text)) {
     return true;
   }
 
@@ -80,6 +82,34 @@ function isRelatedArticlesQuestion(question) {
     /(?:请|帮我|给我|能否|可以|我想(?:看|读))[^。！？?!]{0,20}推荐/.test(text) ||
     /推荐(?:给我)?\s*(?:几|一|两|三|一些|若干)(?:篇|个|本)?/.test(text) ||
     /推荐(?:给我)?\s*(?:文章|阅读|一下)/.test(text)
+  );
+}
+
+function isNextArticleQuestion(question) {
+  return /下一篇|下一步(?:该)?(?:看|学|读)|接下来(?:该)?(?:看|学|读)|后续(?:该)?(?:看|学|读)/.test(
+    String(question || '')
+  );
+}
+
+function isLearningPathQuestion(question) {
+  const text = String(question || '');
+  return /学习路径|学习路线|阅读顺序|学习计划|从零(?:开始)?(?:学|学习)|(?:先|应该先)(?:看|学|读)|(?:学|学习).{0,12}之前(?:先)?(?:看|学|读)|怎么(?:学|学习)|如何(?:学|学习)/.test(text);
+}
+
+function hasExplicitLearningTopic(question) {
+  const remaining = String(question || '')
+    .toLowerCase()
+    .replace(
+      /学习路径|学习路线|阅读顺序|学习计划|从零(?:开始)?|下一篇|下一步|接下来|后续|推荐|文章|我|想|要|请|帮我|给我|应该|先|再|看|学|读|怎么|如何|什么|哪些|一下|之前|吗|呢/g,
+      ''
+    )
+    .replace(/[\s，。；：！？?、,.!]/g, '');
+  return remaining.length >= 2;
+}
+
+function isCodeExplanationQuestion(question) {
+  return /代码块|这段代码|该段代码|第\s*[一二两三四五六七八九十\d]+\s*段代码|解释.{0,30}代码|代码.{0,20}(?:解释|含义|作用|怎么(?:写|运行))|逐行(?:解释|讲解)/.test(
+    String(question || '')
   );
 }
 
@@ -128,6 +158,12 @@ function routeQuestion(state) {
   if (isComparisonQuestion(question, state)) {
     return ROUTES.ARTICLE_COMPARE;
   }
+  if (isCodeExplanationQuestion(question) && hasPageAnchor) {
+    return ROUTES.CODE_EXPLANATION;
+  }
+  if (isNextArticleQuestion(question) || isLearningPathQuestion(question)) {
+    return ROUTES.LEARNING_PATH;
+  }
   if (
     (state.legacyMode === 'page_summary' || /总结|概括|摘要/.test(question)) &&
     hasPageAnchor
@@ -154,7 +190,11 @@ module.exports = {
   ROUTES,
   hasResolvableArticleSelection,
   isComparisonQuestion,
+  isCodeExplanationQuestion,
   isDirectQuestion,
+  hasExplicitLearningTopic,
+  isLearningPathQuestion,
+  isNextArticleQuestion,
   isRelatedArticlesQuestion,
   routeQuestion
 };

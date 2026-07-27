@@ -41,6 +41,7 @@ function sourceWithoutExt(source) {
 }
 
 const manualSlugByTitle = new Map([
+    ['报告生成Agent——环境配置', 'agent-2'],
     ['Pandas数据分析题解汇总', 'pandas'],
     ['LeetCode Hot100 —— Hash', 'hash'],
     ['LeetCode Hot100 —— 二叉树', 'leetcode-hot100'],

@@ -270,7 +270,7 @@
           "UserCF"
         ],
         "toolNames": [
-          "search_blog"
+          "compare_articles"
         ],
         "relevantPostTitles": [
           "ItemCF",
@@ -296,7 +296,7 @@
           "UserCF"
         ],
         "toolNames": [
-          "search_blog"
+          "compare_articles"
         ],
         "relevantPostTitles": [
           "ItemCF",
@@ -322,7 +322,7 @@
           "UserCF"
         ],
         "toolNames": [
-          "search_blog"
+          "compare_articles"
         ],
         "relevantPostTitles": [
           "ItemCF",
@@ -372,7 +372,7 @@
           "UserCF"
         ],
         "toolNames": [
-          "search_blog"
+          "compare_articles"
         ],
         "relevantPostTitles": [
           "ItemCF",
@@ -700,10 +700,8 @@
           "双塔模型",
           "DSSM"
         ],
-        "toolNames": [
-          "search_blog"
-        ],
-        "retrievalAttempts": 2,
+        "toolNames": [],
+        "retrievalAttempts": 1,
         "shouldReject": true
       }
     },

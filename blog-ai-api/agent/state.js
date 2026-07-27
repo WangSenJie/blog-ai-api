@@ -209,6 +209,12 @@ function createAgentState(input, options) {
     subqueries: [],
     targetQueries: [],
     resolvedArticleRefs: [],
+    phase5Request: null,
+    specialistResults: {
+      comparison: null,
+      learningPath: null,
+      codeExplanation: null
+    },
     needsClarification: false,
     clarificationReason: '',
     retrievalAttempts: 0,
@@ -226,6 +232,9 @@ function createAgentState(input, options) {
     citations: [],
     claims: [],
     related: [],
+    comparison: null,
+    learningPath: null,
+    codeExplanation: null,
     deterministicResponse: null,
     modelResponse: null,
     citationVerification: null,

@@ -8,6 +8,7 @@ const test = require('node:test');
 
 const {
   buildManifest,
+  codeBlockHash,
   serializeJson,
   validateCorpusData,
   verifyManifestFiles
@@ -43,6 +44,70 @@ function writeJson(directory, name, value) {
   const filePath = path.join(directory, name);
   fs.writeFileSync(filePath, serializeJson(value), 'utf8');
   return filePath;
+}
+
+function makePhase5Artifacts() {
+  const codeBlock = {
+    id: 'code_aaaaaaaaaaaaaaaaaaaaaaaa',
+    anchor: 'blog-ai-code-aaaaaaaaaaaaaaaaaaaaaaaa',
+    postId: 'post-a',
+    postTitle: 'Post A',
+    postUrl: '/post-a/',
+    sectionTitle: 'Introduction',
+    headingPath: ['Introduction'],
+    ordinal: 1,
+    language: 'javascript',
+    code: 'const answer = 42;\n',
+    sourceLineStart: 3,
+    sourceLineEnd: 5,
+    contextChunkIds: ['chunk_aaaaaaaaaaaaaaaaaaaaaaaa']
+  };
+  codeBlock.contentHash = codeBlockHash(codeBlock);
+
+  const nodeA = {
+    id: 'node-a',
+    postId: 'post-a',
+    title: 'Post A',
+    url: '/post-a/',
+    order: 1,
+    level: 'beginner',
+    aliases: ['post a'],
+    trackId: 'track-a'
+  };
+  const nodeB = {
+    id: 'node-b',
+    postId: 'post-b',
+    title: 'Post B',
+    url: '/post-b/',
+    order: 2,
+    level: 'intermediate',
+    aliases: ['post b'],
+    trackId: 'track-a'
+  };
+  const reason = '作者维护的测试阅读顺序';
+  return {
+    codeBlocks: [codeBlock],
+    learningGraph: {
+      schemaVersion: 1,
+      version: 'test-author-curated-v1',
+      policy: 'explicit_author_curated_only',
+      nodes: [nodeA, nodeB],
+      tracks: [{
+        id: 'track-a',
+        title: 'Test Track',
+        aliases: ['test'],
+        nodes: [nodeA, nodeB]
+      }],
+      edges: [{
+        id: 'track-a:next:node-a:node-b',
+        trackId: 'track-a',
+        from: 'node-a',
+        to: 'node-b',
+        relation: 'next',
+        reason
+      }]
+    }
+  };
 }
 
 test('validateCorpusData rejects duplicate chunk IDs', () => {
@@ -137,6 +202,107 @@ test('schema v2 manifest validates vectors against stable chunk IDs and content 
   assert.throws(
     () => validateCorpusData(posts, chunks, manifest, staleVectors),
     /stale or orphaned/
+  );
+});
+
+test('schema v3 manifest verifies code blocks and the author-curated learning graph', t => {
+  const directory = makeTempDir(t, 'blog-ai-phase5-corpus-');
+  const posts = [
+    makePost(),
+    makePost({ id: 'post-b', title: 'Post B', url: '/post-b/' })
+  ];
+  const chunks = [
+    makeChunk({
+      id: 'chunk_aaaaaaaaaaaaaaaaaaaaaaaa',
+      postId: 'post-a',
+      contentHash: 'sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+      headingPath: ['Introduction'],
+      chunkIndex: 0
+    }),
+    makeChunk({
+      id: 'chunk_bbbbbbbbbbbbbbbbbbbbbbbb',
+      postId: 'post-b',
+      postTitle: 'Post B',
+      postUrl: '/post-b/',
+      sectionTitle: 'Advanced',
+      content: 'A second indexable source chunk.',
+      contentHash: 'sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+      headingPath: ['Advanced'],
+      chunkIndex: 0
+    })
+  ];
+  const vectorBuild = buildVectorIndex(chunks, []);
+  const artifacts = makePhase5Artifacts();
+  const manifest = buildManifest(posts, chunks, {}, {
+    vectors: vectorBuild.vectors,
+    embedding: vectorBuild.embedding,
+    vectorBuild: vectorBuild.build,
+    codeBlocks: artifacts.codeBlocks,
+    learningGraph: artifacts.learningGraph
+  });
+  const paths = {
+    postsPath: writeJson(directory, 'posts.json', posts),
+    chunksPath: writeJson(directory, 'chunks.json', chunks),
+    vectorsPath: writeJson(directory, 'vectors.json', vectorBuild.vectors),
+    codeBlocksPath: writeJson(directory, 'code-blocks.json', artifacts.codeBlocks),
+    learningGraphPath: writeJson(directory, 'learning-graph.json', artifacts.learningGraph)
+  };
+  writeJson(directory, 'manifest.json', manifest);
+
+  assert.equal(manifest.schemaVersion, 3);
+  assert.equal(verifyManifestFiles(manifest, paths), true);
+  assert.deepEqual(
+    validateCorpusData(posts, chunks, manifest, vectorBuild.vectors, artifacts),
+    {
+      publishedPosts: 2,
+      indexedPosts: 2,
+      indexedChunks: 2,
+      droppedChunks: 0,
+      indexedVectors: 2,
+      indexedCodeBlocks: 1,
+      indexedLearningNodes: 2,
+      indexedLearningTracks: 1,
+      indexedLearningEdges: 1
+    }
+  );
+
+  const loaded = loadCorpusFromDir(directory, { logger: { warn() {} } });
+  assert.equal(loaded.manifest.schemaVersion, 3);
+  assert.equal(loaded.codeBlocks[0].id, artifacts.codeBlocks[0].id);
+  assert.equal(loaded.learningGraph.policy, 'explicit_author_curated_only');
+  assert.equal(loaded.integrity.indexedCodeBlocks, 1);
+  assert.equal(loaded.integrity.indexedLearningEdges, 1);
+
+  const tamperedCodeBlocks = JSON.parse(JSON.stringify(artifacts.codeBlocks));
+  tamperedCodeBlocks[0].code = 'const answer = 43;\n';
+  assert.throws(
+    () => validateCorpusData(posts, chunks, manifest, vectorBuild.vectors, {
+      codeBlocks: tamperedCodeBlocks,
+      learningGraph: artifacts.learningGraph
+    }),
+    /code block metadata does not match its source/
+  );
+  writeJson(directory, 'code-blocks.json', tamperedCodeBlocks);
+  assert.throws(
+    () => verifyManifestFiles(manifest, paths),
+    /codeBlocks\.json hash mismatch/
+  );
+
+  const cyclicGraph = JSON.parse(JSON.stringify(artifacts.learningGraph));
+  cyclicGraph.edges.push({
+    id: 'track-a:next:node-b:node-a',
+    trackId: 'track-a',
+    from: 'node-b',
+    to: 'node-a',
+    relation: 'next',
+    reason: 'Invalid test cycle'
+  });
+  assert.throws(
+    () => validateCorpusData(posts, chunks, manifest, vectorBuild.vectors, {
+      codeBlocks: artifacts.codeBlocks,
+      learningGraph: cyclicGraph
+    }),
+    /dependency cycle/
   );
 });
 

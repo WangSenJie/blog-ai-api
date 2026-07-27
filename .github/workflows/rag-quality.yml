@@ -23,3 +23,4 @@ jobs:
       - run: npm --prefix blog-ai-api run eval:hybrid
       - run: npm --prefix blog-ai-api run eval:agent
       - run: npm --prefix blog-ai-api run eval:phase4
+      - run: npm --prefix blog-ai-api run eval:phase5

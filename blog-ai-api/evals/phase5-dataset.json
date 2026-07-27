@@ -1,0 +1,147 @@
+{
+  "version": 1,
+  "strategy": "structured_agentic_rag_phase5",
+  "description": "阶段 5 真实语料验收集。它验证有结构的多文章对比、作者维护学习图谱、原始代码块定位，以及缺少站内依据时的专用安全拒答。所有事实性输出都必须回到当前服务语料中的可验证引用；学习路线只允许使用作者维护的导航元数据。",
+  "cases": [
+    {
+      "id": "compare-itemcf-usercf-aligned",
+      "category": "comparison",
+      "question": "比较 ItemCF 和 UserCF 的实现和流程",
+      "expected": {
+        "answerability": "factual",
+        "route": "article_compare",
+        "toolNames": ["compare_articles"],
+        "citationTitles": ["ItemCF", "UserCF"],
+        "comparison": {
+          "articleTitles": ["ItemCF", "UserCF"],
+          "rowIds": ["core", "implementation", "workflow"]
+        }
+      }
+    },
+    {
+      "id": "learning-mathematical-analysis-author-order",
+      "category": "learning_path",
+      "question": "给我数学分析的学习路径",
+      "expected": {
+        "answerability": "navigation",
+        "route": "learning_path",
+        "toolNames": ["recommend_learning_path"],
+        "learning": {
+          "trackId": "mathematical-analysis",
+          "kind": "path",
+          "stepIds": [
+            "analysis-limits",
+            "analysis-continuity",
+            "analysis-completeness",
+            "analysis-differentiation",
+            "analysis-integration",
+            "analysis-number-series",
+            "analysis-function-series"
+          ],
+          "relations": ["start", "next", "next", "next", "next", "next", "next"]
+        }
+      }
+    },
+    {
+      "id": "learning-vue-prerequisite-order",
+      "category": "learning_path",
+      "question": "我想学习 Vue，应该先看什么？",
+      "expected": {
+        "answerability": "navigation",
+        "route": "learning_path",
+        "toolNames": ["recommend_learning_path"],
+        "learning": {
+          "trackId": "frontend-vue",
+          "kind": "path",
+          "stepIds": ["frontend-basics", "vue-basics"],
+          "relations": ["prerequisite", "next"]
+        }
+      }
+    },
+    {
+      "id": "next-after-langgraph-is-author-curated",
+      "category": "next_article",
+      "pageTitle": "LangGraph 基础",
+      "question": "下一篇应该看什么？",
+      "expected": {
+        "answerability": "navigation",
+        "route": "learning_path",
+        "toolNames": ["recommend_learning_path"],
+        "learning": {
+          "trackId": "agent-development",
+          "kind": "next",
+          "stepIds": ["agent-state-memory"],
+          "relations": ["next"]
+        }
+      }
+    },
+    {
+      "id": "code-langgraph-ordinal-selector-is-exact",
+      "category": "code",
+      "pageTitle": "LangGraph 基础",
+      "question": "解释第 2 段代码",
+      "expected": {
+        "answerability": "factual",
+        "route": "code_explanation",
+        "toolNames": ["explain_code_block"],
+        "citationTitles": ["LangGraph 基础"],
+        "code": {
+          "selector": "ordinal",
+          "ordinal": 2
+        }
+      }
+    },
+    {
+      "id": "code-langgraph-id-selector-is-exact",
+      "category": "code",
+      "pageTitle": "LangGraph 基础",
+      "question": "解释代码块 {{codeBlockId}}",
+      "expected": {
+        "answerability": "factual",
+        "route": "code_explanation",
+        "toolNames": ["explain_code_block"],
+        "citationTitles": ["LangGraph 基础"],
+        "code": {
+          "selector": "block_id",
+          "ordinal": 2
+        }
+      }
+    },
+    {
+      "id": "reject-unconfigured-learning-topic",
+      "category": "safe_refusal",
+      "question": "给我推荐算法的学习路径",
+      "expected": {
+        "answerability": "reject",
+        "route": "learning_path",
+        "toolNames": ["recommend_learning_path"],
+        "evidenceReason": "learning_path_not_configured",
+        "maxRetrievalAttempts": 1
+      }
+    },
+    {
+      "id": "reject-missing-code-ordinal",
+      "category": "safe_refusal",
+      "pageTitle": "LangGraph 基础",
+      "question": "解释第 999 段代码",
+      "expected": {
+        "answerability": "reject",
+        "route": "code_explanation",
+        "toolNames": ["explain_code_block"],
+        "evidenceReason": "not_found",
+        "maxRetrievalAttempts": 1
+      }
+    },
+    {
+      "id": "reject-comparison-with-unresolved-target",
+      "category": "safe_refusal",
+      "question": "比较双塔模型和 DSSM 的区别",
+      "expected": {
+        "answerability": "reject",
+        "route": "article_compare",
+        "toolNames": [],
+        "maxRetrievalAttempts": 1
+      }
+    }
+  ]
+}

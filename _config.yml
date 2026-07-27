@@ -94,6 +94,12 @@ pagination_dir: page
 include:
 exclude:
 ignore:
+  # 原始概率论章节由“概率论（第一至四章）”汇总发布；保留源文件，
+  # 但不要把无 front matter 的原稿作为 Hexo 独立文章解析。
+  - "**/_posts/概率论/第一章 事件与概率.md"
+  - "**/_posts/概率论/第二章 条件概率与统计独立性.md"
+  - "**/_posts/概率论/第三章 随机变量与分布函数.md"
+  - "**/_posts/概率论/第四章 数字特征与特征函数.md"
 
 # Extensions
 ## Plugins: https://hexo.io/plugins/

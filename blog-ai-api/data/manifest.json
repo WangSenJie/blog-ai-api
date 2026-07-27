@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 2,
-  "corpusVersion": "60aa9c14b08cd17c66c6e401a70ef2f252251a5b3754c6bf339ceb61344cfb46",
+  "schemaVersion": 3,
+  "corpusVersion": "3f287d5997e3977eb94c32e326691d9ac4863114166eb3d134a2b17700393f5f",
   "files": {
     "posts": {
       "sha256": "b5a2a7ac8593e8b7230ad5cbd1e1fe7b18054da00e83fdb2bcbf01c13948dcdb",
@@ -13,6 +13,14 @@
     "vectors": {
       "sha256": "a80628c380c611a2da4030ac6129314c5a19731ec69ad7f021db907339352e20",
       "count": 964
+    },
+    "codeBlocks": {
+      "sha256": "e4748c4fd9353f22d325f5ee1a47d9e8abc27ce81e1d61a493a87f37133d2255",
+      "count": 395
+    },
+    "learningGraph": {
+      "sha256": "2bb34e90f278144f3f77f31948f63290a8f82f282ba0c12f472b76e970e13103",
+      "count": 1
     }
   },
   "stats": {
@@ -22,7 +30,9 @@
     "indexedChunks": 964,
     "skippedUnpublishedPosts": 32,
     "skippedPostsWithoutUrl": 4,
-    "skippedPostsWithoutIndexableContent": 0
+    "skippedPostsWithoutIndexableContent": 0,
+    "codeBlocks": 395,
+    "learningTracks": 4
   },
   "warnings": {
     "postsWithoutUrl": [

@@ -665,7 +665,29 @@
     return remaining.length < 2;
   }
 
+  function requiresServerPhase5Feature(question) {
+    const text = String(question || '');
+    return /学习路径|学习路线|阅读顺序|学习计划|下一篇|下一步(?:该)?(?:看|学|读)|接下来(?:该)?(?:看|学|读)|(?:先|应该先)(?:看|学|读)|代码块|这段代码|第\s*[一二两三四五六七八九十\d]+\s*段代码|解释.{0,30}代码|逐行(?:解释|讲解)|对比|比较|有何异同|哪个(?:更好|更适合)/.test(text);
+  }
+
+  function unavailablePhase5Answer(question) {
+    if (/代码/.test(String(question || ''))) {
+      return '代码块解释需要服务端按原文代码索引定位；服务暂不可用时，我不会用本地检索猜测代码含义。';
+    }
+    if (/对比|比较|异同|哪个/.test(String(question || ''))) {
+      return '多文章维度对齐需要服务端逐项核对原文证据；服务暂不可用时，我不会用本地相似度代替对比结论。';
+    }
+    return '学习路径和“下一篇”依赖服务端维护的文章图谱；服务暂不可用时，我不会把本地相关文章检索当作前置关系。';
+  }
+
   async function localAsk(question, mode, context, ranked) {
+    if (requiresServerPhase5Feature(question)) {
+      return {
+        answer: unavailablePhase5Answer(question),
+        citations: [],
+        related: []
+      };
+    }
     if (!ranked) {
       await loadCorpus();
       if (isGenericRelatedRequest(question)) {
@@ -740,6 +762,15 @@
         citations: Array.isArray(result.citations) ? result.citations : [],
         claims: Array.isArray(result.claims) ? result.claims : [],
         related: Array.isArray(result.related) ? result.related : [],
+        comparison: result.comparison && typeof result.comparison === 'object'
+          ? result.comparison
+          : null,
+        learningPath: result.learningPath && typeof result.learningPath === 'object'
+          ? result.learningPath
+          : null,
+        codeExplanation: result.codeExplanation && typeof result.codeExplanation === 'object'
+          ? result.codeExplanation
+          : null,
         meta: result.meta || null,
         feedback: result.feedback || null
       };
@@ -790,6 +821,103 @@
     return escapeHtml(result.answer || '');
   }
 
+  function safeCodeAnchor(value) {
+    const anchor = String(value || '').trim();
+    return /^blog-ai-code-[a-f0-9]{24}$/.test(anchor) ? anchor : '';
+  }
+
+  function renderComparison(result) {
+    const comparison = result && result.comparison;
+    if (!comparison || !Array.isArray(comparison.articles) ||
+      !Array.isArray(comparison.rows) || !comparison.articles.length) {
+      return '';
+    }
+    const citations = Array.isArray(result.citations) ? result.citations : [];
+    const citationsById = new Map(citations.map((citation, index) => [
+      String(citation && citation.chunkId || ''),
+      { citation, index: index + 1 }
+    ]));
+    const headings = comparison.articles.map(article => {
+      const url = safePostUrl(article && article.url);
+      const title = compactText(article && article.title, 200);
+      if (!title) return '<th scope="col">文章</th>';
+      const label = escapeHtml(title);
+      return `<th scope="col">${url
+        ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${label}</a>`
+        : label}</th>`;
+    }).join('');
+    const rows = comparison.rows.map(row => {
+      const cells = comparison.articles.map(article => {
+        const articleUrl = safePostUrl(article && article.url);
+        const cell = (row.cells || []).find(item => (
+          safePostUrl(item && item.articleUrl) === articleUrl
+        ));
+        if (!cell || !cell.available || !compactText(cell.text, 800)) {
+          return '<td class="blog-ai-agent__comparison-empty">暂无可展示的站内原文</td>';
+        }
+        const citation = citationsById.get(String(cell.citationId || ''));
+        const citationLink = citation && safePostUrl(citation.citation && citation.citation.url)
+          ? `<a class="blog-ai-agent__claim-citation" href="${escapeHtml(safePostUrl(citation.citation.url))}" target="_blank" rel="noopener noreferrer" aria-label="查看原文引用 ${citation.index}">[${citation.index}]</a>`
+          : '';
+        return `<td>${escapeHtml(compactText(cell.text, 800))} ${citationLink}</td>`;
+      }).join('');
+      return `<tr><th scope="row">${escapeHtml(compactText(row && row.label, 80) || '原文')}</th>${cells}</tr>`;
+    }).join('');
+    return `<section class="blog-ai-agent__comparison" aria-label="多文章对比">
+      <div class="blog-ai-agent__phase5-title">按维度对齐的原文证据</div>
+      <div class="blog-ai-agent__comparison-scroll"><table><thead><tr><th scope="col">维度</th>${headings}</tr></thead><tbody>${rows}</tbody></table></div>
+    </section>`;
+  }
+
+  function renderLearningPath(result) {
+    const path = result && result.learningPath;
+    const steps = path && Array.isArray(path.steps) ? path.steps : [];
+    if (!path) return '';
+    const relationLabels = {
+      prerequisite: '前置',
+      next: '下一步',
+      start: '起点'
+    };
+    const items = steps.map(step => {
+      const url = safePostUrl(step && step.url);
+      const title = compactText(step && step.title, 200);
+      if (!url || !title) return '';
+      const relation = relationLabels[String(step.relation || '')] || '阅读';
+      return `<li><span>${escapeHtml(relation)}</span><a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(title)}</a></li>`;
+    }).filter(Boolean).join('');
+    return `<section class="blog-ai-agent__learning-path" aria-label="学习路径">
+      <div class="blog-ai-agent__phase5-title">${escapeHtml(compactText(path.trackTitle, 120) || '站内学习路径')}</div>
+      ${items ? `<ol>${items}</ol>` : '<p>该路径当前没有未完成的下一步。</p>'}
+      <small>顺序来自作者维护的站内学习图谱，不由相关文章相似度推断。</small>
+    </section>`;
+  }
+
+  function renderCodeExplanation(result) {
+    const explanation = result && result.codeExplanation;
+    const block = explanation && explanation.block;
+    if (!block || typeof block !== 'object') return '';
+    const code = String(block.code || '');
+    const anchor = safeCodeAnchor(block.anchor);
+    const articleUrl = safePostUrl(block.postUrl);
+    const sourceUrl = articleUrl && anchor ? `${articleUrl}#${anchor}` : articleUrl;
+    if (!code || !articleUrl || !anchor) return '';
+    const language = compactText(block.language, 40) || 'text';
+    const section = compactText(block.sectionTitle, 200);
+    return `<section class="blog-ai-agent__code-explanation" aria-label="原文代码块">
+      <div class="blog-ai-agent__phase5-title">原文代码块 · ${escapeHtml(language)}</div>
+      <div class="blog-ai-agent__code-meta">${section ? escapeHtml(section) : '未命名小节'} · <a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">定位到文章代码块</a></div>
+      <pre><code class="language-${escapeHtml(language)}">${escapeHtml(code)}</code></pre>
+    </section>`;
+  }
+
+  function renderPhase5Artifacts(result) {
+    return [
+      renderComparison(result),
+      renderLearningPath(result),
+      renderCodeExplanation(result)
+    ].filter(Boolean).join('');
+  }
+
   function feedbackHtml(result, isFallback) {
     const feedback = !isFallback && validFeedbackReceipt(result.feedback);
     if (!feedback) return '';
@@ -837,11 +965,13 @@
       if (!url) return '';
       return `<a class="blog-ai-agent__related-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a>`;
     }).join('');
+    const phase5Html = !isFallback ? renderPhase5Artifacts(result) : '';
 
     return `
       <div class="blog-ai-agent__message blog-ai-agent__message--assistant">
         <div class="blog-ai-agent__message-label">向导${isFallback ? ' · 本地检索' : ''}</div>
         <div class="blog-ai-agent__message-body">${renderAnswerBody(result)}</div>
+        ${phase5Html}
         ${citationsHtml ? `<div class="blog-ai-agent__citation-list">${citationsHtml}</div>` : ''}
         ${relatedHtml ? `<div class="blog-ai-agent__related">${relatedHtml}</div>` : ''}
         ${feedbackHtml(result, isFallback)}
