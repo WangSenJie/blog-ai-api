@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-24T08:08:56.355Z",
+  "generatedAt": "2026-08-25T05:20:33.912Z",
   "phase": 3,
   "strategy": "hybrid_agent_workflow",
   "stage2Implemented": true,
@@ -15,8 +15,8 @@
   },
   "corpus": {
     "posts": 71,
-    "chunks": 964,
-    "indexVersion": "60aa9c14b08cd17c66c6e401a70ef2f252251a5b3754c6bf339ceb61344cfb46"
+    "chunks": 1904,
+    "indexVersion": "026475f296f8ab87e7a0359fdf22b05a8193c87724b868ae44ad57cad54b54bd"
   },
   "limits": {
     "maxRetrievalAttempts": 2,
@@ -45,12 +45,12 @@
     "safeStopAccuracy": 1,
     "limitCompliance": 1,
     "legacyCompatibility": 1,
-    "averageRetrievalAttempts": 1,
+    "averageRetrievalAttempts": 0.9643,
     "maxRetrievalAttempts": 2,
     "warmLatencyMs": {
-      "p50": 56.974,
-      "p95": 170.924,
-      "max": 275.04
+      "p50": 80.04,
+      "p95": 192.418,
+      "max": 274.546
     }
   },
   "acceptance": {
@@ -123,7 +123,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": false,
-      "durationMs": 6.18,
+      "durationMs": 9.899,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -163,7 +163,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 71.442,
+      "durationMs": 107.639,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -203,7 +203,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 63.972,
+      "durationMs": 82.858,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -243,7 +243,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 7.56,
+      "durationMs": 14.39,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -283,7 +283,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 6.518,
+      "durationMs": 11.394,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -323,7 +323,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 8.756,
+      "durationMs": 13.742,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -365,7 +365,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 28.119,
+      "durationMs": 84.182,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -407,7 +407,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 26.241,
+      "durationMs": 86.025,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -443,7 +443,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": false,
-      "durationMs": 56.974,
+      "durationMs": 84.065,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -479,7 +479,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": false,
-      "durationMs": 57.066,
+      "durationMs": 80.381,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -515,7 +515,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": false,
-      "durationMs": 58.126,
+      "durationMs": 80.04,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -540,14 +540,14 @@
         "比较 ItemCF 和 UserCF 的区别"
       ],
       "expectedTools": [
-        "search_blog"
+        "compare_articles"
       ],
       "toolNames": [
-        "search_blog"
+        "compare_articles"
       ],
       "retrievalAttempts": 1,
       "evidenceStatus": "sufficient",
-      "evidenceReason": "comparison_targets_covered",
+      "evidenceReason": "comparison_dimensions_covered",
       "stopReason": "evidence_sufficient",
       "relevantPostTitles": [
         "ItemCF",
@@ -559,7 +559,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 170.924,
+      "durationMs": 24.093,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -584,14 +584,14 @@
         "ItemCF、UserCF 有何异同"
       ],
       "expectedTools": [
-        "search_blog"
+        "compare_articles"
       ],
       "toolNames": [
-        "search_blog"
+        "compare_articles"
       ],
       "retrievalAttempts": 1,
       "evidenceStatus": "sufficient",
-      "evidenceReason": "comparison_targets_covered",
+      "evidenceReason": "comparison_dimensions_covered",
       "stopReason": "evidence_sufficient",
       "relevantPostTitles": [
         "ItemCF",
@@ -603,7 +603,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 162.611,
+      "durationMs": 25.975,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -628,14 +628,14 @@
         "比较 ItemCF 和 UserCF，《ItemCF》更适合什么场景？"
       ],
       "expectedTools": [
-        "search_blog"
+        "compare_articles"
       ],
       "toolNames": [
-        "search_blog"
+        "compare_articles"
       ],
       "retrievalAttempts": 1,
       "evidenceStatus": "sufficient",
-      "evidenceReason": "comparison_targets_covered",
+      "evidenceReason": "comparison_dimensions_covered",
       "stopReason": "evidence_sufficient",
       "relevantPostTitles": [
         "ItemCF",
@@ -647,7 +647,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 154.74,
+      "durationMs": 36.891,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -687,7 +687,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 6.703,
+      "durationMs": 12.514,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -712,14 +712,14 @@
         "ItemCF 是什么？《ItemCF》和 UserCF 有什么区别？"
       ],
       "expectedTools": [
-        "search_blog"
+        "compare_articles"
       ],
       "toolNames": [
-        "search_blog"
+        "compare_articles"
       ],
       "retrievalAttempts": 1,
       "evidenceStatus": "sufficient",
-      "evidenceReason": "comparison_targets_covered",
+      "evidenceReason": "comparison_dimensions_covered",
       "stopReason": "evidence_sufficient",
       "relevantPostTitles": [
         "ItemCF",
@@ -731,7 +731,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 166.237,
+      "durationMs": 22.661,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -772,7 +772,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 106.652,
+      "durationMs": 151.057,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -813,7 +813,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 107.409,
+      "durationMs": 153.181,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -853,7 +853,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 56.392,
+      "durationMs": 83.21,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -893,7 +893,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 56.031,
+      "durationMs": 81.398,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -933,7 +933,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 9.685,
+      "durationMs": 17.377,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -973,7 +973,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 56.69,
+      "durationMs": 102.311,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -1005,7 +1005,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": true,
-      "durationMs": 4.348,
+      "durationMs": 7.778,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -1047,7 +1047,7 @@
       ],
       "articleCoverage": 1,
       "rejected": false,
-      "durationMs": 143.091,
+      "durationMs": 274.546,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -1083,7 +1083,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": true,
-      "durationMs": 95.086,
+      "durationMs": 189.917,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -1119,7 +1119,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": true,
-      "durationMs": 93.803,
+      "durationMs": 192.418,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -1143,21 +1143,17 @@
         "DSSM",
         "比较双塔模型和 DSSM 的区别"
       ],
-      "expectedTools": [
-        "search_blog"
-      ],
-      "toolNames": [
-        "search_blog"
-      ],
-      "retrievalAttempts": 2,
+      "expectedTools": [],
+      "toolNames": [],
+      "retrievalAttempts": 1,
       "evidenceStatus": "insufficient",
-      "evidenceReason": "comparison_target_missing",
-      "stopReason": "attempt_limit",
+      "evidenceReason": "no_candidates",
+      "stopReason": "specialist_result_missing",
       "relevantPostTitles": [],
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": true,
-      "durationMs": 275.04,
+      "durationMs": 8.281,
       "checks": {
         "route": true,
         "rewrite": true,
@@ -1189,7 +1185,7 @@
       "coveredPostTitles": [],
       "articleCoverage": null,
       "rejected": true,
-      "durationMs": 4.315,
+      "durationMs": 7.908,
       "checks": {
         "route": true,
         "rewrite": true,

@@ -17,6 +17,7 @@
     "chunkType",
     "childOrdinal",
     "tokenCount",
+    "tokenizerVersion",
     "sourceLines",
     "content",
     "retrievalText"
@@ -34,11 +35,12 @@
     "profileSource": {
       "enum": ["front-matter", "document-rule", "path-rule", "migration-fallback"]
     },
-    "parentId": { "type": "string", "minLength": 1 },
+    "parentId": { "type": "string", "pattern": "^parent_[a-f0-9]{24}$" },
     "headingPath": { "type": "array", "items": { "type": "string" } },
     "chunkType": { "type": "string", "minLength": 1 },
     "childOrdinal": { "type": "integer", "minimum": 0 },
     "tokenCount": { "type": "integer", "minimum": 1 },
+    "tokenizerVersion": { "const": "dashscope-compatible-estimate-v1" },
     "sourceLines": {
       "type": ["object", "null"],
       "properties": {

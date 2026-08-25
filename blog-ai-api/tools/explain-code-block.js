@@ -1,7 +1,7 @@
 'use strict';
 
 const {
-  hybridRankChunks
+  hybridRankChunksAsync
 } = require('../lib/hybrid-retrieve');
 const {
   normalizePostUrl,
@@ -116,21 +116,44 @@ function selectBlock(blocks, args) {
   };
 }
 
-function selectContext(block, chunks, vectors, query) {
+async function selectContext(block, chunks, vectors, query, retrievalOptions) {
   const chunksById = new Map((chunks || []).map(chunk => [chunk.id, chunk]));
   const scoped = (block.contextChunkIds || [])
     .map(id => chunksById.get(id))
     .filter(Boolean);
-  const sameArticle = scoped.length
-    ? scoped
-    : (chunks || []).filter(chunk => (
-      normalizePostUrl(chunk && chunk.postUrl) === normalizePostUrl(block.postUrl)
-    ));
+  const isSubstantiveProse = chunk => (
+    chunk &&
+    chunk.chunkType !== 'code' &&
+    /[\u3400-\u9fff]/u.test(String(chunk.content || '')) &&
+    normalizeText(chunk.content).length >= 6
+  );
+  const scopedProse = scoped.filter(isSubstantiveProse);
+  const articleProse = (chunks || []).filter(chunk => (
+    normalizePostUrl(chunk && chunk.postUrl) === normalizePostUrl(block.postUrl) &&
+    isSubstantiveProse(chunk)
+  ));
+  const sameArticle = scopedProse.length
+    ? scopedProse
+    : articleProse.length
+      ? articleProse
+      : scoped;
   if (!sameArticle.length) return null;
-  const contextQuery = [query, block.sectionTitle, (block.headingPath || []).join(' ')]
+  const contextQuery = [
+    query,
+    block.sectionTitle,
+    (block.headingPath || []).join(' '),
+    String(block.code || '').slice(0, 1200)
+  ]
     .filter(Boolean)
     .join(' ');
-  const retrieval = hybridRankChunks(sameArticle, vectors, contextQuery, 'site', null);
+  const retrieval = await hybridRankChunksAsync(
+    sameArticle,
+    vectors,
+    contextQuery,
+    'site',
+    null,
+    retrievalOptions
+  );
   return retrieval.ranked[0] || null;
 }
 
@@ -138,6 +161,8 @@ function createExplainCodeBlockTool(options) {
   const codeBlocks = options && options.codeBlocks;
   const chunks = options && options.chunks;
   const vectors = options && options.vectors;
+  const manifest = options && options.manifest;
+  const provider = options && options.embeddingProvider;
   if (!Array.isArray(codeBlocks) || !Array.isArray(chunks)) {
     throw new TypeError('createExplainCodeBlockTool requires codeBlocks and chunks arrays');
   }
@@ -146,7 +171,7 @@ function createExplainCodeBlockTool(options) {
     name: 'explain_code_block',
     schema: TOOL_SCHEMAS.explain_code_block,
 
-    execute(rawArgs) {
+    async execute(rawArgs, executionOptions) {
       const args = validateExplainCodeBlockArgs(rawArgs, normalizePostUrl);
       const articleBlocks = codeBlocks.filter(block => (
         normalizePostUrl(block && block.postUrl) === args.url
@@ -172,7 +197,11 @@ function createExplainCodeBlockTool(options) {
           items: []
         };
       }
-      const context = selectContext(selected.block, chunks, vectors, args.query);
+      const context = await selectContext(selected.block, chunks, vectors, args.query, {
+        manifest,
+        provider,
+        signal: executionOptions && executionOptions.signal
+      });
       if (!context || !context.chunk) {
         return {
           strategy: 'source_code_block',

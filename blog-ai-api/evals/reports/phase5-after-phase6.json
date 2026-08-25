@@ -1,9 +1,10 @@
 {
-  "generatedAt": "2026-08-25T04:05:43.465Z",
+  "generatedAt": "2026-08-25T06:09:22.284Z",
   "phase": 5,
   "strategy": "structured_agentic_rag_phase5",
   "notes": [
     "The evaluation uses the exact v3 serving corpus, including code-block and author-curated learning-graph artifacts.",
+    "Retrieval uses a deterministic local proxy index so CI never calls the managed embedding API.",
     "All external-model generation is disabled. Factual comparison and code outputs must pass extractive citation, provenance, and source-support checks.",
     "Learning paths are checked against explicit graph nodes and next edges; they intentionally carry no factual citations.",
     "Negative cases must return no claims, citations, or structured artifacts and must stop within one specialist retrieval attempt."
@@ -17,10 +18,10 @@
   "corpus": {
     "schemaVersion": 3,
     "posts": 71,
-    "chunks": 745,
+    "chunks": 1904,
     "codeBlocks": 395,
     "learningTracks": 4,
-    "indexVersion": "9d8f42dbde8e53d9051b6c71a35c5d3a4387c2523a0ef02d173a3bc581a374b8"
+    "indexVersion": "5255a48fc93de09cd70f16957f35b4e74abc713903a9389acb617244424c60ad"
   },
   "summary": {
     "cases": 9,

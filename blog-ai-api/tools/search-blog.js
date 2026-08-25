@@ -4,7 +4,7 @@ const {
   normalizePostUrl,
   normalizeText
 } = require('../lib/retrieval-core');
-const { hybridRankChunks } = require('../lib/hybrid-retrieve');
+const { hybridRankChunksAsync } = require('../lib/hybrid-retrieve');
 const {
   TOOL_SCHEMAS,
   validateSearchBlogArgs
@@ -26,6 +26,8 @@ function matchesMetadataFilter(values, requestedValues) {
 function createSearchBlogTool(options) {
   const chunks = options && options.chunks;
   const vectors = options && options.vectors;
+  const manifest = options && options.manifest;
+  const provider = options && options.embeddingProvider;
   if (!Array.isArray(chunks)) {
     throw new TypeError('createSearchBlogTool requires a chunks array');
   }
@@ -34,7 +36,7 @@ function createSearchBlogTool(options) {
     name: 'search_blog',
     schema: TOOL_SCHEMAS.search_blog,
 
-    execute(rawArgs) {
+    async execute(rawArgs, executionOptions) {
       const args = validateSearchBlogArgs(rawArgs, normalizePostUrl);
       const candidates = chunks.filter(chunk => {
         const postUrl = normalizePostUrl(chunk && chunk.postUrl);
@@ -46,12 +48,17 @@ function createSearchBlogTool(options) {
         return true;
       });
       const page = args.pageUrl ? { url: args.pageUrl } : null;
-      const retrieval = hybridRankChunks(
+      const retrieval = await hybridRankChunksAsync(
         candidates,
         vectors,
         args.query,
         'site',
-        page
+        page,
+        Object.assign({
+          manifest,
+          provider,
+          signal: executionOptions && executionOptions.signal
+        }, args.currentPageOnly ? { maxChunksPerPost: Math.max(8, args.topK) } : {})
       );
       const results = retrieval.ranked.slice(0, args.topK).map((item, index) => ({
         chunk: cloneChunk(item.chunk),

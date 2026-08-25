@@ -1,39 +1,40 @@
 {
-  "generatedAt": "2026-08-25T04:05:43.230Z",
+  "generatedAt": "2026-08-25T06:09:26.824Z",
   "phase": 4,
   "strategy": "grounded_agent_quality_phase4",
   "notes": [
     "The calibration grid is evaluated only on the calibration split; holdout is not used to select thresholds.",
     "Coverage thresholds are evidence gates, not probabilistic confidence scores.",
+    "Retrieval uses a deterministic local proxy index so CI never calls the managed embedding API.",
     "External model generation is disabled. Claims are checked against the exact serving corpus and extractive claim contract before metrics are computed."
   ],
   "dataset": {
-    "version": 1,
-    "hash": "d9d30798cfc3e43805e6ac71dcd2bfd52916c6df8c0007be0af31814757d211f",
-    "cases": 14,
-    "calibrationCases": 8,
+    "version": 2,
+    "hash": "cfb1181a39223984ff6cd925bf2dcb7bf7331f3f2d9cbd1e2099c0e8b8e85f8c",
+    "cases": 15,
+    "calibrationCases": 9,
     "holdoutCases": 6
   },
   "corpus": {
     "posts": 71,
-    "chunks": 745,
-    "indexVersion": "9d8f42dbde8e53d9051b6c71a35c5d3a4387c2523a0ef02d173a3bc581a374b8"
+    "chunks": 1904,
+    "indexVersion": "5255a48fc93de09cd70f16957f35b4e74abc713903a9389acb617244424c60ad"
   },
   "calibration": {
     "configured": {
       "version": "phase4-v1",
       "vectorEvidenceFloor": 0.3,
-      "siteQaMinCoverage": 0.23,
+      "siteQaMinCoverage": 0.3,
       "pageQaMinCoverage": 0.35,
-      "compoundMinCoverage": 0.23,
+      "compoundMinCoverage": 0.3,
       "compareTargetMinCoverage": 0.45
     },
     "candidates": [
       {
         "threshold": 0.15,
         "summary": {
-          "cases": 8,
-          "passedCases": 8,
+          "cases": 9,
+          "passedCases": 9,
           "routeAccuracy": 1,
           "citationCompleteness": 1,
           "citationSupport": 1,
@@ -49,8 +50,8 @@
       {
         "threshold": 0.2,
         "summary": {
-          "cases": 8,
-          "passedCases": 8,
+          "cases": 9,
+          "passedCases": 9,
           "routeAccuracy": 1,
           "citationCompleteness": 1,
           "citationSupport": 1,
@@ -66,8 +67,8 @@
       {
         "threshold": 0.23,
         "summary": {
-          "cases": 8,
-          "passedCases": 8,
+          "cases": 9,
+          "passedCases": 9,
           "routeAccuracy": 1,
           "citationCompleteness": 1,
           "citationSupport": 1,
@@ -83,39 +84,39 @@
       {
         "threshold": 0.26,
         "summary": {
-          "cases": 8,
-          "passedCases": 7,
+          "cases": 9,
+          "passedCases": 9,
           "routeAccuracy": 1,
-          "citationCompleteness": 0.75,
-          "citationSupport": 0.75,
-          "citationProvenance": 0.75,
-          "extractiveClaims": 0.75,
+          "citationCompleteness": 1,
+          "citationSupport": 1,
+          "citationProvenance": 1,
+          "extractiveClaims": 1,
           "unsupportedClaimRate": 0,
           "rejectionRecall": 1,
-          "rejectionPrecision": 0.8,
-          "answerAcceptance": 0.75
+          "rejectionPrecision": 1,
+          "answerAcceptance": 1
         },
-        "eligible": false
+        "eligible": true
       },
       {
         "threshold": 0.3,
         "summary": {
-          "cases": 8,
-          "passedCases": 7,
+          "cases": 9,
+          "passedCases": 9,
           "routeAccuracy": 1,
-          "citationCompleteness": 0.75,
-          "citationSupport": 0.75,
-          "citationProvenance": 0.75,
-          "extractiveClaims": 0.75,
+          "citationCompleteness": 1,
+          "citationSupport": 1,
+          "citationProvenance": 1,
+          "extractiveClaims": 1,
           "unsupportedClaimRate": 0,
           "rejectionRecall": 1,
-          "rejectionPrecision": 0.8,
-          "answerAcceptance": 0.75
+          "rejectionPrecision": 1,
+          "answerAcceptance": 1
         },
-        "eligible": false
+        "eligible": true
       }
     ],
-    "selected": 0.23
+    "selected": 0.3
   },
   "acceptance": {
     "targets": {
@@ -129,11 +130,11 @@
       "answerAcceptance": 1,
       "routeAccuracy": 1
     },
-    "calibrationSelected": 0.23,
+    "calibrationSelected": 0.3,
     "configMatchesSelection": true,
     "calibration": {
-      "cases": 8,
-      "passedCases": 8,
+      "cases": 9,
+      "passedCases": 9,
       "routeAccuracy": 1,
       "citationCompleteness": 1,
       "citationSupport": 1,
@@ -176,7 +177,7 @@
       "evidenceStatus": "sufficient",
       "evidenceReason": "query_terms_covered",
       "evidenceScore": 1,
-      "evidenceThreshold": 0.23,
+      "evidenceThreshold": 0.3,
       "rejected": false,
       "accepted": true,
       "citedTitles": [
@@ -222,8 +223,8 @@
       "route": "site_qa",
       "evidenceStatus": "sufficient",
       "evidenceReason": "query_terms_covered",
-      "evidenceScore": 0.25,
-      "evidenceThreshold": 0.23,
+      "evidenceScore": 0.581412440181937,
+      "evidenceThreshold": 0.3,
       "rejected": false,
       "accepted": true,
       "citedTitles": [
@@ -271,6 +272,53 @@
       "evidenceReason": "current_page_terms_covered",
       "evidenceScore": 0.75,
       "evidenceThreshold": 0.35,
+      "rejected": false,
+      "accepted": true,
+      "citedTitles": [
+        "双塔模型"
+      ],
+      "claims": 1,
+      "unsupportedClaims": 0,
+      "verification": {
+        "status": "verified",
+        "totalClaims": 1,
+        "supportedClaims": 1,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "source": "deterministic"
+      },
+      "checks": {
+        "route": true,
+        "outcome": true,
+        "citationCompleteness": true,
+        "citationSupport": true,
+        "citationProvenance": true,
+        "extractiveClaims": true,
+        "titleCoverage": true,
+        "verification": true
+      },
+      "passed": true
+    },
+    {
+      "id": "cal-site-double-tower-recall",
+      "split": "calibration",
+      "category": "continuity_positive",
+      "question": "双塔模型如何线上召回？",
+      "expected": {
+        "answerability": "answer",
+        "route": "site_qa",
+        "citationTitles": [
+          "双塔模型"
+        ]
+      },
+      "route": "site_qa",
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "query_terms_covered",
+      "evidenceScore": 0.75,
+      "evidenceThreshold": 0.3,
       "rejected": false,
       "accepted": true,
       "citedTitles": [
@@ -362,8 +410,8 @@
       "route": "site_qa",
       "evidenceStatus": "insufficient",
       "evidenceReason": "query_terms_not_covered",
-      "evidenceScore": 0.1111111111111111,
-      "evidenceThreshold": 0.23,
+      "evidenceScore": 0,
+      "evidenceThreshold": 0.3,
       "rejected": true,
       "accepted": false,
       "citedTitles": [],
@@ -405,7 +453,7 @@
       "evidenceStatus": "insufficient",
       "evidenceReason": "query_terms_not_covered",
       "evidenceScore": 0.14285714285714285,
-      "evidenceThreshold": 0.23,
+      "evidenceThreshold": 0.3,
       "rejected": true,
       "accepted": false,
       "citedTitles": [],
@@ -489,7 +537,7 @@
       "evidenceStatus": "insufficient",
       "evidenceReason": "no_candidates",
       "evidenceScore": 0,
-      "evidenceThreshold": 0.23,
+      "evidenceThreshold": 0.3,
       "rejected": true,
       "accepted": false,
       "citedTitles": [],
@@ -534,7 +582,7 @@
       "evidenceStatus": "sufficient",
       "evidenceReason": "query_terms_covered",
       "evidenceScore": 1,
-      "evidenceThreshold": 0.23,
+      "evidenceThreshold": 0.3,
       "rejected": false,
       "accepted": true,
       "citedTitles": [
@@ -581,7 +629,7 @@
       "evidenceStatus": "sufficient",
       "evidenceReason": "query_terms_covered",
       "evidenceScore": 1,
-      "evidenceThreshold": 0.23,
+      "evidenceThreshold": 0.3,
       "rejected": false,
       "accepted": true,
       "citedTitles": [
@@ -676,7 +724,7 @@
       "evidenceStatus": "sufficient",
       "evidenceReason": "all_subqueries_covered",
       "evidenceScore": 1,
-      "evidenceThreshold": 0.23,
+      "evidenceThreshold": 0.3,
       "rejected": false,
       "accepted": true,
       "citedTitles": [
@@ -721,7 +769,7 @@
       "evidenceStatus": "insufficient",
       "evidenceReason": "query_terms_not_covered",
       "evidenceScore": 0.1,
-      "evidenceThreshold": 0.23,
+      "evidenceThreshold": 0.3,
       "rejected": true,
       "accepted": false,
       "citedTitles": [],
@@ -763,7 +811,7 @@
       "evidenceStatus": "insufficient",
       "evidenceReason": "query_terms_not_covered",
       "evidenceScore": 0.09090909090909091,
-      "evidenceThreshold": 0.23,
+      "evidenceThreshold": 0.3,
       "rejected": true,
       "accepted": false,
       "citedTitles": [],

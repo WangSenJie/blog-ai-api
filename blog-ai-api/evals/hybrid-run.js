@@ -10,6 +10,9 @@ const {
   buildReport,
   parseArgs
 } = require('./run');
+const {
+  createOfflineEvaluationCorpus
+} = require('./offline-corpus');
 
 const DEFAULT_DATASET_PATH = path.join(__dirname, 'hybrid-dataset.json');
 const DEFAULT_OUTPUT_PATH = path.join(__dirname, 'reports', 'hybrid-phase2.json');
@@ -39,21 +42,22 @@ function atLeast(left, right, key) {
 
 function buildPhase2Report(dataset, corpus, metadata) {
   const settings = metadata || {};
+  const evaluationCorpus = createOfflineEvaluationCorpus(corpus);
   const baseMetadata = {
     datasetPath: settings.datasetPath,
     corpusHash: settings.corpusHash
   };
-  const baseline = buildReport(dataset, corpus, Object.assign({}, baseMetadata, {
+  const baseline = buildReport(dataset, evaluationCorpus, Object.assign({}, baseMetadata, {
     retriever: {
       name: 'bm25-custom',
       strategy: 'bm25'
     }
   }));
-  const hybrid = buildReport(dataset, corpus, Object.assign({}, baseMetadata, {
+  const hybrid = buildReport(dataset, evaluationCorpus, Object.assign({}, baseMetadata, {
     ranker(question, mode, page) {
       return hybridRankChunks(
-        corpus.chunks,
-        corpus.vectors,
+        evaluationCorpus.chunks,
+        evaluationCorpus.vectors,
         question,
         mode,
         page

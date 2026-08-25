@@ -1,238 +1,278 @@
 'use strict';
 
 const crypto = require('crypto');
-
+const { TOKENIZER_VERSION } = require('./tokenizer');
 const {
-  normalizeText,
-  tokenize
-} = require('./retrieval-core');
+  CONCEPT_GROUPS,
+  DIMENSIONS: EMBEDDING_DIMENSIONS,
+  MODEL: EMBEDDING_MODEL,
+  VERSION: EMBEDDING_VERSION,
+  createLocalProvider,
+  embedText,
+  normalizeVector
+} = require('./embedding-providers/local');
+const {
+  DEFAULT_DIMENSIONS,
+  DEFAULT_MODEL,
+  EmbeddingProviderError,
+  createDashScopeProvider
+} = require('./embedding-providers/dashscope');
 
-// This deterministic local embedding keeps the first hybrid index portable: it
-// needs no network call at build or query time, and can later be replaced by a
-// hosted embedding provider without changing the vector file contract.
-const EMBEDDING_MODEL = 'local-semantic-hash-v1';
-const EMBEDDING_DIMENSIONS = 384;
-const EMBEDDING_VERSION = 2;
+const DOCUMENT_TEMPLATE_VERSION = 'blog-document-v1';
+const QUERY_TEMPLATE_VERSION = 'technical-blog-query-v1';
+const QUERY_INSTRUCTION = 'Given a technical blog search query, retrieve passages that best answer it.';
 
-const CONCEPT_GROUPS = Object.freeze([
-  ['two_tower', [
-    '双塔', '双塔模型', 'two tower', 'two-tower', '用户塔', '物品塔',
-    '用户编码', '物品编码', '用户表征', '物品表征', '候选侧', '请求侧',
-    '向量召回', '表征空间', '用户和物品', '编码用户和物品', '两个表征',
-    '两个向量的相似度', '用户物品表征'
-  ]],
-  ['residual_network', [
-    'resnet', '残差网络', '残差连接', '残差块', '跳跃连接', '捷径连接',
-    'skip connection', '深层卷积网络'
-  ]],
-  ['gated_recurrent', [
-    'gru', '门控循环', '门控机制', '更新门', '重置门', '长期依赖',
-    '序列记忆', '循环神经网络'
-  ]],
-  ['item_collaborative_filtering', [
-    'itemcf', '物品协同过滤', '物品相似度', '相似物品', '商品相似',
-    '共同交互', '共同购买'
-  ]],
-  ['user_collaborative_filtering', [
-    'usercf', '用户协同过滤', '用户相似度', '兴趣相近', '相似用户',
-    '相近的人群', '共同喜欢'
-  ]],
-  ['transformer_attention', [
-    'transformer', '自注意力', 'self attention', 'self-attention',
-    '注意力机制', '并行序列', '非循环', '不依赖循环'
-  ]],
-  ['exposure_filtering', [
-    '曝光过滤', '已看过滤', '已经看过', '已经展示', '候选排除',
-    '去除已消费', '过滤已曝光'
-  ]],
-  ['deep_retrieval', [
-    'deep retrieval', '深度召回', '层次召回', '路径召回', 'beam search',
-    '束搜索', '树结构召回'
-  ]],
-  ['langchain_pipeline', [
-    'langchain', 'prompt template', '提示词模板', '聊天模型', '输出解析器',
-    '调用链', '链式应用'
-  ]],
-  ['agent_workflow', [
-    'langgraph', 'agent', '智能体', '状态图', '工作流', '节点', '边',
-    '短期记忆', '状态管理'
-  ]],
-  ['embedding_representation', [
-    'embedding', '嵌入', '向量表示', '稠密向量', '特征表征', '语义向量'
-  ]],
-  ['ranking_retrieval', [
-    'bm25', '关键词召回', '向量检索', '混合检索', 'rrf', '重排序',
-    'reranker', '召回阶段'
-  ]]
-]);
+function stableJson(value) {
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(',')}]`;
+  if (value && typeof value === 'object') {
+    return `{${Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${stableJson(value[key])}`).join(',')}}`;
+  }
+  return JSON.stringify(value);
+}
+
+function sha256(value) {
+  return crypto.createHash('sha256').update(value).digest('hex');
+}
+
+function embeddingFingerprint(metadata) {
+  const source = metadata || {};
+  return `sha256:${sha256(stableJson({
+    provider: source.provider,
+    model: source.model,
+    dimensions: source.dimensions,
+    version: source.version,
+    normalization: source.normalization,
+    documentTemplateVersion: source.documentTemplateVersion,
+    queryTemplateVersion: source.queryTemplateVersion,
+    tokenizerVersion: source.tokenizerVersion
+  }))}`;
+}
+
+function providerMetadata(provider) {
+  const metadata = {
+    provider: provider.name,
+    model: provider.model,
+    dimensions: provider.dimensions,
+    version: provider.version,
+    normalization: provider.normalization,
+    documentTemplateVersion: DOCUMENT_TEMPLATE_VERSION,
+    queryTemplateVersion: QUERY_TEMPLATE_VERSION,
+    tokenizerVersion: TOKENIZER_VERSION
+  };
+  metadata.fingerprint = embeddingFingerprint(metadata);
+  return metadata;
+}
 
 function embeddingMetadata() {
-  return {
-    model: EMBEDDING_MODEL,
-    dimensions: EMBEDDING_DIMENSIONS,
-    version: EMBEDDING_VERSION,
-    provider: 'local'
-  };
+  return providerMetadata(createLocalProvider());
 }
 
-function addFeature(features, feature, weight) {
-  if (!feature || !Number.isFinite(weight) || weight <= 0) return;
-  features.set(feature, (features.get(feature) || 0) + weight);
+function documentInputForChunk(chunk) {
+  return [
+    `Title: ${String(chunk && chunk.postTitle || '').trim()}`,
+    `Section: ${(chunk && chunk.headingPath || []).join(' > ')}`,
+    `Type: ${String(chunk && chunk.chunkType || 'text').trim()}`,
+    '',
+    String(chunk && chunk.content || '').trim()
+  ].join('\n').trim();
 }
 
-function addCharacterFeatures(features, value) {
-  const normalized = normalizeText(value).replace(/\s+/g, '');
-  if (!normalized) return;
-
-  for (let index = 0; index < normalized.length - 2; index += 1) {
-    addFeature(features, `gram:${normalized.slice(index, index + 3)}`, 0.18);
-  }
-}
-
-function extractFeatures(value) {
-  const normalized = normalizeText(value);
-  const features = new Map();
-
-  for (const term of tokenize(normalized)) {
-    addFeature(features, `term:${term}`, 1.2);
-  }
-  addCharacterFeatures(features, normalized);
-
-  for (const [concept, aliases] of CONCEPT_GROUPS) {
-    const matchedAliases = aliases.filter(alias => normalized.includes(alias));
-    if (matchedAliases.length) {
-      addFeature(features, `concept:${concept}`, 12 + Math.min(4, matchedAliases.length));
-    }
-  }
-
-  return features;
-}
-
-function featureSlot(feature, dimensions) {
-  const digest = crypto.createHash('sha256').update(feature).digest();
-  return {
-    index: digest.readUInt32BE(0) % dimensions,
-    sign: digest[4] % 2 === 0 ? 1 : -1
-  };
-}
-
-function normalizeVector(values) {
-  const magnitude = Math.sqrt(values.reduce((sum, value) => sum + value * value, 0));
-  if (!magnitude) return values.map(() => 0);
-  return values.map(value => Number((value / magnitude).toFixed(6)));
-}
-
-function embedText(value, options) {
-  const dimensions = Number(options && options.dimensions) || EMBEDDING_DIMENSIONS;
-  const vector = Array.from({ length: dimensions }, () => 0);
-  const features = extractFeatures(value);
-
-  for (const [feature, weight] of features) {
-    const slot = featureSlot(feature, dimensions);
-    vector[slot.index] += slot.sign * weight;
-  }
-
-  return normalizeVector(vector);
+function queryInput(value) {
+  return `Instruct: ${QUERY_INSTRUCTION}\nQuery: ${String(value || '').trim()}`;
 }
 
 function embeddingInputForChunk(chunk) {
-  if (String(chunk && chunk.retrievalText || '').trim()) {
-    return String(chunk.retrievalText).trim();
+  return documentInputForChunk(chunk);
+}
+
+function createEmbeddingProvider(options) {
+  const settings = options || {};
+  const provider = String(settings.provider || 'local').trim().toLowerCase();
+  if (provider === 'local') return createLocalProvider(settings);
+  if (provider === 'dashscope') return createDashScopeProvider(settings);
+  throw new EmbeddingProviderError(`Unsupported embedding provider: ${provider}`, 'EMBEDDING_PROVIDER_UNSUPPORTED');
+}
+
+function providerFromEnvironment(options) {
+  const settings = options || {};
+  const provider = String(settings.provider || process.env.EMBEDDING_PROVIDER || 'local').trim().toLowerCase();
+  return createEmbeddingProvider({
+    provider,
+    apiKey: settings.apiKey || process.env.DASHSCOPE_API_KEY,
+    workspaceId: settings.workspaceId || process.env.DASHSCOPE_WORKSPACE_ID,
+    baseUrl: settings.baseUrl || process.env.DASHSCOPE_BASE_URL,
+    model: settings.model || process.env.EMBEDDING_MODEL || (provider === 'dashscope' ? DEFAULT_MODEL : undefined),
+    dimensions: Number(settings.dimensions || process.env.EMBEDDING_DIMENSIONS) ||
+      (provider === 'dashscope' ? DEFAULT_DIMENSIONS : undefined),
+    timeoutMs: settings.timeoutMs || process.env.EMBEDDING_TIMEOUT_MS,
+    maxRetries: settings.maxRetries ?? Number(process.env.EMBEDDING_MAX_RETRIES || 3),
+    fetchImpl: settings.fetchImpl
+  });
+}
+
+function providerForManifest(manifest, options) {
+  const embedding = manifest && manifest.embedding;
+  if (!embedding) {
+    throw new EmbeddingProviderError('Embedding manifest metadata is missing', 'EMBEDDING_FINGERPRINT_MISMATCH');
   }
-  return [
-    chunk && chunk.postTitle,
-    chunk && chunk.postTitle,
-    chunk && (chunk.tags || []).join(' '),
-    chunk && (chunk.categories || []).join(' '),
-    chunk && (chunk.headingPath || []).join(' '),
-    chunk && chunk.sectionTitle,
-    chunk && chunk.content
-  ].filter(Boolean).join('\n');
+  const provider = providerFromEnvironment(Object.assign({}, options, {
+    provider: embedding.provider,
+    model: embedding.model,
+    dimensions: embedding.dimensions
+  }));
+  const metadata = providerMetadata(provider);
+  if (metadata.fingerprint !== embedding.fingerprint) {
+    throw new EmbeddingProviderError('Runtime embedding fingerprint does not match the vector index', 'EMBEDDING_FINGERPRINT_MISMATCH');
+  }
+  return provider;
 }
 
 function embedChunk(chunk) {
-  return embedText(embeddingInputForChunk(chunk));
+  return embedText(documentInputForChunk(chunk));
 }
 
 function isFiniteVector(values, dimensions) {
-  return Array.isArray(values) &&
-    values.length === dimensions &&
-    values.every(value => Number.isFinite(value));
+  return Array.isArray(values) && values.length === dimensions && values.every(Number.isFinite);
 }
 
-function isReusableVector(record, chunk) {
+function isReusableVector(record, chunk, metadata) {
+  const expected = metadata || embeddingMetadata();
   return Boolean(
-    record &&
-    chunk &&
-    record.id === chunk.id &&
+    record && chunk && record.id === chunk.id &&
     record.contentHash === chunk.contentHash &&
-    isFiniteVector(record.values, EMBEDDING_DIMENSIONS)
+    record.fingerprint === expected.fingerprint &&
+    isFiniteVector(record.values, expected.dimensions)
   );
 }
 
 function buildVectorIndex(chunks, previousVectors) {
-  const previousById = new Map(
-    (previousVectors || [])
-      .filter(record => record && record.id)
-      .map(record => [record.id, record])
-  );
+  const provider = createLocalProvider();
+  const metadata = providerMetadata(provider);
+  const previousById = new Map((previousVectors || []).filter(record => record && record.id).map(record => [record.id, record]));
   const vectors = [];
-  let added = 0;
-  let updated = 0;
-  let reused = 0;
-  let failed = 0;
+  const build = { added: 0, updated: 0, reused: 0, deleted: 0, failed: 0 };
+  for (const chunk of chunks || []) {
+    const previous = previousById.get(chunk.id);
+    if (isReusableVector(previous, chunk, metadata)) {
+      vectors.push(Object.assign({}, previous, { values: previous.values.slice() }));
+      build.reused += 1;
+    } else {
+      vectors.push({
+        id: chunk.id,
+        contentHash: chunk.contentHash,
+        fingerprint: metadata.fingerprint,
+        values: provider.embedText(documentInputForChunk(chunk))
+      });
+      if (previous) build.updated += 1;
+      else build.added += 1;
+    }
+  }
+  const ids = new Set((chunks || []).map(chunk => chunk.id));
+  build.deleted = [...previousById.keys()].filter(id => !ids.has(id)).length;
+  return { vectors, embedding: metadata, build, failures: [], usage: { promptTokens: 0, totalTokens: 0 } };
+}
+
+async function buildVectorIndexAsync(chunks, previousVectors, provider, options) {
+  const settings = Object.assign({
+    batchSize: Number(provider && provider.maxBatchSize) || 10,
+    concurrency: 2
+  }, options || {});
+  const metadata = providerMetadata(provider);
+  const previousById = new Map((previousVectors || []).filter(record => record && record.id).map(record => [record.id, record]));
+  const vectorsById = new Map();
+  const pending = [];
+  const failures = [];
+  const usage = { promptTokens: 0, totalTokens: 0 };
+  const build = { added: 0, updated: 0, reused: 0, deleted: 0, failed: 0 };
 
   for (const chunk of chunks || []) {
     const previous = previousById.get(chunk.id);
-    try {
-      if (isReusableVector(previous, chunk)) {
-        vectors.push({
-          id: previous.id,
-          contentHash: previous.contentHash,
-          values: previous.values.slice()
-        });
-        reused += 1;
-      } else {
-        vectors.push({
-          id: chunk.id,
-          contentHash: chunk.contentHash,
-          values: embedChunk(chunk)
-        });
-        if (previous) updated += 1;
-        else added += 1;
-      }
-    } catch (error) {
-      failed += 1;
-    }
+    if (isReusableVector(previous, chunk, metadata)) {
+      vectorsById.set(chunk.id, Object.assign({}, previous, { values: previous.values.slice() }));
+      build.reused += 1;
+    } else pending.push(chunk);
   }
 
-  const currentIds = new Set(vectors.map(record => record.id));
-  const deleted = [...previousById.keys()].filter(id => !currentIds.has(id)).length;
+  const batchSize = Math.max(1, Math.min(Number(provider.maxBatchSize) || 10, Number(settings.batchSize) || 10));
+  const batches = [];
+  for (let index = 0; index < pending.length; index += batchSize) batches.push(pending.slice(index, index + batchSize));
+  let cursor = 0;
+  async function worker() {
+    while (cursor < batches.length) {
+      const batch = batches[cursor++];
+      try {
+        const response = await provider.embedDocuments(batch.map(documentInputForChunk), { signal: settings.signal });
+        response.vectors.forEach((values, index) => {
+          const chunk = batch[index];
+          if (
+            !isFiniteVector(values, metadata.dimensions) ||
+            !values.some(value => value !== 0)
+          ) {
+            throw new EmbeddingProviderError('Provider returned an invalid vector', 'EMBEDDING_EMPTY_VECTOR');
+          }
+          vectorsById.set(chunk.id, {
+            id: chunk.id,
+            contentHash: chunk.contentHash,
+            fingerprint: metadata.fingerprint,
+            values
+          });
+          if (previousById.has(chunk.id)) build.updated += 1;
+          else build.added += 1;
+        });
+        usage.promptTokens += Number(response.usage && response.usage.promptTokens) || 0;
+        usage.totalTokens += Number(response.usage && response.usage.totalTokens) || 0;
+      } catch (error) {
+        for (const chunk of batch) failures.push({
+          id: chunk.id,
+          contentHash: chunk.contentHash,
+          code: String(error && error.code || 'EMBEDDING_BUILD_FAILED'),
+          message: String(error && error.message || 'Embedding build failed')
+        });
+      }
+    }
+  }
+  await Promise.all(Array.from({ length: Math.max(1, Number(settings.concurrency) || 1) }, worker));
+  build.failed = failures.length;
+  const currentIds = new Set((chunks || []).map(chunk => chunk.id));
+  build.deleted = [...previousById.keys()].filter(id => !currentIds.has(id)).length;
   return {
-    vectors,
-    embedding: embeddingMetadata(),
-    build: { added, updated, reused, deleted, failed }
+    vectors: (chunks || []).map(chunk => vectorsById.get(chunk.id)).filter(Boolean),
+    embedding: metadata,
+    build,
+    failures,
+    usage
   };
 }
 
 function cosineSimilarity(left, right) {
-  if (!Array.isArray(left) || !Array.isArray(right) || left.length !== right.length) {
-    return 0;
-  }
+  if (!Array.isArray(left) || !Array.isArray(right) || left.length !== right.length) return 0;
   return left.reduce((sum, value, index) => sum + value * right[index], 0);
 }
 
 module.exports = {
   CONCEPT_GROUPS,
+  DOCUMENT_TEMPLATE_VERSION,
   EMBEDDING_DIMENSIONS,
   EMBEDDING_MODEL,
   EMBEDDING_VERSION,
+  EmbeddingProviderError,
+  QUERY_INSTRUCTION,
+  QUERY_TEMPLATE_VERSION,
   buildVectorIndex,
+  buildVectorIndexAsync,
   cosineSimilarity,
+  createEmbeddingProvider,
+  documentInputForChunk,
   embedChunk,
   embedText,
+  embeddingFingerprint,
   embeddingInputForChunk,
   embeddingMetadata,
   isFiniteVector,
-  isReusableVector
+  isReusableVector,
+  normalizeVector,
+  providerForManifest,
+  providerFromEnvironment,
+  providerMetadata,
+  queryInput
 };

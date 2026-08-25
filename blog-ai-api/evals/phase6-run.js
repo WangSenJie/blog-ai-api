@@ -63,7 +63,9 @@ function sourceBuildAudit(corpus) {
     const sourceChunk = rebuiltById.get(chunk.id);
     if (sourceChunk && [
       'contentHash', 'content', 'retrievalText', 'sourcePath', 'profile',
-      'profileSource', 'sectionAnchor', 'sourceLines', 'blockTypes'
+      'profileSource', 'parentId', 'childOrdinal', 'chunkType', 'tokenCount',
+      'tokenizerVersion', 'overflowReason', 'sectionAnchor', 'sourceLines',
+      'blockTypes'
     ].every(field => sameJson(chunk[field], sourceChunk[field]))) {
       matchingChunks += 1;
     }
@@ -106,9 +108,16 @@ function buildPhase6Report(corpus) {
   if (!ingestion) throw new Error('Phase 6 evaluation requires structured ingestion metadata');
   const audit = sourceBuildAudit(activeCorpus);
   const chunkCount = activeCorpus.chunks.length;
-  const codeIsolation = activeCorpus.chunks.every(chunk => (
-    !Array.isArray(chunk.blockTypes) || !chunk.blockTypes.includes('code')
+  const codeChunks = activeCorpus.chunks.filter(chunk => (
+    Array.isArray(chunk.blockTypes) && chunk.blockTypes.includes('code')
   ));
+  const codeBoundaryPreserved = codeChunks.length >= activeCorpus.codeBlocks.length &&
+    codeChunks.every(chunk => chunk.chunkType === 'code') &&
+    activeCorpus.chunks.every(chunk => (
+      chunk.chunkType === 'code' ||
+      !Array.isArray(chunk.blockTypes) ||
+      !chunk.blockTypes.includes('code')
+    ));
   const retrievalCoverage = chunkCount
     ? ingestion.stats.chunksWithRetrievalText / chunkCount
     : 1;
@@ -143,16 +152,18 @@ function buildPhase6Report(corpus) {
     traceCoverage: traceCoverage === 1,
     sourceRebuildMatch: audit.sourceRebuildMatchRate === 1,
     sourceLocationsValid: audit.sourceLocationCoverage === 1,
-    codeIsolation: codeIsolation &&
+    codeBoundaryPreserved: codeBoundaryPreserved &&
       ingestion.stats.blockTypeCounts.code === activeCorpus.codeBlocks.length &&
       audit.rebuiltCodeBlocks === activeCorpus.codeBlocks.length,
     profileRegistry: ingestion.profileRegistry.version === 1,
     internalLinksResolved: linkResolution === 1,
     rollbackContract: ingestion.chunkSchema.rollbackMode === 'legacy-v3' &&
       ingestion.chunkSchema.switch === 'RAG_CHUNK_SCHEMA',
-    hybridNoRegression: Boolean(
+    hybridQualityGate: Boolean(
       evaluations.hybrid &&
-      evaluations.hybrid.hitRateAt5 >= LEGACY_BASELINE.evaluations.hitRateAt5 &&
+      hybridReport.acceptance && hybridReport.acceptance.semanticImproved &&
+      hybridReport.acceptance.exactNoRegression &&
+      evaluations.hybrid.recallAt5 >= 0.9 &&
       evaluations.hybrid.mrrAt20 >= LEGACY_BASELINE.evaluations.mrrAt20
     ),
     agentRegression: Boolean(

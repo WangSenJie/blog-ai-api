@@ -52,7 +52,7 @@ function removeKnownArticleTitles(query, state) {
 function isGenericArticleDetailQuery(query) {
   const normalized = normalizeText(query)
     .replace(/[《》：:，,。！？?!\s]/g, '');
-  return /^(?:的)?(?:结构|原理|定义|实现|特点|内容|作用|性质)?(?:什么是|是什么|介绍一下|讲了什么|主要内容|核心观点|有什么特点|有何特点|有什么性质|它有什么性质|如何工作)?$/.test(
+  return /^(?:的)?(?:结构|原理|定义|实现|特点|内容|作用|性质)?(?:什么是|是什么|介绍一下|讲了什么|主要内容|核心观点|有什么特点|有何特点|有哪些特点|有哪些内容|有什么性质|有哪些性质|它有什么性质|如何工作)?$/.test(
     normalized
   );
 }
@@ -272,7 +272,7 @@ function gradeEvidence(state) {
       normalizeText(state.standaloneQuery).includes(
         normalizeText(primaryReference.title)
       ) &&
-      /有什么特点|有何特点|主要(?:内容|特点)|讲了?什么|介绍一下|核心观点|适合(?:谁|什么)|做什么/.test(
+      /有什么特点|有何特点|有哪些(?:特点|内容|性质)|主要(?:内容|特点)|讲了?什么|介绍一下|核心观点|适合(?:谁|什么)|做什么/.test(
         state.standaloneQuery
       )
     );

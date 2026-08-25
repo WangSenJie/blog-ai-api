@@ -18,6 +18,13 @@ const PROFILE_SOURCES = Object.freeze([
   'migration-fallback'
 ]);
 const DEFAULT_PROFILE = 'generic-article';
+const PROFILE_CHUNKING = Object.freeze({
+  'generic-article': Object.freeze({ targetTokens: 384, maxTokens: 512, overlapTokens: 64 }),
+  tutorial: Object.freeze({ targetTokens: 320, maxTokens: 512, overlapTokens: 48 }),
+  'code-doc': Object.freeze({ targetTokens: 384, maxTokens: 512, overlapTokens: 32 }),
+  'math-note': Object.freeze({ targetTokens: 384, maxTokens: 512, overlapTokens: 48 }),
+  'faq-reference': Object.freeze({ targetTokens: 256, maxTokens: 384, overlapTokens: 0 })
+});
 const DEFAULT_PROFILE_CONFIG_PATH = path.resolve(
   __dirname,
   '..',
@@ -169,6 +176,7 @@ module.exports = {
   CHUNK_PROFILES,
   DEFAULT_PROFILE,
   DEFAULT_PROFILE_CONFIG_PATH,
+  PROFILE_CHUNKING,
   PROFILE_SOURCES,
   assertProfile,
   globToRegExp,

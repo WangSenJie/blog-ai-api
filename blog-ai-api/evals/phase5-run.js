@@ -24,6 +24,9 @@ const {
 const {
   normalizeAskRequest
 } = require('../memory/session');
+const {
+  createOfflineEvaluationCorpus
+} = require('./offline-corpus');
 
 const DEFAULT_DATASET_PATH = path.join(__dirname, 'phase5-dataset.json');
 const STRATEGY = 'structured_agentic_rag_phase5';
@@ -564,9 +567,10 @@ function buildAcceptance(summary) {
 
 async function buildPhase5Report(dataset, corpus) {
   validateDataset(dataset, corpus);
+  const evaluationCorpus = createOfflineEvaluationCorpus(corpus);
   const results = [];
   for (const testCase of dataset.cases) {
-    results.push(await evaluateCase(testCase, corpus));
+    results.push(await evaluateCase(testCase, evaluationCorpus));
   }
   const summary = summarize(results);
   return {
@@ -575,6 +579,7 @@ async function buildPhase5Report(dataset, corpus) {
     strategy: STRATEGY,
     notes: [
       'The evaluation uses the exact v3 serving corpus, including code-block and author-curated learning-graph artifacts.',
+      'Retrieval uses a deterministic local proxy index so CI never calls the managed embedding API.',
       'All external-model generation is disabled. Factual comparison and code outputs must pass extractive citation, provenance, and source-support checks.',
       'Learning paths are checked against explicit graph nodes and next edges; they intentionally carry no factual citations.',
       'Negative cases must return no claims, citations, or structured artifacts and must stop within one specialist retrieval attempt.'

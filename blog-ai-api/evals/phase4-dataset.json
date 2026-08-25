@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "strategy": "grounded_agent_quality_phase4",
   "description": "阶段 4 离线质量集。校准集只用于选择拒答门槛；holdout 只用于验收。正例要求每条关键结论有可验证的站内 citation，负例覆盖站外主题、缺失比较对象和标题锚定但正文未覆盖的细节。",
   "thresholdGrid": [0.15, 0.2, 0.23, 0.26, 0.3],
@@ -36,6 +36,19 @@
         "answerability": "answer",
         "route": "page_qa",
         "citationTitles": ["双塔模型"]
+      }
+    },
+    {
+      "id": "cal-site-double-tower-recall",
+      "split": "calibration",
+      "category": "continuity_positive",
+      "question": "双塔模型如何线上召回？",
+      "expected": {
+        "answerability": "answer",
+        "route": "site_qa",
+        "citationTitles": [
+          "双塔模型"
+        ]
       }
     },
     {

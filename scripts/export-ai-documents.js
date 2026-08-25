@@ -5,9 +5,9 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 
 const {
-    buildCorpus,
-    buildIngestionReport,
-    buildLearningGraph,
+  buildCorpus,
+  buildIngestionReport,
+  buildLearningGraph,
   extractCodeBlocks
 } = require('./build-ai-corpus');
 const {
@@ -16,8 +16,7 @@ const {
   validateCorpusData
 } = require('../blog-ai-api/lib/corpus-integrity');
 const {
-  buildVectorIndex,
-  embeddingMetadata
+  buildVectorIndex
 } = require('../blog-ai-api/lib/embedding');
 
 const rootDir = process.cwd();
@@ -27,8 +26,8 @@ const publishOutputDir = path.join(rootDir, 'source', 'ai-data');
 const retrievalCorePath = path.join(rootDir, 'blog-ai-api', 'lib', 'retrieval-core.js');
 const browserRetrievalPath = path.join(rootDir, 'source', 'js', 'blog-ai-retrieval.js');
 
-const chunkSchemaMode = String(process.env.RAG_CHUNK_SCHEMA || 'structured-v1').trim();
-if (!['structured-v1', 'legacy-v3'].includes(chunkSchemaMode)) {
+const chunkSchemaMode = String(process.env.RAG_CHUNK_SCHEMA || 'chunk-v2').trim();
+if (!['chunk-v2', 'legacy-v3'].includes(chunkSchemaMode)) {
   throw new Error(`Unsupported RAG_CHUNK_SCHEMA mode: ${chunkSchemaMode}`);
 }
 if (chunkSchemaMode === 'legacy-v3') {
@@ -113,12 +112,42 @@ function readExistingVectorIndex(outputDir) {
   }
 }
 
-function embeddingMatches(left, right) {
-  return Boolean(left && right) &&
-    left.model === right.model &&
-    left.dimensions === right.dimensions &&
-    left.version === right.version &&
-    left.provider === right.provider;
+function reusableCompleteVectorIndex(index, chunks) {
+  const embedding = index && index.embedding;
+  const vectors = index && index.vectors;
+  if (
+    !embedding || !Array.isArray(vectors) || vectors.length !== chunks.length ||
+    !Number.isSafeInteger(embedding.dimensions) || embedding.dimensions < 1 ||
+    !/^sha256:[a-f0-9]{64}$/.test(String(embedding.fingerprint || ''))
+  ) return null;
+  const chunksById = new Map(chunks.map(chunk => [chunk.id, chunk]));
+  const ids = new Set();
+  for (const vector of vectors) {
+    const chunk = chunksById.get(vector && vector.id);
+    if (
+      !chunk || ids.has(vector.id) || vector.contentHash !== chunk.contentHash ||
+      vector.fingerprint !== embedding.fingerprint ||
+      !Array.isArray(vector.values) || vector.values.length !== embedding.dimensions ||
+      !vector.values.every(Number.isFinite) ||
+      !vector.values.some(value => value !== 0)
+    ) return null;
+    ids.add(vector.id);
+  }
+  return {
+    vectors: vectors.map(vector => Object.assign({}, vector, {
+      values: vector.values.slice()
+    })),
+    embedding: Object.assign({}, embedding),
+    build: {
+      added: 0,
+      updated: 0,
+      reused: vectors.length,
+      deleted: 0,
+      failed: 0
+    },
+    failures: [],
+    usage: { promptTokens: 0, totalTokens: 0 }
+  };
 }
 
 function writeJson(outputDir, filename, value) {
@@ -131,18 +160,20 @@ function writeJson(outputDir, filename, value) {
 const publicPosts = corpus.posts.map(serializePost);
 const phase5Artifacts = { codeBlocks, learningGraph };
 validateCorpusData(publicPosts, corpus.chunks);
-const expectedEmbedding = embeddingMetadata();
 const existingVectorIndex = readExistingVectorIndex(dataOutputDir);
-const vectorBuild = buildVectorIndex(corpus.chunks, embeddingMatches(
-  existingVectorIndex.embedding,
-  expectedEmbedding
-) ? existingVectorIndex.vectors : []);
+const vectorBuild = reusableCompleteVectorIndex(
+  existingVectorIndex,
+  corpus.chunks
+) || buildVectorIndex(corpus.chunks, []);
 const manifest = buildManifest(publicPosts, corpus.chunks, corpus.diagnostics, {
   vectors: vectorBuild.vectors,
   embedding: vectorBuild.embedding,
   vectorBuild: vectorBuild.build,
   codeBlocks,
   learningGraph,
+  ingestion
+});
+const browserManifest = buildManifest(publicPosts, corpus.chunks, corpus.diagnostics, {
   ingestion
 });
 validateCorpusData(
@@ -160,8 +191,9 @@ const codeBlocksOutputPath = writeJson(dataOutputDir, 'code-blocks.json', codeBl
 const learningGraphOutputPath = writeJson(dataOutputDir, 'learning-graph.json', learningGraph);
 const publishedPostsPath = writeJson(publishOutputDir, 'posts.json', publicPosts);
 const publishedChunksPath = writeJson(publishOutputDir, 'chunks.json', corpus.chunks);
-const publishedManifestPath = writeJson(publishOutputDir, 'manifest.json', manifest);
-const publishedVectorsPath = writeJson(publishOutputDir, 'vectors.json', vectorBuild.vectors);
+const publishedManifestPath = writeJson(publishOutputDir, 'manifest.json', browserManifest);
+const legacyPublishedVectorsPath = path.join(publishOutputDir, 'vectors.json');
+if (fs.existsSync(legacyPublishedVectorsPath)) fs.unlinkSync(legacyPublishedVectorsPath);
 const publishedCodeBlocksPath = writeJson(publishOutputDir, 'code-blocks.json', codeBlocks);
 const publishedLearningGraphPath = writeJson(publishOutputDir, 'learning-graph.json', learningGraph);
 
@@ -202,7 +234,7 @@ console.log(`Data learning graph file: ${learningGraphOutputPath}`);
 console.log(`Published posts file: ${publishedPostsPath}`);
 console.log(`Published chunks file: ${publishedChunksPath}`);
 console.log(`Published manifest file: ${publishedManifestPath}`);
-console.log(`Published vectors file: ${publishedVectorsPath}`);
+console.log('Published vectors file: omitted (browser fallback uses BM25 only)');
 console.log(`Published code blocks file: ${publishedCodeBlocksPath}`);
 console.log(`Published learning graph file: ${publishedLearningGraphPath}`);
 console.log(

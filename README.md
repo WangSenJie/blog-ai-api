@@ -45,6 +45,10 @@ npm run server
 | `npm run eval:hybrid` | 运行 Hybrid RAG 召回回归评测。 |
 | `npm run eval:agent` | 运行阶段 3 受控 Agent 工作流评测。 |
 | `npm run eval:phase4` | 运行阶段 4 引用、拒答与质量验收评测。 |
+| `npm run eval:phase5` | 运行阶段 5 专用工具与代码块验收评测。 |
+| `npm run eval:phase6` | 运行阶段 6 Markdown 摄取回归评测。 |
+| `npm run eval:phase7` | 运行阶段 7 Chunk v2、Hybrid 与降级验收评测。 |
+| `npm run build:embeddings` | 显式构建托管 Embedding 并在完整成功后同步 API 语料。 |
 | `npm run deploy` | 部署 `public/` 到 GitHub Pages。 |
 
 ## 写文章
@@ -86,8 +90,8 @@ source/_posts/*.md
         v
 scripts/export-ai-documents.js
         |
-        +--> data/posts.json, data/chunks.json, data/vectors.json, data/manifest.json
-        +--> source/ai-data/*.json       (浏览器 BM25 降级与语料发布)
+        +--> data/*.json                 (服务端完整语料与向量索引)
+        +--> source/ai-data/*.json       (浏览器 BM25 语料，不发布向量)
         +--> source/js/blog-ai-retrieval.js
         |
         v
@@ -99,13 +103,15 @@ blog-ai-api/data/*.json                 (Vercel API 权威检索)
 
 正常请求只向 Vercel API 发送问题、模式和当前页面上下文，由服务端完成检索并返回引用。浏览器不再发送自行召回的候选内容；只有网络错误、请求超时、非 2xx 响应或无效响应时，才按需加载静态 `chunks.json` 并执行本地 BM25。服务端与浏览器降级路径共用 `blog-ai-api/lib/retrieval-core.js`；导出语料时，该核心会同步为浏览器脚本 `source/js/blog-ai-retrieval.js`。
 
-当前阶段 6 验收索引由 108 篇源文章生成：71 篇已发布文章进入公开语料并产生 745 个结构化检索 chunk，395 个代码块保存在独立索引中；32 篇未发布文章和 5 篇缺少公开 URL 的文章被跳过。所有检索 chunk 都带有文章、小节、源码文件和行号；PDF-only 页面会生成包含标题、描述和资源链接的元数据 chunk。
+当前 Chunk v2 索引由 108 篇源文章生成：71 篇已发布文章进入公开语料，形成 451 个 Section Parent、1904 个 Child 和 395 个精确代码块记录；32 篇未发布文章和 5 篇缺少公开 URL 的文章被跳过。Child 按 Profile Token 预算切分，保留表格表头、公式上下文、代码边界、源码行号和显式溢出原因；PDF-only 页面会生成包含标题、描述和资源链接的元数据 Child。
 
 每条服务端引用遵循 `chunkId`、`title`、`url`、`section`、`snippet` 契约。响应中的 `meta.indexVersion` 对应 manifest 的语料版本；稳定 chunk ID 由文章 URL、标题路径与结构位置生成，`contentHash` 用于识别内容、Profile、来源和检索增强字段的变化。`content` 是唯一引用原文，`retrievalText` 只用于 BM25 和向量召回，不能作为最终引用。
 
 `manifest.json` 记录 posts、chunks、vectors、代码块和学习图的 SHA-256、记录数、语料版本与结构化摄取统计。语料导出、同步和服务端加载会校验文件哈希及结构，包括 URL、chunk ID 唯一性、`contentHash`、Profile、源码位置、`retrievalText`、vector 维度、孤立 chunk 和计数一致性；Hexo 构建还会确认每篇语料文章都有实际生成页面，防止格式合法但点击 404 的引用进入索引。
 
-正常 API 路径中的 `search_blog` 和 `get_related_articles` 会执行 BM25 与 384 维本地向量的双路 Top 20 召回、RRF 融合和重排；浏览器故障降级继续使用轻量 BM25。阶段 6 回归中，语义题 Recall@5 从 `0.7000` 提升至 `0.9000`、MRR@20 从 `0.5152` 提升至 `0.5958`，精确题 Recall@5 与 MRR@20 均保持 `1.0000`；综合 Hit@5 为 `0.9500`、MRR@20 为 `0.7979`。后续检索改动应先运行完整阶段 6 回归再上线。
+正常 API 路径中的检索工具执行 BM25 Top 20 与 Dense Top 20、RRF `k=60`、标题感知重排及 Parent/相邻 Child 扩展。Embedding Provider 由 manifest 指纹锁定；超时、限流、空向量、索引不完整或指纹不一致时自动回退服务端 BM25，API 不可达时再回退浏览器 BM25。浏览器不下载向量，也不持有 Embedding 密钥。
+
+仓库当前保留 384 维本地语义哈希索引作为无凭据开发与安全回滚索引；托管 Provider 已接入 Model Studio `qwen3.7-text-embedding` 1024 维，但真实索引需要配置凭据后显式构建。阶段 7 本地代理回归中，语义题 Recall@5 保持 `0.8000`，MRR@20 从 `0.5450` 提升至 `0.6333`；精确题 Recall@5 与 MRR@20 均为 `1.0000`，综合 Recall@5 为 `0.9000`、MRR@20 为 `0.8167`。`npm run eval:phase7` 会把真实托管索引是否已激活单独报告，不会把本地代理结果冒充真实 Embedding 验收。
 
 ### 阶段 4：可验证回答与质量闭环
 
@@ -124,7 +130,18 @@ npm run sync:corpus
 cd ..
 ```
 
-然后提交并推送 `data/`、`source/ai-data/` 和 `blog-ai-api/data/` 中的 `posts.json`、`chunks.json`、`vectors.json`、`manifest.json` 更新。Vercel 项目应以 `blog-ai-api` 为 Root Directory，并通过 Git 集成自动部署。
+然后提交并推送 `data/` 与 `blog-ai-api/data/` 的完整语料，以及 `source/ai-data/` 中不含向量的浏览器降级语料。Vercel 项目应以 `blog-ai-api` 为 Root Directory，并通过 Git 集成自动部署。
+
+如需生成托管向量，先完成普通导出，再在服务端环境中运行：
+
+```bash
+export EMBEDDING_PROVIDER=dashscope
+export DASHSCOPE_API_KEY='<server-secret>'
+export DASHSCOPE_WORKSPACE_ID='<workspace-id>'
+npm run build:embeddings
+```
+
+该命令仅在 1904 个 Chunk 全部成功、维度与 fingerprint 校验通过后替换 `data/vectors.json` 和 manifest，并自动同步到 `blog-ai-api/data/`。失败只写入被 Git 忽略的 `data/embedding-build-report.json`，保留当前可用索引。普通 Hexo 构建不会发起远程 Embedding 请求；若现有索引与语料完全匹配，也会原样保留它。`source/ai-data/` 只提交浏览器 BM25 所需文件，不再包含 `vectors.json`。
 
 ### API 环境变量
 
@@ -137,6 +154,12 @@ cd ..
 | `LLM_API_KEY` | 可选，模型服务密钥。 |
 | `LLM_MODEL` | 可选，模型名称。 |
 | `LLM_API_PATH` | 可选，默认 `/chat/completions`。 |
+| `EMBEDDING_PROVIDER` | 托管建库时设为 `dashscope`；普通静态构建不会读取它调用远程 API。 |
+| `DASHSCOPE_API_KEY` | 仅服务端使用的 Model Studio API Key。 |
+| `DASHSCOPE_WORKSPACE_ID` | Model Studio Workspace ID；也可用 `DASHSCOPE_BASE_URL` 显式指定兼容端点。 |
+| `EMBEDDING_MODEL` / `EMBEDDING_DIMENSIONS` | 可选；阶段 7 默认 `qwen3.7-text-embedding` / `1024`。 |
+| `EMBEDDING_TIMEOUT_MS` / `EMBEDDING_MAX_RETRIES` | 可选的请求超时与重试次数。 |
+| `RAG_RETRIEVAL_MODE` | 可选；设为 `bm25` 可关闭 Dense 路径并强制回退。 |
 | `FEEDBACK_RECEIPT_SECRET` | 可选；至少 32 字符。与 webhook 配置齐全时签发短期反馈凭据。 |
 | `FEEDBACK_WEBHOOK_URL` | 可选；反馈接收端 HTTPS 地址，不能带用户名或密码。 |
 | `FEEDBACK_WEBHOOK_SECRET` | 可选；至少 32 字符，用于 API 到接收端的 HMAC 签名。 |

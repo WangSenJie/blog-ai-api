@@ -15,6 +15,8 @@ function createAgentTools(corpus) {
   const posts = corpus && corpus.posts;
   const chunks = corpus && corpus.chunks;
   const vectors = corpus && corpus.vectors;
+  const manifest = corpus && corpus.manifest;
+  const embeddingProvider = corpus && corpus.embeddingProvider;
   const codeBlocks = corpus && corpus.codeBlocks || [];
   const learningGraph = corpus && corpus.learningGraph || null;
   if (!Array.isArray(posts) || !Array.isArray(chunks)) {
@@ -22,10 +24,10 @@ function createAgentTools(corpus) {
   }
 
   const tools = Object.freeze({
-    search_blog: createSearchBlogTool({ chunks, vectors }),
+    search_blog: createSearchBlogTool({ chunks, vectors, manifest, embeddingProvider }),
     get_article: createGetArticleTool({ posts, chunks }),
-    get_related_articles: createGetRelatedArticlesTool({ posts, chunks, vectors }),
-    compare_articles: createCompareArticlesTool({ posts, chunks, vectors }),
+    get_related_articles: createGetRelatedArticlesTool({ posts, chunks, vectors, manifest, embeddingProvider }),
+    compare_articles: createCompareArticlesTool({ posts, chunks, vectors, manifest, embeddingProvider }),
     recommend_learning_path: createRecommendLearningPathTool({
       posts,
       learningGraph
@@ -33,7 +35,9 @@ function createAgentTools(corpus) {
     explain_code_block: createExplainCodeBlockTool({
       codeBlocks,
       chunks,
-      vectors
+      vectors,
+      manifest,
+      embeddingProvider
     })
   });
 
@@ -47,7 +51,7 @@ function createAgentTools(corpus) {
       return TOOL_NAMES.slice();
     },
 
-    execute(name, args) {
+    execute(name, args, executionOptions) {
       if (
         typeof name !== 'string' ||
         !Object.prototype.hasOwnProperty.call(tools, name)
@@ -56,7 +60,7 @@ function createAgentTools(corpus) {
         error.code = 'UNKNOWN_AGENT_TOOL';
         throw error;
       }
-      return tools[name].execute(args);
+      return tools[name].execute(args, executionOptions);
     }
   });
 }

@@ -26,6 +26,9 @@ blog-ai-api/
     chunks.json
     manifest.json
   lib/
+    embedding-providers/
+    embedding.js
+    hybrid-retrieve.js
     corpus.js
     corpus-integrity.js
     retrieval-core.js
@@ -103,6 +106,14 @@ apiBaseUrl: 'https://your-blog-ai-api.vercel.app'
   - Optional generation ceiling, defaults to `700` and is clamped to 128–1,200 tokens.
 - `LLM_MAX_REQUEST_COST_USD`, `LLM_INPUT_COST_PER_MILLION_TOKENS`, and `LLM_OUTPUT_COST_PER_MILLION_TOKENS`
   - Optional cost guard. All three must be configured before the API estimates and enforces a per-request model cost ceiling.
+- `DASHSCOPE_API_KEY` and `DASHSCOPE_WORKSPACE_ID`
+  - Server-only credentials for a manifest that uses the managed `dashscope` embedding provider. `DASHSCOPE_BASE_URL` may replace the workspace-derived endpoint.
+- `EMBEDDING_MODEL` and `EMBEDDING_DIMENSIONS`
+  - Optional managed build settings; phase 7 defaults to `qwen3.7-text-embedding` and 1024 dimensions.
+- `EMBEDDING_TIMEOUT_MS`, `EMBEDDING_MAX_RETRIES`, `EMBEDDING_BATCH_SIZE`, and `EMBEDDING_CONCURRENCY`
+  - Optional bounded managed embedding build/query controls.
+- `RAG_RETRIEVAL_MODE`
+  - Set to `bm25` to disable the Dense path without changing corpus artifacts.
 - `FEEDBACK_RECEIPT_SECRET`
   - Optional secret of at least 32 characters. Together with the webhook settings, it enables short-lived signed feedback receipts.
 - `FEEDBACK_WEBHOOK_URL`
@@ -214,7 +225,7 @@ Only the most recent assistant turn contributes article-reference and standalone
     "evidenceCalibration": {
       "version": "phase4-v1",
       "score": 0.62,
-      "threshold": 0.23,
+      "threshold": 0.3,
       "features": {}
     },
     "citationVerification": {
@@ -349,11 +360,13 @@ For privacy, the receipt and forwarded event omit the raw answer, session ID, IP
 
 The Hexo `after_generate` check also requires every exported post URL to resolve to a generated route, preventing syntactically valid dead links from becoming citations.
 
-The phase 6 acceptance corpus contains 71 published/indexed posts, 745 retrieval chunks, and 395 separately indexed code blocks. The parser identified 2,781 Markdown structure blocks, and all exported chunks are reproducible from their source file and line range. Fifteen probability/ODE posts use the author-maintained `math-note` path rule; 56 posts remain on the explicitly reported `generic-article` migration fallback. The exporter skips 32 unpublished posts and 5 sources without public URLs. Published PDF-only posts produce a metadata-only chunk with their title, description, and resource links; PDF full-text extraction remains a future corpus enhancement.
+The phase 7 corpus contains 71 published/indexed posts, 451 section parents, 1,904 Child chunks, and 395 exact code-block artifacts. The parser identifies 2,781 Markdown structure blocks, and all exported chunks are reproducible from their source file and line range. Fifteen probability/ODE posts use the author-maintained `math-note` path rule; 56 posts remain on the explicitly reported `generic-article` migration fallback. The exporter skips 32 unpublished posts and 5 sources without public URLs. Published PDF-only posts produce a metadata-only chunk with their title, description, and resource links; PDF full-text extraction remains a future corpus enhancement.
 
 `content` is the only citation source. `retrievalText` adds deterministic title, heading, tag, category, structure-type, and content context for BM25/vector retrieval, but it is marked non-citeable in the manifest. New posts default to `rag.chunk_profile: generic-article`; Front Matter overrides exact document rules, which override directory rules, which override the migration fallback.
 
-The legacy v3 corpus is frozen at Git revision `7e6d67b`. To rehearse or perform the scoped artifact rollback, run `RAG_CHUNK_SCHEMA=legacy-v3 npm run export:ai`, then synchronize the API corpus. Normal exports use `RAG_CHUNK_SCHEMA=structured-v1`.
+The legacy v3 corpus is frozen at Git revision `7e6d67b`. To rehearse or perform the scoped artifact rollback, run `RAG_CHUNK_SCHEMA=legacy-v3 npm run export:ai`, then synchronize the API corpus. Normal exports use `RAG_CHUNK_SCHEMA=chunk-v2`; `RAG_RETRIEVAL_MODE=bm25` independently disables managed Dense retrieval.
+
+Managed vectors are built only by the explicit root command `npm run build:embeddings`. The default `qwen3.7-text-embedding` provider batches at most 20 inputs per request (`text-embedding-v4` overrides remain capped at 10), applies bounded concurrency, timeout and retry controls, and publishes only a complete index whose Chunk IDs, content hashes and embedding fingerprint match. A failed build leaves the current vector index and manifest unchanged. Static browser artifacts deliberately omit `vectors.json` and all provider credentials.
 
 ## Tests and retrieval evaluation
 
@@ -365,6 +378,7 @@ npm run eval:agent
 npm run eval:phase4
 npm run eval:phase5
 npm run eval:phase6
+npm run eval:phase7
 ```
 
 To intentionally refresh the committed baseline report after reviewing a retrieval change:
@@ -385,7 +399,9 @@ The phase 2 Hybrid dataset and report are `evals/hybrid-dataset.json` and `evals
 
 Phase 4 uses `evals/phase4-dataset.json`. Its calibration split selects the configured structural evidence coverage threshold; its holdout split is never used for selection and must meet the all-or-nothing acceptance targets for claim citation completeness/support/provenance, unsupported claims, answerability, rejection, and route. `npm run eval:phase4` prints the report without modifying the working tree. After review, `npm run eval:phase4:update` writes `evals/reports/phase4.json` deliberately. The `RAG quality` GitHub Actions workflow runs API tests plus Hybrid, Agent, and phase 4 evaluations on every push and pull request.
 
-Phase 6 writes `evals/reports/phase6-ingestion.json`. It compares the frozen v3 hashes and metrics with the structured corpus, rebuilds every chunk from Markdown, validates source locations and code isolation, and requires the current Hybrid, Agent, phase 4, and phase 5 regression reports to match the serving corpus.
+Phase 6 writes `evals/reports/phase6-ingestion.json`. It compares the frozen v3 hashes and metrics with the structured corpus, rebuilds every chunk from Markdown, validates source locations and code boundaries, and requires the current Hybrid, Agent, phase 4, and phase 5 regression reports to match the serving corpus.
+
+Phase 7 writes `evals/reports/phase7.json`. It validates Chunk v2 hierarchy and Token budgets, full vector/fingerprint coverage, Hybrid quality thresholds, BM25 failure paths, the browser no-vector boundary and rollback switches. `implementationPassed` is a local/CI gate; `releaseReady` becomes true only after a real managed 1024-dimensional index is active, so the report cannot confuse the local semantic-hash proxy with production Model Studio validation.
 
 The evaluation runner reports article-level Recall@5/20, HitRate@5, MRR@20, nDCG@20, no-answer accuracy, per-category results, and failed cases. Results are deduplicated by normalized published post URL.
 

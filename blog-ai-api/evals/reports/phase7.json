@@ -1,0 +1,162 @@
+{
+  "phase": 7,
+  "generatedAt": "2026-08-25T06:09:37.388Z",
+  "strategy": "chunk-v2-managed-embedding-hybrid-rrf",
+  "corpus": {
+    "version": "5255a48fc93de09cd70f16957f35b4e74abc713903a9389acb617244424c60ad",
+    "posts": 71,
+    "chunks": 1904,
+    "vectors": 1904,
+    "vectorCoverage": 1,
+    "activeEmbedding": {
+      "model": "qwen3.7-text-embedding",
+      "dimensions": 1024,
+      "version": 1,
+      "provider": "dashscope",
+      "fingerprint": "sha256:87817a9db94577ed3f1bc9e4e36911c28cad5b2bcc92213b1bbef4437d655198",
+      "normalization": "l2-client-v1",
+      "documentTemplateVersion": "blog-document-v1",
+      "queryTemplateVersion": "technical-blog-query-v1",
+      "tokenizerVersion": "dashscope-compatible-estimate-v1",
+      "build": {
+        "added": 0,
+        "updated": 1904,
+        "reused": 0,
+        "deleted": 0,
+        "failed": 0
+      }
+    }
+  },
+  "chunkAudit": {
+    "parents": 451,
+    "children": 1904,
+    "chunkTypes": {
+      "code": 397,
+      "formula": 92,
+      "formula-context": 356,
+      "image": 10,
+      "list": 404,
+      "metadata": 4,
+      "proof": 15,
+      "quote": 99,
+      "table": 1,
+      "text": 521,
+      "theorem": 5
+    },
+    "overflowChunks": 3,
+    "invalidHierarchy": [],
+    "overBudgetWithoutReason": [],
+    "invalidCodeContexts": [],
+    "passed": true
+  },
+  "browserBoundary": {
+    "vectorsPublished": false,
+    "manifestHasVectors": false,
+    "manifestHasEmbedding": false,
+    "passed": true
+  },
+  "fallbackAudit": {
+    "cases": {
+      "rateLimited": true,
+      "emptyVector": true,
+      "featureFlag": true
+    },
+    "passed": true
+  },
+  "quality": {
+    "proxy": "local-semantic-hash regression suite",
+    "thresholds": {
+      "recallAt5": 0.9,
+      "mrrAt20": 0.8,
+      "exactNoRegression": true,
+      "semanticImproved": true
+    },
+    "acceptance": {
+      "semanticImproved": true,
+      "exactNoRegression": true,
+      "passed": true
+    },
+    "summary": {
+      "cases": 20,
+      "recallAt5": 0.9,
+      "recallAt20": 0.9,
+      "hitRateAt5": 0.9,
+      "mrrAt20": 0.8167,
+      "ndcgAt20": 0.8381,
+      "noAnswerCases": 0,
+      "noAnswerAccuracy": 0,
+      "averageWarmRetrievalMs": 33.273,
+      "failedCases": 2
+    },
+    "comparison": {
+      "semantic": {
+        "baseline": {
+          "recallAt5": 0.8,
+          "recallAt20": 0.9,
+          "hitRateAt5": 0.8,
+          "mrrAt20": 0.545,
+          "ndcgAt20": 0.6288,
+          "cases": 10
+        },
+        "hybrid": {
+          "recallAt5": 0.8,
+          "recallAt20": 0.8,
+          "hitRateAt5": 0.8,
+          "mrrAt20": 0.6333,
+          "ndcgAt20": 0.6762,
+          "cases": 10
+        }
+      },
+      "exact": {
+        "baseline": {
+          "recallAt5": 1,
+          "recallAt20": 1,
+          "hitRateAt5": 1,
+          "mrrAt20": 1,
+          "ndcgAt20": 1,
+          "cases": 10
+        },
+        "hybrid": {
+          "recallAt5": 1,
+          "recallAt20": 1,
+          "hitRateAt5": 1,
+          "mrrAt20": 1,
+          "ndcgAt20": 1,
+          "cases": 10
+        }
+      }
+    }
+  },
+  "managedEmbedding": {
+    "target": {
+      "provider": "dashscope",
+      "model": "qwen3.7-text-embedding",
+      "dimensions": 1024,
+      "version": 1,
+      "normalization": "l2-client-v1",
+      "documentTemplateVersion": "blog-document-v1",
+      "queryTemplateVersion": "technical-blog-query-v1",
+      "tokenizerVersion": "dashscope-compatible-estimate-v1",
+      "fingerprint": "sha256:87817a9db94577ed3f1bc9e4e36911c28cad5b2bcc92213b1bbef4437d655198"
+    },
+    "configured": false,
+    "active": true,
+    "status": "active",
+    "command": "npm run build:embeddings"
+  },
+  "acceptance": {
+    "checks": {
+      "chunkV2": true,
+      "vectorCoverage": true,
+      "fingerprintCoverage": true,
+      "hybridRegression": true,
+      "fallbackAvailability": true,
+      "browserBoundary": true,
+      "rollbackSwitch": true
+    },
+    "implementationPassed": true,
+    "managedIndexActive": true,
+    "releaseReady": true,
+    "status": "passed"
+  }
+}

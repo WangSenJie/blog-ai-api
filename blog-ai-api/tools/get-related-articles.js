@@ -3,7 +3,7 @@
 const {
   normalizePostUrl
 } = require('../lib/retrieval-core');
-const { hybridRankChunks } = require('../lib/hybrid-retrieve');
+const { hybridRankChunksAsync } = require('../lib/hybrid-retrieve');
 const {
   TOOL_SCHEMAS,
   validateGetRelatedArticlesArgs
@@ -28,6 +28,8 @@ function createGetRelatedArticlesTool(options) {
   const posts = options && options.posts;
   const chunks = options && options.chunks;
   const vectors = options && options.vectors;
+  const manifest = options && options.manifest;
+  const provider = options && options.embeddingProvider;
   if (!Array.isArray(posts) || !Array.isArray(chunks)) {
     throw new TypeError(
       'createGetRelatedArticlesTool requires posts and chunks arrays'
@@ -38,7 +40,7 @@ function createGetRelatedArticlesTool(options) {
     name: 'get_related_articles',
     schema: TOOL_SCHEMAS.get_related_articles,
 
-    execute(rawArgs) {
+    async execute(rawArgs, executionOptions) {
       const args = validateGetRelatedArticlesArgs(rawArgs, normalizePostUrl);
       const sourcePost = args.url
         ? posts.find(post => normalizePostUrl(post && post.url) === args.url)
@@ -61,7 +63,14 @@ function createGetRelatedArticlesTool(options) {
         (sourcePost.tags || []).join(' '),
         (sourcePost.categories || []).join(' ')
       ].filter(Boolean).join(' ');
-      const retrieval = hybridRankChunks(chunks, vectors, query, 'site', null);
+      const retrievalChunks = chunks.filter(chunk => (
+        normalizePostUrl(chunk && chunk.postUrl) !== sourceUrl
+      ));
+      const retrieval = await hybridRankChunksAsync(retrievalChunks, vectors, query, 'site', null, {
+        manifest,
+        provider,
+        signal: executionOptions && executionOptions.signal
+      });
       const seenUrls = new Set();
       const related = [];
 

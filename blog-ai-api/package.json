@@ -17,6 +17,7 @@
     "eval:phase4": "node evals/phase4-run.js",
     "eval:phase4:update": "node evals/phase4-run.js --output evals/reports/phase4.json",
     "eval:phase5": "node evals/phase5-run.js",
-    "eval:phase6": "node evals/phase6-run.js"
+    "eval:phase6": "node evals/phase6-run.js",
+    "eval:phase7": "node evals/phase7-run.js"
   }
 }

@@ -15,6 +15,7 @@ const { resolveSlug, formatDatePrefix } = require('./slug-utils');
 const { LEARNING_TRACKS } = require('./learning-graph-config');
 const {
     CHUNK_PROFILES,
+    PROFILE_CHUNKING,
     PROFILE_SOURCES,
     loadProfileRegistry,
     normalizeRepositoryPath,
@@ -26,6 +27,15 @@ const {
     parseFrontMatter,
     parseMarkdownDocument
 } = require('./markdown-structure');
+const {
+    TOKENIZER_VERSION,
+    estimateTokens,
+    splitTextByTokenBudget
+} = require('../blog-ai-api/lib/tokenizer');
+
+const CHUNK_SCHEMA_VERSION = 'chunk-v2';
+const RETRIEVAL_TEXT_VERSION = 'retrieval-text-v2';
+const DOCUMENT_EMBEDDING_TEMPLATE_VERSION = 'blog-document-v1';
 
 function findPostFiles(dir) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -468,23 +478,247 @@ function chunkStructuredSection(section, chunkSize, overlap) {
     return chunks;
 }
 
+function stableParentId(post, headingPath, sectionOccurrence) {
+    const location = [
+        String(post && post.url || '').trim().toLowerCase(),
+        headingKey(headingPath),
+        String(sectionOccurrence || 0)
+    ].join('\u0000');
+    return `parent_${sha256(location).slice(0, 24)}`;
+}
+
+function blockChunkType(block, profile) {
+    const type = String(block && block.type || 'paragraph');
+    const text = `${block && block.sectionTitle || ''}\n${block && block.content || ''}`;
+    if (type === 'list' && profile === 'tutorial') return 'step';
+    if (profile === 'faq-reference') return 'faq';
+    if (profile === 'math-note') {
+        if (/证明|proof/i.test(text)) return 'proof';
+        if (/定理|theorem/i.test(text)) return 'theorem';
+        if (/定义|definition/i.test(text)) return 'definition';
+        if (/推论|corollary/i.test(text)) return 'corollary';
+        if (/例题|示例|example/i.test(text)) return 'example';
+    }
+    if (type === 'paragraph') return 'text';
+    return type;
+}
+
+function sourceLinesForSlice(block, startOffset, endOffset) {
+    const lines = block && block.sourceLines;
+    if (!lines) return null;
+    return {
+        start: lines.start + Math.max(0, startOffset || 0),
+        end: Math.min(lines.end, lines.start + Math.max(startOffset || 0, endOffset || 0))
+    };
+}
+
+function splitTableBlock(block, maxTokens) {
+    const rows = String(block.content || '').split('\n').map(row => row.trim()).filter(Boolean);
+    if (rows.length <= 1 || estimateTokens(block.content) <= maxTokens) return [block];
+    const header = rows[0];
+    const parts = [];
+    let current = [];
+
+    function flush() {
+        if (!current.length) return;
+        const content = [header, ...current].join('\n');
+        parts.push(Object.assign({}, block, {
+            content,
+            tokenCount: estimateTokens(content),
+            overflowReason: estimateTokens(content) > maxTokens
+                ? 'table_row_exceeds_token_limit'
+                : null
+        }));
+        current = [];
+    }
+
+    for (const row of rows.slice(1)) {
+        const candidate = [header, ...current, row].join('\n');
+        if (current.length && estimateTokens(candidate) > maxTokens) flush();
+        current.push(row);
+        if (estimateTokens([header, ...current].join('\n')) > maxTokens) flush();
+    }
+    flush();
+    return parts;
+}
+
+function splitLineBlock(block, maxTokens, overflowReason, preciseSourceLines) {
+    const lines = String(block.content || '').split('\n');
+    if (estimateTokens(block.content) <= maxTokens) return [block];
+    const parts = [];
+    let start = 0;
+    let current = [];
+
+    function flush(end) {
+        const content = current.join('\n').trimEnd();
+        if (!content.trim()) {
+            current = [];
+            start = end + 1;
+            return;
+        }
+        const tokenCount = estimateTokens(content);
+        parts.push(Object.assign({}, block, {
+            content,
+            sourceLines: preciseSourceLines
+                ? sourceLinesForSlice(block, start, end)
+                : block.sourceLines,
+            tokenCount,
+            overflowReason: tokenCount > maxTokens ? overflowReason : null
+        }));
+        current = [];
+        start = end + 1;
+    }
+
+    for (let index = 0; index < lines.length; index += 1) {
+        const line = lines[index];
+        const candidate = current.concat(line).join('\n');
+        if (current.length && estimateTokens(candidate) > maxTokens) {
+            flush(index - 1);
+        }
+        if (!current.length) start = index;
+        current.push(line);
+        if (estimateTokens(current.join('\n')) > maxTokens) flush(index);
+    }
+    if (current.length) flush(lines.length - 1);
+    return parts;
+}
+
+function splitStructuredBlock(block, profile, maxTokens) {
+    const type = String(block && block.type || 'paragraph');
+    const base = Object.assign({}, block, {
+        chunkType: blockChunkType(block, profile),
+        tokenCount: estimateTokens(block && block.content),
+        overflowReason: null
+    });
+    if (type === 'table') return splitTableBlock(base, maxTokens);
+    if (type === 'code') {
+        return splitLineBlock(base, maxTokens, 'code_line_exceeds_token_limit', true);
+    }
+    if (type === 'list') {
+        return splitLineBlock(base, maxTokens, 'list_item_exceeds_token_limit', false);
+    }
+    if (type === 'formula') {
+        if (base.tokenCount > maxTokens) base.overflowReason = 'formula_exceeds_token_limit';
+        return [base];
+    }
+    return splitTextByTokenBudget(base.content, maxTokens).map(content => Object.assign({}, base, {
+        content,
+        tokenCount: estimateTokens(content),
+        overflowReason: null
+    }));
+}
+
+function chunkStructuredSectionV2(section, profile) {
+    const budget = PROFILE_CHUNKING[profile] || PROFILE_CHUNKING['generic-article'];
+    const standaloneTypes = new Set(['code', 'table', 'list']);
+    const chunks = [];
+    let current = [];
+    let formulaPendingExplanation = false;
+
+    function currentContent(units) {
+        return (units || current).map(unit => unit.content).filter(Boolean).join('\n\n').trim();
+    }
+
+    function flush(allowOverlap) {
+        if (!current.length) return;
+        const content = currentContent();
+        const blockTypes = [...new Set(current.map(unit => unit.type))];
+        const soleType = blockTypes.length === 1 ? current[0].chunkType : '';
+        chunks.push({
+            content,
+            blockTypes,
+            sourceLines: mergeSourceLines(current),
+            chunkType: soleType || (blockTypes.includes('formula') ? 'formula-context' : 'text'),
+            tokenCount: estimateTokens(content),
+            overflowReason: current.map(unit => unit.overflowReason).find(Boolean) || null
+        });
+
+        const mayOverlap = allowOverlap && budget.overlapTokens > 0 &&
+            !blockTypes.some(type => ['formula', 'code', 'table', 'list'].includes(type));
+        if (!mayOverlap) {
+            current = [];
+            formulaPendingExplanation = false;
+            return;
+        }
+        const retained = [];
+        let tokens = 0;
+        for (let index = current.length - 1; index >= 0; index -= 1) {
+            const unit = current[index];
+            if (tokens + unit.tokenCount > budget.overlapTokens) break;
+            retained.unshift(unit);
+            tokens += unit.tokenCount;
+        }
+        current = retained;
+        formulaPendingExplanation = false;
+    }
+
+    for (const rawBlock of section && section.blocks || []) {
+        if (!rawBlock || !String(rawBlock.content || '').trim()) continue;
+        const units = splitStructuredBlock(rawBlock, profile, budget.maxTokens);
+        for (const unit of units) {
+            if (standaloneTypes.has(unit.type)) {
+                flush(false);
+                chunks.push({
+                    content: unit.content,
+                    blockTypes: [unit.type],
+                    sourceLines: unit.sourceLines || null,
+                    chunkType: unit.chunkType,
+                    tokenCount: unit.tokenCount,
+                    overflowReason: unit.overflowReason || null
+                });
+                continue;
+            }
+
+            const candidate = currentContent(current.concat(unit));
+            if (current.length && estimateTokens(candidate) > budget.maxTokens) flush(true);
+            if (
+                current.length &&
+                estimateTokens(currentContent(current.concat(unit))) > budget.maxTokens
+            ) {
+                current = [];
+            }
+            current.push(unit);
+
+            if (formulaPendingExplanation && unit.type !== 'formula') {
+                flush(false);
+                continue;
+            }
+            if (unit.type === 'formula') {
+                formulaPendingExplanation = true;
+                if (unit.overflowReason) flush(false);
+                continue;
+            }
+            if (estimateTokens(currentContent()) >= budget.targetTokens) flush(true);
+        }
+    }
+    flush(false);
+    return chunks;
+}
+
 function buildRetrievalText(post, values) {
     return [
         post && post.title,
         post && (post.tags || []).join(' '),
         post && (post.categories || []).join(' '),
+        values && values.profile,
         values && (values.headingPath || []).join(' > '),
+        values && values.chunkType,
         values && (values.blockTypes || []).join(' '),
         values && values.content
     ].map(value => String(value || '').trim()).filter(Boolean).join('\n');
 }
 
-function stableChunkId(post, headingPath, sectionChunkIndex, sectionOccurrence) {
+function stableChunkId(post, parentId, chunkType, content, duplicateOrdinal) {
+    const normalizedContent = String(content || '')
+        .replace(/\r\n/g, '\n')
+        .replace(/\s+/g, ' ')
+        .trim();
     const stableLocation = [
-        String(post.url || '').trim().toLowerCase(),
-        (headingPath || []).map(value => String(value || '').trim()).join(' > '),
-        String(sectionOccurrence || 0),
-        String(sectionChunkIndex)
+        String(post && post.url || '').trim().toLowerCase(),
+        String(parentId || '').trim(),
+        String(chunkType || '').trim(),
+        sha256(normalizedContent),
+        String(duplicateOrdinal || 0)
     ].join('\u0000');
     const digest = crypto
         .createHash('sha256')
@@ -495,6 +729,10 @@ function stableChunkId(post, headingPath, sectionChunkIndex, sectionOccurrence) 
 
 function contentHashForChunk(chunk) {
     const fingerprint = {
+        chunkSchema: CHUNK_SCHEMA_VERSION,
+        tokenizer: TOKENIZER_VERSION,
+        retrievalTextVersion: RETRIEVAL_TEXT_VERSION,
+        documentEmbeddingTemplateVersion: DOCUMENT_EMBEDDING_TEMPLATE_VERSION,
         postTitle: String(chunk.postTitle || '').trim(),
         postUrl: String(chunk.postUrl || '').trim(),
         tags: (chunk.tags || []).map(value => String(value || '').trim()),
@@ -502,10 +740,13 @@ function contentHashForChunk(chunk) {
         sourcePath: String(chunk.sourcePath || '').trim(),
         profile: String(chunk.profile || '').trim(),
         profileSource: String(chunk.profileSource || '').trim(),
+        parentId: String(chunk.parentId || '').trim(),
         headingPath: (chunk.headingPath || []).map(value => String(value || '').trim()),
         sectionAnchor: String(chunk.sectionAnchor || '').trim(),
+        chunkType: String(chunk.chunkType || '').trim(),
         blockTypes: (chunk.blockTypes || []).map(value => String(value || '').trim()),
         sourceLines: chunk.sourceLines || null,
+        overflowReason: chunk.overflowReason || null,
         content: String(chunk.content || '')
             .replace(/\r\n/g, '\n')
             .replace(/\s+/g, ' ')
@@ -594,12 +835,14 @@ function extractCodeBlocksForPost(post, postChunks) {
         const ordinal = (occurrences.get(key) || 0) + 1;
         occurrences.set(key, ordinal);
         const exactContext = (postChunks || []).filter(chunk => (
-            headingKey(chunk && chunk.headingPath) === key
+            headingKey(chunk && chunk.headingPath) === key &&
+            String(chunk && chunk.chunkType || '') !== 'code'
         ));
         const fallbackContext = exactContext.length
             ? exactContext
             : (postChunks || []).filter(chunk => (
-                String(chunk && chunk.sectionTitle || '') === sectionTitle
+                String(chunk && chunk.sectionTitle || '') === sectionTitle &&
+                String(chunk && chunk.chunkType || '') !== 'code'
             ));
         const id = stableCodeBlockId(post, headingPath, ordinal);
         const lineMap = Array.isArray(token.map) ? token.map : [0, 0];
@@ -736,11 +979,17 @@ function createChunk(post, values) {
         sourcePath: post.sourcePath || '',
         profile: post.chunkProfile || 'generic-article',
         profileSource: post.profileSource || 'migration-fallback',
+        parentId: values.parentId,
         sectionTitle: values.sectionTitle || '',
         headingPath: (values.headingPath || []).slice(),
         sectionAnchor: values.sectionAnchor || '',
         chunkIndex: values.chunkIndex,
+        childOrdinal: values.childOrdinal,
         sectionOccurrence: values.sectionOccurrence || 0,
+        chunkType: values.chunkType || 'text',
+        tokenCount: values.tokenCount || estimateTokens(values.content),
+        tokenizerVersion: TOKENIZER_VERSION,
+        overflowReason: values.overflowReason || null,
         content: values.content,
         retrievalText: '',
         blockTypes: (values.blockTypes || ['paragraph']).slice(),
@@ -749,12 +998,7 @@ function createChunk(post, values) {
         metadataOnly: values.metadataOnly === true
     };
     chunk.retrievalText = buildRetrievalText(post, chunk);
-    chunk.id = stableChunkId(
-        post,
-        chunk.headingPath,
-        values.sectionChunkIndex || 0,
-        values.sectionOccurrence || 0
-    );
+    chunk.id = stableChunkId(post, chunk.parentId, chunk.chunkType, chunk.content, values.duplicateOrdinal);
     chunk.contentHash = contentHashForChunk(chunk);
     return chunk;
 }
@@ -772,15 +1016,21 @@ function buildPdfMetadataChunk(post) {
         resourceSummary
     ].filter(Boolean).join('\n');
 
+    const parentId = stableParentId(post, ['文章元数据'], 0);
     return createChunk(post, {
+        parentId,
         sectionTitle: '文章元数据',
         headingPath: ['文章元数据'],
         sectionAnchor: 'section_metadata',
         chunkIndex: 0,
+        childOrdinal: 0,
         sectionChunkIndex: 0,
         sectionOccurrence: 0,
         content,
         blockTypes: ['metadata'],
+        chunkType: 'metadata',
+        tokenCount: estimateTokens(content),
+        overflowReason: null,
         sourceLines: null,
         resourceLinks: post.resourceLinks || [],
         metadataOnly: true
@@ -789,8 +1039,6 @@ function buildPdfMetadataChunk(post) {
 
 function chunkPost(post) {
     const chunks = [];
-    const chunkSize = 700;
-    const overlap = 100;
     const postUrl = post.url || '';
     if (post.published === false || !postUrl) return chunks;
 
@@ -807,23 +1055,43 @@ function chunkPost(post) {
         const headingKey = (section.headingPath || []).join('\u0000');
         const sectionOccurrence = headingOccurrences.get(headingKey) || 0;
         headingOccurrences.set(headingKey, sectionOccurrence + 1);
+        const parentId = stableParentId(post, section.headingPath || [], sectionOccurrence);
         const sectionChunks = section.blocks
-            ? chunkStructuredSection(section, chunkSize, overlap)
-            : chunkSection(section.content, chunkSize, overlap).map(content => ({
+            ? chunkStructuredSectionV2(section, post.chunkProfile || 'generic-article')
+            : splitTextByTokenBudget(
+                section.content,
+                (PROFILE_CHUNKING[post.chunkProfile] || PROFILE_CHUNKING['generic-article']).maxTokens
+            ).map(content => ({
                 content,
                 blockTypes: ['paragraph'],
-                sourceLines: null
+                sourceLines: null,
+                chunkType: 'text',
+                tokenCount: estimateTokens(content),
+                overflowReason: null
             }));
+        const duplicateLocations = new Map();
         for (const [sectionChunkIndex, sectionChunk] of sectionChunks.entries()) {
+            const duplicateKey = [
+                sectionChunk.chunkType,
+                sha256(String(sectionChunk.content || '').replace(/\s+/g, ' ').trim())
+            ].join('\u0000');
+            const duplicateOrdinal = duplicateLocations.get(duplicateKey) || 0;
+            duplicateLocations.set(duplicateKey, duplicateOrdinal + 1);
             chunks.push(createChunk(post, {
+                parentId,
                 sectionTitle: section.sectionTitle,
                 headingPath: section.headingPath || [],
                 sectionAnchor: section.sectionAnchor || '',
                 chunkIndex: index,
+                childOrdinal: sectionChunkIndex,
                 sectionChunkIndex,
                 sectionOccurrence,
+                duplicateOrdinal,
                 content: sectionChunk.content,
                 blockTypes: sectionChunk.blockTypes,
+                chunkType: sectionChunk.chunkType,
+                tokenCount: sectionChunk.tokenCount,
+                overflowReason: sectionChunk.overflowReason,
                 sourceLines: sectionChunk.sourceLines,
                 resourceLinks: post.resourceLinks || []
             }));
@@ -934,6 +1202,7 @@ function percentile(values, ratio) {
 
 function buildIngestionReport(posts, chunks, diagnostics) {
     const lengths = (chunks || []).map(chunk => String(chunk && chunk.content || '').length);
+    const tokenCounts = (chunks || []).map(chunk => Number(chunk && chunk.tokenCount) || 0);
     const contentCounts = new Map();
     for (const chunk of chunks || []) {
         const content = String(chunk && chunk.content || '').replace(/\s+/g, ' ').trim();
@@ -962,12 +1231,12 @@ function buildIngestionReport(posts, chunks, diagnostics) {
             frontMatter: 'js-yaml-json-schema-v1',
             markdown: 'markdown-it-token-v1'
         },
-        transformer: 'retrieval-text-v1',
-        chunking: 'section-character-v1',
+        transformer: RETRIEVAL_TEXT_VERSION,
+        chunking: 'profile-parent-child-token-v2',
+        tokenizer: TOKENIZER_VERSION,
         chunkSchema: {
-            active: 'structured-v1',
-            next: 'chunk-v2',
-            nextSchema: 'config/rag-chunk-v2.schema.json',
+            active: 'chunk-v2',
+            schema: 'config/rag-chunk-v2.schema.json',
             rollbackMode: 'legacy-v3',
             rollbackRevision: '7e6d67b',
             switch: 'RAG_CHUNK_SCHEMA'
@@ -982,7 +1251,7 @@ function buildIngestionReport(posts, chunks, diagnostics) {
                 role: 'retrieval-only',
                 derived: true,
                 citeable: false,
-                version: 'retrieval-text-v1',
+                version: RETRIEVAL_TEXT_VERSION,
                 source: 'deterministic-title-metadata-structure-content'
             },
             sectionAnchor: {
@@ -1035,6 +1304,17 @@ function buildIngestionReport(posts, chunks, diagnostics) {
             )).length,
             metadataOnlyChunks: (chunks || []).filter(chunk => chunk && chunk.metadataOnly).length,
             duplicateChunkContents,
+            parentSections: new Set((chunks || []).map(chunk => chunk && chunk.parentId).filter(Boolean)).size,
+            overflowChunks: (chunks || []).filter(chunk => String(chunk && chunk.overflowReason || '')).length,
+            chunkTypeCounts: Object.fromEntries([...new Set(
+                (chunks || []).map(chunk => String(chunk && chunk.chunkType || '')).filter(Boolean)
+            )].sort().map(type => [type, (chunks || []).filter(chunk => chunk.chunkType === type).length])),
+            tokenCount: {
+                min: tokenCounts.length ? Math.min(...tokenCounts) : 0,
+                p50: percentile(tokenCounts, 0.5),
+                p95: percentile(tokenCounts, 0.95),
+                max: tokenCounts.length ? Math.max(...tokenCounts) : 0
+            },
             contentLength: {
                 min: lengths.length ? Math.min(...lengths) : 0,
                 p50: percentile(lengths, 0.5),
@@ -1073,9 +1353,14 @@ module.exports = {
     buildLearningGraph,
     stableCodeBlockId,
     stableChunkId,
+    stableParentId,
     chunkStructuredSection,
+    chunkStructuredSectionV2,
     chunkPost,
     buildCorpus,
     CHUNK_PROFILES,
-    PROFILE_SOURCES
+    PROFILE_SOURCES,
+    PROFILE_CHUNKING,
+    CHUNK_SCHEMA_VERSION,
+    RETRIEVAL_TEXT_VERSION
 };

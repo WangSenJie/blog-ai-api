@@ -285,9 +285,9 @@ test('registry exposes only the allow-listed read-only tools', () => {
   );
 });
 
-test('compare_articles returns a source-backed dimension matrix for known articles', () => {
+test('compare_articles returns a source-backed dimension matrix for known articles', async () => {
   const registry = createAgentTools(makePhase5Corpus());
-  const result = registry.execute('compare_articles', {
+  const result = await registry.execute('compare_articles', {
     urls: ['/bm25-retrieval/', '/hybrid-retrieval/'],
     dimensions: ['implementation'],
     query: '实现方法',
@@ -321,7 +321,7 @@ test('compare_articles returns a source-backed dimension matrix for known articl
     true
   );
 
-  const partial = registry.execute('compare_articles', {
+  const partial = await registry.execute('compare_articles', {
     urls: ['/bm25-retrieval/', '/hybrid-retrieval/'],
     dimensions: ['scenario']
   });
@@ -333,14 +333,14 @@ test('compare_articles returns a source-backed dimension matrix for known articl
   );
   assert.equal(partial.items.every(item => item.dimension === 'core'), true);
 
-  assert.throws(
-    () => registry.execute('compare_articles', {
+  await assert.rejects(
+    registry.execute('compare_articles', {
       urls: ['/bm25-retrieval/', 'https://example.com/external/']
     }),
     /valid blog URL/
   );
-  assert.throws(
-    () => registry.execute('compare_articles', {
+  await assert.rejects(
+    registry.execute('compare_articles', {
       urls: ['/bm25-retrieval/', '/bm25-retrieval/']
     }),
     /at least two distinct articles/
@@ -388,10 +388,10 @@ test('recommend_learning_path follows only the supplied author-curated graph', (
   assert.equal(invalidCompleted.status, 'invalid_completed_article');
 });
 
-test('explain_code_block returns only indexed source code and its article context', () => {
+test('explain_code_block returns only indexed source code and its article context', async () => {
   const corpus = makePhase5Corpus();
   const registry = createAgentTools(corpus);
-  const result = registry.execute('explain_code_block', {
+  const result = await registry.execute('explain_code_block', {
     url: '/bm25-retrieval/',
     ordinal: 1,
     query: 'BM25 查询'
@@ -417,33 +417,33 @@ test('explain_code_block returns only indexed source code and its article contex
     'const results = bm25.search(query);\n'
   );
 
-  const foreignBlock = registry.execute('explain_code_block', {
+  const foreignBlock = await registry.execute('explain_code_block', {
     url: '/retrieval-foundations/',
     blockId: 'code_aaaaaaaaaaaaaaaaaaaaaaaa'
   });
   assert.equal(foreignBlock.status, 'not_found');
   assert.equal(foreignBlock.codeExplanation, null);
 
-  assert.throws(
-    () => registry.execute('explain_code_block', {
+  await assert.rejects(
+    registry.execute('explain_code_block', {
       url: 'https://example.com/external/',
       ordinal: 1
     }),
     /valid blog URL/
   );
-  assert.throws(
-    () => registry.execute('explain_code_block', {
+  await assert.rejects(
+    registry.execute('explain_code_block', {
       url: '/bm25-retrieval/'
     }),
     /requires blockId, ordinal, section, or query/
   );
 });
 
-test('search_blog runs BM25, returns complete chunks, and applies metadata filters', () => {
+test('search_blog runs BM25, returns complete chunks, and applies metadata filters', async () => {
   const corpus = makeCorpus();
   const originalCorpus = JSON.parse(JSON.stringify(corpus));
   const registry = createAgentTools(corpus);
-  const result = registry.execute('search_blog', {
+  const result = await registry.execute('search_blog', {
     query: 'sentinel retrieval',
     tags: ['shared'],
     categories: ['AI'],
@@ -470,18 +470,18 @@ test('search_blog runs BM25, returns complete chunks, and applies metadata filte
   assert.deepEqual(corpus.chunks[1].tags, ['retrieval', 'shared']);
 });
 
-test('search_blog currentPageOnly requires and enforces a safe page URL', () => {
+test('search_blog currentPageOnly requires and enforces a safe page URL', async () => {
   const registry = createAgentTools(makeCorpus());
 
-  assert.throws(
-    () => registry.execute('search_blog', {
+  await assert.rejects(
+    registry.execute('search_blog', {
       query: 'sentinel',
       currentPageOnly: true
     }),
     /pageUrl is required/
   );
 
-  const result = registry.execute('search_blog', {
+  const result = await registry.execute('search_blog', {
     query: 'sentinel',
     currentPageOnly: true,
     pageUrl: '/gamma/',
@@ -530,14 +530,14 @@ test('get_article preserves corpus source order and supports section and topK', 
   assert.deepEqual(corpus.chunks[2].categories, ['Guides']);
 });
 
-test('get_related_articles accepts URL or postId, excludes self, and deduplicates URLs', () => {
+test('get_related_articles accepts URL or postId, excludes self, and deduplicates URLs', async () => {
   const registry = createAgentTools(makeCorpus());
-  const byUrl = registry.execute('get_related_articles', {
+  const byUrl = await registry.execute('get_related_articles', {
     url: '/alpha/',
     topic: 'sentinel retrieval',
     topK: 5
   });
-  const byPostId = registry.execute('get_related_articles', {
+  const byPostId = await registry.execute('get_related_articles', {
     postId: 'post-a',
     topic: 'sentinel retrieval',
     topK: 1
@@ -558,7 +558,7 @@ test('get_related_articles accepts URL or postId, excludes self, and deduplicate
   assert.equal(byPostId.results.length, 1);
 });
 
-test('tools reject unknown parameters, invalid topK values, and off-site URLs', () => {
+test('tools reject unknown parameters, invalid topK values, and off-site URLs', async () => {
   const registry = createAgentTools(makeCorpus());
 
   const unknownArgumentCases = [
@@ -570,15 +570,15 @@ test('tools reject unknown parameters, invalid topK values, and off-site URLs', 
     ['explain_code_block', { url: '/alpha/', ordinal: 1, unsafe: true }]
   ];
   for (const [name, args] of unknownArgumentCases) {
-    assert.throws(
-      () => registry.execute(name, args),
+    await assert.rejects(
+      Promise.resolve().then(() => registry.execute(name, args)),
       /unknown argument/
     );
   }
 
   for (const invalidTopK of [0, 21, 1.5, '2']) {
-    assert.throws(
-      () => registry.execute('search_blog', {
+    await assert.rejects(
+      registry.execute('search_blog', {
         query: 'alpha',
         topK: invalidTopK
       }),
@@ -591,8 +591,8 @@ test('tools reject unknown parameters, invalid topK values, and off-site URLs', 
       }),
       /topK must be an integer between 1 and 20/
     );
-    assert.throws(
-      () => registry.execute('get_related_articles', {
+    await assert.rejects(
+      registry.execute('get_related_articles', {
         postId: 'post-a',
         topK: invalidTopK
       }),
@@ -600,8 +600,8 @@ test('tools reject unknown parameters, invalid topK values, and off-site URLs', 
     );
   }
 
-  assert.throws(
-    () => registry.execute('compare_articles', {
+  await assert.rejects(
+    registry.execute('compare_articles', {
       urls: ['/alpha/', '/beta/'],
       topK: 4
     }),
@@ -615,8 +615,8 @@ test('tools reject unknown parameters, invalid topK values, and off-site URLs', 
     /topK must be an integer between 1 and 8/
   );
 
-  assert.throws(
-    () => registry.execute('search_blog', {
+  await assert.rejects(
+    registry.execute('search_blog', {
       query: 'alpha',
       pageUrl: 'https://example.com/alpha/'
     }),
@@ -628,26 +628,26 @@ test('tools reject unknown parameters, invalid topK values, and off-site URLs', 
     }),
     /valid blog URL/
   );
-  assert.throws(
-    () => registry.execute('get_related_articles', {
+  await assert.rejects(
+    registry.execute('get_related_articles', {
       url: 'https://example.com/alpha/'
     }),
     /valid blog URL/
   );
 });
 
-test('related target validation is unambiguous and missing corpus targets return no results', () => {
+test('related target validation is unambiguous and missing corpus targets return no results', async () => {
   const registry = createAgentTools(makeCorpus());
 
-  assert.throws(
-    () => registry.execute('get_related_articles', {
+  await assert.rejects(
+    registry.execute('get_related_articles', {
       url: '/alpha/',
       postId: 'post-a'
     }),
     /exactly one of url or postId/
   );
-  assert.throws(
-    () => registry.execute('get_related_articles', {
+  await assert.rejects(
+    registry.execute('get_related_articles', {
       topic: 'alpha'
     }),
     /exactly one of url or postId/
@@ -656,7 +656,7 @@ test('related target validation is unambiguous and missing corpus targets return
   const missingArticle = registry.execute('get_article', {
     url: '/missing/'
   });
-  const missingRelated = registry.execute('get_related_articles', {
+  const missingRelated = await registry.execute('get_related_articles', {
     postId: 'missing'
   });
 

@@ -9,6 +9,7 @@
     "deploy": "hexo deploy",
     "server": "hexo server",
     "export:ai": "node scripts/export-ai-documents.js",
+    "build:embeddings": "node scripts/build-managed-embeddings.js && npm --prefix blog-ai-api run sync:corpus",
     "test:ai": "npm --prefix blog-ai-api test",
     "eval:ai": "npm --prefix blog-ai-api run eval:bm25",
     "eval:agent": "npm --prefix blog-ai-api run eval:agent",
@@ -16,7 +17,8 @@
     "eval:phase4": "npm --prefix blog-ai-api run eval:phase4 --",
     "eval:phase4:update": "npm --prefix blog-ai-api run eval:phase4:update --",
     "eval:phase5": "npm --prefix blog-ai-api run eval:phase5 --",
-    "eval:phase6": "npm --prefix blog-ai-api run eval:phase6 --"
+    "eval:phase6": "npm --prefix blog-ai-api run eval:phase6 --",
+    "eval:phase7": "npm --prefix blog-ai-api run eval:phase7 --"
   },
   "hexo": {
     "version": "7.3.0"

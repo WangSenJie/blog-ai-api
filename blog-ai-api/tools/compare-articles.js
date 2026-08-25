@@ -1,7 +1,7 @@
 'use strict';
 
 const {
-  hybridRankChunks
+  hybridRankChunksAsync
 } = require('../lib/hybrid-retrieve');
 const {
   normalizePostUrl,
@@ -74,7 +74,7 @@ function hasDimensionEvidence(chunk, dimension) {
   )));
 }
 
-function selectDimensionEvidence(chunks, vectors, post, dimension, query) {
+async function selectDimensionEvidence(chunks, vectors, post, dimension, query, retrievalOptions) {
   const definition = DIMENSIONS[dimension];
   const dimensionQuery = [
     post.title,
@@ -85,12 +85,13 @@ function selectDimensionEvidence(chunks, vectors, post, dimension, query) {
   const eligibleChunks = (chunks || []).filter(chunk => (
     hasDimensionEvidence(chunk, dimension)
   ));
-  const retrieval = hybridRankChunks(
+  const retrieval = await hybridRankChunksAsync(
     eligibleChunks.length ? eligibleChunks : chunks,
     vectors,
     dimensionQuery,
     'site',
-    null
+    null,
+    retrievalOptions
   );
   const evidence = eligibleChunks.length ? retrieval.ranked[0] || null : null;
   return { evidence, retrieval };
@@ -100,6 +101,8 @@ function createCompareArticlesTool(options) {
   const posts = options && options.posts;
   const chunks = options && options.chunks;
   const vectors = options && options.vectors;
+  const manifest = options && options.manifest;
+  const provider = options && options.embeddingProvider;
   if (!Array.isArray(posts) || !Array.isArray(chunks)) {
     throw new TypeError('createCompareArticlesTool requires posts and chunks arrays');
   }
@@ -108,7 +111,7 @@ function createCompareArticlesTool(options) {
     name: 'compare_articles',
     schema: TOOL_SCHEMAS.compare_articles,
 
-    execute(rawArgs) {
+    async execute(rawArgs, executionOptions) {
       const args = validateCompareArticlesArgs(rawArgs, normalizePostUrl);
       const articles = args.urls.map(url => posts.find(post => (
         normalizePostUrl(post && post.url) === url
@@ -146,12 +149,13 @@ function createCompareArticlesTool(options) {
           const articleChunks = chunks.filter(chunk => (
             normalizePostUrl(chunk && chunk.postUrl) === normalizePostUrl(post.url)
           ));
-          const selected = selectDimensionEvidence(
+          const selected = await selectDimensionEvidence(
             articleChunks,
             vectors,
             post,
             dimension.id,
-            args.query
+            args.query,
+            { manifest, provider, signal: executionOptions && executionOptions.signal }
           );
           if (selected.retrieval.strategy === 'hybrid_rrf_rerank') hybridUsed = true;
           if (!selected.evidence) {

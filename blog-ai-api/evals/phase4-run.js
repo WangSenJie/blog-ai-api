@@ -23,6 +23,9 @@ const {
 const {
   normalizeAskRequest
 } = require('../memory/session');
+const {
+  createOfflineEvaluationCorpus
+} = require('./offline-corpus');
 
 const DEFAULT_DATASET_PATH = path.join(__dirname, 'phase4-dataset.json');
 const STRATEGY = 'grounded_agent_quality_phase4';
@@ -328,10 +331,15 @@ async function calibrate(dataset, corpus) {
 
 async function buildPhase4Report(dataset, corpus) {
   validateDataset(dataset, corpus);
-  const calibration = await calibrate(dataset, corpus);
+  const evaluationCorpus = createOfflineEvaluationCorpus(corpus);
+  const calibration = await calibrate(dataset, evaluationCorpus);
   const allResults = [];
   for (const testCase of dataset.cases) {
-    allResults.push(await evaluateCase(testCase, corpus, EVIDENCE_CALIBRATION));
+    allResults.push(await evaluateCase(
+      testCase,
+      evaluationCorpus,
+      EVIDENCE_CALIBRATION
+    ));
   }
   const calibrationResults = allResults.filter(result => result.split === 'calibration');
   const holdoutResults = allResults.filter(result => result.split === 'holdout');
@@ -356,6 +364,7 @@ async function buildPhase4Report(dataset, corpus) {
     notes: [
       'The calibration grid is evaluated only on the calibration split; holdout is not used to select thresholds.',
       'Coverage thresholds are evidence gates, not probabilistic confidence scores.',
+      'Retrieval uses a deterministic local proxy index so CI never calls the managed embedding API.',
       'External model generation is disabled. Claims are checked against the exact serving corpus and extractive claim contract before metrics are computed.'
     ],
     dataset: {

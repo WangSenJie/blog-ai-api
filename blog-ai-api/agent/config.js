@@ -21,9 +21,9 @@ const AGENT_LIMITS = Object.freeze({
 const EVIDENCE_CALIBRATION = Object.freeze({
   version: 'phase4-v1',
   vectorEvidenceFloor: 0.3,
-  siteQaMinCoverage: 0.23,
+  siteQaMinCoverage: 0.3,
   pageQaMinCoverage: 0.35,
-  compoundMinCoverage: 0.23,
+  compoundMinCoverage: 0.3,
   compareTargetMinCoverage: 0.45
 });
 

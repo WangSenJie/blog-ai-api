@@ -7,13 +7,14 @@ const {
   isIndexableChunk,
   normalizePostUrl
 } = require('./retrieval-core');
+const { TOKENIZER_VERSION, estimateTokens } = require('./tokenizer');
 
 const MANIFEST_SCHEMA_VERSION = 3;
 const VECTOR_MANIFEST_SCHEMA_VERSION = 2;
 const LEGACY_MANIFEST_SCHEMA_VERSION = 1;
 const INGESTION_SCHEMA_VERSION = 1;
 const INGESTION_BLOCK_TYPES = new Set([
-  'paragraph', 'list', 'table', 'formula', 'quote', 'image', 'callout', 'metadata'
+  'paragraph', 'list', 'table', 'code', 'formula', 'quote', 'image', 'callout', 'metadata'
 ]);
 const INGESTION_PROFILES = new Set([
   'generic-article', 'tutorial', 'code-doc', 'math-note', 'faq-reference'
@@ -21,6 +22,13 @@ const INGESTION_PROFILES = new Set([
 const INGESTION_PROFILE_SOURCES = new Set([
   'front-matter', 'document-rule', 'path-rule', 'migration-fallback'
 ]);
+const PROFILE_MAX_TOKENS = Object.freeze({
+  'generic-article': 512,
+  tutorial: 512,
+  'code-doc': 512,
+  'math-note': 512,
+  'faq-reference': 384
+});
 
 function manifestFileNames(schemaVersion) {
   if (schemaVersion === MANIFEST_SCHEMA_VERSION) {
@@ -134,6 +142,11 @@ function buildManifest(posts, chunks, diagnostics, options) {
       dimensions: Number(embedding.dimensions) || 0,
       version: Number(embedding.version) || 0,
       provider: String(embedding.provider || '').trim(),
+      fingerprint: String(embedding.fingerprint || '').trim(),
+      normalization: String(embedding.normalization || '').trim(),
+      documentTemplateVersion: String(embedding.documentTemplateVersion || '').trim(),
+      queryTemplateVersion: String(embedding.queryTemplateVersion || '').trim(),
+      tokenizerVersion: String(embedding.tokenizerVersion || '').trim(),
       build: {
         added: Number(build.added) || 0,
         updated: Number(build.updated) || 0,
@@ -171,6 +184,7 @@ function assertIngestionShape(ingestion) {
   const stats = ingestion.stats;
   const parser = ingestion.parser;
   const lengths = stats && stats.contentLength;
+  const tokenCounts = stats && stats.tokenCount;
   const registry = ingestion.profileRegistry;
   const fieldContract = ingestion.fieldContract;
   const chunkSchema = ingestion.chunkSchema;
@@ -183,9 +197,9 @@ function assertIngestionShape(ingestion) {
     !String(parser.markdown || '').trim() ||
     !String(ingestion.transformer || '').trim() ||
     !String(ingestion.chunking || '').trim() ||
-    !chunkSchema || chunkSchema.active !== 'structured-v1' ||
-    chunkSchema.next !== 'chunk-v2' ||
-    chunkSchema.nextSchema !== 'config/rag-chunk-v2.schema.json' ||
+    !String(ingestion.tokenizer || '').trim() ||
+    !chunkSchema || chunkSchema.active !== 'chunk-v2' ||
+    chunkSchema.schema !== 'config/rag-chunk-v2.schema.json' ||
     chunkSchema.rollbackMode !== 'legacy-v3' ||
     !/^[a-f0-9]{7,40}$/.test(String(chunkSchema.rollbackRevision || '')) ||
     chunkSchema.switch !== 'RAG_CHUNK_SCHEMA' ||
@@ -209,7 +223,9 @@ function assertIngestionShape(ingestion) {
     Array.isArray(stats.profileCounts) ||
     !stats.profileSourceCounts || typeof stats.profileSourceCounts !== 'object' ||
     Array.isArray(stats.profileSourceCounts) ||
-    !lengths
+    !stats.chunkTypeCounts || typeof stats.chunkTypeCounts !== 'object' ||
+    Array.isArray(stats.chunkTypeCounts) ||
+    !lengths || !tokenCounts
   ) {
     throw new Error('RAG corpus ingestion metadata is invalid');
   }
@@ -217,7 +233,7 @@ function assertIngestionShape(ingestion) {
   const integerFields = [
     'structuredPosts', 'structuredBlocks', 'chunksWithRetrievalText',
     'sourceLocatedChunks', 'metadataOnlyChunks', 'duplicateChunkContents',
-    'internalLinkEdges', 'resolvedInternalLinkEdges'
+    'internalLinkEdges', 'resolvedInternalLinkEdges', 'parentSections', 'overflowChunks'
   ];
   for (const field of integerFields) {
     if (!Number.isSafeInteger(stats[field]) || stats[field] < 0) {
@@ -227,6 +243,9 @@ function assertIngestionShape(ingestion) {
   for (const field of ['min', 'p50', 'p95', 'max']) {
     if (!Number.isSafeInteger(lengths[field]) || lengths[field] < 0) {
       throw new Error(`RAG corpus ingestion length statistic is invalid: ${field}`);
+    }
+    if (!Number.isSafeInteger(tokenCounts[field]) || tokenCounts[field] < 0) {
+      throw new Error(`RAG corpus ingestion token statistic is invalid: ${field}`);
     }
   }
   for (const [type, count] of Object.entries(stats.blockTypeCounts)) {
@@ -311,7 +330,14 @@ function assertManifestShape(manifest) {
       embedding.dimensions < 1 ||
       !Number.isSafeInteger(embedding.version) ||
       embedding.version < 1 ||
-      !String(embedding.provider || '').trim()
+      !String(embedding.provider || '').trim() ||
+      (manifest.ingestion && manifest.ingestion.chunkSchema?.active === 'chunk-v2' && (
+        !/^sha256:[a-f0-9]{64}$/.test(String(embedding.fingerprint || '')) ||
+        !String(embedding.normalization || '').trim() ||
+        !String(embedding.documentTemplateVersion || '').trim() ||
+        !String(embedding.queryTemplateVersion || '').trim() ||
+        !String(embedding.tokenizerVersion || '').trim()
+      ))
     ) {
       throw new Error('Invalid RAG embedding manifest metadata');
     }
@@ -320,6 +346,10 @@ function assertManifestShape(manifest) {
 
 function structuredChunkHash(chunk) {
   const fingerprint = {
+    chunkSchema: 'chunk-v2',
+    tokenizer: 'dashscope-compatible-estimate-v1',
+    retrievalTextVersion: 'retrieval-text-v2',
+    documentEmbeddingTemplateVersion: 'blog-document-v1',
     postTitle: String(chunk && chunk.postTitle || '').trim(),
     postUrl: String(chunk && chunk.postUrl || '').trim(),
     tags: (chunk && chunk.tags || []).map(value => String(value || '').trim()),
@@ -327,10 +357,13 @@ function structuredChunkHash(chunk) {
     sourcePath: String(chunk && chunk.sourcePath || '').trim(),
     profile: String(chunk && chunk.profile || '').trim(),
     profileSource: String(chunk && chunk.profileSource || '').trim(),
+    parentId: String(chunk && chunk.parentId || '').trim(),
     headingPath: (chunk && chunk.headingPath || []).map(value => String(value || '').trim()),
     sectionAnchor: String(chunk && chunk.sectionAnchor || '').trim(),
+    chunkType: String(chunk && chunk.chunkType || '').trim(),
     blockTypes: (chunk && chunk.blockTypes || []).map(value => String(value || '').trim()),
     sourceLines: chunk && chunk.sourceLines || null,
+    overflowReason: chunk && chunk.overflowReason || null,
     content: String(chunk && chunk.content || '')
       .replace(/\r\n/g, '\n')
       .replace(/\s+/g, ' ')
@@ -353,6 +386,9 @@ function validateStructuredIngestion(posts, chunks, ingestion) {
   let sourceLocatedChunks = 0;
   let metadataOnlyChunks = 0;
   const lengths = [];
+  const tokens = [];
+  const parentIds = new Set();
+  let overflowChunks = 0;
   const postsByUrl = new Map((posts || []).map(post => [
     normalizePostUrl(post && post.url),
     post
@@ -368,6 +404,11 @@ function validateStructuredIngestion(posts, chunks, ingestion) {
     const sourcePath = String(chunk && chunk.sourcePath || '').trim();
     const profile = String(chunk && chunk.profile || '').trim();
     const profileSource = String(chunk && chunk.profileSource || '').trim();
+    const parentId = String(chunk && chunk.parentId || '').trim();
+    const chunkType = String(chunk && chunk.chunkType || '').trim();
+    const tokenCount = Number(chunk && chunk.tokenCount);
+    const childOrdinal = Number(chunk && chunk.childOrdinal);
+    const overflowReason = String(chunk && chunk.overflowReason || '').trim();
     const post = postsByUrl.get(normalizePostUrl(chunk && chunk.postUrl));
     if (!retrievalText) {
       throw new Error(`RAG structured chunk is missing retrievalText: ${id}`);
@@ -381,6 +422,18 @@ function validateStructuredIngestion(posts, chunks, ingestion) {
     if (!/^section_(?:[a-f0-9]{16}|metadata)$/.test(anchor)) {
       throw new Error(`RAG structured chunk has an invalid section anchor: ${id}`);
     }
+    if (
+      !/^parent_[a-f0-9]{24}$/.test(parentId) || !chunkType ||
+      !Number.isSafeInteger(childOrdinal) || childOrdinal < 0 ||
+      !Number.isSafeInteger(tokenCount) || tokenCount < 1 ||
+      tokenCount !== estimateTokens(chunk && chunk.content) ||
+      String(chunk && chunk.tokenizerVersion || '') !== TOKENIZER_VERSION ||
+      (tokenCount > PROFILE_MAX_TOKENS[profile] && !overflowReason)
+    ) {
+      throw new Error(`RAG structured chunk has invalid parent/token metadata: ${id}`);
+    }
+    parentIds.add(parentId);
+    if (overflowReason) overflowChunks += 1;
     if (
       !sourcePath || !INGESTION_PROFILES.has(profile) ||
       !INGESTION_PROFILE_SOURCES.has(profileSource) ||
@@ -412,6 +465,7 @@ function validateStructuredIngestion(posts, chunks, ingestion) {
     const content = String(chunk.content || '');
     const normalized = content.replace(/\s+/g, ' ').trim();
     lengths.push(content.length);
+    tokens.push(tokenCount);
     contentCounts.set(normalized, (contentCounts.get(normalized) || 0) + 1);
   }
 
@@ -419,8 +473,9 @@ function validateStructuredIngestion(posts, chunks, ingestion) {
     .filter(count => count > 1)
     .reduce((total, count) => total + count - 1, 0);
   const sortedLengths = lengths.slice().sort((left, right) => left - right);
-  const percentile = ratio => sortedLengths.length
-    ? sortedLengths[Math.min(sortedLengths.length - 1, Math.ceil(sortedLengths.length * ratio) - 1)]
+  const sortedTokens = tokens.slice().sort((left, right) => left - right);
+  const percentile = (values, ratio) => values.length
+    ? values[Math.min(values.length - 1, Math.ceil(values.length * ratio) - 1)]
     : 0;
   const actual = {
     structuredPosts: (posts || []).length,
@@ -428,6 +483,8 @@ function validateStructuredIngestion(posts, chunks, ingestion) {
     sourceLocatedChunks,
     metadataOnlyChunks,
     duplicateChunkContents,
+    parentSections: parentIds.size,
+    overflowChunks,
     internalLinkEdges: (posts || []).reduce((count, post) => (
       count + (Array.isArray(post && post.internalLinks) ? post.internalLinks.length : 0)
     ), 0),
@@ -438,15 +495,21 @@ function validateStructuredIngestion(posts, chunks, ingestion) {
     ), 0),
     contentLength: {
       min: sortedLengths.length ? sortedLengths[0] : 0,
-      p50: percentile(0.5),
-      p95: percentile(0.95),
+      p50: percentile(sortedLengths, 0.5),
+      p95: percentile(sortedLengths, 0.95),
       max: sortedLengths.length ? sortedLengths[sortedLengths.length - 1] : 0
+    },
+    tokenCount: {
+      min: sortedTokens.length ? sortedTokens[0] : 0,
+      p50: percentile(sortedTokens, 0.5),
+      p95: percentile(sortedTokens, 0.95),
+      max: sortedTokens.length ? sortedTokens[sortedTokens.length - 1] : 0
     }
   };
   for (const field of [
     'structuredPosts', 'chunksWithRetrievalText', 'sourceLocatedChunks',
     'metadataOnlyChunks', 'duplicateChunkContents', 'internalLinkEdges',
-    'resolvedInternalLinkEdges'
+    'resolvedInternalLinkEdges', 'parentSections', 'overflowChunks'
   ]) {
     if (ingestion.stats[field] !== actual[field]) {
       throw new Error(`RAG corpus ingestion report does not match chunks: ${field}`);
@@ -462,15 +525,22 @@ function validateStructuredIngestion(posts, chunks, ingestion) {
   );
   const profileCounts = sortedCounts(countBy(posts || [], 'chunkProfile'));
   const profileSourceCounts = sortedCounts(countBy(posts || [], 'profileSource'));
+  const chunkTypeCounts = sortedCounts(countBy(chunks || [], 'chunkType'));
   if (JSON.stringify(ingestion.stats.profileCounts) !== JSON.stringify(profileCounts)) {
     throw new Error('RAG corpus ingestion report does not match posts: profileCounts');
   }
   if (JSON.stringify(ingestion.stats.profileSourceCounts) !== JSON.stringify(profileSourceCounts)) {
     throw new Error('RAG corpus ingestion report does not match posts: profileSourceCounts');
   }
+  if (JSON.stringify(ingestion.stats.chunkTypeCounts) !== JSON.stringify(chunkTypeCounts)) {
+    throw new Error('RAG corpus ingestion report does not match chunks: chunkTypeCounts');
+  }
   for (const field of ['min', 'p50', 'p95', 'max']) {
     if (ingestion.stats.contentLength[field] !== actual.contentLength[field]) {
       throw new Error(`RAG corpus ingestion report length does not match chunks: ${field}`);
+    }
+    if (ingestion.stats.tokenCount[field] !== actual.tokenCount[field]) {
+      throw new Error(`RAG corpus ingestion token count does not match chunks: ${field}`);
     }
   }
   return {
@@ -515,12 +585,19 @@ function validateVectorData(chunks, vectors, manifest) {
   for (const vector of vectors) {
     const id = String(vector && vector.id || '').trim();
     const contentHash = String(vector && vector.contentHash || '').trim();
+    const fingerprint = String(vector && vector.fingerprint || '').trim();
     const values = vector && vector.values;
     if (!id || vectorIds.has(id)) {
       throw new Error(`RAG vector index contains a missing or duplicate ID: ${id || '(missing id)'}`);
     }
     if (!/^sha256:[a-f0-9]{64}$/.test(contentHash)) {
       throw new Error(`RAG vector index contains an invalid content hash: ${id}`);
+    }
+    if (
+      manifest.embedding.fingerprint &&
+      fingerprint !== manifest.embedding.fingerprint
+    ) {
+      throw new Error(`RAG vector index fingerprint is stale or invalid: ${id}`);
     }
     if (
       !Array.isArray(values) ||

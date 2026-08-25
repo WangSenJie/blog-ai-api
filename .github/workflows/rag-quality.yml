@@ -25,3 +25,4 @@ jobs:
       - run: node blog-ai-api/evals/phase4-run.js --output blog-ai-api/evals/reports/phase4-after-phase6.json
       - run: node blog-ai-api/evals/phase5-run.js --output blog-ai-api/evals/reports/phase5-after-phase6.json
       - run: npm --prefix blog-ai-api run eval:phase6
+      - run: npm --prefix blog-ai-api run eval:phase7

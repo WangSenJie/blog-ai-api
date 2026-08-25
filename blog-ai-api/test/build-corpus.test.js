@@ -10,6 +10,7 @@ const {
   buildCorpus,
   buildIngestionReport,
   buildLearningGraph,
+  chunkStructuredSectionV2,
   extractCodeBlocks,
   parseFrontMatter,
   parseMarkdownDocument
@@ -225,7 +226,7 @@ slug: code-advanced
   assert.equal(graph.nodes.every(node => node.trackId === 'code-track'), true);
 });
 
-test('Phase 6 parses nested YAML and preserves Markdown structure without indexing code', t => {
+test('Phase 6 parses nested YAML and preserves Markdown structure before Chunk v2', t => {
   const metadata = parseFrontMatter(`
 title: "Structured: Markdown"
 date: 2026-08-25
@@ -288,6 +289,99 @@ Callout content remains visible.
   assert.match(document.sections[0].sectionAnchor, /^section_[a-f0-9]{16}$/);
 });
 
+test('Chunk v2 repeats table headers, keeps formula context, and splits code on lines', () => {
+  const header = '| Name | Purpose |';
+  const table = [
+    header,
+    `| first | ${'甲'.repeat(220)} |`,
+    `| second | ${'乙'.repeat(220)} |`,
+    `| third | ${'丙'.repeat(220)} |`
+  ].join('\n');
+  const tableChunks = chunkStructuredSectionV2({
+    blocks: [{
+      type: 'table',
+      content: table,
+      sourceLines: { start: 10, end: 14 }
+    }]
+  }, 'faq-reference');
+
+  assert.ok(tableChunks.length > 1);
+  assert.equal(tableChunks.every(chunk => chunk.content.startsWith(header)), true);
+  assert.equal(tableChunks.every(chunk => chunk.tokenCount <= 384), true);
+
+  const formulaChunks = chunkStructuredSectionV2({
+    blocks: [{
+      type: 'paragraph',
+      content: '下面给出期望的定义。',
+      sourceLines: { start: 20, end: 20 }
+    }, {
+      type: 'formula',
+      content: 'E[X] = \\sum_x xp(x)',
+      sourceLines: { start: 21, end: 23 }
+    }, {
+      type: 'paragraph',
+      content: '其中求和遍历随机变量的全部取值。',
+      sourceLines: { start: 24, end: 24 }
+    }]
+  }, 'math-note');
+  const formulaContext = formulaChunks.find(chunk => chunk.blockTypes.includes('formula'));
+
+  assert.equal(formulaContext.chunkType, 'formula-context');
+  assert.match(formulaContext.content, /下面给出期望的定义/);
+  assert.match(formulaContext.content, /E\[X\]/);
+  assert.match(formulaContext.content, /其中求和遍历/);
+
+  const code = Array.from({ length: 180 }, (_, index) => (
+    `const value_${index} = ${index};`
+  )).join('\n');
+  const codeChunks = chunkStructuredSectionV2({
+    blocks: [{
+      type: 'code',
+      content: code,
+      sourceLines: { start: 30, end: 209 }
+    }]
+  }, 'code-doc');
+
+  assert.ok(codeChunks.length > 1);
+  assert.equal(codeChunks.every(chunk => chunk.chunkType === 'code'), true);
+  assert.equal(codeChunks.every(chunk => chunk.tokenCount <= 512), true);
+  assert.equal(codeChunks.map(chunk => chunk.content).join('\n'), code);
+});
+
+test('Chunk v2 IDs for untouched sections survive an unrelated edit', t => {
+  const postsDirectory = makeTempDir(t);
+  const frontMatter = `
+title: Stable IDs
+date: 2026-08-25
+slug: stable-ids
+  `;
+  writePost(postsDirectory, 'stable.md', frontMatter, `# First
+
+The first section changes independently.
+
+# Second
+
+The second section must keep its ID.`);
+  const before = buildCorpus(postsDirectory);
+  const untouchedBefore = before.chunks.find(chunk => chunk.sectionTitle === 'Second');
+
+  writePost(postsDirectory, 'stable.md', frontMatter, `# First
+
+The first section now contains an unrelated edit.
+
+# Second
+
+The second section must keep its ID.`);
+  const after = buildCorpus(postsDirectory);
+  const untouchedAfter = after.chunks.find(chunk => chunk.sectionTitle === 'Second');
+
+  assert.ok(untouchedBefore);
+  assert.ok(untouchedAfter);
+  assert.equal(untouchedAfter.id, untouchedBefore.id);
+  assert.equal(untouchedAfter.parentId, untouchedBefore.parentId);
+  assert.equal(untouchedAfter.contentHash, untouchedBefore.contentHash);
+});
+
 test('Phase 6 exports retrievalText, source locations, ingestion diagnostics, and strict hashes', t => {
   const postsDirectory = makeTempDir(t);
   writePost(postsDirectory, 'structured.md', `
@@ -322,8 +416,16 @@ $$`);
   assert.doesNotMatch(chunk.content, /codeIsSeparate/);
   assert.match(chunk.retrievalText, /Structured RAG/);
   assert.match(chunk.retrievalText, /Retrieval section/);
-  assert.deepEqual(chunk.blockTypes, ['paragraph', 'formula']);
-  assert.deepEqual(chunk.sourceLines, { start: 12, end: 20 });
+  assert.deepEqual(chunk.blockTypes, ['paragraph']);
+  assert.deepEqual(chunk.sourceLines, { start: 12, end: 12 });
+  const formulaChunk = corpus.chunks.find(item => item.blockTypes.includes('formula'));
+  const codeChunk = corpus.chunks.find(item => item.blockTypes.includes('code'));
+  assert.equal(formulaChunk.parentId, chunk.parentId);
+  assert.equal(formulaChunk.chunkType, 'formula');
+  assert.equal(codeChunk.chunkType, 'code');
+  assert.match(chunk.parentId, /^parent_[a-f0-9]{24}$/);
+  assert.equal(Number.isSafeInteger(chunk.tokenCount), true);
+  assert.equal(chunk.tokenizerVersion, 'dashscope-compatible-estimate-v1');
   assert.match(chunk.sectionAnchor, /^section_[a-f0-9]{16}$/);
   assert.equal(ingestion.stats.chunksWithRetrievalText, corpus.chunks.length);
   assert.equal(ingestion.stats.sourceLocatedChunks, corpus.chunks.length);

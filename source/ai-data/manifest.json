@@ -1,38 +1,24 @@
 {
-  "schemaVersion": 3,
-  "corpusVersion": "9d8f42dbde8e53d9051b6c71a35c5d3a4387c2523a0ef02d173a3bc581a374b8",
+  "schemaVersion": 1,
+  "corpusVersion": "b7e5ef28def6c563467a804f486ef0bf8279e6517599693699b5a45c9da20cf6",
   "files": {
     "posts": {
       "sha256": "3951188bd19146671fcf1b080e3b90d3f62c813e7978af083d77107d2c3d9485",
       "count": 71
     },
     "chunks": {
-      "sha256": "1b4b2d2f19228f90fecb6c8776aeb82bd0e4516c45954cee0f7c7c81ba5236ff",
-      "count": 745
-    },
-    "vectors": {
-      "sha256": "eabd4ee97cb231676997ed8dc3723e7b07a98c1ce02ee932bbd008b50d5bbd50",
-      "count": 745
-    },
-    "codeBlocks": {
-      "sha256": "cc68526aaf26e2c7a79f96422b7ecd7a6bb38c85b7558614b7a4ab9df7934819",
-      "count": 395
-    },
-    "learningGraph": {
-      "sha256": "2bb34e90f278144f3f77f31948f63290a8f82f282ba0c12f472b76e970e13103",
-      "count": 1
+      "sha256": "497531e17f3994eadf3935631363076e556b378bd32675a9908e4a8c81003ef2",
+      "count": 1904
     }
   },
   "stats": {
     "sourcePosts": 108,
     "publishedPosts": 71,
     "indexedPosts": 71,
-    "indexedChunks": 745,
+    "indexedChunks": 1904,
     "skippedUnpublishedPosts": 32,
     "skippedPostsWithoutUrl": 5,
-    "skippedPostsWithoutIndexableContent": 0,
-    "codeBlocks": 395,
-    "learningTracks": 4
+    "skippedPostsWithoutIndexableContent": 0
   },
   "warnings": {
     "postsWithoutUrl": [
@@ -44,31 +30,18 @@
     ],
     "postsWithoutIndexableContent": []
   },
-  "embedding": {
-    "model": "local-semantic-hash-v1",
-    "dimensions": 384,
-    "version": 2,
-    "provider": "local",
-    "build": {
-      "added": 0,
-      "updated": 0,
-      "reused": 745,
-      "deleted": 0,
-      "failed": 0
-    }
-  },
   "ingestion": {
     "schemaVersion": 1,
     "parser": {
       "frontMatter": "js-yaml-json-schema-v1",
       "markdown": "markdown-it-token-v1"
     },
-    "transformer": "retrieval-text-v1",
-    "chunking": "section-character-v1",
+    "transformer": "retrieval-text-v2",
+    "chunking": "profile-parent-child-token-v2",
+    "tokenizer": "dashscope-compatible-estimate-v1",
     "chunkSchema": {
-      "active": "structured-v1",
-      "next": "chunk-v2",
-      "nextSchema": "config/rag-chunk-v2.schema.json",
+      "active": "chunk-v2",
+      "schema": "config/rag-chunk-v2.schema.json",
       "rollbackMode": "legacy-v3",
       "rollbackRevision": "7e6d67b",
       "switch": "RAG_CHUNK_SCHEMA"
@@ -88,7 +61,7 @@
         "role": "retrieval-only",
         "derived": true,
         "citeable": false,
-        "version": "retrieval-text-v1",
+        "version": "retrieval-text-v2",
         "source": "deterministic-title-metadata-structure-content"
       },
       "sectionAnchor": {
@@ -148,14 +121,35 @@
       },
       "internalLinkEdges": 20,
       "resolvedInternalLinkEdges": 20,
-      "chunksWithRetrievalText": 745,
-      "sourceLocatedChunks": 741,
+      "chunksWithRetrievalText": 1904,
+      "sourceLocatedChunks": 1900,
       "metadataOnlyChunks": 4,
-      "duplicateChunkContents": 2,
+      "duplicateChunkContents": 55,
+      "parentSections": 451,
+      "overflowChunks": 3,
+      "chunkTypeCounts": {
+        "code": 397,
+        "formula": 92,
+        "formula-context": 356,
+        "image": 10,
+        "list": 404,
+        "metadata": 4,
+        "proof": 15,
+        "quote": 99,
+        "table": 1,
+        "text": 521,
+        "theorem": 5
+      },
+      "tokenCount": {
+        "min": 1,
+        "p50": 67,
+        "p95": 433,
+        "max": 1211
+      },
       "contentLength": {
-        "min": 2,
-        "p50": 423,
-        "p95": 693,
+        "min": 1,
+        "p50": 101,
+        "p95": 651,
         "max": 2043
       }
     },

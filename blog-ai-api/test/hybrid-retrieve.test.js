@@ -90,7 +90,7 @@ test('incremental vector build reuses unchanged chunks and updates changed conte
   });
 });
 
-test('embedding input prefers retrievalText over citation content', () => {
+test('embedding input uses the versioned document template and citation content', () => {
   const chunk = makeChunk({
     content: '可以直接引用的原始正文',
     retrievalText: '标题和标签增强\n可以直接引用的原始正文'
@@ -98,7 +98,7 @@ test('embedding input prefers retrievalText over citation content', () => {
 
   assert.equal(
     embeddingInputForChunk(chunk),
-    '标题和标签增强\n可以直接引用的原始正文'
+    'Title: \nSection: \nType: text\n\n可以直接引用的原始正文'
   );
 });
 

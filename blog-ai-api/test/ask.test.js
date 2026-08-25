@@ -13,6 +13,13 @@ const MODEL_ENV_KEYS = [
   'LLM_API_KEY',
   'LLM_MODEL',
   'LLM_API_PATH',
+  'DASHSCOPE_API_KEY',
+  'DASHSCOPE_WORKSPACE_ID',
+  'DASHSCOPE_BASE_URL',
+  'EMBEDDING_PROVIDER',
+  'EMBEDDING_MODEL',
+  'EMBEDDING_DIMENSIONS',
+  'RAG_RETRIEVAL_MODE',
   'FEEDBACK_RECEIPT_SECRET',
   'FEEDBACK_REVIEW_CONTEXT_SECRET',
   'FEEDBACK_INCLUDE_REVIEW_CONTEXT',
@@ -74,7 +81,7 @@ test.after(() => {
   }
 });
 
-test('successful ask response includes trace metadata and retrieval timings', async () => {
+test('successful ask response includes trace metadata and safe embedding fallback', async () => {
   const req = {
     method: 'POST',
     headers: {
@@ -93,7 +100,7 @@ test('successful ask response includes trace metadata and retrieval timings', as
   assert.equal(res.getHeader('access-control-expose-headers'), 'X-Trace-Id');
   assert.equal(payload.meta.mode, 'site');
   assert.match(payload.meta.indexVersion, /^[a-f0-9]{64}$/);
-  assert.equal(payload.meta.retrieval.strategy, 'hybrid_rrf_rerank');
+  assert.equal(payload.meta.retrieval.strategy, 'bm25');
   assert.ok(payload.meta.retrieval.candidates > 0);
   assert.deepEqual(payload.meta.model, {
     attempted: false,
