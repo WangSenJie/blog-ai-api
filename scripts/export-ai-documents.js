@@ -2,10 +2,12 @@
 
 const fs = require('fs');
 const path = require('path');
+const { execFileSync } = require('child_process');
 
 const {
-  buildCorpus,
-  buildLearningGraph,
+    buildCorpus,
+    buildIngestionReport,
+    buildLearningGraph,
   extractCodeBlocks
 } = require('./build-ai-corpus');
 const {
@@ -25,9 +27,54 @@ const publishOutputDir = path.join(rootDir, 'source', 'ai-data');
 const retrievalCorePath = path.join(rootDir, 'blog-ai-api', 'lib', 'retrieval-core.js');
 const browserRetrievalPath = path.join(rootDir, 'source', 'js', 'blog-ai-retrieval.js');
 
+const chunkSchemaMode = String(process.env.RAG_CHUNK_SCHEMA || 'structured-v1').trim();
+if (!['structured-v1', 'legacy-v3'].includes(chunkSchemaMode)) {
+  throw new Error(`Unsupported RAG_CHUNK_SCHEMA mode: ${chunkSchemaMode}`);
+}
+if (chunkSchemaMode === 'legacy-v3') {
+  const revision = String(process.env.RAG_LEGACY_CORPUS_REVISION || '7e6d67b').trim();
+  if (!/^[a-f0-9]{7,40}$/.test(revision)) {
+    throw new Error(`Invalid RAG_LEGACY_CORPUS_REVISION: ${revision}`);
+  }
+  const artifactNames = [
+    'posts.json',
+    'chunks.json',
+    'manifest.json',
+    'vectors.json',
+    'code-blocks.json',
+    'learning-graph.json'
+  ];
+  fs.mkdirSync(dataOutputDir, { recursive: true });
+  fs.mkdirSync(publishOutputDir, { recursive: true });
+  for (const filename of artifactNames) {
+    const contents = execFileSync('git', [
+      'show',
+      `${revision}:data/${filename}`
+    ], {
+      cwd: rootDir,
+      encoding: null,
+      maxBuffer: 256 * 1024 * 1024
+    });
+    fs.writeFileSync(path.join(dataOutputDir, filename), contents);
+    fs.writeFileSync(path.join(publishOutputDir, filename), contents);
+  }
+  const browserRetrieval = execFileSync('git', [
+    'show',
+    `${revision}:source/js/blog-ai-retrieval.js`
+  ], {
+    cwd: rootDir,
+    encoding: null,
+    maxBuffer: 16 * 1024 * 1024
+  });
+  fs.writeFileSync(browserRetrievalPath, browserRetrieval);
+  console.warn(`Restored legacy v3 RAG corpus from Git revision ${revision}`);
+  process.exit(0);
+}
+
 const corpus = buildCorpus(postsDir);
 const codeBlocks = extractCodeBlocks(corpus.posts, corpus.chunks);
 const learningGraph = buildLearningGraph(corpus.posts);
+const ingestion = buildIngestionReport(corpus.posts, corpus.chunks, corpus.diagnostics);
 
 function serializePost(post) {
   return {
@@ -37,7 +84,11 @@ function serializePost(post) {
     description: post.description || '',
     tags: post.tags || [],
     categories: post.categories || [],
+    sourcePath: post.sourcePath || '',
     resourceLinks: post.resourceLinks || [],
+    internalLinks: post.internalLinks || [],
+    chunkProfile: post.chunkProfile || '',
+    profileSource: post.profileSource || '',
     slug: post.slug,
     url: post.url
   };
@@ -91,7 +142,8 @@ const manifest = buildManifest(publicPosts, corpus.chunks, corpus.diagnostics, {
   embedding: vectorBuild.embedding,
   vectorBuild: vectorBuild.build,
   codeBlocks,
-  learningGraph
+  learningGraph,
+  ingestion
 });
 validateCorpusData(
   publicPosts,
@@ -136,6 +188,11 @@ if (typeof hexo !== 'undefined' && hexo.extend && hexo.extend.filter) {
 
 console.log(`Exported ${corpus.posts.length} posts`);
 console.log(`Exported ${corpus.chunks.length} chunks`);
+console.log(
+  `Structured ingestion: blocks=${ingestion.stats.structuredBlocks} ` +
+  `locatedChunks=${ingestion.stats.sourceLocatedChunks} ` +
+  `duplicateContents=${ingestion.stats.duplicateChunkContents}`
+);
 console.log(`Data posts file: ${postsOutputPath}`);
 console.log(`Data chunks file: ${chunksOutputPath}`);
 console.log(`Data manifest file: ${manifestOutputPath}`);

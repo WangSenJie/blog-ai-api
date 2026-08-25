@@ -99,13 +99,13 @@ blog-ai-api/data/*.json                 (Vercel API 权威检索)
 
 正常请求只向 Vercel API 发送问题、模式和当前页面上下文，由服务端完成检索并返回引用。浏览器不再发送自行召回的候选内容；只有网络错误、请求超时、非 2xx 响应或无效响应时，才按需加载静态 `chunks.json` 并执行本地 BM25。服务端与浏览器降级路径共用 `blog-ai-api/lib/retrieval-core.js`；导出语料时，该核心会同步为浏览器脚本 `source/js/blog-ai-retrieval.js`。
 
-当前验收索引由 107 篇源文章生成：71 篇已发布文章进入公开语料并产生 964 个 chunk；32 篇未发布文章和 4 篇缺少公开 URL 的文章被跳过。PDF-only 页面会生成包含标题、描述和资源链接的元数据 chunk。
+当前阶段 6 验收索引由 108 篇源文章生成：71 篇已发布文章进入公开语料并产生 745 个结构化检索 chunk，395 个代码块保存在独立索引中；32 篇未发布文章和 5 篇缺少公开 URL 的文章被跳过。所有检索 chunk 都带有文章、小节、源码文件和行号；PDF-only 页面会生成包含标题、描述和资源链接的元数据 chunk。
 
-每条服务端引用遵循 `chunkId`、`title`、`url`、`section`、`snippet` 契约。响应中的 `meta.indexVersion` 对应 manifest 的语料版本；阶段 2 的稳定 chunk ID 由文章 URL、标题路径与结构位置生成，`contentHash` 用于识别内容变化和向量更新。
+每条服务端引用遵循 `chunkId`、`title`、`url`、`section`、`snippet` 契约。响应中的 `meta.indexVersion` 对应 manifest 的语料版本；稳定 chunk ID 由文章 URL、标题路径与结构位置生成，`contentHash` 用于识别内容、Profile、来源和检索增强字段的变化。`content` 是唯一引用原文，`retrievalText` 只用于 BM25 和向量召回，不能作为最终引用。
 
-`manifest.json` 分别记录 `posts.json`、`chunks.json` 和 `vectors.json` 的 SHA-256、记录数、语料版本与完整性统计。语料导出、同步和服务端加载会校验文件哈希及结构，包括 URL、chunk ID 唯一性、`contentHash`、vector 维度、孤立 chunk 和计数一致性；Hexo 构建还会确认每篇语料文章都有实际生成页面，防止格式合法但点击 404 的引用进入索引。
+`manifest.json` 记录 posts、chunks、vectors、代码块和学习图的 SHA-256、记录数、语料版本与结构化摄取统计。语料导出、同步和服务端加载会校验文件哈希及结构，包括 URL、chunk ID 唯一性、`contentHash`、Profile、源码位置、`retrievalText`、vector 维度、孤立 chunk 和计数一致性；Hexo 构建还会确认每篇语料文章都有实际生成页面，防止格式合法但点击 404 的引用进入索引。
 
-正常 API 路径中的 `search_blog` 和 `get_related_articles` 会执行 BM25 与 384 维本地向量的双路 Top 20 召回、RRF 融合和重排；浏览器故障降级继续使用轻量 BM25。阶段 2 独立评测中，语义题 Recall@5 从 `0.6000` 提升至 `0.9000`、MRR@20 从 `0.4035` 提升至 `0.5917`，精确题 Recall@5 与 MRR@20 均保持 `1.0000`。后续检索改动应先运行 `npm --prefix blog-ai-api run eval:hybrid` 再上线。
+正常 API 路径中的 `search_blog` 和 `get_related_articles` 会执行 BM25 与 384 维本地向量的双路 Top 20 召回、RRF 融合和重排；浏览器故障降级继续使用轻量 BM25。阶段 6 回归中，语义题 Recall@5 从 `0.7000` 提升至 `0.9000`、MRR@20 从 `0.5152` 提升至 `0.5958`，精确题 Recall@5 与 MRR@20 均保持 `1.0000`；综合 Hit@5 为 `0.9500`、MRR@20 为 `0.7979`。后续检索改动应先运行完整阶段 6 回归再上线。
 
 ### 阶段 4：可验证回答与质量闭环
 

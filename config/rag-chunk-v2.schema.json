@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wangsenjie.github.io/schemas/rag-chunk-v2.schema.json",
+  "title": "Blog RAG Chunk v2",
+  "type": "object",
+  "required": [
+    "id",
+    "contentHash",
+    "postId",
+    "postTitle",
+    "postUrl",
+    "sourcePath",
+    "profile",
+    "profileSource",
+    "parentId",
+    "headingPath",
+    "chunkType",
+    "childOrdinal",
+    "tokenCount",
+    "sourceLines",
+    "content",
+    "retrievalText"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^chunk_[a-f0-9]{24}$" },
+    "contentHash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "postId": { "type": "string", "minLength": 1 },
+    "postTitle": { "type": "string", "minLength": 1 },
+    "postUrl": { "type": "string", "minLength": 1 },
+    "sourcePath": { "type": "string", "minLength": 1 },
+    "profile": {
+      "enum": ["generic-article", "tutorial", "code-doc", "math-note", "faq-reference"]
+    },
+    "profileSource": {
+      "enum": ["front-matter", "document-rule", "path-rule", "migration-fallback"]
+    },
+    "parentId": { "type": "string", "minLength": 1 },
+    "headingPath": { "type": "array", "items": { "type": "string" } },
+    "chunkType": { "type": "string", "minLength": 1 },
+    "childOrdinal": { "type": "integer", "minimum": 0 },
+    "tokenCount": { "type": "integer", "minimum": 1 },
+    "sourceLines": {
+      "type": ["object", "null"],
+      "properties": {
+        "start": { "type": "integer", "minimum": 1 },
+        "end": { "type": "integer", "minimum": 1 }
+      },
+      "required": ["start", "end"],
+      "additionalProperties": false
+    },
+    "overflowReason": { "type": ["string", "null"] },
+    "content": { "type": "string", "minLength": 1 },
+    "retrievalText": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": true
+}

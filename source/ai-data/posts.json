@@ -11,9 +11,13 @@
       "数学",
       "抽象代数"
     ],
+    "sourcePath": "source/_posts/Basic Abstract Algebra/Basic Abstract Algebra Exercises Notes.md",
     "resourceLinks": [
       "https://www.cnblogs.com/sufewsj/p/18622102"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "basic-abstract-algebra-exercises-notes",
     "url": "https://wangsenjie.github.io/2026/03/25/basic-abstract-algebra-exercises-notes/"
   },
@@ -28,10 +32,14 @@
     "categories": [
       "Hexo 教程"
     ],
+    "sourcePath": "source/_posts/Hexo-指令.md",
     "resourceLinks": [
       "./有图的文章/figure1.png",
       "./有图的文章/讲义.pdf"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "hexo",
     "url": "https://wangsenjie.github.io/2025/09/05/hexo/"
   },
@@ -48,7 +56,11 @@
       "常微分方程",
       "初等积分法"
     ],
+    "sourcePath": "source/_posts/ODE/2.1分离变量法.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "math-note",
+    "profileSource": "path-rule",
     "slug": "2-1",
     "url": "https://wangsenjie.github.io/2025/09/03/2-1/"
   },
@@ -65,7 +77,11 @@
       "常微分方程",
       "初等积分法"
     ],
+    "sourcePath": "source/_posts/ODE/2.2变量替换法.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "math-note",
+    "profileSource": "path-rule",
     "slug": "2-2",
     "url": "https://wangsenjie.github.io/2025/09/03/2-2/"
   },
@@ -82,7 +98,11 @@
       "常微分方程",
       "初等积分法"
     ],
+    "sourcePath": "source/_posts/ODE/2.3积分因子法.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "math-note",
+    "profileSource": "path-rule",
     "slug": "2-3",
     "url": "https://wangsenjie.github.io/2025/09/03/2-3/"
   },
@@ -99,7 +119,11 @@
       "常微分方程",
       "初等积分法"
     ],
+    "sourcePath": "source/_posts/ODE/2.4参数法.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "math-note",
+    "profileSource": "path-rule",
     "slug": "2-4",
     "url": "https://wangsenjie.github.io/2025/09/03/2-4/"
   },
@@ -116,7 +140,11 @@
       "常微分方程",
       "定解问题与适定性"
     ],
+    "sourcePath": "source/_posts/ODE/3.1Picard存在唯一性定理.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "math-note",
+    "profileSource": "path-rule",
     "slug": "3-1picard",
     "url": "https://wangsenjie.github.io/2025/09/03/3-1picard/"
   },
@@ -133,7 +161,11 @@
       "常微分方程",
       "定解问题与适定性"
     ],
+    "sourcePath": "source/_posts/ODE/3.2不动点定理与解的存在性.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "math-note",
+    "profileSource": "path-rule",
     "slug": "3-2",
     "url": "https://wangsenjie.github.io/2025/09/03/3-2/"
   },
@@ -150,7 +182,11 @@
       "常微分方程",
       "定解问题与适定性"
     ],
+    "sourcePath": "source/_posts/ODE/3.3解的延拓.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "math-note",
+    "profileSource": "path-rule",
     "slug": "3-3",
     "url": "https://wangsenjie.github.io/2025/09/03/3-3/"
   },
@@ -167,7 +203,11 @@
       "常微分方程",
       "定解问题与适定性"
     ],
+    "sourcePath": "source/_posts/ODE/3.4 解对初值与参数的连续性与可微性.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "math-note",
+    "profileSource": "path-rule",
     "slug": "3-4",
     "url": "https://wangsenjie.github.io/2025/09/03/3-4/"
   },
@@ -184,7 +224,11 @@
       "常微分方程",
       "高阶微分方程"
     ],
+    "sourcePath": "source/_posts/ODE/4.2 高阶线性微分方程的一般理论.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "math-note",
+    "profileSource": "path-rule",
     "slug": "4-2",
     "url": "https://wangsenjie.github.io/2025/09/03/4-2/"
   },
@@ -192,12 +236,16 @@
     "id": "常系数齐次线性方程的待定指数函数法",
     "title": "常系数齐次线性方程的待定指数函数法",
     "date": "2025-09-03",
-    "description": "常系数齐次线性方程的待定指数函数法题解",
+    "description": "常系数齐次线性方程的待定指数函数法题解 - 数学 - 常微分方程 - 高阶微分方程",
     "tags": [
       "常微分方程"
     ],
     "categories": [],
+    "sourcePath": "source/_posts/ODE/4.3 常系数齐次线性方程的待定指数函数法.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "math-note",
+    "profileSource": "path-rule",
     "slug": "4-3",
     "url": "https://wangsenjie.github.io/2025/09/03/4-3/"
   },
@@ -214,7 +262,11 @@
       "常微分方程",
       "高阶微分方程"
     ],
+    "sourcePath": "source/_posts/ODE/4.4 常系数非齐次线性方程的待定系数法.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "math-note",
+    "profileSource": "path-rule",
     "slug": "4-4",
     "url": "https://wangsenjie.github.io/2025/09/03/4-4/"
   },
@@ -231,7 +283,11 @@
       "常微分方程",
       "一阶线性微分方程组"
     ],
+    "sourcePath": "source/_posts/ODE/5.1 一阶线性微分方程组.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "math-note",
+    "profileSource": "path-rule",
     "slug": "5-1",
     "url": "https://wangsenjie.github.io/2025/09/03/5-1/"
   },
@@ -248,7 +304,11 @@
       "常微分方程",
       "一阶线性微分方程组"
     ],
+    "sourcePath": "source/_posts/ODE/5.2 一阶常系数线性微分方程组.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "math-note",
+    "profileSource": "path-rule",
     "slug": "5-2",
     "url": "https://wangsenjie.github.io/2025/09/03/5-2/"
   },
@@ -266,7 +326,11 @@
       "Python 数据分析",
       "Pandas"
     ],
+    "sourcePath": "source/_posts/Python 数据分析/Pandas数据分析题解汇总.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "pandas",
     "url": "https://wangsenjie.github.io/2025/09/05/pandas/"
   },
@@ -282,7 +346,11 @@
     "categories": [
       "前端"
     ],
+    "sourcePath": "source/_posts/frontend/Vue.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "vue",
     "url": "https://wangsenjie.github.io/2026/05/11/vue/"
   },
@@ -299,7 +367,11 @@
     "categories": [
       "前端"
     ],
+    "sourcePath": "source/_posts/frontend/frontend-basic.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "frontend-basic",
     "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/"
   },
@@ -313,7 +385,11 @@
       "从零开始——AI应用开发",
       "LangChain"
     ],
+    "sourcePath": "source/_posts/从零开始——AI应用开发/LangChain/human-in-the-loop.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "human-in-the-loop",
     "url": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/"
   },
@@ -327,7 +403,11 @@
       "从零开始——AI应用开发",
       "LangChain"
     ],
+    "sourcePath": "source/_posts/从零开始——AI应用开发/LangChain/langchain-basic.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "langchain-basic",
     "url": "https://wangsenjie.github.io/2026/07/03/langchain-basic/"
   },
@@ -341,9 +421,13 @@
       "从零开始——AI应用开发",
       "LangChain"
     ],
+    "sourcePath": "source/_posts/从零开始——AI应用开发/LangChain/langgraph-foundations.md",
     "resourceLinks": [
       "/Users/wangsenjie/Sites/blog/source/_posts/从零开始——AI应用开发/LangChain/langgraph-foundations/Agent.png"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "langgraph-foundations",
     "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/"
   },
@@ -357,9 +441,24 @@
       "从零开始——AI应用开发",
       "LangChain"
     ],
+    "sourcePath": "source/_posts/从零开始——AI应用开发/LangChain/state-and-short-term-memory.md",
     "resourceLinks": [
       "langgraph-foundations.md"
     ],
+    "internalLinks": [
+      {
+        "sourcePostId": "状态与短期记忆",
+        "sourceUrl": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
+        "targetPostId": "LangGraph 基础",
+        "targetUrl": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
+        "targetSourcePath": "source/_posts/从零开始——AI应用开发/LangChain/langgraph-foundations.md",
+        "label": "LangGraph Foundations",
+        "anchor": "",
+        "resolved": true
+      }
+    ],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "state-and-short-term-memory",
     "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/"
   },
@@ -373,7 +472,11 @@
       "从零开始——AI应用开发",
       "报告生成Agent"
     ],
+    "sourcePath": "source/_posts/从零开始——AI应用开发/报告生成Agent/报告生成Agent—环境配置.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "agent-2",
     "url": "https://wangsenjie.github.io/2026/05/17/agent-2/"
   },
@@ -389,7 +492,11 @@
     "categories": [
       "推荐算法"
     ],
+    "sourcePath": "source/_posts/推荐算法/ALS.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "als",
     "url": "https://wangsenjie.github.io/2026/03/30/als/"
   },
@@ -405,7 +512,11 @@
     "categories": [
       "推荐算法"
     ],
+    "sourcePath": "source/_posts/推荐算法/BPR.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "bpr",
     "url": "https://wangsenjie.github.io/2026/03/30/bpr/"
   },
@@ -420,7 +531,11 @@
     "categories": [
       "推荐算法"
     ],
+    "sourcePath": "source/_posts/推荐算法/ItemCF.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "itemcf",
     "url": "https://wangsenjie.github.io/2026/03/29/itemcf/"
   },
@@ -436,7 +551,11 @@
     "categories": [
       "推荐算法"
     ],
+    "sourcePath": "source/_posts/推荐算法/LightFM.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "lightfm",
     "url": "https://wangsenjie.github.io/2026/03/30/lightfm/"
   },
@@ -452,7 +571,11 @@
     "categories": [
       "推荐算法"
     ],
+    "sourcePath": "source/_posts/推荐算法/SVD.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "svd",
     "url": "https://wangsenjie.github.io/2026/03/30/svd/"
   },
@@ -467,7 +590,11 @@
     "categories": [
       "推荐算法"
     ],
+    "sourcePath": "source/_posts/推荐算法/UserCF.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "usercf",
     "url": "https://wangsenjie.github.io/2026/03/29/usercf/"
   },
@@ -482,6 +609,7 @@
     "categories": [
       "推荐算法"
     ],
+    "sourcePath": "source/_posts/推荐算法/deep-retrieval.md",
     "resourceLinks": [
       "deep-retrieval/index.jpeg",
       "deep-retrieval/estimate.jpeg",
@@ -490,6 +618,9 @@
       "deep-retrieval/beam-search-3.jpeg",
       "deep-retrieval/training.png"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "deep-retrieval",
     "url": "https://wangsenjie.github.io/2026/04/01/deep-retrieval/"
   },
@@ -504,6 +635,7 @@
     "categories": [
       "推荐算法"
     ],
+    "sourcePath": "source/_posts/推荐算法/双塔模型.md",
     "resourceLinks": [
       "双塔模型/双塔模型.jpeg",
       "双塔模型/双塔模型-用户塔.jpeg",
@@ -516,6 +648,9 @@
       "双塔模型/双塔模型-自监督学习01.jpeg",
       "双塔模型/双塔模型-自监督学习02.jpeg"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "post-20260331-2061fb",
     "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/"
   },
@@ -530,9 +665,13 @@
     "categories": [
       "推荐算法"
     ],
+    "sourcePath": "source/_posts/推荐算法/地理位置召回作者召回.md",
     "resourceLinks": [
       "地理位置召回作者召回/GeoHash.jpeg"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "post-20260402-1243e1",
     "url": "https://wangsenjie.github.io/2026/04/02/post-20260402-1243e1/"
   },
@@ -547,7 +686,11 @@
     "categories": [
       "推荐算法"
     ],
+    "sourcePath": "source/_posts/推荐算法/曝光过滤.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "post-20260402-71bd59",
     "url": "https://wangsenjie.github.io/2026/04/02/post-20260402-71bd59/"
   },
@@ -562,7 +705,11 @@
     "categories": [
       "推荐算法"
     ],
+    "sourcePath": "source/_posts/推荐算法/离散特征的处理——Embedding.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "embedding",
     "url": "https://wangsenjie.github.io/2026/03/30/embedding/"
   },
@@ -579,7 +726,11 @@
       "数学分析",
       "习题集"
     ],
+    "sourcePath": "source/_posts/数学分析/习题集/1.数列极限与函数极限.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "1",
     "url": "https://wangsenjie.github.io/2025/09/07/1/"
   },
@@ -596,7 +747,11 @@
       "数学分析",
       "习题集"
     ],
+    "sourcePath": "source/_posts/数学分析/习题集/2.函数的连续性.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "2",
     "url": "https://wangsenjie.github.io/2025/09/07/2/"
   },
@@ -613,7 +768,11 @@
       "数学分析",
       "习题集"
     ],
+    "sourcePath": "source/_posts/数学分析/习题集/3.实数完备性.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "3",
     "url": "https://wangsenjie.github.io/2025/09/07/3/"
   },
@@ -630,7 +789,11 @@
       "数学分析",
       "习题集"
     ],
+    "sourcePath": "source/_posts/数学分析/习题集/4.一元微分学.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "4",
     "url": "https://wangsenjie.github.io/2025/09/07/4/"
   },
@@ -647,10 +810,14 @@
       "数学分析",
       "习题集"
     ],
+    "sourcePath": "source/_posts/数学分析/习题集/5.一元积分学.md",
     "resourceLinks": [
       "i=$ $1,2,\\cdots,n",
       "image.png"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "5",
     "url": "https://wangsenjie.github.io/2025/09/07/5/"
   },
@@ -667,7 +834,11 @@
       "数学分析",
       "习题集"
     ],
+    "sourcePath": "source/_posts/数学分析/习题集/6.数项级数.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "6",
     "url": "https://wangsenjie.github.io/2025/09/07/6/"
   },
@@ -684,7 +855,11 @@
       "数学分析",
       "习题集"
     ],
+    "sourcePath": "source/_posts/数学分析/习题集/7.函数项级数.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "7",
     "url": "https://wangsenjie.github.io/2025/09/07/7/"
   },
@@ -701,7 +876,11 @@
       "机器学习与深度学习",
       "集成学习"
     ],
+    "sourcePath": "source/_posts/机器学习与深度学习/AdaBoost.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "adaboost",
     "url": "https://wangsenjie.github.io/2025/10/02/adaboost/"
   },
@@ -717,10 +896,14 @@
       "机器学习与深度学习",
       "卷积神经网络"
     ],
+    "sourcePath": "source/_posts/机器学习与深度学习/AlexNet.md",
     "resourceLinks": [
       "https://zh-v2.d2l.ai/_images/alexnet.svg",
       "AlexNet/ReLU.png"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "alexnet",
     "url": "https://wangsenjie.github.io/2026/04/28/alexnet/"
   },
@@ -737,7 +920,11 @@
       "机器学习与深度学习",
       "集成学习"
     ],
+    "sourcePath": "source/_posts/机器学习与深度学习/GBDT.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "gbdt",
     "url": "https://wangsenjie.github.io/2025/10/15/gbdt/"
   },
@@ -754,9 +941,13 @@
       "机器学习与深度学习",
       "循环神经网络"
     ],
+    "sourcePath": "source/_posts/机器学习与深度学习/LSTM.md",
     "resourceLinks": [
       "LSTM/LSTM结构.png"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "lstm",
     "url": "https://wangsenjie.github.io/2026/05/04/lstm/"
   },
@@ -772,9 +963,13 @@
       "机器学习与深度学习",
       "线性机器学习模型"
     ],
+    "sourcePath": "source/_posts/机器学习与深度学习/Logistic Regression.md",
     "resourceLinks": [
       "Logistic回归.pdf"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "logistic-regression",
     "url": "https://wangsenjie.github.io/2026/04/30/logistic-regression/"
   },
@@ -790,9 +985,13 @@
       "机器学习与深度学习",
       "线性机器学习模型"
     ],
+    "sourcePath": "source/_posts/机器学习与深度学习/MLP.md",
     "resourceLinks": [
       "MLP.pdf"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "mlp",
     "url": "https://wangsenjie.github.io/2026/04/30/mlp/"
   },
@@ -808,12 +1007,16 @@
       "机器学习与深度学习",
       "卷积神经网络"
     ],
+    "sourcePath": "source/_posts/机器学习与深度学习/ResNet.md",
     "resourceLinks": [
       "ResNet/FNN.png",
       "ResNet/残差集成.png",
       "ResNet/ResCNN1.png",
       "ResNet/ResNet.png"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "resnet",
     "url": "https://wangsenjie.github.io/2026/04/29/resnet/"
   },
@@ -829,10 +1032,14 @@
       "机器学习与深度学习",
       "注意力机制"
     ],
+    "sourcePath": "source/_posts/机器学习与深度学习/Transformer架构.md",
     "resourceLinks": [
       "Transformer架构/Transformer结构.png",
       "Transformer架构/Norm.png"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "transformer-architecture",
     "url": "https://wangsenjie.github.io/2025/10/16/transformer-architecture/"
   },
@@ -848,11 +1055,15 @@
       "机器学习与深度学习",
       "卷积神经网络"
     ],
+    "sourcePath": "source/_posts/机器学习与深度学习/卷积神经网络.md",
     "resourceLinks": [
       "卷积神经网络/CNN_NOTE_01.png",
       "卷积神经网络/CNN_NOTE_02.png",
       "卷积神经网络/CNN_NOTE_03.png"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "cnn",
     "url": "https://wangsenjie.github.io/2026/04/27/cnn/"
   },
@@ -868,10 +1079,14 @@
       "机器学习与深度学习",
       "循环神经网络"
     ],
+    "sourcePath": "source/_posts/机器学习与深度学习/循环神经网络.md",
     "resourceLinks": [
       "循环神经网络/S-RNN.png",
       "循环神经网络/S-RNN计算图.png"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "post-20260430-1a596f",
     "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/"
   },
@@ -887,9 +1102,13 @@
       "机器学习与深度学习",
       "线性机器学习模型"
     ],
+    "sourcePath": "source/_posts/机器学习与深度学习/支持向量机.md",
     "resourceLinks": [
       "支持向量机.pdf"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "post-20260430-13327d",
     "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-13327d/"
   },
@@ -905,7 +1124,11 @@
       "数学",
       "概率论"
     ],
+    "sourcePath": "source/_posts/概率论/概率论.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "math-note",
+    "profileSource": "path-rule",
     "slug": "post-20260723-bae228",
     "url": "https://wangsenjie.github.io/2026/07/23/post-20260723-bae228/"
   },
@@ -921,6 +1144,7 @@
       "数学",
       "概率论"
     ],
+    "sourcePath": "source/_posts/概率论/概率论（第一至四章）.md",
     "resourceLinks": [
       "#概率论习题集",
       "#目录",
@@ -929,6 +1153,70 @@
       "#第三章-随机变量与分布函数",
       "#第四章-数字特征与特征函数"
     ],
+    "internalLinks": [
+      {
+        "sourcePostId": "概率论——习题集",
+        "sourceUrl": "https://wangsenjie.github.io/2026/07/23/post-20260723-0a3780/",
+        "targetPostId": "概率论——习题集",
+        "targetUrl": "https://wangsenjie.github.io/2026/07/23/post-20260723-0a3780/",
+        "targetSourcePath": "source/_posts/概率论/概率论（第一至四章）.md",
+        "label": "概率论习题集",
+        "anchor": "概率论习题集",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "概率论——习题集",
+        "sourceUrl": "https://wangsenjie.github.io/2026/07/23/post-20260723-0a3780/",
+        "targetPostId": "概率论——习题集",
+        "targetUrl": "https://wangsenjie.github.io/2026/07/23/post-20260723-0a3780/",
+        "targetSourcePath": "source/_posts/概率论/概率论（第一至四章）.md",
+        "label": "目录",
+        "anchor": "目录",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "概率论——习题集",
+        "sourceUrl": "https://wangsenjie.github.io/2026/07/23/post-20260723-0a3780/",
+        "targetPostId": "概率论——习题集",
+        "targetUrl": "https://wangsenjie.github.io/2026/07/23/post-20260723-0a3780/",
+        "targetSourcePath": "source/_posts/概率论/概率论（第一至四章）.md",
+        "label": "第一章 事件与概率",
+        "anchor": "第一章-事件与概率",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "概率论——习题集",
+        "sourceUrl": "https://wangsenjie.github.io/2026/07/23/post-20260723-0a3780/",
+        "targetPostId": "概率论——习题集",
+        "targetUrl": "https://wangsenjie.github.io/2026/07/23/post-20260723-0a3780/",
+        "targetSourcePath": "source/_posts/概率论/概率论（第一至四章）.md",
+        "label": "第二章 条件概率与统计独立性",
+        "anchor": "第二章-条件概率与统计独立性",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "概率论——习题集",
+        "sourceUrl": "https://wangsenjie.github.io/2026/07/23/post-20260723-0a3780/",
+        "targetPostId": "概率论——习题集",
+        "targetUrl": "https://wangsenjie.github.io/2026/07/23/post-20260723-0a3780/",
+        "targetSourcePath": "source/_posts/概率论/概率论（第一至四章）.md",
+        "label": "第三章 随机变量与分布函数",
+        "anchor": "第三章-随机变量与分布函数",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "概率论——习题集",
+        "sourceUrl": "https://wangsenjie.github.io/2026/07/23/post-20260723-0a3780/",
+        "targetPostId": "概率论——习题集",
+        "targetUrl": "https://wangsenjie.github.io/2026/07/23/post-20260723-0a3780/",
+        "targetSourcePath": "source/_posts/概率论/概率论（第一至四章）.md",
+        "label": "第四章 数字特征与特征函数",
+        "anchor": "第四章-数字特征与特征函数",
+        "resolved": true
+      }
+    ],
+    "chunkProfile": "math-note",
+    "profileSource": "path-rule",
     "slug": "post-20260723-0a3780",
     "url": "https://wangsenjie.github.io/2026/07/23/post-20260723-0a3780/"
   },
@@ -944,7 +1232,11 @@
       "数学",
       "测度论"
     ],
+    "sourcePath": "source/_posts/测度论/Carathéodory扩张.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "caratheodory",
     "url": "https://wangsenjie.github.io/2025/09/02/caratheodory/"
   },
@@ -960,7 +1252,11 @@
       "数学",
       "测度论"
     ],
+    "sourcePath": "source/_posts/测度论/单调收敛定理.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "post-20250902-2e2bd7",
     "url": "https://wangsenjie.github.io/2025/09/02/post-20250902-2e2bd7/"
   },
@@ -976,7 +1272,11 @@
       "数学",
       "测度论"
     ],
+    "sourcePath": "source/_posts/测度论/完备的测度空间.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "omega-mathscr-m-mu-ast",
     "url": "https://wangsenjie.github.io/2025/09/09/omega-mathscr-m-mu-ast/"
   },
@@ -991,7 +1291,11 @@
     "categories": [
       "算法题"
     ],
+    "sourcePath": "source/_posts/算法题/hash.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "hash",
     "url": "https://wangsenjie.github.io/2026/04/17/hash/"
   },
@@ -1006,6 +1310,7 @@
     "categories": [
       "算法题"
     ],
+    "sourcePath": "source/_posts/算法题/leetcode hot 100.md",
     "resourceLinks": [
       "/2026/04/17/hash/",
       "/2026/04/17/leetcode-hot100-2/",
@@ -1021,6 +1326,140 @@
       "/2026/04/22/post-20260422-47fa06/",
       "/2026/04/21/leetcode-hot100-4/"
     ],
+    "internalLinks": [
+      {
+        "sourcePostId": "LeetCode Hot100 题解",
+        "sourceUrl": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/",
+        "targetPostId": "LeetCode Hot100 —— Hash",
+        "targetUrl": "https://wangsenjie.github.io/2026/04/17/hash/",
+        "targetSourcePath": "source/_posts/算法题/hash.md",
+        "label": "哈希",
+        "anchor": "",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "LeetCode Hot100 题解",
+        "sourceUrl": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/",
+        "targetPostId": "LeetCode Hot100 —— 双指针",
+        "targetUrl": "https://wangsenjie.github.io/2026/04/17/leetcode-hot100-2/",
+        "targetSourcePath": "source/_posts/算法题/双指针.md",
+        "label": "双指针",
+        "anchor": "",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "LeetCode Hot100 题解",
+        "sourceUrl": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/",
+        "targetPostId": "LeetCode Hot100 —— 滑动窗口",
+        "targetUrl": "https://wangsenjie.github.io/2026/04/17/leetcode-hot100-7/",
+        "targetSourcePath": "source/_posts/算法题/滑动窗口.md",
+        "label": "滑动窗口",
+        "anchor": "",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "LeetCode Hot100 题解",
+        "sourceUrl": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/",
+        "targetPostId": "LeetCode Hot100 —— 子串",
+        "targetUrl": "https://wangsenjie.github.io/2026/04/17/leetcode-hot100-5/",
+        "targetSourcePath": "source/_posts/算法题/子串.md",
+        "label": "子串",
+        "anchor": "",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "LeetCode Hot100 题解",
+        "sourceUrl": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/",
+        "targetPostId": "LeetCode Hot100 —— 普通数组",
+        "targetUrl": "https://wangsenjie.github.io/2026/04/17/leetcode-hot100-6/",
+        "targetSourcePath": "source/_posts/算法题/普通数组.md",
+        "label": "普通数组",
+        "anchor": "",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "LeetCode Hot100 题解",
+        "sourceUrl": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/",
+        "targetPostId": "LeetCode Hot100 —— 矩阵",
+        "targetUrl": "https://wangsenjie.github.io/2026/04/18/leetcode-hot100-8/",
+        "targetSourcePath": "source/_posts/算法题/矩阵.md",
+        "label": "矩阵",
+        "anchor": "",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "LeetCode Hot100 题解",
+        "sourceUrl": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/",
+        "targetPostId": "LeetCode Hot100 —— 链表",
+        "targetUrl": "https://wangsenjie.github.io/2026/03/23/leetcode-hot100-9/",
+        "targetSourcePath": "source/_posts/算法题/链表.md",
+        "label": "链表",
+        "anchor": "",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "LeetCode Hot100 题解",
+        "sourceUrl": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/",
+        "targetPostId": "LeetCode Hot100 —— 二叉树",
+        "targetUrl": "https://wangsenjie.github.io/2026/04/20/leetcode-hot100/",
+        "targetSourcePath": "source/_posts/算法题/二叉树.md",
+        "label": "二叉树",
+        "anchor": "",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "LeetCode Hot100 题解",
+        "sourceUrl": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/",
+        "targetPostId": "LeetCode Hot100 —— 图论",
+        "targetUrl": "https://wangsenjie.github.io/2026/04/20/leetcode-hot100-3/",
+        "targetSourcePath": "source/_posts/算法题/图论.md",
+        "label": "图论",
+        "anchor": "",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "LeetCode Hot100 题解",
+        "sourceUrl": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/",
+        "targetPostId": "LeetCode Hot100 —— 回溯",
+        "targetUrl": "https://wangsenjie.github.io/2026/03/28/leetcode-hot100-11/",
+        "targetSourcePath": "source/_posts/算法题/回溯.md",
+        "label": "回溯",
+        "anchor": "",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "LeetCode Hot100 题解",
+        "sourceUrl": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/",
+        "targetPostId": "LeetCode Hot100 —— 堆",
+        "targetUrl": "https://wangsenjie.github.io/2026/04/21/leetcode-hot100-10/",
+        "targetSourcePath": "source/_posts/算法题/堆.md",
+        "label": "堆",
+        "anchor": "",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "LeetCode Hot100 题解",
+        "sourceUrl": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/",
+        "targetPostId": "LeetCode Hot100 —— 动态规划",
+        "targetUrl": "https://wangsenjie.github.io/2026/04/22/post-20260422-47fa06/",
+        "targetSourcePath": "source/_posts/算法题/动态规划.md",
+        "label": "动态规划",
+        "anchor": "",
+        "resolved": true
+      },
+      {
+        "sourcePostId": "LeetCode Hot100 题解",
+        "sourceUrl": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/",
+        "targetPostId": "LeetCode Hot100 —— 二分查找",
+        "targetUrl": "https://wangsenjie.github.io/2026/04/21/leetcode-hot100-4/",
+        "targetSourcePath": "source/_posts/算法题/二分查找.md",
+        "label": "二分查找",
+        "anchor": "",
+        "resolved": true
+      }
+    ],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "leetcode-hot-100",
     "url": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/"
   },
@@ -1035,7 +1474,11 @@
     "categories": [
       "算法题"
     ],
+    "sourcePath": "source/_posts/算法题/二分查找.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "leetcode-hot100-4",
     "url": "https://wangsenjie.github.io/2026/04/21/leetcode-hot100-4/"
   },
@@ -1050,6 +1493,7 @@
     "categories": [
       "算法题"
     ],
+    "sourcePath": "source/_posts/算法题/二叉树.md",
     "resourceLinks": [
       "二叉树/invert1-tree.jpg",
       "二叉树/symmetric.png",
@@ -1064,6 +1508,9 @@
       "https://assets.leetcode.com/uploads/2018/12/14/binarytree.png",
       "https://assets.leetcode.com/uploads/2020/10/13/exx1.jpg"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "leetcode-hot100",
     "url": "https://wangsenjie.github.io/2026/04/20/leetcode-hot100/"
   },
@@ -1078,9 +1525,13 @@
     "categories": [
       "算法题"
     ],
+    "sourcePath": "source/_posts/算法题/动态规划.md",
     "resourceLinks": [
       "https://pic.leetcode.cn/1626927345-DZmfxB-PascalTriangleAnimated2.gif"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "post-20260422-47fa06",
     "url": "https://wangsenjie.github.io/2026/04/22/post-20260422-47fa06/"
   },
@@ -1095,10 +1546,14 @@
     "categories": [
       "算法题"
     ],
+    "sourcePath": "source/_posts/算法题/双指针.md",
     "resourceLinks": [
       "双指针/question_11.jpg",
       "双指针/rainwatertrap.png"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "leetcode-hot100-2",
     "url": "https://wangsenjie.github.io/2026/04/17/leetcode-hot100-2/"
   },
@@ -1113,10 +1568,14 @@
     "categories": [
       "算法题"
     ],
+    "sourcePath": "source/_posts/算法题/回溯.md",
     "resourceLinks": [
       "https://pic.leetcode.cn/1752723054-mfIHZs-image.png",
       "https://assets.leetcode.com/uploads/2020/11/04/word2.jpg"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "leetcode-hot100-11",
     "url": "https://wangsenjie.github.io/2026/03/28/leetcode-hot100-11/"
   },
@@ -1131,9 +1590,13 @@
     "categories": [
       "算法题"
     ],
+    "sourcePath": "source/_posts/算法题/图论.md",
     "resourceLinks": [
       "https://assets.leetcode.cn/aliyun-lc-upload/uploads/2019/02/16/oranges.png"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "leetcode-hot100-3",
     "url": "https://wangsenjie.github.io/2026/04/20/leetcode-hot100-3/"
   },
@@ -1148,7 +1611,11 @@
     "categories": [
       "算法题"
     ],
+    "sourcePath": "source/_posts/算法题/堆.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "leetcode-hot100-10",
     "url": "https://wangsenjie.github.io/2026/04/21/leetcode-hot100-10/"
   },
@@ -1163,7 +1630,11 @@
     "categories": [
       "算法题"
     ],
+    "sourcePath": "source/_posts/算法题/子串.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "leetcode-hot100-5",
     "url": "https://wangsenjie.github.io/2026/04/17/leetcode-hot100-5/"
   },
@@ -1178,7 +1649,11 @@
     "categories": [
       "算法题"
     ],
+    "sourcePath": "source/_posts/算法题/普通数组.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "leetcode-hot100-6",
     "url": "https://wangsenjie.github.io/2026/04/17/leetcode-hot100-6/"
   },
@@ -1193,7 +1668,11 @@
     "categories": [
       "算法题"
     ],
+    "sourcePath": "source/_posts/算法题/滑动窗口.md",
     "resourceLinks": [],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "leetcode-hot100-7",
     "url": "https://wangsenjie.github.io/2026/04/17/leetcode-hot100-7/"
   },
@@ -1208,12 +1687,16 @@
     "categories": [
       "算法题"
     ],
+    "sourcePath": "source/_posts/算法题/矩阵.md",
     "resourceLinks": [
       "矩阵/mat1.jpg",
       "矩阵/spiral1.jpg",
       "矩阵/mat2.jpg",
       "矩阵/searchgrid2.jpg"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "leetcode-hot100-8",
     "url": "https://wangsenjie.github.io/2026/04/18/leetcode-hot100-8/"
   },
@@ -1228,6 +1711,7 @@
     "categories": [
       "算法题"
     ],
+    "sourcePath": "source/_posts/算法题/链表.md",
     "resourceLinks": [
       "链表/160_statement.png",
       "链表/rev1ex1.jpg",
@@ -1239,6 +1723,9 @@
       "链表/swap_ex1.jpg",
       "链表/reverse_ex1.jpg"
     ],
+    "internalLinks": [],
+    "chunkProfile": "generic-article",
+    "profileSource": "migration-fallback",
     "slug": "leetcode-hot100-9",
     "url": "https://wangsenjie.github.io/2026/03/23/leetcode-hot100-9/"
   }

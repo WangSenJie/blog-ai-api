@@ -65,6 +65,9 @@ function rankVectorChunks(chunks, vectors, question, mode, page, options) {
 }
 
 function candidateText(chunk) {
+  if (String(chunk && chunk.retrievalText || '').trim()) {
+    return normalizeText(chunk.retrievalText);
+  }
   return normalizeText([
     chunk && chunk.postTitle,
     chunk && (chunk.tags || []).join(' '),

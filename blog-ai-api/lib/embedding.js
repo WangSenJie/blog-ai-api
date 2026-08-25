@@ -136,6 +136,9 @@ function embedText(value, options) {
 }
 
 function embeddingInputForChunk(chunk) {
+  if (String(chunk && chunk.retrievalText || '').trim()) {
+    return String(chunk.retrievalText).trim();
+  }
   return [
     chunk && chunk.postTitle,
     chunk && chunk.postTitle,

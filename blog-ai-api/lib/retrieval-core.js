@@ -124,7 +124,7 @@
     for (const [position, chunk] of (chunks || []).entries()) {
       if (!isIndexableChunk(chunk)) continue;
 
-      const termFrequency = countTerms(chunk.content);
+      const termFrequency = countTerms(chunk.retrievalText || chunk.content);
       const length = Math.max(
         Array.from(termFrequency.values()).reduce((total, count) => total + count, 0),
         1
@@ -173,11 +173,12 @@
       chunk.sectionTitle
     ].join(' '));
     const content = normalizeText(chunk.content);
+    const retrievalText = normalizeText(chunk.retrievalText || chunk.content);
     const normalizedQuestion = normalizeText(question);
     const terms = getQuestionTerms(question);
     let score = 0;
 
-    if (normalizedQuestion && content.includes(normalizedQuestion)) {
+    if (normalizedQuestion && retrievalText.includes(normalizedQuestion)) {
       score += 8;
     }
     if (normalizedQuestion && title.includes(normalizedQuestion)) {

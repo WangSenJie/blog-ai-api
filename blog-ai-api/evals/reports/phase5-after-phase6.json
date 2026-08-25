@@ -1,0 +1,670 @@
+{
+  "generatedAt": "2026-08-25T04:05:43.465Z",
+  "phase": 5,
+  "strategy": "structured_agentic_rag_phase5",
+  "notes": [
+    "The evaluation uses the exact v3 serving corpus, including code-block and author-curated learning-graph artifacts.",
+    "All external-model generation is disabled. Factual comparison and code outputs must pass extractive citation, provenance, and source-support checks.",
+    "Learning paths are checked against explicit graph nodes and next edges; they intentionally carry no factual citations.",
+    "Negative cases must return no claims, citations, or structured artifacts and must stop within one specialist retrieval attempt."
+  ],
+  "dataset": {
+    "version": 1,
+    "hash": "e966612f3e3c42f6cfb59890e54c39fe1ec958fecdd06181a07270c505a4409b",
+    "cases": 9,
+    "path": "evals/phase5-dataset.json"
+  },
+  "corpus": {
+    "schemaVersion": 3,
+    "posts": 71,
+    "chunks": 745,
+    "codeBlocks": 395,
+    "learningTracks": 4,
+    "indexVersion": "9d8f42dbde8e53d9051b6c71a35c5d3a4387c2523a0ef02d173a3bc581a374b8"
+  },
+  "summary": {
+    "cases": 9,
+    "passedCases": 9,
+    "casePassRate": 1,
+    "specialistRouting": 1,
+    "strictCitationSupport": 1,
+    "comparisonAlignment": 1,
+    "authorGraphConformance": 1,
+    "codeArtifactExactness": 1,
+    "safeRefusalRate": 1,
+    "noModelCalls": 1,
+    "limitCompliance": 1
+  },
+  "acceptance": {
+    "passed": true,
+    "metrics": {
+      "casePassRate": {
+        "target": 1,
+        "actual": 1,
+        "passed": true
+      },
+      "specialistRouting": {
+        "target": 1,
+        "actual": 1,
+        "passed": true
+      },
+      "strictCitationSupport": {
+        "target": 1,
+        "actual": 1,
+        "passed": true
+      },
+      "comparisonAlignment": {
+        "target": 1,
+        "actual": 1,
+        "passed": true
+      },
+      "authorGraphConformance": {
+        "target": 1,
+        "actual": 1,
+        "passed": true
+      },
+      "codeArtifactExactness": {
+        "target": 1,
+        "actual": 1,
+        "passed": true
+      },
+      "safeRefusalRate": {
+        "target": 1,
+        "actual": 1,
+        "passed": true
+      },
+      "noModelCalls": {
+        "target": 1,
+        "actual": 1,
+        "passed": true
+      },
+      "limitCompliance": {
+        "target": 1,
+        "actual": 1,
+        "passed": true
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "compare-itemcf-usercf-aligned",
+      "category": "comparison",
+      "question": "比较 ItemCF 和 UserCF 的实现和流程",
+      "expected": {
+        "answerability": "factual",
+        "route": "article_compare",
+        "toolNames": [
+          "compare_articles"
+        ],
+        "citationTitles": [
+          "ItemCF",
+          "UserCF"
+        ],
+        "comparison": {
+          "articleTitles": [
+            "ItemCF",
+            "UserCF"
+          ],
+          "rowIds": [
+            "core",
+            "implementation",
+            "workflow"
+          ]
+        }
+      },
+      "route": "article_compare",
+      "toolNames": [
+        "compare_articles"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "comparison_dimensions_covered",
+      "stopReason": "evidence_sufficient",
+      "modelCalls": 0,
+      "citationVerification": {
+        "status": "verified",
+        "totalClaims": 6,
+        "supportedClaims": 6,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "source": "deterministic"
+      },
+      "citationTitles": [
+        "ItemCF",
+        "UserCF"
+      ],
+      "comparison": {
+        "structure": true,
+        "cellsCitable": true
+      },
+      "learning": null,
+      "code": null,
+      "refusal": null,
+      "checks": {
+        "route": true,
+        "tools": true,
+        "modelNotUsed": true,
+        "limits": true,
+        "factualCitations": true,
+        "citationTitles": true,
+        "comparisonAlignment": true,
+        "authorGraph": true,
+        "codeArtifact": true,
+        "safeRefusal": true,
+        "navigationNoFacts": true
+      },
+      "passed": true
+    },
+    {
+      "id": "learning-mathematical-analysis-author-order",
+      "category": "learning_path",
+      "question": "给我数学分析的学习路径",
+      "expected": {
+        "answerability": "navigation",
+        "route": "learning_path",
+        "toolNames": [
+          "recommend_learning_path"
+        ],
+        "learning": {
+          "trackId": "mathematical-analysis",
+          "kind": "path",
+          "stepIds": [
+            "analysis-limits",
+            "analysis-continuity",
+            "analysis-completeness",
+            "analysis-differentiation",
+            "analysis-integration",
+            "analysis-number-series",
+            "analysis-function-series"
+          ],
+          "relations": [
+            "start",
+            "next",
+            "next",
+            "next",
+            "next",
+            "next",
+            "next"
+          ]
+        }
+      },
+      "route": "learning_path",
+      "toolNames": [
+        "recommend_learning_path"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "learning_path_found",
+      "stopReason": "evidence_sufficient",
+      "modelCalls": 0,
+      "citationVerification": {
+        "status": "not_required",
+        "totalClaims": 0,
+        "supportedClaims": 0,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "reason": "learning_navigation_metadata"
+      },
+      "citationTitles": [],
+      "comparison": null,
+      "learning": {
+        "structure": true,
+        "authorCurated": true,
+        "navigationOnly": true
+      },
+      "code": null,
+      "refusal": null,
+      "checks": {
+        "route": true,
+        "tools": true,
+        "modelNotUsed": true,
+        "limits": true,
+        "factualCitations": true,
+        "citationTitles": true,
+        "comparisonAlignment": true,
+        "authorGraph": true,
+        "codeArtifact": true,
+        "safeRefusal": true,
+        "navigationNoFacts": true
+      },
+      "passed": true
+    },
+    {
+      "id": "learning-vue-prerequisite-order",
+      "category": "learning_path",
+      "question": "我想学习 Vue，应该先看什么？",
+      "expected": {
+        "answerability": "navigation",
+        "route": "learning_path",
+        "toolNames": [
+          "recommend_learning_path"
+        ],
+        "learning": {
+          "trackId": "frontend-vue",
+          "kind": "path",
+          "stepIds": [
+            "frontend-basics",
+            "vue-basics"
+          ],
+          "relations": [
+            "prerequisite",
+            "next"
+          ]
+        }
+      },
+      "route": "learning_path",
+      "toolNames": [
+        "recommend_learning_path"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "learning_path_found",
+      "stopReason": "evidence_sufficient",
+      "modelCalls": 0,
+      "citationVerification": {
+        "status": "not_required",
+        "totalClaims": 0,
+        "supportedClaims": 0,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "reason": "learning_navigation_metadata"
+      },
+      "citationTitles": [],
+      "comparison": null,
+      "learning": {
+        "structure": true,
+        "authorCurated": true,
+        "navigationOnly": true
+      },
+      "code": null,
+      "refusal": null,
+      "checks": {
+        "route": true,
+        "tools": true,
+        "modelNotUsed": true,
+        "limits": true,
+        "factualCitations": true,
+        "citationTitles": true,
+        "comparisonAlignment": true,
+        "authorGraph": true,
+        "codeArtifact": true,
+        "safeRefusal": true,
+        "navigationNoFacts": true
+      },
+      "passed": true
+    },
+    {
+      "id": "next-after-langgraph-is-author-curated",
+      "category": "next_article",
+      "question": "下一篇应该看什么？",
+      "expected": {
+        "answerability": "navigation",
+        "route": "learning_path",
+        "toolNames": [
+          "recommend_learning_path"
+        ],
+        "learning": {
+          "trackId": "agent-development",
+          "kind": "next",
+          "stepIds": [
+            "agent-state-memory"
+          ],
+          "relations": [
+            "next"
+          ]
+        }
+      },
+      "route": "learning_path",
+      "toolNames": [
+        "recommend_learning_path"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "learning_path_found",
+      "stopReason": "evidence_sufficient",
+      "modelCalls": 0,
+      "citationVerification": {
+        "status": "not_required",
+        "totalClaims": 0,
+        "supportedClaims": 0,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "reason": "learning_navigation_metadata"
+      },
+      "citationTitles": [],
+      "comparison": null,
+      "learning": {
+        "structure": true,
+        "authorCurated": true,
+        "navigationOnly": true
+      },
+      "code": null,
+      "refusal": null,
+      "checks": {
+        "route": true,
+        "tools": true,
+        "modelNotUsed": true,
+        "limits": true,
+        "factualCitations": true,
+        "citationTitles": true,
+        "comparisonAlignment": true,
+        "authorGraph": true,
+        "codeArtifact": true,
+        "safeRefusal": true,
+        "navigationNoFacts": true
+      },
+      "passed": true
+    },
+    {
+      "id": "code-langgraph-ordinal-selector-is-exact",
+      "category": "code",
+      "question": "解释第 2 段代码",
+      "expected": {
+        "answerability": "factual",
+        "route": "code_explanation",
+        "toolNames": [
+          "explain_code_block"
+        ],
+        "citationTitles": [
+          "LangGraph 基础"
+        ],
+        "code": {
+          "selector": "ordinal",
+          "ordinal": 2
+        }
+      },
+      "route": "code_explanation",
+      "toolNames": [
+        "explain_code_block"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "code_block_found",
+      "stopReason": "evidence_sufficient",
+      "modelCalls": 0,
+      "citationVerification": {
+        "status": "verified",
+        "totalClaims": 1,
+        "supportedClaims": 1,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "source": "deterministic"
+      },
+      "citationTitles": [
+        "LangGraph 基础"
+      ],
+      "comparison": null,
+      "learning": null,
+      "code": {
+        "expectedBlockId": "code_a9f160c0c9729c63da1a61df",
+        "actualBlockId": "code_a9f160c0c9729c63da1a61df",
+        "exact": true,
+        "contextIsLinked": true,
+        "citedContext": true
+      },
+      "refusal": null,
+      "checks": {
+        "route": true,
+        "tools": true,
+        "modelNotUsed": true,
+        "limits": true,
+        "factualCitations": true,
+        "citationTitles": true,
+        "comparisonAlignment": true,
+        "authorGraph": true,
+        "codeArtifact": true,
+        "safeRefusal": true,
+        "navigationNoFacts": true
+      },
+      "passed": true
+    },
+    {
+      "id": "code-langgraph-id-selector-is-exact",
+      "category": "code",
+      "question": "解释代码块 code_a9f160c0c9729c63da1a61df",
+      "expected": {
+        "answerability": "factual",
+        "route": "code_explanation",
+        "toolNames": [
+          "explain_code_block"
+        ],
+        "citationTitles": [
+          "LangGraph 基础"
+        ],
+        "code": {
+          "selector": "block_id",
+          "ordinal": 2
+        }
+      },
+      "route": "code_explanation",
+      "toolNames": [
+        "explain_code_block"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "code_block_found",
+      "stopReason": "evidence_sufficient",
+      "modelCalls": 0,
+      "citationVerification": {
+        "status": "verified",
+        "totalClaims": 1,
+        "supportedClaims": 1,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "source": "deterministic"
+      },
+      "citationTitles": [
+        "LangGraph 基础"
+      ],
+      "comparison": null,
+      "learning": null,
+      "code": {
+        "expectedBlockId": "code_a9f160c0c9729c63da1a61df",
+        "actualBlockId": "code_a9f160c0c9729c63da1a61df",
+        "exact": true,
+        "contextIsLinked": true,
+        "citedContext": true
+      },
+      "refusal": null,
+      "checks": {
+        "route": true,
+        "tools": true,
+        "modelNotUsed": true,
+        "limits": true,
+        "factualCitations": true,
+        "citationTitles": true,
+        "comparisonAlignment": true,
+        "authorGraph": true,
+        "codeArtifact": true,
+        "safeRefusal": true,
+        "navigationNoFacts": true
+      },
+      "passed": true
+    },
+    {
+      "id": "reject-unconfigured-learning-topic",
+      "category": "safe_refusal",
+      "question": "给我推荐算法的学习路径",
+      "expected": {
+        "answerability": "reject",
+        "route": "learning_path",
+        "toolNames": [
+          "recommend_learning_path"
+        ],
+        "evidenceReason": "learning_path_not_configured",
+        "maxRetrievalAttempts": 1
+      },
+      "route": "learning_path",
+      "toolNames": [
+        "recommend_learning_path"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "insufficient",
+      "evidenceReason": "learning_path_not_configured",
+      "stopReason": "specialist_result_missing",
+      "modelCalls": 0,
+      "citationVerification": {
+        "status": "not_required",
+        "totalClaims": 0,
+        "supportedClaims": 0,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "reason": "evidence_insufficient"
+      },
+      "citationTitles": [],
+      "comparison": null,
+      "learning": null,
+      "code": null,
+      "refusal": {
+        "refused": true,
+        "expectedReason": true,
+        "specialistBounded": true
+      },
+      "checks": {
+        "route": true,
+        "tools": true,
+        "modelNotUsed": true,
+        "limits": true,
+        "factualCitations": true,
+        "citationTitles": true,
+        "comparisonAlignment": true,
+        "authorGraph": true,
+        "codeArtifact": true,
+        "safeRefusal": true,
+        "navigationNoFacts": true
+      },
+      "passed": true
+    },
+    {
+      "id": "reject-missing-code-ordinal",
+      "category": "safe_refusal",
+      "question": "解释第 999 段代码",
+      "expected": {
+        "answerability": "reject",
+        "route": "code_explanation",
+        "toolNames": [
+          "explain_code_block"
+        ],
+        "evidenceReason": "not_found",
+        "maxRetrievalAttempts": 1
+      },
+      "route": "code_explanation",
+      "toolNames": [
+        "explain_code_block"
+      ],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "insufficient",
+      "evidenceReason": "not_found",
+      "stopReason": "specialist_result_missing",
+      "modelCalls": 0,
+      "citationVerification": {
+        "status": "not_required",
+        "totalClaims": 0,
+        "supportedClaims": 0,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "reason": "evidence_insufficient"
+      },
+      "citationTitles": [],
+      "comparison": null,
+      "learning": null,
+      "code": null,
+      "refusal": {
+        "refused": true,
+        "expectedReason": true,
+        "specialistBounded": true
+      },
+      "checks": {
+        "route": true,
+        "tools": true,
+        "modelNotUsed": true,
+        "limits": true,
+        "factualCitations": true,
+        "citationTitles": true,
+        "comparisonAlignment": true,
+        "authorGraph": true,
+        "codeArtifact": true,
+        "safeRefusal": true,
+        "navigationNoFacts": true
+      },
+      "passed": true
+    },
+    {
+      "id": "reject-comparison-with-unresolved-target",
+      "category": "safe_refusal",
+      "question": "比较双塔模型和 DSSM 的区别",
+      "expected": {
+        "answerability": "reject",
+        "route": "article_compare",
+        "toolNames": [],
+        "maxRetrievalAttempts": 1
+      },
+      "route": "article_compare",
+      "toolNames": [],
+      "retrievalAttempts": 1,
+      "evidenceStatus": "insufficient",
+      "evidenceReason": "no_candidates",
+      "stopReason": "specialist_result_missing",
+      "modelCalls": 0,
+      "citationVerification": {
+        "status": "not_required",
+        "totalClaims": 0,
+        "supportedClaims": 0,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "reason": "evidence_insufficient"
+      },
+      "citationTitles": [],
+      "comparison": null,
+      "learning": null,
+      "code": null,
+      "refusal": {
+        "refused": true,
+        "expectedReason": true,
+        "specialistBounded": true
+      },
+      "checks": {
+        "route": true,
+        "tools": true,
+        "modelNotUsed": true,
+        "limits": true,
+        "factualCitations": true,
+        "citationTitles": true,
+        "comparisonAlignment": true,
+        "authorGraph": true,
+        "codeArtifact": true,
+        "safeRefusal": true,
+        "navigationNoFacts": true
+      },
+      "passed": true
+    }
+  ],
+  "failedCases": []
+}

@@ -46,6 +46,29 @@ test('rankChunks prioritizes an exact title match', () => {
   assert.ok(ranked[0].score > 0);
 });
 
+test('rankChunks searches retrievalText while keeping content as citation text', () => {
+  const chunks = [
+    makeChunk({
+      id: 'enhanced#0',
+      postTitle: '术语映射',
+      postUrl: '/enhanced/',
+      content: '这里保留可以直接引用的原始正文。',
+      retrievalText: '术语映射\n用户查询别名\n这里保留可以直接引用的原始正文。'
+    }),
+    makeChunk({
+      id: 'other#0',
+      postTitle: '其他文章',
+      postUrl: '/other/',
+      content: '这是一段无关内容。'
+    })
+  ];
+
+  const ranked = rankChunks(chunks, '用户查询别名', 'site', null);
+
+  assert.equal(ranked[0].chunk.id, 'enhanced#0');
+  assert.equal(ranked[0].chunk.content, '这里保留可以直接引用的原始正文。');
+});
+
 test('post URL normalization only accepts HTTPS URLs on the blog origin', () => {
   const allowedCases = [
     {

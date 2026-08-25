@@ -74,16 +74,20 @@ function claimFromCandidate(candidate, query, values) {
   };
 }
 
-function bestEvidenceCandidate(candidates, query, calibration) {
-  const normalizedQuery = normalizeText(query);
+function bestEvidenceCandidate(candidates, query, calibration, rankingQuery) {
+  const normalizedQuery = normalizeText(rankingQuery || query);
   return (candidates || [])
     .filter(candidate => hasUsableQuote(candidate, query))
     .slice()
     .sort((left, right) => {
       const leftTitle = normalizeText(left.chunk.postTitle);
       const rightTitle = normalizeText(right.chunk.postTitle);
-      const leftTitleMatch = leftTitle === normalizedQuery ? 1 : 0;
-      const rightTitleMatch = rightTitle === normalizedQuery ? 1 : 0;
+      const leftTitleMatch = leftTitle && normalizedQuery.includes(leftTitle)
+        ? leftTitle.length
+        : 0;
+      const rightTitleMatch = rightTitle && normalizedQuery.includes(rightTitle)
+        ? rightTitle.length
+        : 0;
       return rightTitleMatch - leftTitleMatch ||
         candidateCoverage(right, query, calibration) -
           candidateCoverage(left, query, calibration) ||
@@ -403,7 +407,8 @@ function buildSingleEvidenceClaims(state) {
   const candidate = bestEvidenceCandidate(
     anchoredCandidates.length ? anchoredCandidates : state.selectedChunks,
     state.evidenceQuery || state.standaloneQuery,
-    state.evidenceCalibration
+    state.evidenceCalibration,
+    state.standaloneQuery
   );
   if (!candidate || !candidate.chunk) return [];
   const titlePrefix = `《${candidate.chunk.postTitle}》：`;

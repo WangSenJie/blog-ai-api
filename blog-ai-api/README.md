@@ -335,18 +335,25 @@ For privacy, the receipt and forwarded event omit the raw answer, session ID, IP
 
 ## Corpus integrity
 
-`manifest.json` contains the SHA-256 and record count for `posts.json`, `chunks.json`, and `vectors.json`, plus corpus statistics, embedding metadata, and warnings. Export, synchronization, and manifest-backed API loading perform strong validation:
+`manifest.json` contains the SHA-256 and record count for posts, chunks, vectors, code blocks, and the learning graph, plus corpus statistics, embedding metadata, structured-ingestion metadata, and warnings. Export, synchronization, and manifest-backed API loading perform strong validation:
 
 - both JSON values must be arrays and match manifest counts;
 - published post URLs must be valid and unique;
 - chunks must have non-empty content, valid published URLs, and unique non-empty IDs;
 - every chunk must belong to a published post;
 - every vector must have the manifest dimension and match an existing chunk's `id` and `contentHash`;
+- every structured chunk must carry a valid Profile, section anchor, source file/line range, block types, and retrieval-only `retrievalText`;
+- `contentHash` covers both the citation text and every field that changes retrieval or source provenance;
+- ingestion counts, Profile distribution, source-location coverage, and internal-link edges must agree with the exported posts and chunks;
 - the file SHA-256 values must match the manifest.
 
 The Hexo `after_generate` check also requires every exported post URL to resolve to a generated route, preventing syntactically valid dead links from becoming citations.
 
-The current acceptance corpus contains 71 published/indexed posts and 964 chunks. The exporter skips 32 unpublished posts and 4 sources without public URLs. Published PDF-only posts produce a metadata-only chunk with their title, description, and resource links; PDF full-text extraction remains a future corpus enhancement.
+The phase 6 acceptance corpus contains 71 published/indexed posts, 745 retrieval chunks, and 395 separately indexed code blocks. The parser identified 2,781 Markdown structure blocks, and all exported chunks are reproducible from their source file and line range. Fifteen probability/ODE posts use the author-maintained `math-note` path rule; 56 posts remain on the explicitly reported `generic-article` migration fallback. The exporter skips 32 unpublished posts and 5 sources without public URLs. Published PDF-only posts produce a metadata-only chunk with their title, description, and resource links; PDF full-text extraction remains a future corpus enhancement.
+
+`content` is the only citation source. `retrievalText` adds deterministic title, heading, tag, category, structure-type, and content context for BM25/vector retrieval, but it is marked non-citeable in the manifest. New posts default to `rag.chunk_profile: generic-article`; Front Matter overrides exact document rules, which override directory rules, which override the migration fallback.
+
+The legacy v3 corpus is frozen at Git revision `7e6d67b`. To rehearse or perform the scoped artifact rollback, run `RAG_CHUNK_SCHEMA=legacy-v3 npm run export:ai`, then synchronize the API corpus. Normal exports use `RAG_CHUNK_SCHEMA=structured-v1`.
 
 ## Tests and retrieval evaluation
 
@@ -356,6 +363,8 @@ npm run eval:bm25
 npm run eval:hybrid
 npm run eval:agent
 npm run eval:phase4
+npm run eval:phase5
+npm run eval:phase6
 ```
 
 To intentionally refresh the committed baseline report after reviewing a retrieval change:
@@ -375,6 +384,8 @@ The committed reports are `evals/reports/bm25-baseline.json` (phase 0) and `eval
 The phase 2 Hybrid dataset and report are `evals/hybrid-dataset.json` and `evals/reports/hybrid-phase2.json`. It compares BM25 with Hybrid RAG on the same exact and semantic cases, and fails the command unless semantic retrieval improves while exact retrieval does not regress. The phase 3 workflow dataset and report are `evals/agent-dataset.json` and `evals/reports/agent-phase3.json`; they run fully offline with model generation disabled against the Hybrid tool path.
 
 Phase 4 uses `evals/phase4-dataset.json`. Its calibration split selects the configured structural evidence coverage threshold; its holdout split is never used for selection and must meet the all-or-nothing acceptance targets for claim citation completeness/support/provenance, unsupported claims, answerability, rejection, and route. `npm run eval:phase4` prints the report without modifying the working tree. After review, `npm run eval:phase4:update` writes `evals/reports/phase4.json` deliberately. The `RAG quality` GitHub Actions workflow runs API tests plus Hybrid, Agent, and phase 4 evaluations on every push and pull request.
+
+Phase 6 writes `evals/reports/phase6-ingestion.json`. It compares the frozen v3 hashes and metrics with the structured corpus, rebuilds every chunk from Markdown, validates source locations and code isolation, and requires the current Hybrid, Agent, phase 4, and phase 5 regression reports to match the serving corpus.
 
 The evaluation runner reports article-level Recall@5/20, HitRate@5, MRR@20, nDCG@20, no-answer accuracy, per-category results, and failed cases. Results are deduplicated by normalized published post URL.
 

@@ -3,7 +3,7 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
 
-const { buildVectorIndex } = require('../lib/embedding');
+const { buildVectorIndex, embeddingInputForChunk } = require('../lib/embedding');
 const { hybridRankChunks } = require('../lib/hybrid-retrieve');
 
 function makeChunk(values) {
@@ -88,6 +88,18 @@ test('incremental vector build reuses unchanged chunks and updates changed conte
     deleted: 0,
     failed: 0
   });
+});
+
+test('embedding input prefers retrievalText over citation content', () => {
+  const chunk = makeChunk({
+    content: '可以直接引用的原始正文',
+    retrievalText: '标题和标签增强\n可以直接引用的原始正文'
+  });
+
+  assert.equal(
+    embeddingInputForChunk(chunk),
+    '标题和标签增强\n可以直接引用的原始正文'
+  );
 });
 
 test('hybrid retrieval finds a semantic rewrite and returns RRF/reranker metadata', () => {

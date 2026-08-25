@@ -1,0 +1,797 @@
+{
+  "generatedAt": "2026-08-25T04:05:43.230Z",
+  "phase": 4,
+  "strategy": "grounded_agent_quality_phase4",
+  "notes": [
+    "The calibration grid is evaluated only on the calibration split; holdout is not used to select thresholds.",
+    "Coverage thresholds are evidence gates, not probabilistic confidence scores.",
+    "External model generation is disabled. Claims are checked against the exact serving corpus and extractive claim contract before metrics are computed."
+  ],
+  "dataset": {
+    "version": 1,
+    "hash": "d9d30798cfc3e43805e6ac71dcd2bfd52916c6df8c0007be0af31814757d211f",
+    "cases": 14,
+    "calibrationCases": 8,
+    "holdoutCases": 6
+  },
+  "corpus": {
+    "posts": 71,
+    "chunks": 745,
+    "indexVersion": "9d8f42dbde8e53d9051b6c71a35c5d3a4387c2523a0ef02d173a3bc581a374b8"
+  },
+  "calibration": {
+    "configured": {
+      "version": "phase4-v1",
+      "vectorEvidenceFloor": 0.3,
+      "siteQaMinCoverage": 0.23,
+      "pageQaMinCoverage": 0.35,
+      "compoundMinCoverage": 0.23,
+      "compareTargetMinCoverage": 0.45
+    },
+    "candidates": [
+      {
+        "threshold": 0.15,
+        "summary": {
+          "cases": 8,
+          "passedCases": 8,
+          "routeAccuracy": 1,
+          "citationCompleteness": 1,
+          "citationSupport": 1,
+          "citationProvenance": 1,
+          "extractiveClaims": 1,
+          "unsupportedClaimRate": 0,
+          "rejectionRecall": 1,
+          "rejectionPrecision": 1,
+          "answerAcceptance": 1
+        },
+        "eligible": true
+      },
+      {
+        "threshold": 0.2,
+        "summary": {
+          "cases": 8,
+          "passedCases": 8,
+          "routeAccuracy": 1,
+          "citationCompleteness": 1,
+          "citationSupport": 1,
+          "citationProvenance": 1,
+          "extractiveClaims": 1,
+          "unsupportedClaimRate": 0,
+          "rejectionRecall": 1,
+          "rejectionPrecision": 1,
+          "answerAcceptance": 1
+        },
+        "eligible": true
+      },
+      {
+        "threshold": 0.23,
+        "summary": {
+          "cases": 8,
+          "passedCases": 8,
+          "routeAccuracy": 1,
+          "citationCompleteness": 1,
+          "citationSupport": 1,
+          "citationProvenance": 1,
+          "extractiveClaims": 1,
+          "unsupportedClaimRate": 0,
+          "rejectionRecall": 1,
+          "rejectionPrecision": 1,
+          "answerAcceptance": 1
+        },
+        "eligible": true
+      },
+      {
+        "threshold": 0.26,
+        "summary": {
+          "cases": 8,
+          "passedCases": 7,
+          "routeAccuracy": 1,
+          "citationCompleteness": 0.75,
+          "citationSupport": 0.75,
+          "citationProvenance": 0.75,
+          "extractiveClaims": 0.75,
+          "unsupportedClaimRate": 0,
+          "rejectionRecall": 1,
+          "rejectionPrecision": 0.8,
+          "answerAcceptance": 0.75
+        },
+        "eligible": false
+      },
+      {
+        "threshold": 0.3,
+        "summary": {
+          "cases": 8,
+          "passedCases": 7,
+          "routeAccuracy": 1,
+          "citationCompleteness": 0.75,
+          "citationSupport": 0.75,
+          "citationProvenance": 0.75,
+          "extractiveClaims": 0.75,
+          "unsupportedClaimRate": 0,
+          "rejectionRecall": 1,
+          "rejectionPrecision": 0.8,
+          "answerAcceptance": 0.75
+        },
+        "eligible": false
+      }
+    ],
+    "selected": 0.23
+  },
+  "acceptance": {
+    "targets": {
+      "citationCompleteness": 1,
+      "citationSupport": 1,
+      "citationProvenance": 1,
+      "extractiveClaims": 1,
+      "unsupportedClaimRate": 0,
+      "rejectionRecall": 1,
+      "rejectionPrecision": 1,
+      "answerAcceptance": 1,
+      "routeAccuracy": 1
+    },
+    "calibrationSelected": 0.23,
+    "configMatchesSelection": true,
+    "calibration": {
+      "cases": 8,
+      "passedCases": 8,
+      "routeAccuracy": 1,
+      "citationCompleteness": 1,
+      "citationSupport": 1,
+      "citationProvenance": 1,
+      "extractiveClaims": 1,
+      "unsupportedClaimRate": 0,
+      "rejectionRecall": 1,
+      "rejectionPrecision": 1,
+      "answerAcceptance": 1
+    },
+    "holdout": {
+      "cases": 6,
+      "passedCases": 6,
+      "routeAccuracy": 1,
+      "citationCompleteness": 1,
+      "citationSupport": 1,
+      "citationProvenance": 1,
+      "extractiveClaims": 1,
+      "unsupportedClaimRate": 0,
+      "rejectionRecall": 1,
+      "rejectionPrecision": 1,
+      "answerAcceptance": 1
+    },
+    "passed": true
+  },
+  "cases": [
+    {
+      "id": "cal-exact-double-tower",
+      "split": "calibration",
+      "category": "exact",
+      "question": "双塔模型",
+      "expected": {
+        "answerability": "answer",
+        "route": "site_qa",
+        "citationTitles": [
+          "双塔模型"
+        ]
+      },
+      "route": "site_qa",
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "query_terms_covered",
+      "evidenceScore": 1,
+      "evidenceThreshold": 0.23,
+      "rejected": false,
+      "accepted": true,
+      "citedTitles": [
+        "双塔模型"
+      ],
+      "claims": 1,
+      "unsupportedClaims": 0,
+      "verification": {
+        "status": "verified",
+        "totalClaims": 1,
+        "supportedClaims": 1,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "source": "deterministic"
+      },
+      "checks": {
+        "route": true,
+        "outcome": true,
+        "citationCompleteness": true,
+        "citationSupport": true,
+        "citationProvenance": true,
+        "extractiveClaims": true,
+        "titleCoverage": true,
+        "verification": true
+      },
+      "passed": true
+    },
+    {
+      "id": "cal-borderline-function-series-properties",
+      "split": "calibration",
+      "category": "borderline_positive",
+      "question": "函数项级数有哪些性质",
+      "expected": {
+        "answerability": "answer",
+        "route": "site_qa",
+        "citationTitles": [
+          "函数项级数"
+        ]
+      },
+      "route": "site_qa",
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "query_terms_covered",
+      "evidenceScore": 0.25,
+      "evidenceThreshold": 0.23,
+      "rejected": false,
+      "accepted": true,
+      "citedTitles": [
+        "函数项级数"
+      ],
+      "claims": 1,
+      "unsupportedClaims": 0,
+      "verification": {
+        "status": "verified",
+        "totalClaims": 1,
+        "supportedClaims": 1,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "source": "deterministic"
+      },
+      "checks": {
+        "route": true,
+        "outcome": true,
+        "citationCompleteness": true,
+        "citationSupport": true,
+        "citationProvenance": true,
+        "extractiveClaims": true,
+        "titleCoverage": true,
+        "verification": true
+      },
+      "passed": true
+    },
+    {
+      "id": "cal-page-double-tower-recall",
+      "split": "calibration",
+      "category": "page_qa",
+      "question": "这篇文章如何线上召回？",
+      "expected": {
+        "answerability": "answer",
+        "route": "page_qa",
+        "citationTitles": [
+          "双塔模型"
+        ]
+      },
+      "route": "page_qa",
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "current_page_terms_covered",
+      "evidenceScore": 0.75,
+      "evidenceThreshold": 0.35,
+      "rejected": false,
+      "accepted": true,
+      "citedTitles": [
+        "双塔模型"
+      ],
+      "claims": 1,
+      "unsupportedClaims": 0,
+      "verification": {
+        "status": "verified",
+        "totalClaims": 1,
+        "supportedClaims": 1,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "source": "deterministic"
+      },
+      "checks": {
+        "route": true,
+        "outcome": true,
+        "citationCompleteness": true,
+        "citationSupport": true,
+        "citationProvenance": true,
+        "extractiveClaims": true,
+        "titleCoverage": true,
+        "verification": true
+      },
+      "passed": true
+    },
+    {
+      "id": "cal-compare-itemcf-usercf",
+      "split": "calibration",
+      "category": "comparison",
+      "question": "比较 ItemCF 和 UserCF 的区别",
+      "expected": {
+        "answerability": "answer",
+        "route": "article_compare",
+        "citationTitles": [
+          "ItemCF",
+          "UserCF"
+        ]
+      },
+      "route": "article_compare",
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "comparison_dimensions_covered",
+      "evidenceScore": 1,
+      "evidenceThreshold": 1,
+      "rejected": false,
+      "accepted": true,
+      "citedTitles": [
+        "ItemCF",
+        "UserCF"
+      ],
+      "claims": 2,
+      "unsupportedClaims": 0,
+      "verification": {
+        "status": "verified",
+        "totalClaims": 2,
+        "supportedClaims": 2,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "source": "deterministic"
+      },
+      "checks": {
+        "route": true,
+        "outcome": true,
+        "citationCompleteness": true,
+        "citationSupport": true,
+        "citationProvenance": true,
+        "extractiveClaims": true,
+        "titleCoverage": true,
+        "verification": true
+      },
+      "passed": true
+    },
+    {
+      "id": "cal-no-kubernetes",
+      "split": "calibration",
+      "category": "no_answer",
+      "question": "博客里讲过 Kubernetes Pod 调度机制吗？",
+      "expected": {
+        "answerability": "reject",
+        "route": "site_qa"
+      },
+      "route": "site_qa",
+      "evidenceStatus": "insufficient",
+      "evidenceReason": "query_terms_not_covered",
+      "evidenceScore": 0.1111111111111111,
+      "evidenceThreshold": 0.23,
+      "rejected": true,
+      "accepted": false,
+      "citedTitles": [],
+      "claims": 0,
+      "unsupportedClaims": 0,
+      "verification": {
+        "status": "not_required",
+        "totalClaims": 0,
+        "supportedClaims": 0,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "reason": "evidence_insufficient"
+      },
+      "checks": {
+        "route": true,
+        "outcome": true,
+        "citationCompleteness": true,
+        "citationSupport": true,
+        "citationProvenance": true,
+        "extractiveClaims": true,
+        "titleCoverage": true,
+        "verification": true
+      },
+      "passed": true
+    },
+    {
+      "id": "cal-title-anchored-missing-detail",
+      "split": "calibration",
+      "category": "hard_negative",
+      "question": "双塔模型文章中是否讲了对比学习的温度系数？",
+      "expected": {
+        "answerability": "reject",
+        "route": "site_qa"
+      },
+      "route": "site_qa",
+      "evidenceStatus": "insufficient",
+      "evidenceReason": "query_terms_not_covered",
+      "evidenceScore": 0.14285714285714285,
+      "evidenceThreshold": 0.23,
+      "rejected": true,
+      "accepted": false,
+      "citedTitles": [],
+      "claims": 0,
+      "unsupportedClaims": 0,
+      "verification": {
+        "status": "not_required",
+        "totalClaims": 0,
+        "supportedClaims": 0,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "reason": "evidence_insufficient"
+      },
+      "checks": {
+        "route": true,
+        "outcome": true,
+        "citationCompleteness": true,
+        "citationSupport": true,
+        "citationProvenance": true,
+        "extractiveClaims": true,
+        "titleCoverage": true,
+        "verification": true
+      },
+      "passed": true
+    },
+    {
+      "id": "cal-page-anchored-missing-detail",
+      "split": "calibration",
+      "category": "hard_negative",
+      "question": "这篇双塔模型文章是否讲过量子纠缠？",
+      "expected": {
+        "answerability": "reject",
+        "route": "page_qa"
+      },
+      "route": "page_qa",
+      "evidenceStatus": "insufficient",
+      "evidenceReason": "current_page_terms_not_covered",
+      "evidenceScore": 0,
+      "evidenceThreshold": 0.35,
+      "rejected": true,
+      "accepted": false,
+      "citedTitles": [],
+      "claims": 0,
+      "unsupportedClaims": 0,
+      "verification": {
+        "status": "not_required",
+        "totalClaims": 0,
+        "supportedClaims": 0,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "reason": "evidence_insufficient"
+      },
+      "checks": {
+        "route": true,
+        "outcome": true,
+        "citationCompleteness": true,
+        "citationSupport": true,
+        "citationProvenance": true,
+        "extractiveClaims": true,
+        "titleCoverage": true,
+        "verification": true
+      },
+      "passed": true
+    },
+    {
+      "id": "cal-missing-comparison-target",
+      "split": "calibration",
+      "category": "partial",
+      "question": "比较双塔模型和 DSSM 的区别",
+      "expected": {
+        "answerability": "reject",
+        "route": "article_compare"
+      },
+      "route": "article_compare",
+      "evidenceStatus": "insufficient",
+      "evidenceReason": "no_candidates",
+      "evidenceScore": 0,
+      "evidenceThreshold": 0.23,
+      "rejected": true,
+      "accepted": false,
+      "citedTitles": [],
+      "claims": 0,
+      "unsupportedClaims": 0,
+      "verification": {
+        "status": "not_required",
+        "totalClaims": 0,
+        "supportedClaims": 0,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "reason": "evidence_insufficient"
+      },
+      "checks": {
+        "route": true,
+        "outcome": true,
+        "citationCompleteness": true,
+        "citationSupport": true,
+        "citationProvenance": true,
+        "extractiveClaims": true,
+        "titleCoverage": true,
+        "verification": true
+      },
+      "passed": true
+    },
+    {
+      "id": "holdout-exact-resnet",
+      "split": "holdout",
+      "category": "exact",
+      "question": "ResNet",
+      "expected": {
+        "answerability": "answer",
+        "route": "site_qa",
+        "citationTitles": [
+          "ResNet"
+        ]
+      },
+      "route": "site_qa",
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "query_terms_covered",
+      "evidenceScore": 1,
+      "evidenceThreshold": 0.23,
+      "rejected": false,
+      "accepted": true,
+      "citedTitles": [
+        "ResNet"
+      ],
+      "claims": 1,
+      "unsupportedClaims": 0,
+      "verification": {
+        "status": "verified",
+        "totalClaims": 1,
+        "supportedClaims": 1,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "source": "deterministic"
+      },
+      "checks": {
+        "route": true,
+        "outcome": true,
+        "citationCompleteness": true,
+        "citationSupport": true,
+        "citationProvenance": true,
+        "extractiveClaims": true,
+        "titleCoverage": true,
+        "verification": true
+      },
+      "passed": true
+    },
+    {
+      "id": "holdout-exact-transformer",
+      "split": "holdout",
+      "category": "exact",
+      "question": "Transformer 架构",
+      "expected": {
+        "answerability": "answer",
+        "route": "site_qa",
+        "citationTitles": [
+          "Transformer 架构 —— Attention Is All You Need"
+        ]
+      },
+      "route": "site_qa",
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "query_terms_covered",
+      "evidenceScore": 1,
+      "evidenceThreshold": 0.23,
+      "rejected": false,
+      "accepted": true,
+      "citedTitles": [
+        "Transformer 架构 —— Attention Is All You Need"
+      ],
+      "claims": 1,
+      "unsupportedClaims": 0,
+      "verification": {
+        "status": "verified",
+        "totalClaims": 1,
+        "supportedClaims": 1,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "source": "deterministic"
+      },
+      "checks": {
+        "route": true,
+        "outcome": true,
+        "citationCompleteness": true,
+        "citationSupport": true,
+        "citationProvenance": true,
+        "extractiveClaims": true,
+        "titleCoverage": true,
+        "verification": true
+      },
+      "passed": true
+    },
+    {
+      "id": "holdout-page-summary",
+      "split": "holdout",
+      "category": "page_summary",
+      "question": "总结这篇文章",
+      "expected": {
+        "answerability": "answer",
+        "route": "page_summary",
+        "citationTitles": [
+          "双塔模型"
+        ]
+      },
+      "route": "page_summary",
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "current_article_loaded",
+      "evidenceScore": 1,
+      "evidenceThreshold": 1,
+      "rejected": false,
+      "accepted": true,
+      "citedTitles": [
+        "双塔模型"
+      ],
+      "claims": 3,
+      "unsupportedClaims": 0,
+      "verification": {
+        "status": "verified",
+        "totalClaims": 3,
+        "supportedClaims": 3,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "source": "deterministic"
+      },
+      "checks": {
+        "route": true,
+        "outcome": true,
+        "citationCompleteness": true,
+        "citationSupport": true,
+        "citationProvenance": true,
+        "extractiveClaims": true,
+        "titleCoverage": true,
+        "verification": true
+      },
+      "passed": true
+    },
+    {
+      "id": "holdout-compound",
+      "split": "holdout",
+      "category": "compound",
+      "question": "双塔模型的结构是什么；UserCF 的原理是什么",
+      "expected": {
+        "answerability": "answer",
+        "route": "site_qa",
+        "citationTitles": [
+          "双塔模型",
+          "UserCF"
+        ]
+      },
+      "route": "site_qa",
+      "evidenceStatus": "sufficient",
+      "evidenceReason": "all_subqueries_covered",
+      "evidenceScore": 1,
+      "evidenceThreshold": 0.23,
+      "rejected": false,
+      "accepted": true,
+      "citedTitles": [
+        "双塔模型",
+        "UserCF"
+      ],
+      "claims": 2,
+      "unsupportedClaims": 0,
+      "verification": {
+        "status": "verified",
+        "totalClaims": 2,
+        "supportedClaims": 2,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "source": "deterministic"
+      },
+      "checks": {
+        "route": true,
+        "outcome": true,
+        "citationCompleteness": true,
+        "citationSupport": true,
+        "citationProvenance": true,
+        "extractiveClaims": true,
+        "titleCoverage": true,
+        "verification": true
+      },
+      "passed": true
+    },
+    {
+      "id": "holdout-no-graphql",
+      "split": "holdout",
+      "category": "no_answer",
+      "question": "GraphQL 联邦网关如何做查询规划？",
+      "expected": {
+        "answerability": "reject",
+        "route": "site_qa"
+      },
+      "route": "site_qa",
+      "evidenceStatus": "insufficient",
+      "evidenceReason": "query_terms_not_covered",
+      "evidenceScore": 0.1,
+      "evidenceThreshold": 0.23,
+      "rejected": true,
+      "accepted": false,
+      "citedTitles": [],
+      "claims": 0,
+      "unsupportedClaims": 0,
+      "verification": {
+        "status": "not_required",
+        "totalClaims": 0,
+        "supportedClaims": 0,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "reason": "evidence_insufficient"
+      },
+      "checks": {
+        "route": true,
+        "outcome": true,
+        "citationCompleteness": true,
+        "citationSupport": true,
+        "citationProvenance": true,
+        "extractiveClaims": true,
+        "titleCoverage": true,
+        "verification": true
+      },
+      "passed": true
+    },
+    {
+      "id": "holdout-no-kafka",
+      "split": "holdout",
+      "category": "no_answer",
+      "question": "Kafka 消费者组重平衡的过程是什么？",
+      "expected": {
+        "answerability": "reject",
+        "route": "site_qa"
+      },
+      "route": "site_qa",
+      "evidenceStatus": "insufficient",
+      "evidenceReason": "query_terms_not_covered",
+      "evidenceScore": 0.09090909090909091,
+      "evidenceThreshold": 0.23,
+      "rejected": true,
+      "accepted": false,
+      "citedTitles": [],
+      "claims": 0,
+      "unsupportedClaims": 0,
+      "verification": {
+        "status": "not_required",
+        "totalClaims": 0,
+        "supportedClaims": 0,
+        "rejectedClaims": 0,
+        "citationCompleteness": 1,
+        "citationSupport": 1,
+        "unsupportedClaimRate": 0,
+        "reasons": [],
+        "reason": "evidence_insufficient"
+      },
+      "checks": {
+        "route": true,
+        "outcome": true,
+        "citationCompleteness": true,
+        "citationSupport": true,
+        "citationProvenance": true,
+        "extractiveClaims": true,
+        "titleCoverage": true,
+        "verification": true
+      },
+      "passed": true
+    }
+  ],
+  "failedCases": []
+}

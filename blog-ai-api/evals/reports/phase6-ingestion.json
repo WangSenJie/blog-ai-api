@@ -1,0 +1,200 @@
+{
+  "phase": 6,
+  "generatedAt": "2026-08-25T04:10:37.614Z",
+  "strategy": "structured-markdown-ingestion-v1",
+  "baseline": {
+    "gitRevision": "7e6d67bd9653bd2fb48f161e0c438f56215b83de",
+    "manifest": {
+      "schemaVersion": 3,
+      "corpusVersion": "3f287d5997e3977eb94c32e326691d9ac4863114166eb3d134a2b17700393f5f",
+      "postsSha256": "b5a2a7ac8593e8b7230ad5cbd1e1fe7b18054da00e83fdb2bcbf01c13948dcdb",
+      "chunksSha256": "119cc5664a0f46a7854f6f6156e9709e5487870b8ecb87d65e943ee7b5021d20",
+      "vectorsSha256": "a80628c380c611a2da4030ac6129314c5a19731ec69ad7f021db907339352e20",
+      "posts": 71,
+      "chunks": 964,
+      "vectors": 964,
+      "codeBlocks": 395
+    },
+    "evaluations": {
+      "hybridPhase2Sha256": "9f7e7e6adb0485a95374c3245d891d686c321e6d6892f4d7fbc550f2bd8f5feb",
+      "agentPhase3Sha256": "90cf43ad5a072b6b69672d6960e36d51f54c682476e60fff01c3dd0b871a80ec",
+      "hitRateAt5": 0.95,
+      "recallAt5": 0.95,
+      "mrrAt20": 0.7958,
+      "safeStopAccuracy": 1,
+      "referenceResolutionAccuracy": 1,
+      "warmLatencyP95Ms": 170.924
+    },
+    "buildDurationMs": 400
+  },
+  "current": {
+    "corpusVersion": "9d8f42dbde8e53d9051b6c71a35c5d3a4387c2523a0ef02d173a3bc581a374b8",
+    "manifestSchemaVersion": 3,
+    "posts": 71,
+    "chunks": 745,
+    "vectors": 745,
+    "codeBlocks": 395,
+    "structuredBlocks": 2781,
+    "blockTypeCounts": {
+      "code": 395,
+      "formula": 459,
+      "image": 46,
+      "list": 348,
+      "paragraph": 1378,
+      "quote": 154,
+      "table": 1
+    },
+    "profileCounts": {
+      "generic-article": 56,
+      "math-note": 15
+    },
+    "profileSourceCounts": {
+      "migration-fallback": 56,
+      "path-rule": 15
+    },
+    "retrievalCoverage": 1,
+    "traceCoverage": 1,
+    "linkResolution": 1,
+    "contentLength": {
+      "min": 2,
+      "p50": 423,
+      "p95": 693,
+      "max": 2043
+    },
+    "warnings": {
+      "postsWithoutFrontMatter": [
+        "source/_posts/从零开始——AI应用开发/Hermes-Agent.md",
+        "source/_posts/概率论/第一章 事件与概率.md",
+        "source/_posts/概率论/第三章 随机变量与分布函数.md",
+        "source/_posts/概率论/第二章 条件概率与统计独立性.md",
+        "source/_posts/概率论/第四章 数字特征与特征函数.md"
+      ],
+      "postsWithoutDeclaredProfile": [
+        "source/_posts/Basic Abstract Algebra/Basic Abstract Algebra Exercises Notes.md",
+        "source/_posts/Hexo-指令.md",
+        "source/_posts/Python 数据分析/Pandas数据分析题解汇总.md",
+        "source/_posts/frontend/Vue.md",
+        "source/_posts/frontend/frontend-basic.md",
+        "source/_posts/从零开始——AI应用开发/LangChain/human-in-the-loop.md",
+        "source/_posts/从零开始——AI应用开发/LangChain/langchain-basic.md",
+        "source/_posts/从零开始——AI应用开发/LangChain/langgraph-foundations.md",
+        "source/_posts/从零开始——AI应用开发/LangChain/state-and-short-term-memory.md",
+        "source/_posts/从零开始——AI应用开发/报告生成Agent/报告生成Agent—环境配置.md",
+        "source/_posts/推荐算法/ALS.md",
+        "source/_posts/推荐算法/BPR.md",
+        "source/_posts/推荐算法/ItemCF.md",
+        "source/_posts/推荐算法/LightFM.md",
+        "source/_posts/推荐算法/SVD.md",
+        "source/_posts/推荐算法/UserCF.md",
+        "source/_posts/推荐算法/deep-retrieval.md",
+        "source/_posts/推荐算法/双塔模型.md",
+        "source/_posts/推荐算法/地理位置召回作者召回.md",
+        "source/_posts/推荐算法/曝光过滤.md",
+        "source/_posts/推荐算法/离散特征的处理——Embedding.md",
+        "source/_posts/数学分析/习题集/1.数列极限与函数极限.md",
+        "source/_posts/数学分析/习题集/2.函数的连续性.md",
+        "source/_posts/数学分析/习题集/3.实数完备性.md",
+        "source/_posts/数学分析/习题集/4.一元微分学.md",
+        "source/_posts/数学分析/习题集/5.一元积分学.md",
+        "source/_posts/数学分析/习题集/6.数项级数.md",
+        "source/_posts/数学分析/习题集/7.函数项级数.md",
+        "source/_posts/机器学习与深度学习/AdaBoost.md",
+        "source/_posts/机器学习与深度学习/AlexNet.md",
+        "source/_posts/机器学习与深度学习/GBDT.md",
+        "source/_posts/机器学习与深度学习/LSTM.md",
+        "source/_posts/机器学习与深度学习/Logistic Regression.md",
+        "source/_posts/机器学习与深度学习/MLP.md",
+        "source/_posts/机器学习与深度学习/ResNet.md",
+        "source/_posts/机器学习与深度学习/Transformer架构.md",
+        "source/_posts/机器学习与深度学习/卷积神经网络.md",
+        "source/_posts/机器学习与深度学习/循环神经网络.md",
+        "source/_posts/机器学习与深度学习/支持向量机.md",
+        "source/_posts/测度论/Carathéodory扩张.md",
+        "source/_posts/测度论/单调收敛定理.md",
+        "source/_posts/测度论/完备的测度空间.md",
+        "source/_posts/算法题/hash.md",
+        "source/_posts/算法题/leetcode hot 100.md",
+        "source/_posts/算法题/二分查找.md",
+        "source/_posts/算法题/二叉树.md",
+        "source/_posts/算法题/动态规划.md",
+        "source/_posts/算法题/双指针.md",
+        "source/_posts/算法题/回溯.md",
+        "source/_posts/算法题/图论.md",
+        "source/_posts/算法题/堆.md",
+        "source/_posts/算法题/子串.md",
+        "source/_posts/算法题/普通数组.md",
+        "source/_posts/算法题/滑动窗口.md",
+        "source/_posts/算法题/矩阵.md",
+        "source/_posts/算法题/链表.md"
+      ]
+    },
+    "evaluations": {
+      "hybrid": {
+        "cases": 20,
+        "recallAt5": 0.95,
+        "recallAt20": 1,
+        "hitRateAt5": 0.95,
+        "mrrAt20": 0.7979,
+        "ndcgAt20": 0.8473,
+        "noAnswerCases": 0,
+        "noAnswerAccuracy": 0,
+        "averageWarmRetrievalMs": 18.699,
+        "failedCases": 1
+      },
+      "agent": {
+        "cases": 28,
+        "passedCases": 28,
+        "routeAccuracy": 1,
+        "rewriteAccuracy": 1,
+        "toolSelectionAccuracy": 1,
+        "articleCoverage": 1,
+        "referenceResolutionAccuracy": 1,
+        "comparisonCoverage": 1,
+        "safeStopAccuracy": 1,
+        "limitCompliance": 1,
+        "legacyCompatibility": 1,
+        "averageRetrievalAttempts": 0.9643,
+        "maxRetrievalAttempts": 2,
+        "warmLatencyMs": {
+          "p50": 26.274,
+          "p95": 120.064,
+          "max": 141.241
+        }
+      },
+      "phase4Passed": true,
+      "phase5Passed": true
+    },
+    "sourceBuildAudit": {
+      "buildDurationMs": 185.293,
+      "rebuiltPosts": 71,
+      "rebuiltChunks": 745,
+      "rebuiltCodeBlocks": 395,
+      "matchingChunks": 745,
+      "sourceRebuildMatchRate": 1,
+      "validSourceLocations": 745,
+      "sourceLocationCoverage": 1
+    }
+  },
+  "rollback": {
+    "command": "RAG_CHUNK_SCHEMA=legacy-v3 npm run export:ai",
+    "revision": "7e6d67b",
+    "scope": "restores posts, chunks, vectors, code blocks, learning graph and browser retrieval artifacts"
+  },
+  "acceptance": {
+    "checks": {
+      "allPublishedPostsParsed": true,
+      "retrievalCoverage": true,
+      "traceCoverage": true,
+      "sourceRebuildMatch": true,
+      "sourceLocationsValid": true,
+      "codeIsolation": true,
+      "profileRegistry": true,
+      "internalLinksResolved": true,
+      "rollbackContract": true,
+      "hybridNoRegression": true,
+      "agentRegression": true,
+      "groundedAndSpecialistRegression": true
+    },
+    "passed": true
+  }
+}

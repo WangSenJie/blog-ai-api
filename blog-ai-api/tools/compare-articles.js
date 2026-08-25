@@ -82,10 +82,17 @@ function selectDimensionEvidence(chunks, vectors, post, dimension, query) {
     definition && definition.terms.join(' '),
     query
   ].filter(Boolean).join(' ');
-  const retrieval = hybridRankChunks(chunks, vectors, dimensionQuery, 'site', null);
-  const evidence = retrieval.ranked.find(item => (
-    hasDimensionEvidence(item.chunk, dimension)
-  )) || null;
+  const eligibleChunks = (chunks || []).filter(chunk => (
+    hasDimensionEvidence(chunk, dimension)
+  ));
+  const retrieval = hybridRankChunks(
+    eligibleChunks.length ? eligibleChunks : chunks,
+    vectors,
+    dimensionQuery,
+    'site',
+    null
+  );
+  const evidence = eligibleChunks.length ? retrieval.ranked[0] || null : null;
   return { evidence, retrieval };
 }
 

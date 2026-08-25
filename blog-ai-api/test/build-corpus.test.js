@@ -8,9 +8,19 @@ const test = require('node:test');
 
 const {
   buildCorpus,
+  buildIngestionReport,
   buildLearningGraph,
-  extractCodeBlocks
+  extractCodeBlocks,
+  parseFrontMatter,
+  parseMarkdownDocument
 } = require('../../scripts/build-ai-corpus');
+const {
+  buildManifest,
+  validateCorpusData
+} = require('../lib/corpus-integrity');
+const {
+  loadProfileRegistry
+} = require('../../scripts/rag-chunk-profiles');
 
 function makeTempDir(t) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'blog-ai-build-corpus-'));
@@ -213,4 +223,189 @@ slug: code-advanced
     'prerequisite'
   ]);
   assert.equal(graph.nodes.every(node => node.trackId === 'code-track'), true);
+});
+
+test('Phase 6 parses nested YAML and preserves Markdown structure without indexing code', t => {
+  const metadata = parseFrontMatter(`
+title: "Structured: Markdown"
+date: 2026-08-25
+published: true
+categories: [AI, RAG]
+rag:
+  chunk_profile: tutorial
+  `, 'fixture.md');
+
+  assert.equal(metadata.title, 'Structured: Markdown');
+  assert.equal(metadata.date, '2026-08-25');
+  assert.equal(metadata.published, true);
+  assert.deepEqual(metadata.categories, ['AI', 'RAG']);
+  assert.equal(metadata.rag.chunk_profile, 'tutorial');
+
+  const document = parseMarkdownDocument(`# Structured section
+
+Visible paragraph with [a source](https://example.com).
+
+![architecture diagram](diagram.png)
+
+Figure 1 explains the architecture diagram.
+
+- First complete item
+- Second complete item
+
+  \`\`\`js
+  const shouldNotEnterProse = true;
+  \`\`\`
+
+| Name | Purpose |
+| --- | --- |
+| Redis | Memory |
+
+Before the formula.
+$$
+E[X] = \\sum_x xp(x)
+$$
+After the formula.
+
+> Quoted evidence.
+
+{% note info %}
+Callout content remains visible.
+{% endnote %}`);
+
+  assert.deepEqual(
+    [...new Set(document.blocks.map(block => block.type))].sort(),
+    ['callout', 'code', 'formula', 'image', 'list', 'paragraph', 'quote', 'table']
+  );
+  assert.equal(document.blocks.every(block => (
+    block.sourceLines && block.sourceLines.start >= 1 && block.sourceLines.end >= block.sourceLines.start
+  )), true);
+  assert.match(document.contentText, /图片：architecture diagram/);
+  assert.match(document.contentText, /Figure 1 explains the architecture diagram/);
+  assert.match(document.contentText, /E\[X\] =/);
+  assert.doesNotMatch(document.contentText, /shouldNotEnterProse/);
+  assert.match(document.blocks.find(block => block.type === 'list').content, /Second complete item/);
+  assert.deepEqual(document.sections[0].headingPath, ['Structured section']);
+  assert.match(document.sections[0].sectionAnchor, /^section_[a-f0-9]{16}$/);
+});
+
+test('Phase 6 exports retrievalText, source locations, ingestion diagnostics, and strict hashes', t => {
+  const postsDirectory = makeTempDir(t);
+  writePost(postsDirectory, 'structured.md', `
+title: Structured RAG
+date: 2026-08-25
+slug: structured-rag
+tags: [retrieval]
+categories: [AI]
+rag:
+  chunk_profile: tutorial
+  `, `# Retrieval section
+
+The exact source paragraph is preserved for citation.
+
+\`\`\`js
+const codeIsSeparate = true;
+\`\`\`
+
+$$
+x = y + 1
+$$`);
+
+  const corpus = buildCorpus(postsDirectory);
+  const ingestion = buildIngestionReport(corpus.posts, corpus.chunks, corpus.diagnostics);
+  const manifest = buildManifest(corpus.posts, corpus.chunks, corpus.diagnostics, {
+    ingestion
+  });
+  const chunk = corpus.chunks[0];
+
+  assert.equal(corpus.posts[0].chunkProfile, 'tutorial');
+  assert.match(chunk.content, /exact source paragraph/);
+  assert.doesNotMatch(chunk.content, /codeIsSeparate/);
+  assert.match(chunk.retrievalText, /Structured RAG/);
+  assert.match(chunk.retrievalText, /Retrieval section/);
+  assert.deepEqual(chunk.blockTypes, ['paragraph', 'formula']);
+  assert.deepEqual(chunk.sourceLines, { start: 12, end: 20 });
+  assert.match(chunk.sectionAnchor, /^section_[a-f0-9]{16}$/);
+  assert.equal(ingestion.stats.chunksWithRetrievalText, corpus.chunks.length);
+  assert.equal(ingestion.stats.sourceLocatedChunks, corpus.chunks.length);
+  assert.equal(ingestion.stats.blockTypeCounts.code, 1);
+  assert.equal(ingestion.stats.blockTypeCounts.formula, 1);
+  assert.doesNotThrow(() => validateCorpusData(
+    corpus.posts,
+    corpus.chunks,
+    manifest,
+    []
+  ));
+
+  const tamperedChunks = corpus.chunks.map(item => Object.assign({}, item));
+  tamperedChunks[0].retrievalText += '\nforged retrieval text';
+  assert.throws(
+    () => validateCorpusData(corpus.posts, tamperedChunks, manifest, []),
+    /content hash is invalid/
+  );
+});
+
+test('Phase 6 resolves author profiles by fixed priority and standardizes internal links', t => {
+  const rootDirectory = makeTempDir(t);
+  const postsDirectory = path.join(rootDirectory, 'posts');
+  const mathDirectory = path.join(postsDirectory, 'math');
+  const configDirectory = path.join(rootDirectory, 'config');
+  fs.mkdirSync(mathDirectory, { recursive: true });
+  fs.mkdirSync(configDirectory, { recursive: true });
+  const configPath = path.join(configDirectory, 'rag-chunk-profiles.yml');
+  fs.writeFileSync(configPath, `version: 1
+defaultProfile: generic-article
+pathRules:
+  - glob: posts/math/**/*.md
+    profile: math-note
+documents:
+  posts/math/exact.md: faq-reference
+`, 'utf8');
+
+  writePost(mathDirectory, 'front-matter.md', `
+title: Front Matter Profile
+date: 2026-08-21
+rag:
+  chunk_profile: tutorial
+  `, 'The front matter declaration wins.');
+  writePost(mathDirectory, 'exact.md', `
+title: Exact Profile
+date: 2026-08-22
+  `, '[Read the generic article](../generic.md).');
+  writePost(mathDirectory, 'path-rule.md', `
+title: Path Profile
+date: 2026-08-23
+  `, 'The directory rule applies.');
+  writePost(postsDirectory, 'generic.md', `
+title: Fallback Profile
+date: 2026-08-24
+  `, 'The migration fallback is explicit in diagnostics.');
+
+  const profileRegistry = loadProfileRegistry(configPath, { rootDir: rootDirectory });
+  const corpus = buildCorpus(postsDirectory, { profileRegistry });
+  const profiles = Object.fromEntries(corpus.posts.map(post => [post.title, [
+    post.chunkProfile,
+    post.profileSource
+  ]]));
+  const ingestion = buildIngestionReport(corpus.posts, corpus.chunks, corpus.diagnostics);
+
+  assert.deepEqual(profiles, {
+    'Fallback Profile': ['generic-article', 'migration-fallback'],
+    'Exact Profile': ['faq-reference', 'document-rule'],
+    'Front Matter Profile': ['tutorial', 'front-matter'],
+    'Path Profile': ['math-note', 'path-rule']
+  });
+  assert.deepEqual(corpus.diagnostics.postsWithoutDeclaredProfile, ['posts/generic.md']);
+  assert.equal(ingestion.stats.internalLinkEdges, 1);
+  assert.equal(ingestion.stats.resolvedInternalLinkEdges, 1);
+  const exactPost = corpus.posts.find(post => post.title === 'Exact Profile');
+  assert.deepEqual(exactPost.internalLinks[0], {
+    sourcePostId: 'Exact Profile',
+    sourceUrl: exactPost.url,
+    targetPostId: 'Fallback Profile',
+    targetUrl: corpus.posts.find(post => post.title === 'Fallback Profile').url,
+    targetSourcePath: 'posts/generic.md',
+    label: 'Read the generic article',
+    anchor: '',
+    resolved: true
+  });
 });

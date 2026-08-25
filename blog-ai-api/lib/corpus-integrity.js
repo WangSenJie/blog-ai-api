@@ -11,6 +11,16 @@ const {
 const MANIFEST_SCHEMA_VERSION = 3;
 const VECTOR_MANIFEST_SCHEMA_VERSION = 2;
 const LEGACY_MANIFEST_SCHEMA_VERSION = 1;
+const INGESTION_SCHEMA_VERSION = 1;
+const INGESTION_BLOCK_TYPES = new Set([
+  'paragraph', 'list', 'table', 'formula', 'quote', 'image', 'callout', 'metadata'
+]);
+const INGESTION_PROFILES = new Set([
+  'generic-article', 'tutorial', 'code-doc', 'math-note', 'faq-reference'
+]);
+const INGESTION_PROFILE_SOURCES = new Set([
+  'front-matter', 'document-rule', 'path-rule', 'migration-fallback'
+]);
 
 function manifestFileNames(schemaVersion) {
   if (schemaVersion === MANIFEST_SCHEMA_VERSION) {
@@ -149,7 +159,103 @@ function buildManifest(posts, chunks, diagnostics, options) {
       : 0;
   }
 
+  if (settings.ingestion) {
+    manifest.ingestion = JSON.parse(JSON.stringify(settings.ingestion));
+  }
+
   return manifest;
+}
+
+function assertIngestionShape(ingestion) {
+  if (!ingestion) return;
+  const stats = ingestion.stats;
+  const parser = ingestion.parser;
+  const lengths = stats && stats.contentLength;
+  const registry = ingestion.profileRegistry;
+  const fieldContract = ingestion.fieldContract;
+  const chunkSchema = ingestion.chunkSchema;
+  const derivedContractFields = [
+    'retrievalText', 'sectionAnchor', 'blockTypes', 'sourceLines', 'internalLinks'
+  ];
+  if (
+    ingestion.schemaVersion !== INGESTION_SCHEMA_VERSION ||
+    !parser || !String(parser.frontMatter || '').trim() ||
+    !String(parser.markdown || '').trim() ||
+    !String(ingestion.transformer || '').trim() ||
+    !String(ingestion.chunking || '').trim() ||
+    !chunkSchema || chunkSchema.active !== 'structured-v1' ||
+    chunkSchema.next !== 'chunk-v2' ||
+    chunkSchema.nextSchema !== 'config/rag-chunk-v2.schema.json' ||
+    chunkSchema.rollbackMode !== 'legacy-v3' ||
+    !/^[a-f0-9]{7,40}$/.test(String(chunkSchema.rollbackRevision || '')) ||
+    chunkSchema.switch !== 'RAG_CHUNK_SCHEMA' ||
+    !registry || registry.version !== 1 ||
+    !INGESTION_PROFILES.has(String(registry.defaultProfile || '')) ||
+    !Number.isSafeInteger(registry.documentRules) || registry.documentRules < 0 ||
+    !Number.isSafeInteger(registry.pathRules) || registry.pathRules < 0 ||
+    !fieldContract || fieldContract.content?.role !== 'citation-source' ||
+    fieldContract.content?.derived !== false ||
+    fieldContract.retrievalText?.role !== 'retrieval-only' ||
+    derivedContractFields.some(field => (
+      fieldContract[field]?.derived !== true ||
+      fieldContract[field]?.citeable !== false ||
+      !String(fieldContract[field]?.version || '').trim() ||
+      !String(fieldContract[field]?.source || '').trim()
+    )) ||
+    !Array.isArray(fieldContract.reservedRetrievalFields) ||
+    !stats || !stats.blockTypeCounts || typeof stats.blockTypeCounts !== 'object' ||
+    Array.isArray(stats.blockTypeCounts) ||
+    !stats.profileCounts || typeof stats.profileCounts !== 'object' ||
+    Array.isArray(stats.profileCounts) ||
+    !stats.profileSourceCounts || typeof stats.profileSourceCounts !== 'object' ||
+    Array.isArray(stats.profileSourceCounts) ||
+    !lengths
+  ) {
+    throw new Error('RAG corpus ingestion metadata is invalid');
+  }
+
+  const integerFields = [
+    'structuredPosts', 'structuredBlocks', 'chunksWithRetrievalText',
+    'sourceLocatedChunks', 'metadataOnlyChunks', 'duplicateChunkContents',
+    'internalLinkEdges', 'resolvedInternalLinkEdges'
+  ];
+  for (const field of integerFields) {
+    if (!Number.isSafeInteger(stats[field]) || stats[field] < 0) {
+      throw new Error(`RAG corpus ingestion statistic is invalid: ${field}`);
+    }
+  }
+  for (const field of ['min', 'p50', 'p95', 'max']) {
+    if (!Number.isSafeInteger(lengths[field]) || lengths[field] < 0) {
+      throw new Error(`RAG corpus ingestion length statistic is invalid: ${field}`);
+    }
+  }
+  for (const [type, count] of Object.entries(stats.blockTypeCounts)) {
+    if (!INGESTION_BLOCK_TYPES.has(type) && type !== 'code') {
+      throw new Error(`RAG corpus ingestion block type is invalid: ${type}`);
+    }
+    if (!Number.isSafeInteger(count) || count < 0) {
+      throw new Error(`RAG corpus ingestion block count is invalid: ${type}`);
+    }
+  }
+  for (const [profile, count] of Object.entries(stats.profileCounts)) {
+    if (!INGESTION_PROFILES.has(profile) || !Number.isSafeInteger(count) || count < 0) {
+      throw new Error(`RAG corpus ingestion profile count is invalid: ${profile}`);
+    }
+  }
+  for (const [source, count] of Object.entries(stats.profileSourceCounts)) {
+    if (!INGESTION_PROFILE_SOURCES.has(source) || !Number.isSafeInteger(count) || count < 0) {
+      throw new Error(`RAG corpus ingestion profile source count is invalid: ${source}`);
+    }
+  }
+  if (
+    !ingestion.warnings ||
+    !Array.isArray(ingestion.warnings.postsWithoutFrontMatter) ||
+    ingestion.warnings.postsWithoutFrontMatter.some(value => !String(value || '').trim()) ||
+    !Array.isArray(ingestion.warnings.postsWithoutDeclaredProfile) ||
+    ingestion.warnings.postsWithoutDeclaredProfile.some(value => !String(value || '').trim())
+  ) {
+    throw new Error('RAG corpus ingestion warnings are invalid');
+  }
 }
 
 function assertManifestShape(manifest) {
@@ -178,6 +284,8 @@ function assertManifestShape(manifest) {
   if (!/^[a-f0-9]{64}$/.test(String(manifest.corpusVersion || ''))) {
     throw new Error('Invalid RAG corpus version');
   }
+
+  assertIngestionShape(manifest.ingestion);
 
   const expectedVersion = manifest.schemaVersion === MANIFEST_SCHEMA_VERSION
     ? sha256(
@@ -208,6 +316,168 @@ function assertManifestShape(manifest) {
       throw new Error('Invalid RAG embedding manifest metadata');
     }
   }
+}
+
+function structuredChunkHash(chunk) {
+  const fingerprint = {
+    postTitle: String(chunk && chunk.postTitle || '').trim(),
+    postUrl: String(chunk && chunk.postUrl || '').trim(),
+    tags: (chunk && chunk.tags || []).map(value => String(value || '').trim()),
+    categories: (chunk && chunk.categories || []).map(value => String(value || '').trim()),
+    sourcePath: String(chunk && chunk.sourcePath || '').trim(),
+    profile: String(chunk && chunk.profile || '').trim(),
+    profileSource: String(chunk && chunk.profileSource || '').trim(),
+    headingPath: (chunk && chunk.headingPath || []).map(value => String(value || '').trim()),
+    sectionAnchor: String(chunk && chunk.sectionAnchor || '').trim(),
+    blockTypes: (chunk && chunk.blockTypes || []).map(value => String(value || '').trim()),
+    sourceLines: chunk && chunk.sourceLines || null,
+    content: String(chunk && chunk.content || '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\s+/g, ' ')
+      .trim(),
+    retrievalText: String(chunk && chunk.retrievalText || '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\s+/g, ' ')
+      .trim(),
+    resourceLinks: (chunk && chunk.resourceLinks || [])
+      .map(value => String(value || '').trim())
+  };
+  return `sha256:${sha256(JSON.stringify(fingerprint))}`;
+}
+
+function validateStructuredIngestion(posts, chunks, ingestion) {
+  if (!ingestion) return {};
+  assertIngestionShape(ingestion);
+  const contentCounts = new Map();
+  let chunksWithRetrievalText = 0;
+  let sourceLocatedChunks = 0;
+  let metadataOnlyChunks = 0;
+  const lengths = [];
+  const postsByUrl = new Map((posts || []).map(post => [
+    normalizePostUrl(post && post.url),
+    post
+  ]));
+
+  for (const chunk of chunks || []) {
+    const id = String(chunk && chunk.id || '').trim();
+    const retrievalText = String(chunk && chunk.retrievalText || '').trim();
+    const blockTypes = chunk && chunk.blockTypes;
+    const anchor = String(chunk && chunk.sectionAnchor || '').trim();
+    const sourceLines = chunk && chunk.sourceLines;
+    const metadataOnly = chunk && chunk.metadataOnly === true;
+    const sourcePath = String(chunk && chunk.sourcePath || '').trim();
+    const profile = String(chunk && chunk.profile || '').trim();
+    const profileSource = String(chunk && chunk.profileSource || '').trim();
+    const post = postsByUrl.get(normalizePostUrl(chunk && chunk.postUrl));
+    if (!retrievalText) {
+      throw new Error(`RAG structured chunk is missing retrievalText: ${id}`);
+    }
+    if (
+      !Array.isArray(blockTypes) || !blockTypes.length ||
+      blockTypes.some(type => !INGESTION_BLOCK_TYPES.has(String(type || '')))
+    ) {
+      throw new Error(`RAG structured chunk has invalid block types: ${id}`);
+    }
+    if (!/^section_(?:[a-f0-9]{16}|metadata)$/.test(anchor)) {
+      throw new Error(`RAG structured chunk has an invalid section anchor: ${id}`);
+    }
+    if (
+      !sourcePath || !INGESTION_PROFILES.has(profile) ||
+      !INGESTION_PROFILE_SOURCES.has(profileSource) ||
+      !post || String(post.sourcePath || '') !== sourcePath ||
+      String(post.chunkProfile || '') !== profile ||
+      String(post.profileSource || '') !== profileSource
+    ) {
+      throw new Error(`RAG structured chunk has invalid source/profile metadata: ${id}`);
+    }
+    if (metadataOnly) {
+      if (sourceLines !== null || !blockTypes.includes('metadata')) {
+        throw new Error(`RAG metadata chunk has an invalid source location: ${id}`);
+      }
+      metadataOnlyChunks += 1;
+    } else {
+      if (
+        !sourceLines ||
+        !Number.isSafeInteger(sourceLines.start) || sourceLines.start < 1 ||
+        !Number.isSafeInteger(sourceLines.end) || sourceLines.end < sourceLines.start
+      ) {
+        throw new Error(`RAG structured chunk has an invalid source location: ${id}`);
+      }
+      sourceLocatedChunks += 1;
+    }
+    if (structuredChunkHash(chunk) !== String(chunk.contentHash || '')) {
+      throw new Error(`RAG structured chunk content hash is invalid: ${id}`);
+    }
+    chunksWithRetrievalText += 1;
+    const content = String(chunk.content || '');
+    const normalized = content.replace(/\s+/g, ' ').trim();
+    lengths.push(content.length);
+    contentCounts.set(normalized, (contentCounts.get(normalized) || 0) + 1);
+  }
+
+  const duplicateChunkContents = [...contentCounts.values()]
+    .filter(count => count > 1)
+    .reduce((total, count) => total + count - 1, 0);
+  const sortedLengths = lengths.slice().sort((left, right) => left - right);
+  const percentile = ratio => sortedLengths.length
+    ? sortedLengths[Math.min(sortedLengths.length - 1, Math.ceil(sortedLengths.length * ratio) - 1)]
+    : 0;
+  const actual = {
+    structuredPosts: (posts || []).length,
+    chunksWithRetrievalText,
+    sourceLocatedChunks,
+    metadataOnlyChunks,
+    duplicateChunkContents,
+    internalLinkEdges: (posts || []).reduce((count, post) => (
+      count + (Array.isArray(post && post.internalLinks) ? post.internalLinks.length : 0)
+    ), 0),
+    resolvedInternalLinkEdges: (posts || []).reduce((count, post) => (
+      count + (Array.isArray(post && post.internalLinks)
+        ? post.internalLinks.filter(link => link && link.resolved === true).length
+        : 0)
+    ), 0),
+    contentLength: {
+      min: sortedLengths.length ? sortedLengths[0] : 0,
+      p50: percentile(0.5),
+      p95: percentile(0.95),
+      max: sortedLengths.length ? sortedLengths[sortedLengths.length - 1] : 0
+    }
+  };
+  for (const field of [
+    'structuredPosts', 'chunksWithRetrievalText', 'sourceLocatedChunks',
+    'metadataOnlyChunks', 'duplicateChunkContents', 'internalLinkEdges',
+    'resolvedInternalLinkEdges'
+  ]) {
+    if (ingestion.stats[field] !== actual[field]) {
+      throw new Error(`RAG corpus ingestion report does not match chunks: ${field}`);
+    }
+  }
+  const countBy = (values, field) => values.reduce((counts, value) => {
+    const key = String(value && value[field] || '').trim();
+    if (key) counts[key] = (counts[key] || 0) + 1;
+    return counts;
+  }, {});
+  const sortedCounts = counts => Object.fromEntries(
+    Object.entries(counts).sort(([left], [right]) => left.localeCompare(right))
+  );
+  const profileCounts = sortedCounts(countBy(posts || [], 'chunkProfile'));
+  const profileSourceCounts = sortedCounts(countBy(posts || [], 'profileSource'));
+  if (JSON.stringify(ingestion.stats.profileCounts) !== JSON.stringify(profileCounts)) {
+    throw new Error('RAG corpus ingestion report does not match posts: profileCounts');
+  }
+  if (JSON.stringify(ingestion.stats.profileSourceCounts) !== JSON.stringify(profileSourceCounts)) {
+    throw new Error('RAG corpus ingestion report does not match posts: profileSourceCounts');
+  }
+  for (const field of ['min', 'p50', 'p95', 'max']) {
+    if (ingestion.stats.contentLength[field] !== actual.contentLength[field]) {
+      throw new Error(`RAG corpus ingestion report length does not match chunks: ${field}`);
+    }
+  }
+  return {
+    structuredBlocks: ingestion.stats.structuredBlocks,
+    sourceLocatedChunks,
+    metadataOnlyChunks
+  };
 }
 
 function verifyManifestFiles(manifest, paths) {
@@ -516,6 +786,11 @@ function validateCorpusData(posts, chunks, manifest, vectors, phase5Artifacts) {
   }
 
   const vectorIntegrity = validateVectorData(chunks, vectors, manifest);
+  const ingestionIntegrity = validateStructuredIngestion(
+    posts,
+    chunks,
+    manifest && manifest.ingestion
+  );
   const phase5Integrity = manifest &&
     manifest.schemaVersion === MANIFEST_SCHEMA_VERSION
     ? (() => {
@@ -542,14 +817,16 @@ function validateCorpusData(posts, chunks, manifest, vectors, phase5Artifacts) {
     indexedPosts: indexedPostUrls.size,
     indexedChunks: chunks.length,
     droppedChunks: 0
-  }, vectorIntegrity, phase5Integrity);
+  }, vectorIntegrity, phase5Integrity, ingestionIntegrity);
 }
 
 module.exports = {
   LEGACY_MANIFEST_SCHEMA_VERSION,
   VECTOR_MANIFEST_SCHEMA_VERSION,
   MANIFEST_SCHEMA_VERSION,
+  INGESTION_SCHEMA_VERSION,
   assertManifestShape,
+  assertIngestionShape,
   buildManifest,
   codeBlockHash,
   hashFile,
@@ -559,6 +836,7 @@ module.exports = {
   validateCodeBlocksData,
   validateCorpusData,
   validateLearningGraphData,
+  validateStructuredIngestion,
   validateVectorData,
   verifyManifestFiles
 };

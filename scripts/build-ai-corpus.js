@@ -10,16 +10,22 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const MarkdownIt = require('markdown-it');
 const SITE_URL = 'https://wangsenjie.github.io';
 const { resolveSlug, formatDatePrefix } = require('./slug-utils');
 const { LEARNING_TRACKS } = require('./learning-graph-config');
-
-const markdownParser = new MarkdownIt({
-    html: false,
-    linkify: false,
-    typographer: false
-});
+const {
+    CHUNK_PROFILES,
+    PROFILE_SOURCES,
+    loadProfileRegistry,
+    normalizeRepositoryPath,
+    resolveChunkProfile
+} = require('./rag-chunk-profiles');
+const {
+    markdownParser,
+    markdownToText,
+    parseFrontMatter,
+    parseMarkdownDocument
+} = require('./markdown-structure');
 
 function findPostFiles(dir) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -42,62 +48,38 @@ function findPostFiles(dir) {
 }
 
 function readPostFile(filePath) {
-    const raw = fs.readFileSync(filePath, 'utf8');
-
+    const raw = fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, '');
     let frontMatterText = '';
     let body = raw;
+    let hasFrontMatter = false;
+    let bodyLineOffset = 0;
+    const frontMatter = raw.match(
+        /^---[ \t]*\r?\n([\s\S]*?)\r?\n(?:---|\.\.\.)[ \t]*(?:\r?\n|$)/
+    );
 
-    if (raw.startsWith('---')) {
-        const parts = raw.split('---');
-
-        frontMatterText = parts[1].trim();
-        body = parts.slice(2).join('---').trim();
+    if (frontMatter) {
+        hasFrontMatter = true;
+        frontMatterText = frontMatter[1].trim();
+        body = raw.slice(frontMatter[0].length).replace(/\s+$/, '');
+        bodyLineOffset = (frontMatter[0].match(/\n/g) || []).length;
     }
 
     return {
         filePath: filePath,
         raw: raw,
         frontMatterText: frontMatterText,
-        body: body
+        body: body,
+        hasFrontMatter,
+        bodyLineOffset
     };
 }
 
-function parseFrontMatter(frontMatterText) {
-    const result = {};
-    const lines = frontMatterText.split('\n');
-    let currentKey = null;
-
-    for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed) continue;
-
-        if (trimmed.startsWith('- ')) {
-            if (currentKey) {
-                result[currentKey].push(trimmed.slice(2).trim());
-            }
-            continue;
-        }
-
-        const parts = trimmed.split(':');
-        const key = parts[0].trim();
-        const value = parts.slice(1).join(':').trim();
-
-        if (value) {
-            result[key] = value;
-            currentKey = null;
-        } else {
-            result[key] = [];
-            currentKey = key;
-        }
-    }
-
-    return result;
-}
-
 function toArray(value) {
-    if (Array.isArray(value)) return value;
+    if (Array.isArray(value)) {
+        return value.map(item => String(item || '').trim()).filter(Boolean);
+    }
     if (!value) return [];
-    return [value];
+    return [String(value).trim()].filter(Boolean);
 }
 
 function isPublished(value) {
@@ -145,48 +127,6 @@ function buildPostUrl(siteUrl, date, slug) {
     return url;
 }
 
-// 清洗 markdown 文本
-function markdownToText(markdown) {
-    let text = String(markdown || '');
-
-    // 移除 Hexo 标签
-    text = text.replace(/{%[\s\S]*?%}/g, '');
-
-    // 移除图片语法
-    text = text.replace(/!\[.*?\]\(.*?\)/g, '');
-
-    // 处理链接, 只保留文字
-    text = text.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
-
-    // 除去行内代码
-    text = text.replace(/`([^`]+)`/g, '$1');
-
-    // 除去标题开头的 # 号
-    text = text.replace(/^#+\s*/gm, '');
-
-    // 除去引号开头的 >
-    text = text.replace(/^\s*>\s*/gm, '');
-
-    // 除去列表符号
-    text = text.replace(/^\s*[-*+]\s+/gm, '');
-
-    // 除去代码框
-    text = text.replace(/^```.*$/gm, '');
-
-    // 除去数学公式围栏
-    text = text.replace(/^\$\$$/gm, '');
-
-    // 除去加粗/斜体符号
-    // text = text.replace(/[*_]{1,2}/g, '');
-
-    // 压缩空白
-    text = text.replace(/[ \t]+/g, ' '); //压缩横向空白
-    text = text.replace(/\n{3,}/g, '\n\n'); //压缩纵向空白
-    text = text.trim(); //去掉首尾空白
-
-
-    return text;
-}
 
 function extractResourceLinks(markdown) {
     const links = new Set();
@@ -206,9 +146,115 @@ function extractResourceLinks(markdown) {
     return [...links];
 }
 
-function buildPostObject(filePath, assignedSlugs) {
+function extractInternalMarkdownLinks(markdown, filePath, rootDir) {
+    const links = [];
+    const source = String(markdown || '');
+    const sourcePath = normalizeRepositoryPath(path.relative(rootDir, filePath));
+    const seen = new Set();
+
+    for (const match of source.matchAll(/(?<!!)\[([^\]]*)\]\(([^)]+)\)/g)) {
+        const label = markdownToText(match[1]).replace(/\s+/g, ' ').trim();
+        let rawTarget = String(match[2] || '').trim()
+            .replace(/^<|>$/g, '')
+            .replace(/\s+["'][^"']*["']\s*$/, '')
+            .trim();
+        if (!rawTarget || /^(?:mailto:|javascript:|data:)/i.test(rawTarget)) continue;
+
+        let targetUrl = '';
+        let targetSourcePath = '';
+        let anchor = '';
+        const hashIndex = rawTarget.indexOf('#');
+        if (hashIndex >= 0) {
+            anchor = rawTarget.slice(hashIndex + 1);
+            rawTarget = rawTarget.slice(0, hashIndex);
+        }
+        const targetWithoutQuery = rawTarget.split('?')[0];
+        if (!targetWithoutQuery) {
+            targetSourcePath = sourcePath;
+        } else if (/^https?:\/\//i.test(targetWithoutQuery)) {
+            try {
+                const url = new URL(targetWithoutQuery);
+                if (url.origin !== SITE_URL) continue;
+                targetUrl = url.pathname.replace(/\/{2,}/g, '/');
+            } catch (error) {
+                continue;
+            }
+        } else if (targetWithoutQuery.startsWith('/')) {
+            targetUrl = targetWithoutQuery.replace(/\/{2,}/g, '/');
+        } else if (/\.md$/i.test(targetWithoutQuery)) {
+            targetSourcePath = normalizeRepositoryPath(path.relative(
+                rootDir,
+                path.resolve(path.dirname(filePath), targetWithoutQuery)
+            ));
+        } else {
+            continue;
+        }
+
+        const key = [label, targetUrl, targetSourcePath, anchor].join('\u0000');
+        if (seen.has(key)) continue;
+        seen.add(key);
+        links.push({
+            label,
+            rawTarget: String(match[2] || '').trim(),
+            targetUrl,
+            targetSourcePath,
+            anchor
+        });
+    }
+    return links;
+}
+
+function standardizeInternalLinkEdges(posts) {
+    const postsBySource = new Map((posts || []).map(post => [post.sourcePath, post]));
+    const postsByPathname = new Map((posts || []).map(post => {
+        let pathname = '';
+        try {
+            pathname = new URL(post.url).pathname.replace(/\/{2,}/g, '/');
+        } catch (error) {
+            pathname = '';
+        }
+        return [pathname, post];
+    }).filter(([pathname]) => pathname));
+    const edges = [];
+
+    for (const post of posts || []) {
+        const resolvedLinks = [];
+        for (const link of post.internalLinks || []) {
+            const target = link.targetSourcePath
+                ? postsBySource.get(link.targetSourcePath)
+                : postsByPathname.get(link.targetUrl);
+            const edge = {
+                sourcePostId: post.id,
+                sourceUrl: post.url,
+                targetPostId: target ? target.id : '',
+                targetUrl: target ? target.url : link.targetUrl,
+                targetSourcePath: target ? target.sourcePath : link.targetSourcePath,
+                label: link.label,
+                anchor: link.anchor,
+                resolved: Boolean(target)
+            };
+            resolvedLinks.push(edge);
+            edges.push(edge);
+        }
+        post.internalLinks = resolvedLinks;
+    }
+    return edges;
+}
+
+function buildPostObject(filePath, assignedSlugs, profileRegistry) {
+    const activeProfileRegistry = profileRegistry || loadProfileRegistry();
     const postFile = readPostFile(filePath);
-    const meta = parseFrontMatter(postFile.frontMatterText);
+    const meta = parseFrontMatter(postFile.frontMatterText, filePath);
+    const markdownDocument = parseMarkdownDocument(postFile.body);
+    if (postFile.bodyLineOffset) {
+        for (const block of markdownDocument.blocks || []) {
+            if (!block.sourceLines) continue;
+            block.sourceLines = {
+                start: block.sourceLines.start + postFile.bodyLineOffset,
+                end: block.sourceLines.end + postFile.bodyLineOffset
+            };
+        }
+    }
     const source = filePath.replace(/^.*source[\\/]/, '');
     const published = isPublished(meta.published) && !isDraft(meta.draft);
     const slug = resolveSlug(
@@ -221,7 +267,12 @@ function buildPostObject(filePath, assignedSlugs) {
         assignedSlugs
     )
     const url = buildPostUrl(SITE_URL, meta.date, slug);
-    const contentText = markdownToText(postFile.body);
+    const contentText = markdownDocument.contentText;
+    const profile = resolveChunkProfile(meta, filePath, activeProfileRegistry);
+    const sourcePath = normalizeRepositoryPath(path.relative(
+        activeProfileRegistry.rootDir,
+        filePath
+    ));
 
     return {
         id: meta.title || filePath,
@@ -231,50 +282,30 @@ function buildPostObject(filePath, assignedSlugs) {
         tags: toArray(meta.tags),
         categories: toArray(meta.categories),
         filePath: filePath,
+        sourcePath,
         body: postFile.body || '',
         contentText,
         resourceLinks: extractResourceLinks(postFile.body),
+        internalLinks: extractInternalMarkdownLinks(
+            postFile.body,
+            filePath,
+            activeProfileRegistry.rootDir
+        ),
+        chunkProfile: profile.profile,
+        profileSource: profile.profileSource,
+        profileMatchedRule: profile.matchedRule,
         slug: slug || '',
         url: url,
-        published
+        published,
+        hasFrontMatter: postFile.hasFrontMatter,
+        bodyLineOffset: postFile.bodyLineOffset,
+        structuredBlocks: markdownDocument.blocks,
+        structuredSections: markdownDocument.sections
     };
 }
 
 function splitMarkdownSections(markdown) {
-    const sections = [];
-    let sectionTitle = '';
-    let headingPath = [];
-    const headingStack = [];
-    let lines = [];
-
-    function flush() {
-        const content = markdownToText(lines.join('\n'));
-        if (content) {
-            sections.push({
-                sectionTitle,
-                headingPath: headingPath.slice(),
-                content
-            });
-        }
-        lines = [];
-    }
-
-    for (const line of String(markdown || '').split('\n')) {
-        const heading = line.match(/^(#{1,6})\s+(.+?)\s*#*$/);
-        if (heading) {
-            flush();
-            const level = heading[1].length;
-            sectionTitle = markdownToText(heading[2]);
-            headingStack.length = level - 1;
-            headingStack[level - 1] = sectionTitle;
-            headingPath = headingStack.filter(Boolean);
-            continue;
-        }
-        lines.push(line);
-    }
-
-    flush();
-    return sections;
+    return parseMarkdownDocument(markdown).sections;
 }
 
 function splitLongText(text, maxLength) {
@@ -337,6 +368,117 @@ function chunkSection(text, chunkSize, overlap) {
     return chunks;
 }
 
+const ATOMIC_PROSE_BLOCK_TYPES = new Set(['table', 'formula', 'image']);
+
+function mergeSourceLines(units) {
+    const locations = (units || [])
+        .map(unit => unit && unit.sourceLines)
+        .filter(location => (
+            location &&
+            Number.isSafeInteger(location.start) &&
+            Number.isSafeInteger(location.end)
+        ));
+    if (!locations.length) return null;
+    return {
+        start: Math.min(...locations.map(location => location.start)),
+        end: Math.max(...locations.map(location => location.end))
+    };
+}
+
+function structuredChunk(units) {
+    return {
+        content: (units || []).map(unit => unit.content).filter(Boolean).join('\n\n').trim(),
+        blockTypes: [...new Set((units || []).map(unit => unit.type).filter(Boolean))],
+        sourceLines: mergeSourceLines(units)
+    };
+}
+
+function chunkStructuredSection(section, chunkSize, overlap) {
+    const units = [];
+    for (const block of section && section.blocks || []) {
+        if (!block || block.type === 'code' || !String(block.content || '').trim()) continue;
+        const content = String(block.content).trim();
+        const atomic = ATOMIC_PROSE_BLOCK_TYPES.has(block.type);
+        const parts = atomic ? [content] : splitLongText(content, chunkSize);
+        for (const part of parts) {
+            units.push({
+                content: part,
+                type: block.type,
+                sourceLines: block.sourceLines,
+                atomic
+            });
+        }
+    }
+
+    const chunks = [];
+    let current = [];
+
+    function currentText() {
+        return current.map(unit => unit.content).join('\n\n');
+    }
+
+    function flush(keepOverlap) {
+        const chunk = structuredChunk(current);
+        if (chunk.content) chunks.push(chunk);
+        if (!keepOverlap || !current.length) {
+            current = [];
+            return;
+        }
+        const last = current[current.length - 1];
+        if (last.atomic) {
+            current = [];
+            return;
+        }
+        const overlapUnits = [];
+        let remaining = overlap;
+        for (let index = current.length - 1; index >= 0 && remaining > 0; index -= 1) {
+            const unit = current[index];
+            if (unit.atomic) break;
+            const content = String(unit.content || '').trim();
+            if (!content) continue;
+            const retained = content.length <= remaining
+                ? content
+                : content.slice(-remaining).trim();
+            if (retained) {
+                overlapUnits.unshift(Object.assign({}, unit, { content: retained }));
+                remaining -= retained.length;
+            }
+        }
+        current = overlapUnits;
+    }
+
+    for (const unit of units) {
+        if (unit.atomic && unit.content.length > chunkSize) {
+            if (current.length) flush(false);
+            chunks.push(structuredChunk([unit]));
+            continue;
+        }
+
+        const separatorLength = current.length ? 2 : 0;
+        if (current.length && currentText().length + separatorLength + unit.content.length > chunkSize) {
+            flush(true);
+        }
+        if (current.length && currentText().length + 2 + unit.content.length > chunkSize) {
+            current = [];
+        }
+        current.push(unit);
+    }
+
+    if (current.length) flush(false);
+    return chunks;
+}
+
+function buildRetrievalText(post, values) {
+    return [
+        post && post.title,
+        post && (post.tags || []).join(' '),
+        post && (post.categories || []).join(' '),
+        values && (values.headingPath || []).join(' > '),
+        values && (values.blockTypes || []).join(' '),
+        values && values.content
+    ].map(value => String(value || '').trim()).filter(Boolean).join('\n');
+}
+
 function stableChunkId(post, headingPath, sectionChunkIndex, sectionOccurrence) {
     const stableLocation = [
         String(post.url || '').trim().toLowerCase(),
@@ -357,8 +499,18 @@ function contentHashForChunk(chunk) {
         postUrl: String(chunk.postUrl || '').trim(),
         tags: (chunk.tags || []).map(value => String(value || '').trim()),
         categories: (chunk.categories || []).map(value => String(value || '').trim()),
+        sourcePath: String(chunk.sourcePath || '').trim(),
+        profile: String(chunk.profile || '').trim(),
+        profileSource: String(chunk.profileSource || '').trim(),
         headingPath: (chunk.headingPath || []).map(value => String(value || '').trim()),
+        sectionAnchor: String(chunk.sectionAnchor || '').trim(),
+        blockTypes: (chunk.blockTypes || []).map(value => String(value || '').trim()),
+        sourceLines: chunk.sourceLines || null,
         content: String(chunk.content || '')
+            .replace(/\r\n/g, '\n')
+            .replace(/\s+/g, ' ')
+            .trim(),
+        retrievalText: String(chunk.retrievalText || '')
             .replace(/\r\n/g, '\n')
             .replace(/\s+/g, ' ')
             .trim(),
@@ -462,8 +614,14 @@ function extractCodeBlocksForPost(post, postChunks) {
             ordinal,
             language: normalizeCodeLanguage(token.info),
             code: String(token.content || '').replace(/\r\n/g, '\n'),
-            sourceLineStart: Math.max(1, Number(lineMap[0]) + 1),
-            sourceLineEnd: Math.max(1, Number(lineMap[1])),
+            sourceLineStart: Math.max(
+                1,
+                Number(lineMap[0]) + 1 + (Number(post.bodyLineOffset) || 0)
+            ),
+            sourceLineEnd: Math.max(
+                1,
+                Number(lineMap[1]) + (Number(post.bodyLineOffset) || 0)
+            ),
             contextChunkIds: fallbackContext
                 .map(chunk => String(chunk && chunk.id || '').trim())
                 .filter(Boolean)
@@ -575,14 +733,22 @@ function createChunk(post, values) {
         postTitle: post.title,
         tags: post.tags || [],
         categories: post.categories || [],
+        sourcePath: post.sourcePath || '',
+        profile: post.chunkProfile || 'generic-article',
+        profileSource: post.profileSource || 'migration-fallback',
         sectionTitle: values.sectionTitle || '',
         headingPath: (values.headingPath || []).slice(),
+        sectionAnchor: values.sectionAnchor || '',
         chunkIndex: values.chunkIndex,
         sectionOccurrence: values.sectionOccurrence || 0,
         content: values.content,
+        retrievalText: '',
+        blockTypes: (values.blockTypes || ['paragraph']).slice(),
+        sourceLines: values.sourceLines || null,
         resourceLinks: (values.resourceLinks || []).slice(),
         metadataOnly: values.metadataOnly === true
     };
+    chunk.retrievalText = buildRetrievalText(post, chunk);
     chunk.id = stableChunkId(
         post,
         chunk.headingPath,
@@ -609,10 +775,13 @@ function buildPdfMetadataChunk(post) {
     return createChunk(post, {
         sectionTitle: '文章元数据',
         headingPath: ['文章元数据'],
+        sectionAnchor: 'section_metadata',
         chunkIndex: 0,
         sectionChunkIndex: 0,
         sectionOccurrence: 0,
         content,
+        blockTypes: ['metadata'],
+        sourceLines: null,
         resourceLinks: post.resourceLinks || [],
         metadataOnly: true
     });
@@ -625,7 +794,9 @@ function chunkPost(post) {
     const postUrl = post.url || '';
     if (post.published === false || !postUrl) return chunks;
 
-    const sections = splitMarkdownSections(post.body);
+    const sections = Array.isArray(post.structuredSections)
+        ? post.structuredSections
+        : splitMarkdownSections(post.body);
     const sourceSections = sections.length
         ? sections
         : [{ sectionTitle: '', content: post.contentText || '' }];
@@ -636,15 +807,24 @@ function chunkPost(post) {
         const headingKey = (section.headingPath || []).join('\u0000');
         const sectionOccurrence = headingOccurrences.get(headingKey) || 0;
         headingOccurrences.set(headingKey, sectionOccurrence + 1);
-        const sectionChunks = chunkSection(section.content, chunkSize, overlap);
-        for (const [sectionChunkIndex, content] of sectionChunks.entries()) {
+        const sectionChunks = section.blocks
+            ? chunkStructuredSection(section, chunkSize, overlap)
+            : chunkSection(section.content, chunkSize, overlap).map(content => ({
+                content,
+                blockTypes: ['paragraph'],
+                sourceLines: null
+            }));
+        for (const [sectionChunkIndex, sectionChunk] of sectionChunks.entries()) {
             chunks.push(createChunk(post, {
                 sectionTitle: section.sectionTitle,
                 headingPath: section.headingPath || [],
+                sectionAnchor: section.sectionAnchor || '',
                 chunkIndex: index,
                 sectionChunkIndex,
                 sectionOccurrence,
-                content,
+                content: sectionChunk.content,
+                blockTypes: sectionChunk.blockTypes,
+                sourceLines: sectionChunk.sourceLines,
                 resourceLinks: post.resourceLinks || []
             }));
             index += 1;
@@ -658,7 +838,11 @@ function chunkPost(post) {
     return chunks;
 }
 
-function buildCorpus(postsDir) {
+function buildCorpus(postsDir, options) {
+    const settings = options || {};
+    const profileRegistry = settings.profileRegistry || loadProfileRegistry(
+        settings.profileConfigPath
+    );
     const files = findPostFiles(postsDir);
     const posts = [];
     const chunks = [];
@@ -667,11 +851,29 @@ function buildCorpus(postsDir) {
         sourcePosts: files.length,
         unpublishedPosts: [],
         postsWithoutUrl: [],
-        postsWithoutIndexableContent: []
+        postsWithoutIndexableContent: [],
+        postsWithoutFrontMatter: [],
+        postsWithoutDeclaredProfile: [],
+        structuredBlocks: 0,
+        blockTypeCounts: {},
+        profileCounts: {},
+        profileSourceCounts: {},
+        profileRegistry: {
+            version: profileRegistry.version,
+            defaultProfile: profileRegistry.defaultProfile,
+            documentRules: profileRegistry.documents.size,
+            pathRules: profileRegistry.pathRules.length
+        },
+        internalLinkEdges: 0,
+        resolvedInternalLinkEdges: 0
     };
 
     for (const filePath of files) {
-        const post = buildPostObject(filePath, assignedSlugs);
+        const post = buildPostObject(filePath, assignedSlugs, profileRegistry);
+
+        if (!post.hasFrontMatter) {
+            diagnostics.postsWithoutFrontMatter.push(post.sourcePath);
+        }
 
         if (!post.published) {
             diagnostics.unpublishedPosts.push(post.title || post.id);
@@ -684,6 +886,23 @@ function buildCorpus(postsDir) {
         }
 
         posts.push(post);
+        diagnostics.profileCounts[post.chunkProfile] = (
+            diagnostics.profileCounts[post.chunkProfile] || 0
+        ) + 1;
+        diagnostics.profileSourceCounts[post.profileSource] = (
+            diagnostics.profileSourceCounts[post.profileSource] || 0
+        ) + 1;
+        if (post.profileSource === 'migration-fallback') {
+            diagnostics.postsWithoutDeclaredProfile.push(post.sourcePath);
+        }
+        for (const block of post.structuredBlocks || []) {
+            const type = String(block && block.type || '').trim();
+            if (!type) continue;
+            diagnostics.structuredBlocks += 1;
+            diagnostics.blockTypeCounts[type] = (
+                diagnostics.blockTypeCounts[type] || 0
+            ) + 1;
+        }
 
         const postChunks = chunkPost(post);
         if (!postChunks.length) {
@@ -692,6 +911,10 @@ function buildCorpus(postsDir) {
         chunks.push(...postChunks);
     }
 
+    const internalLinkEdges = standardizeInternalLinkEdges(posts);
+    diagnostics.internalLinkEdges = internalLinkEdges.length;
+    diagnostics.resolvedInternalLinkEdges = internalLinkEdges.filter(edge => edge.resolved).length;
+
     return {
         posts: posts,
         chunks: chunks,
@@ -699,10 +922,141 @@ function buildCorpus(postsDir) {
     };
 }
 
+function percentile(values, ratio) {
+    if (!values.length) return 0;
+    const sorted = values.slice().sort((left, right) => left - right);
+    const index = Math.min(
+        sorted.length - 1,
+        Math.max(0, Math.ceil(sorted.length * ratio) - 1)
+    );
+    return sorted[index];
+}
+
+function buildIngestionReport(posts, chunks, diagnostics) {
+    const lengths = (chunks || []).map(chunk => String(chunk && chunk.content || '').length);
+    const contentCounts = new Map();
+    for (const chunk of chunks || []) {
+        const content = String(chunk && chunk.content || '').replace(/\s+/g, ' ').trim();
+        if (!content) continue;
+        contentCounts.set(content, (contentCounts.get(content) || 0) + 1);
+    }
+    const duplicateChunkContents = [...contentCounts.values()]
+        .filter(count => count > 1)
+        .reduce((total, count) => total + count - 1, 0);
+    const blockTypeCounts = Object.fromEntries(
+        Object.entries(diagnostics && diagnostics.blockTypeCounts || {})
+            .sort(([left], [right]) => left.localeCompare(right))
+    );
+    const profileCounts = Object.fromEntries(
+        Object.entries(diagnostics && diagnostics.profileCounts || {})
+            .sort(([left], [right]) => left.localeCompare(right))
+    );
+    const profileSourceCounts = Object.fromEntries(
+        Object.entries(diagnostics && diagnostics.profileSourceCounts || {})
+            .sort(([left], [right]) => left.localeCompare(right))
+    );
+
+    return {
+        schemaVersion: 1,
+        parser: {
+            frontMatter: 'js-yaml-json-schema-v1',
+            markdown: 'markdown-it-token-v1'
+        },
+        transformer: 'retrieval-text-v1',
+        chunking: 'section-character-v1',
+        chunkSchema: {
+            active: 'structured-v1',
+            next: 'chunk-v2',
+            nextSchema: 'config/rag-chunk-v2.schema.json',
+            rollbackMode: 'legacy-v3',
+            rollbackRevision: '7e6d67b',
+            switch: 'RAG_CHUNK_SCHEMA'
+        },
+        profileRegistry: Object.assign({}, diagnostics && diagnostics.profileRegistry),
+        fieldContract: {
+            content: {
+                role: 'citation-source',
+                derived: false
+            },
+            retrievalText: {
+                role: 'retrieval-only',
+                derived: true,
+                citeable: false,
+                version: 'retrieval-text-v1',
+                source: 'deterministic-title-metadata-structure-content'
+            },
+            sectionAnchor: {
+                role: 'source-navigation',
+                derived: true,
+                citeable: false,
+                version: 'section-anchor-v1',
+                source: 'heading-path-and-occurrence'
+            },
+            blockTypes: {
+                role: 'structure-metadata',
+                derived: true,
+                citeable: false,
+                version: 'markdown-block-types-v1',
+                source: 'markdown-it-token-stream'
+            },
+            sourceLines: {
+                role: 'source-provenance',
+                derived: true,
+                citeable: false,
+                version: 'source-lines-v1',
+                source: 'markdown-token-line-map'
+            },
+            internalLinks: {
+                role: 'navigation-metadata',
+                derived: true,
+                citeable: false,
+                version: 'internal-links-v1',
+                source: 'markdown-links'
+            },
+            reservedRetrievalFields: ['summary', 'keywords', 'aliases', 'questions']
+        },
+        stats: {
+            structuredPosts: (posts || []).length,
+            structuredBlocks: Number(diagnostics && diagnostics.structuredBlocks) || 0,
+            blockTypeCounts,
+            profileCounts,
+            profileSourceCounts,
+            internalLinkEdges: Number(diagnostics && diagnostics.internalLinkEdges) || 0,
+            resolvedInternalLinkEdges: Number(
+                diagnostics && diagnostics.resolvedInternalLinkEdges
+            ) || 0,
+            chunksWithRetrievalText: (chunks || []).filter(chunk => (
+                String(chunk && chunk.retrievalText || '').trim()
+            )).length,
+            sourceLocatedChunks: (chunks || []).filter(chunk => (
+                chunk && chunk.sourceLines &&
+                Number.isSafeInteger(chunk.sourceLines.start) &&
+                Number.isSafeInteger(chunk.sourceLines.end)
+            )).length,
+            metadataOnlyChunks: (chunks || []).filter(chunk => chunk && chunk.metadataOnly).length,
+            duplicateChunkContents,
+            contentLength: {
+                min: lengths.length ? Math.min(...lengths) : 0,
+                p50: percentile(lengths, 0.5),
+                p95: percentile(lengths, 0.95),
+                max: lengths.length ? Math.max(...lengths) : 0
+            }
+        },
+        warnings: {
+            postsWithoutFrontMatter: (diagnostics && diagnostics.postsWithoutFrontMatter || []).slice(),
+            postsWithoutDeclaredProfile: (
+                diagnostics && diagnostics.postsWithoutDeclaredProfile || []
+            ).slice()
+        }
+    };
+}
+
 module.exports = {
     findPostFiles,
     readPostFile,
     parseFrontMatter,
+    parseMarkdownDocument,
+    markdownToText,
     isPublished,
     isDraft,
     buildPostObject,
@@ -711,11 +1065,17 @@ module.exports = {
     contentHashForChunk,
     contentHashForCodeBlock,
     extractResourceLinks,
+    extractInternalMarkdownLinks,
+    standardizeInternalLinkEdges,
     extractCodeBlocks,
     extractCodeBlocksForPost,
+    buildIngestionReport,
     buildLearningGraph,
     stableCodeBlockId,
     stableChunkId,
+    chunkStructuredSection,
     chunkPost,
-    buildCorpus
+    buildCorpus,
+    CHUNK_PROFILES,
+    PROFILE_SOURCES
 };

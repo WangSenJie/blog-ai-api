@@ -1,0 +1,11 @@
+version: 1
+defaultProfile: generic-article
+
+# 作者维护的规则只负责选择模板，不根据内容特征自动推断。
+pathRules:
+  - glob: source/_posts/概率论/**/*.md
+    profile: math-note
+  - glob: source/_posts/ODE/**/*.md
+    profile: math-note
+
+documents: {}
