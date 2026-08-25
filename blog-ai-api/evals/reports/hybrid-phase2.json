@@ -1,6 +1,6 @@
 {
   "phase": 2,
-  "generatedAt": "2026-07-24T08:08:53.950Z",
+  "generatedAt": "2026-07-27T08:26:54.788Z",
   "strategy": "bm25_vector_rrf_reranker",
   "acceptance": {
     "semanticImproved": true,
@@ -46,7 +46,7 @@
     }
   },
   "baseline": {
-    "generatedAt": "2026-07-24T08:08:53.533Z",
+    "generatedAt": "2026-07-27T08:26:54.281Z",
     "dataset": {
       "version": 1,
       "cases": 20,
@@ -78,7 +78,7 @@
       "ndcgAt20": 0.7599,
       "noAnswerCases": 0,
       "noAnswerAccuracy": 0,
-      "averageWarmRetrievalMs": 9.733,
+      "averageWarmRetrievalMs": 14.486,
       "failedCases": 4
     },
     "byCategory": {
@@ -254,7 +254,7 @@
           1
         ],
         "candidateChunks": 92,
-        "durationMs": 7.942,
+        "durationMs": 12.791,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -302,7 +302,7 @@
           1
         ],
         "candidateChunks": 15,
-        "durationMs": 9.036,
+        "durationMs": 12.82,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -350,7 +350,7 @@
           1
         ],
         "candidateChunks": 159,
-        "durationMs": 9.427,
+        "durationMs": 13.661,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -398,7 +398,7 @@
           1
         ],
         "candidateChunks": 169,
-        "durationMs": 9.11,
+        "durationMs": 12.628,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -446,7 +446,7 @@
           1
         ],
         "candidateChunks": 80,
-        "durationMs": 7.962,
+        "durationMs": 10.646,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -494,7 +494,7 @@
           1
         ],
         "candidateChunks": 3,
-        "durationMs": 7.354,
+        "durationMs": 10.761,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -522,7 +522,7 @@
           1
         ],
         "candidateChunks": 10,
-        "durationMs": 6.795,
+        "durationMs": 9.723,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -560,7 +560,7 @@
           1
         ],
         "candidateChunks": 76,
-        "durationMs": 7.907,
+        "durationMs": 13.266,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -608,7 +608,7 @@
           1
         ],
         "candidateChunks": 40,
-        "durationMs": 8.186,
+        "durationMs": 11.188,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -656,7 +656,7 @@
           1
         ],
         "candidateChunks": 247,
-        "durationMs": 7.76,
+        "durationMs": 10.91,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -704,7 +704,7 @@
           9
         ],
         "candidateChunks": 177,
-        "durationMs": 12.772,
+        "durationMs": 19.879,
         "metrics": {
           "recallAt5": 0,
           "recallAt20": 1,
@@ -752,7 +752,7 @@
           3
         ],
         "candidateChunks": 241,
-        "durationMs": 12.251,
+        "durationMs": 19.788,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -800,7 +800,7 @@
           1
         ],
         "candidateChunks": 191,
-        "durationMs": 11.557,
+        "durationMs": 17.376,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -848,7 +848,7 @@
           6
         ],
         "candidateChunks": 92,
-        "durationMs": 11.137,
+        "durationMs": 17.27,
         "metrics": {
           "recallAt5": 0,
           "recallAt20": 1,
@@ -896,7 +896,7 @@
           11
         ],
         "candidateChunks": 204,
-        "durationMs": 10.988,
+        "durationMs": 16.114,
         "metrics": {
           "recallAt5": 0,
           "recallAt20": 1,
@@ -944,7 +944,7 @@
           2
         ],
         "candidateChunks": 300,
-        "durationMs": 11.382,
+        "durationMs": 16.149,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -990,7 +990,7 @@
         ],
         "relevantRanks": [],
         "candidateChunks": 151,
-        "durationMs": 10.423,
+        "durationMs": 15.823,
         "metrics": {
           "recallAt5": 0,
           "recallAt20": 0,
@@ -1038,7 +1038,7 @@
           1
         ],
         "candidateChunks": 189,
-        "durationMs": 10.965,
+        "durationMs": 17.464,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1086,7 +1086,7 @@
           3
         ],
         "candidateChunks": 481,
-        "durationMs": 10.834,
+        "durationMs": 16.252,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1134,7 +1134,7 @@
           2
         ],
         "candidateChunks": 241,
-        "durationMs": 10.871,
+        "durationMs": 15.216,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1173,7 +1173,7 @@
     ]
   },
   "hybrid": {
-    "generatedAt": "2026-07-24T08:08:53.947Z",
+    "generatedAt": "2026-07-27T08:26:54.784Z",
     "dataset": {
       "version": 1,
       "cases": 20,
@@ -1207,7 +1207,7 @@
       "ndcgAt20": 0.8459,
       "noAnswerCases": 0,
       "noAnswerAccuracy": 0,
-      "averageWarmRetrievalMs": 19.402,
+      "averageWarmRetrievalMs": 23.357,
       "failedCases": 1
     },
     "byCategory": {
@@ -1278,7 +1278,7 @@
           1
         ],
         "candidateChunks": 18,
-        "durationMs": 17.839,
+        "durationMs": 21.482,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1326,7 +1326,7 @@
           1
         ],
         "candidateChunks": 10,
-        "durationMs": 18.422,
+        "durationMs": 21.205,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1374,7 +1374,7 @@
           1
         ],
         "candidateChunks": 20,
-        "durationMs": 15.881,
+        "durationMs": 18.665,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1422,7 +1422,7 @@
           1
         ],
         "candidateChunks": 8,
-        "durationMs": 18.466,
+        "durationMs": 22.173,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1465,7 +1465,7 @@
           1
         ],
         "candidateChunks": 8,
-        "durationMs": 17.634,
+        "durationMs": 23.494,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1508,7 +1508,7 @@
           1
         ],
         "candidateChunks": 7,
-        "durationMs": 16.361,
+        "durationMs": 23.422,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1556,7 +1556,7 @@
           1
         ],
         "candidateChunks": 11,
-        "durationMs": 16.736,
+        "durationMs": 19.693,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1604,7 +1604,7 @@
           1
         ],
         "candidateChunks": 13,
-        "durationMs": 17.915,
+        "durationMs": 20.335,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1652,7 +1652,7 @@
           1
         ],
         "candidateChunks": 20,
-        "durationMs": 18.668,
+        "durationMs": 21.452,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1700,7 +1700,7 @@
           1
         ],
         "candidateChunks": 11,
-        "durationMs": 17.561,
+        "durationMs": 20.297,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1748,7 +1748,7 @@
           3
         ],
         "candidateChunks": 20,
-        "durationMs": 21.318,
+        "durationMs": 24.928,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1796,7 +1796,7 @@
           6
         ],
         "candidateChunks": 17,
-        "durationMs": 21.272,
+        "durationMs": 26.828,
         "metrics": {
           "recallAt5": 0,
           "recallAt20": 1,
@@ -1844,7 +1844,7 @@
           1
         ],
         "candidateChunks": 18,
-        "durationMs": 20.939,
+        "durationMs": 26.43,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1892,7 +1892,7 @@
           3
         ],
         "candidateChunks": 17,
-        "durationMs": 21.015,
+        "durationMs": 24.806,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1940,7 +1940,7 @@
           3
         ],
         "candidateChunks": 20,
-        "durationMs": 20.852,
+        "durationMs": 27.094,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1988,7 +1988,7 @@
           2
         ],
         "candidateChunks": 17,
-        "durationMs": 21.637,
+        "durationMs": 26.126,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -2036,7 +2036,7 @@
           1
         ],
         "candidateChunks": 20,
-        "durationMs": 20.801,
+        "durationMs": 24.13,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -2084,7 +2084,7 @@
           1
         ],
         "candidateChunks": 20,
-        "durationMs": 21.471,
+        "durationMs": 24.844,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -2132,7 +2132,7 @@
           1
         ],
         "candidateChunks": 17,
-        "durationMs": 21.46,
+        "durationMs": 24.949,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -2180,7 +2180,7 @@
           4
         ],
         "candidateChunks": 20,
-        "durationMs": 21.8,
+        "durationMs": 24.781,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
