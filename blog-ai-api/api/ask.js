@@ -147,6 +147,7 @@ function createAskHandler(options) {
         const modelConfig = getModelConfig();
         console.error('LLM fallback triggered', {
           traceId: trace.traceId,
+          code: error && error.code || 'MODEL_REQUEST_FAILED',
           message: error && error.message ? error.message : 'Unknown LLM error',
           apiBaseUrl: modelConfig.apiBaseUrl,
           apiPath: modelConfig.apiPath,
@@ -201,8 +202,14 @@ function createAskHandler(options) {
         modelAttempted: payload.meta.model.attempted,
         modelAnswered: payload.meta.model.answered,
         generationSchemaValid: payload.meta.model.generationSchemaValid,
+        generationErrorCode: payload.meta.model.generationErrorCode,
+        generationFinishReason: payload.meta.model.generationFinishReason,
+        generationContentChars: payload.meta.model.generationContentChars,
         verificationAttempted: payload.meta.model.verificationAttempted,
         verificationSchemaValid: payload.meta.model.verificationSchemaValid,
+        verificationErrorCode: payload.meta.model.verificationErrorCode,
+        verificationFinishReason: payload.meta.model.verificationFinishReason,
+        verificationContentChars: payload.meta.model.verificationContentChars,
         citationVerification: payload.meta.citationVerification &&
           payload.meta.citationVerification.status,
         claims: (payload.claims || []).length,

@@ -262,7 +262,7 @@ test('model timeout stays active while the response body is being consumed', asy
       }, {
         timeoutMs: 5
       }),
-      error => error && error.name === 'AbortError'
+      error => error && error.code === 'generation_timeout'
     );
     assert.equal(requestSignal.aborted, true);
   } finally {

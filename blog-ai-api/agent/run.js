@@ -5,6 +5,7 @@ const {
   canUseVerifier,
   generateGroundedAnswer,
   generateGroundedV2Answer,
+  getModelDiagnostic,
   verifyGroundedAnswer
 } = require('../lib/generate');
 const {
@@ -268,9 +269,37 @@ function initializePhase10ModelMeta(state) {
   Object.assign(state.model, {
     generationAttempted: false,
     generationSchemaValid: false,
+    generationErrorCode: '',
+    generationFinishReason: '',
+    generationContentChars: 0,
     verificationAttempted: false,
-    verificationSchemaValid: false
+    verificationSchemaValid: false,
+    verificationErrorCode: '',
+    verificationFinishReason: '',
+    verificationContentChars: 0
   });
+}
+
+function stageDiagnostic(error, stage) {
+  if (error && error.modelDiagnostic) {
+    return Object.assign({}, error.modelDiagnostic);
+  }
+  const timedOut = error instanceof AgentDeadlineError ||
+    error && error.name === 'AbortError';
+  return {
+    errorCode: timedOut ? `${stage}_timeout` : 'provider_request_error',
+    finishReason: '',
+    contentChars: 0
+  };
+}
+
+function applyStageDiagnostic(model, stage, diagnostic) {
+  const source = diagnostic || {};
+  model[`${stage}ErrorCode`] = String(source.errorCode || '');
+  model[`${stage}FinishReason`] = String(source.finishReason || '');
+  model[`${stage}ContentChars`] = Number.isFinite(source.contentChars)
+    ? Math.max(0, Math.round(source.contentChars))
+    : 0;
 }
 
 async function boundedModelStage(state, operation, timeoutLimit, trace, timingName) {
@@ -333,14 +362,23 @@ async function maybeVerifyExplicitMemory(state, dependencies, trace) {
       !verification.memoryDelta ||
       typeof verification.memoryDelta !== 'object'
     ) {
+      state.model.verificationErrorCode = 'invalid_verification_schema';
       state.model.rejectionReason = 'invalid_verification_schema';
       return false;
     }
+    applyStageDiagnostic(
+      state.model,
+      'verification',
+      getModelDiagnostic(verification)
+    );
     state.model.verificationSchemaValid = true;
     state.semanticVerification = verification;
     state.memoryOnlyVerification = true;
     return true;
   } catch (error) {
+    const diagnostic = stageDiagnostic(error, 'verification');
+    applyStageDiagnostic(state.model, 'verification', diagnostic);
+    state.model.rejectionReason = diagnostic.errorCode;
     if (typeof dependencies.onModelError === 'function') {
       dependencies.onModelError(error);
     }
@@ -411,6 +449,11 @@ async function maybeGenerateGroundedV2(state, dependencies, trace) {
       trace,
       'generationMs'
     );
+    applyStageDiagnostic(
+      state.model,
+      'generation',
+      getModelDiagnostic(generated)
+    );
     state.model.answered = Boolean(generated);
     if (
       !generated ||
@@ -418,6 +461,7 @@ async function maybeGenerateGroundedV2(state, dependencies, trace) {
       Array.isArray(generated) ||
       !Array.isArray(generated.claims)
     ) {
+      state.model.generationErrorCode = 'invalid_generation_schema';
       state.model.rejectionReason = 'invalid_generation_schema';
       state.llmFallback = true;
       return;
@@ -439,6 +483,11 @@ async function maybeGenerateGroundedV2(state, dependencies, trace) {
       trace,
       'semanticVerificationMs'
     );
+    applyStageDiagnostic(
+      state.model,
+      'verification',
+      getModelDiagnostic(verification)
+    );
     if (
       !verification ||
       typeof verification !== 'object' ||
@@ -448,6 +497,7 @@ async function maybeGenerateGroundedV2(state, dependencies, trace) {
       !verification.memoryDelta ||
       typeof verification.memoryDelta !== 'object'
     ) {
+      state.model.verificationErrorCode = 'invalid_verification_schema';
       state.model.rejectionReason = 'invalid_verification_schema';
       state.llmFallback = true;
       state.modelResponse = null;
@@ -456,6 +506,12 @@ async function maybeGenerateGroundedV2(state, dependencies, trace) {
     state.model.verificationSchemaValid = true;
     state.semanticVerification = verification;
   } catch (error) {
+    const stage = state.model.verificationAttempted
+      ? 'verification'
+      : 'generation';
+    const diagnostic = stageDiagnostic(error, stage);
+    applyStageDiagnostic(state.model, stage, diagnostic);
+    state.model.rejectionReason = diagnostic.errorCode;
     state.llmFallback = true;
     state.modelResponse = null;
     state.semanticVerification = null;

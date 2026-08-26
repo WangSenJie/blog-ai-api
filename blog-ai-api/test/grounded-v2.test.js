@@ -122,7 +122,8 @@ test('phase 10 prompts and parsers enforce separate generation and verification 
     evidence
   });
 
-  assert.match(generationPrompt, /draftAnswer/);
+  assert.doesNotMatch(generationPrompt, /draftAnswer/);
+  assert.match(generationPrompt, /最多 3 条 claim/);
   assert.match(generationPrompt, /subquestionId/);
   assert.match(generationPrompt, /text 可以自然改写/);
   assert.match(generationPrompt, /可用于子问题: sq_1/);
@@ -134,7 +135,6 @@ test('phase 10 prompts and parsers enforce separate generation and verification 
     claims: [],
     unansweredSubquestions: ['sq_1']
   })), {
-    draftAnswer: '草稿',
     claims: [],
     unansweredSubquestions: ['sq_1']
   });
@@ -351,6 +351,35 @@ test('an unavailable or invalid semantic verifier falls back to deterministic ev
   assert.equal(payload.meta.citationVerification.source, 'deterministic');
   assert.doesNotMatch(payload.answer, /未验证的自然结论/);
   assert.ok(payload.citations.length > 0);
+});
+
+test('phase 10 exposes safe generation failure diagnostics without model content', async () => {
+  const corpus = makeAgentCorpus();
+  const error = new Error('raw model content must not be published');
+  error.code = 'provider_invalid_json';
+  error.modelDiagnostic = {
+    errorCode: 'provider_invalid_json',
+    finishReason: 'length',
+    contentChars: 321
+  };
+  const payload = await runAgent(makeInput(), {
+    corpus,
+    groundedSynthesisEnabled: true,
+    semanticVerificationEnabled: true,
+    canUseModel: () => true,
+    canUseVerifier: () => true,
+    async generateV2() {
+      throw error;
+    }
+  });
+
+  assert.equal(payload.meta.model.rejectionReason, 'provider_invalid_json');
+  assert.equal(payload.meta.model.generationErrorCode, 'provider_invalid_json');
+  assert.equal(payload.meta.model.generationFinishReason, 'length');
+  assert.equal(payload.meta.model.generationContentChars, 321);
+  assert.equal(payload.meta.model.verificationAttempted, false);
+  assert.equal(payload.meta.citationVerification.source, 'deterministic');
+  assert.equal(JSON.stringify(payload).includes(error.message), false);
 });
 
 test('an explicit preference can be verified and stored without publishing factual claims', async () => {

@@ -353,6 +353,8 @@ Only the most recent assistant turn contributes article-reference and standalone
 
 `claims` is an audit array for the factual statements that form the answer. In Grounded Answer v2 every claim belongs to one required subquestion, has exactly one server-selected citation, and contains a continuous source `quote`. Natural `text` may paraphrase the quote only after the independent semantic verifier confirms support and directness; server code then validates IDs, quote origin, limits, negation, duplicates, and subquestion coverage. The browser renders the server-rebuilt `answer`, while `claims` remains available for citation positioning, feedback, and audit. Missing required parts appear in `unansweredSubquestions`. `feedback` is omitted unless feedback collection is fully configured.
 
+`meta.model` reports bounded Phase 10 diagnostics without exposing model output: `generationErrorCode`, `generationFinishReason`, `generationContentChars`, plus the corresponding `verification*` fields. Error codes distinguish deadline, provider HTTP/network, empty content, invalid JSON, and invalid generation or verification schemas. Raw provider content is never copied into the response or completion log.
+
 The same trace ID is returned in the `X-Trace-Id` response header. Internal errors return a trace ID without exposing implementation details to the browser.
 
 ## Controlled Agent workflow
