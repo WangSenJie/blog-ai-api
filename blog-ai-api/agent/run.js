@@ -19,6 +19,7 @@ const {
   createEvidenceCalibration,
   estimatedGenerationCost,
   estimateTokens,
+  getAgentLimits,
   phase10Features,
   snapshotBudget
 } = require('./config');
@@ -683,7 +684,10 @@ async function runAgent(input, options) {
     throw new TypeError('runAgent requires a corpus with posts and chunks');
   }
 
-  const limits = Object.assign({}, AGENT_LIMITS, settings.limits || {});
+  const limits = getAgentLimits(
+    settings.environment || process.env,
+    settings.limits
+  );
   const evidenceCalibration = createEvidenceCalibration(
     settings.evidenceCalibration
   );

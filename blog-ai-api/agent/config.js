@@ -14,9 +14,9 @@ const AGENT_LIMITS = Object.freeze({
   maxStandaloneQueryChars: 1000,
   maxSubqueryChars: 500,
   overallTimeoutMs: 17000,
-  retrievalRoundTimeoutMs: 1200,
+  retrievalRoundTimeoutMs: 1500,
   generationTimeoutMs: 7000,
-  verificationTimeoutMs: 4000
+  verificationTimeoutMs: 5000
 });
 
 // These values are selected by the Phase 4 offline calibration runner. They
@@ -71,6 +71,31 @@ function rolloutPercent(value, fallback) {
   const number = Number(value);
   if (!Number.isFinite(number)) return fallback;
   return Math.min(100, Math.max(0, number));
+}
+
+function boundedInteger(value, fallback, minimum, maximum) {
+  const number = Number(value);
+  if (!Number.isFinite(number) || number <= 0) return fallback;
+  return Math.min(maximum, Math.max(minimum, Math.round(number)));
+}
+
+function getAgentLimits(environment, overrides) {
+  const source = environment || process.env;
+  const configured = Object.assign({}, AGENT_LIMITS, {
+    retrievalRoundTimeoutMs: boundedInteger(
+      source.RETRIEVAL_ROUND_TIMEOUT_MS,
+      AGENT_LIMITS.retrievalRoundTimeoutMs,
+      500,
+      5000
+    ),
+    verificationTimeoutMs: boundedInteger(
+      source.VERIFIER_TIMEOUT_MS,
+      AGENT_LIMITS.verificationTimeoutMs,
+      1000,
+      6000
+    )
+  });
+  return Object.assign(configured, overrides || {});
 }
 
 function stableRollout(key, percent) {
@@ -196,6 +221,7 @@ module.exports = {
   enabledValue,
   estimatedGenerationCost,
   estimateTokens,
+  getAgentLimits,
   getCostControls,
   phase10Features,
   rolloutPercent,

@@ -120,7 +120,9 @@ apiBaseUrl: 'https://your-blog-ai-api.vercel.app'
 - `VERIFIER_API_BASE_URL`, `VERIFIER_API_KEY`, `VERIFIER_MODEL`, and `VERIFIER_API_PATH`
   - Optional independent semantic-verifier provider settings. Each value falls back to the corresponding `LLM_*` setting, but verification is always a separate bounded model call.
 - `VERIFIER_TIMEOUT_MS` and `VERIFIER_MAX_OUTPUT_TOKENS`
-  - Optional verifier limits; defaults are at most 6 seconds and 700 output tokens.
+  - Optional verifier limits. The Agent defaults to a 5-second verification budget, clamps the environment timeout to 1–6 seconds, and defaults to 700 output tokens.
+- `RETRIEVAL_ROUND_TIMEOUT_MS`
+  - Optional timeout for one retrieval round; defaults to `1500` and is clamped to 500–5,000 milliseconds. A timed-out first round may still use the bounded second attempt.
 - `LLM_MAX_REQUEST_COST_USD`, `LLM_INPUT_COST_PER_MILLION_TOKENS`, and `LLM_OUTPUT_COST_PER_MILLION_TOKENS`
   - Optional cost guard. All three must be configured before the API estimates and enforces a per-request model cost ceiling.
 - `DASHSCOPE_API_KEY` and `DASHSCOPE_WORKSPACE_ID`

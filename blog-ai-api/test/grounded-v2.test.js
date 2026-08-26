@@ -8,6 +8,8 @@ const {
   runAgent
 } = require('../agent/run');
 const {
+  AGENT_LIMITS,
+  getAgentLimits,
   phase10Features
 } = require('../agent/config');
 const {
@@ -69,6 +71,34 @@ test('phase 10 rollout requires both flags and uses a stable bucket', () => {
   const second = phase10Features(environment, 'stable-user');
   assert.equal(first.rolloutSelected, second.rolloutSelected);
   assert.equal(first.groundedSynthesisEnabled, second.groundedSynthesisEnabled);
+});
+
+test('agent timeout budgets use bounded production environment values', () => {
+  const defaults = getAgentLimits({});
+  assert.equal(defaults.retrievalRoundTimeoutMs, 1500);
+  assert.equal(defaults.verificationTimeoutMs, 5000);
+
+  const configured = getAgentLimits({
+    RETRIEVAL_ROUND_TIMEOUT_MS: '1800',
+    VERIFIER_TIMEOUT_MS: '5500'
+  });
+  assert.equal(configured.retrievalRoundTimeoutMs, 1800);
+  assert.equal(configured.verificationTimeoutMs, 5500);
+
+  const clamped = getAgentLimits({
+    RETRIEVAL_ROUND_TIMEOUT_MS: '50',
+    VERIFIER_TIMEOUT_MS: '90000'
+  });
+  assert.equal(clamped.retrievalRoundTimeoutMs, 500);
+  assert.equal(clamped.verificationTimeoutMs, 6000);
+
+  const overridden = getAgentLimits({
+    VERIFIER_TIMEOUT_MS: '5500'
+  }, {
+    verificationTimeoutMs: 25
+  });
+  assert.equal(overridden.verificationTimeoutMs, 25);
+  assert.equal(AGENT_LIMITS.verificationTimeoutMs, 5000);
 });
 
 test('phase 10 prompts and parsers enforce separate generation and verification schemas', () => {

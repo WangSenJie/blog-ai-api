@@ -1,6 +1,6 @@
 {
   "phase": 10,
-  "generatedAt": "2026-08-26T05:24:17.658Z",
+  "generatedAt": "2026-08-26T06:14:14.994Z",
   "strategy": "grounded-answer-v2-with-trusted-memory-update",
   "implementation": {
     "checks": {
@@ -22,7 +22,7 @@
       "requiredSubquestionCoverage": 1,
       "generationSchemaSuccessRate": 1,
       "verificationSchemaSuccessRate": 1,
-      "modelStageBudgetMs": 11000
+      "modelStageBudgetMs": 12000
     },
     "targets": {
       "unsupportedClaimPublishedRate": 0,

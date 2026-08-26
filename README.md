@@ -158,6 +158,8 @@ npm run build:embeddings
 | `SEMANTIC_VERIFICATION_ENABLED` | 阶段 10 独立语义验证开关；不可用时回退确定性回答。 |
 | `GROUNDED_SYNTHESIS_ROLLOUT_PERCENT` | 可选，0–100 的稳定灰度比例，默认 100。 |
 | `VERIFIER_API_BASE_URL` / `VERIFIER_API_KEY` / `VERIFIER_MODEL` | 可选的独立验证器配置；未设置时逐项沿用 `LLM_*`，但仍发起独立验证调用。 |
+| `VERIFIER_TIMEOUT_MS` / `VERIFIER_MAX_OUTPUT_TOKENS` | 可选，语义验证默认最多 5 秒、700 输出 token；超时限制在 1–6 秒。 |
+| `RETRIEVAL_ROUND_TIMEOUT_MS` | 可选，单轮检索默认 1500ms，限制在 500–5000ms。 |
 | `EMBEDDING_PROVIDER` | 托管建库时设为 `dashscope`；普通静态构建不会读取它调用远程 API。 |
 | `DASHSCOPE_API_KEY` | 仅服务端使用的 Model Studio API Key。 |
 | `DASHSCOPE_WORKSPACE_ID` | Model Studio Workspace ID；也可用 `DASHSCOPE_BASE_URL` 显式指定兼容端点。 |
