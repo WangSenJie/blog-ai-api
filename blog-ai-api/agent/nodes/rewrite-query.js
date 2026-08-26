@@ -55,6 +55,15 @@ function replaceReferenceExpressions(question, references) {
     }
   );
 
+  rewritten = rewritten.replace(/上一篇(?:文章)?/g, match => {
+    if (!references[0]) {
+      unresolved = true;
+      return match;
+    }
+    select(references[0]);
+    return `《${references[0].title}》`;
+  });
+
   rewritten = rewritten.replace(/前者/g, () => {
     if (!references[0]) {
       unresolved = true;
@@ -96,7 +105,7 @@ function rewriteStandaloneQuery(state) {
   const currentQuestionRefs = state.currentQuestionRefs || [];
   const normalizedQuestion = normalizeText(state.question);
   const firstReferenceExpression = normalizedQuestion.match(
-    /第\s*[一二两三四五六七八九十\d]+\s*篇|前者|后者|这两篇|它们|两者|这篇文章|这篇|那篇|该文|本文|本页|当前页|这一页|它|这个/
+    /第\s*[一二两三四五六七八九十\d]+\s*篇|上一篇(?:文章)?|前者|后者|这两篇|它们|两者|这篇文章|这篇|那篇|该文|本文|本页|当前页|这一页|它|这个/
   );
   const firstPronounIndex = firstReferenceExpression
     ? firstReferenceExpression.index

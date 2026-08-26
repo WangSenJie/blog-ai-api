@@ -1,0 +1,147 @@
+{
+  "phase": 9,
+  "generatedAt": "2026-08-26T03:22:48.132Z",
+  "strategy": "browser-anonymous-cross-session-memory-v1",
+  "implementation": {
+    "checks": {
+      "localCredentialPersistence": true,
+      "createAndRestore": true,
+      "managedAskContract": true,
+      "uuidPerRequest": true,
+      "safeCredentialRecovery": true,
+      "versionConflictRecovery": true,
+      "degradedCompatibilityHistory": true,
+      "serverThreadRotation": true,
+      "explicitClear": true,
+      "distinctUserControls": true,
+      "visibleMemoryState": true,
+      "browserFeatureFlag": true,
+      "noNetworkIdentity": true
+    },
+    "passed": true
+  },
+  "crossVisitReferences": {
+    "target": 0.95,
+    "accuracy": 1,
+    "passedCases": 20,
+    "totalCases": 20,
+    "passed": true,
+    "cases": [
+      {
+        "question": "它的结构是什么？",
+        "standaloneQuery": "《双塔模型》的结构是什么？",
+        "passed": true
+      },
+      {
+        "question": "请解释它的训练方式",
+        "standaloneQuery": "请解释《双塔模型》的训练方式",
+        "passed": true
+      },
+      {
+        "question": "介绍一下它",
+        "standaloneQuery": "介绍一下《双塔模型》",
+        "passed": true
+      },
+      {
+        "question": "这个模型如何召回？",
+        "standaloneQuery": "《双塔模型》模型如何召回？",
+        "passed": true
+      },
+      {
+        "question": "这个算法如何训练？",
+        "standaloneQuery": "《双塔模型》算法如何训练？",
+        "passed": true
+      },
+      {
+        "question": "这篇文章讲了什么？",
+        "standaloneQuery": "《双塔模型》讲了什么？",
+        "passed": true
+      },
+      {
+        "question": "本文的核心内容是什么？",
+        "standaloneQuery": "《双塔模型》的核心内容是什么？",
+        "passed": true
+      },
+      {
+        "question": "上一篇讲了什么？",
+        "standaloneQuery": "《双塔模型》讲了什么？",
+        "passed": true
+      },
+      {
+        "question": "上一篇文章的线上召回怎么做？",
+        "standaloneQuery": "《双塔模型》的线上召回怎么做？",
+        "passed": true
+      },
+      {
+        "question": "回到上一篇继续讲结构",
+        "standaloneQuery": "双塔模型 回到《双塔模型》继续讲结构",
+        "passed": true
+      },
+      {
+        "question": "继续",
+        "standaloneQuery": "双塔模型",
+        "passed": true
+      },
+      {
+        "question": "继续解释",
+        "standaloneQuery": "双塔模型",
+        "passed": true
+      },
+      {
+        "question": "接着讲",
+        "standaloneQuery": "双塔模型 接着讲",
+        "passed": true
+      },
+      {
+        "question": "展开说明",
+        "standaloneQuery": "双塔模型 展开说明",
+        "passed": true
+      },
+      {
+        "question": "再讲详细点",
+        "standaloneQuery": "双塔模型 再讲详细点",
+        "passed": true
+      },
+      {
+        "question": "进一步说明",
+        "standaloneQuery": "双塔模型 进一步说明",
+        "passed": true
+      },
+      {
+        "question": "详细说说",
+        "standaloneQuery": "双塔模型",
+        "passed": true
+      },
+      {
+        "question": "继续解释相似度计算",
+        "standaloneQuery": "双塔模型 继续解释相似度计算",
+        "passed": true
+      },
+      {
+        "question": "接着展开训练过程",
+        "standaloneQuery": "双塔模型 接着展开训练过程",
+        "passed": true
+      },
+      {
+        "question": "再解释一下线上召回",
+        "standaloneQuery": "双塔模型 再解释一下线上召回",
+        "passed": true
+      }
+    ]
+  },
+  "coverage": {
+    "firstVisitCreate": true,
+    "laterVisitRestore": true,
+    "managedAskMetadata": true,
+    "expiredTokenReinitialize": true,
+    "versionConflictRetry": true,
+    "degradedShortHistory": true,
+    "newConversationThreadRotation": true,
+    "clearAndRevoke": true,
+    "failedClearRetainsCredential": true
+  },
+  "acceptance": {
+    "releaseReady": true,
+    "status": "passed"
+  }
+}

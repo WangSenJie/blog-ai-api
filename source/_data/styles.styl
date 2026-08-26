@@ -1835,10 +1835,13 @@ body::after
 .blog-ai-agent__header-actions
   align-items center
   display flex
+  flex-wrap wrap
   flex-shrink 0
   gap 6px
+  justify-content flex-end
 
-.blog-ai-agent__new-conversation
+.blog-ai-agent__new-conversation,
+.blog-ai-agent__clear-memory
   background rgba(248, 252, 253, .12)
   border 1px solid rgba(248, 252, 253, .28)
   border-radius 999px
@@ -1851,6 +1854,46 @@ body::after
   &:hover
     background rgba(248, 252, 253, .2)
     color #fff
+
+  &:disabled
+    cursor default
+    opacity .48
+
+.blog-ai-agent__clear-memory
+  border-color rgba(255, 226, 226, .34)
+  color rgba(255, 238, 238, .92)
+
+.blog-ai-agent__memory-bar
+  align-items center
+  background rgba(244, 249, 250, .96)
+  border-bottom 1px solid rgba(205, 226, 230, .72)
+  display flex
+  min-height 34px
+  padding 7px 18px
+
+.blog-ai-agent__memory-status
+  color #526677
+  font-size .7rem
+  line-height 1.4
+
+  &::before
+    background #94a3b8
+    border-radius 50%
+    content ''
+    display inline-block
+    height 6px
+    margin-right 7px
+    vertical-align 1px
+    width 6px
+
+  &[data-memory-state='active']::before
+    background #178f92
+
+  &[data-memory-state='degraded']::before
+    background #d97706
+
+  &[data-memory-state='cleared']::before
+    background #64748b
 
 .blog-ai-agent__suggestions button:disabled
   cursor wait

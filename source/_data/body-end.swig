@@ -55,7 +55,9 @@ document.addEventListener('click', async event => {
 window.__BLOG_AI_CONFIG__ = window.__BLOG_AI_CONFIG__ || {
   apiBaseUrl: 'https://blog-ai-api.vercel.app',
   dataBasePath: '/ai-data',
-  apiTimeoutMs: 20000
+  apiTimeoutMs: 20000,
+  memoryV1Enabled: true,
+  memoryTimeoutMs: 5000
 };
 </script>
 <script src="/js/blog-ai-retrieval.js"></script>

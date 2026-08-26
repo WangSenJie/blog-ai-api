@@ -42,7 +42,7 @@ test('shared retrieval core loads before the browser agent', () => {
 test('the normal browser flow asks the server before entering local fallback', () => {
   const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
   const ask = sourceSection(agent, 'async function ask(question)', 'function togglePanel');
-  const remoteCall = ask.indexOf('await remoteAsk(');
+  const remoteCall = ask.indexOf('await remoteAskWithMemoryRecovery(');
   const fallbackCatch = ask.indexOf('} catch (error) {', remoteCall);
   const localCall = ask.indexOf('await localAsk(');
 
@@ -56,7 +56,7 @@ test('remote requests do not load or send browser-side retrieval candidates', ()
   const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
   const remoteAsk = sourceSection(
     agent,
-    'async function remoteAsk(question, mode, context, messages)',
+    'async function remoteAsk(question, mode, context, messages, requestId)',
     'function renderAssistantMessage'
   );
 
@@ -71,7 +71,7 @@ test('remote requests carry bounded conversation state without duplicating the c
   const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
   const remoteAsk = sourceSection(
     agent,
-    'async function remoteAsk(question, mode, context, messages)',
+    'async function remoteAsk(question, mode, context, messages, requestId)',
     'function renderAssistantMessage'
   );
   const ask = sourceSection(agent, 'async function ask(question)', 'function renderConversationHistory');
@@ -86,7 +86,7 @@ test('remote requests carry bounded conversation state without duplicating the c
     ask,
     /trimConversationMessages\(\[\s*\.\.\.state\.messages,\s*\{\s*role:\s*'user',\s*content:\s*trimmed\s*\}/
   );
-  assert.match(ask, /remoteAsk\(trimmed,\s*mode,\s*context,\s*requestMessages\)/);
+  assert.match(ask, /remoteAskWithMemoryRecovery\(\s*trimmed,\s*mode,\s*context,\s*requestMessages,\s*requestId\s*\)/);
 
   const currentUserOccurrences = (
     ask.match(/\{\s*role:\s*'user',\s*content:\s*trimmed\s*\}/g) || []
@@ -152,7 +152,7 @@ test('Phase 5 artifacts are escaped and never masquerade as local BM25 fallback'
   const localAsk = sourceSection(
     agent,
     'async function localAsk(question, mode, context, ranked)',
-    'async function remoteAsk(question, mode, context, messages)'
+    'async function remoteAsk(question, mode, context, messages, requestId)'
   );
 
   assert.match(renderComparison, /escapeHtml\(compactText\(cell\.text, 800\)\)/);
@@ -181,7 +181,7 @@ test('feedback is signed server state, omitted from fallback and never persisted
   const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
   const remoteAsk = sourceSection(
     agent,
-    'async function remoteAsk(question, mode, context, messages)',
+    'async function remoteAsk(question, mode, context, messages, requestId)',
     'function renderAssistantMessage'
   );
   const feedbackHtml = sourceSection(
@@ -211,7 +211,7 @@ test('feedback is signed server state, omitted from fallback and never persisted
   assert.doesNotMatch(commitConversation, /feedback/);
 });
 
-test('conversation storage is versioned, expiring, bounded, and session scoped', () => {
+test('conversation history remains session scoped while memory credentials are local and bounded', () => {
   const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
   const saveConversation = sourceSection(
     agent,
@@ -221,19 +221,28 @@ test('conversation storage is versioned, expiring, bounded, and session scoped',
   const restoreConversation = sourceSection(
     agent,
     'function restoreConversation()',
-    'function ensureMathJaxLoaded()'
+    'function memoryStorage()'
+  );
+  const saveStoredMemory = sourceSection(
+    agent,
+    'function saveStoredMemory()',
+    'function memoryStatusCopy()'
   );
 
   assert.match(agent, /blog-ai-agent-conversation-v1/);
   assert.match(agent, /const CONVERSATION_SCHEMA_VERSION = 1;/);
   assert.match(agent, /const CONVERSATION_TTL_MS = 2 \* 60 \* 60 \* 1000;/);
   assert.match(agent, /window\.sessionStorage/);
-  assert.doesNotMatch(agent, /window\.localStorage/);
+  assert.match(agent, /blog-ai-agent-memory-v1/);
+  assert.match(agent, /window\.localStorage/);
   assert.match(saveConversation, /expiresAt:\s*Date\.now\(\) \+ CONVERSATION_TTL_MS/);
   assert.match(saveConversation, /trimConversationMessages\(state\.messages\)/);
   assert.match(restoreConversation, /serialized\.length <= MAX_STORED_CONVERSATION_CHARACTERS/);
   assert.match(restoreConversation, /payload\.expiresAt <= Date\.now\(\)/);
   assert.match(restoreConversation, /isValidSessionId\(payload\.sessionId\)/);
+  assert.match(saveStoredMemory, /memoryToken:\s*state\.memory\.token/);
+  assert.match(saveStoredMemory, /memoryVersion:/);
+  assert.doesNotMatch(saveStoredMemory, /messages|summary|articleRefs/);
 });
 
 test('local fallback conservatively rewrites ordinal and pronoun follow-ups', () => {
@@ -255,25 +264,46 @@ test('local fallback conservatively rewrites ordinal and pronoun follow-ups', ()
   assert.match(ask, /await localAsk\(/);
 });
 
-test('new conversation aborts stale work and busy state disables suggestions', () => {
+test('new conversation rotates the server thread while clear memory stays a separate action', () => {
   const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
   const setBusy = sourceSection(agent, 'function setBusy(isBusy)', 'function commitConversation');
+  const abortActiveWork = sourceSection(
+    agent,
+    'function abortActiveWork()',
+    'function resetLocalConversation()'
+  );
+  const resetLocalConversation = sourceSection(
+    agent,
+    'function resetLocalConversation()',
+    'async function resetConversation()'
+  );
   const resetConversation = sourceSection(
     agent,
-    'function resetConversation()',
+    'async function resetConversation()',
+    'async function clearMemory(options)'
+  );
+  const clearMemory = sourceSection(
+    agent,
+    'async function clearMemory(options)',
     'function togglePanel'
   );
 
   assert.match(setBusy, /state\.busy = isBusy/);
   assert.match(setBusy, /state\.elements\.suggestionButtons\.forEach/);
   assert.match(setBusy, /button\.disabled = isBusy/);
-  assert.match(resetConversation, /state\.requestEpoch \+= 1/);
-  assert.match(resetConversation, /state\.activeController\.abort\(\)/);
-  assert.match(resetConversation, /state\.sessionId = createSessionId\(\)/);
-  assert.match(resetConversation, /state\.messages = \[\]/);
-  assert.match(resetConversation, /state\.lastArticleRefs = \[\]/);
-  assert.match(resetConversation, /saveConversation\(\)/);
+  assert.match(abortActiveWork, /state\.requestEpoch \+= 1/);
+  assert.match(abortActiveWork, /state\.activeController\.abort\(\)/);
+  assert.match(resetLocalConversation, /state\.sessionId = createSessionId\(\)/);
+  assert.match(resetLocalConversation, /state\.messages = \[\]/);
+  assert.match(resetLocalConversation, /state\.lastArticleRefs = \[\]/);
+  assert.match(resetLocalConversation, /saveConversation\(\)/);
+  assert.match(resetConversation, /\/api\/memory\/thread/);
+  assert.match(resetConversation, /currentThreadId:\s*state\.memory\.threadId/);
+  assert.match(clearMemory, /\/api\/memory\/session/);
+  assert.match(clearMemory, /'DELETE'/);
+  assert.match(clearMemory, /clearMemoryCredential\('cleared'/);
   assert.match(agent, /blog-ai-agent__new-conversation/);
+  assert.match(agent, /blog-ai-agent__clear-memory/);
 });
 
 test('chunks.json is loaded only by the local fallback implementation', () => {
@@ -284,7 +314,7 @@ test('chunks.json is loaded only by the local fallback implementation', () => {
   const localAsk = sourceSection(
     agent,
     'async function localAsk(question, mode, context, ranked)',
-    'async function remoteAsk(question, mode, context, messages)'
+    'async function remoteAsk(question, mode, context, messages, requestId)'
   );
   const outsideLoadCorpus = agent.slice(0, loadCorpusStart) + agent.slice(rankChunksStart);
 

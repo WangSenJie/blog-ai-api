@@ -102,6 +102,25 @@ test('second-article reference follows trusted citation order, not assistant pro
   assert.doesNotMatch(state.standaloneQuery, /第二篇/);
 });
 
+test('previous-article wording resolves to the latest trusted article reference', () => {
+  const corpus = makeAgentCorpus();
+  const previousAnswer = assistantReference(corpus, ['tower#0'], {
+    standaloneQuery: '双塔模型'
+  });
+  const state = stateFor(makeInput({
+    question: '上一篇文章的线上召回是怎么做的？',
+    messages: [
+      { role: 'user', content: '什么是双塔模型？' },
+      previousAnswer,
+      { role: 'user', content: '上一篇文章的线上召回是怎么做的？' }
+    ]
+  }), corpus);
+
+  assert.equal(state.needsClarification, false);
+  assert.match(state.standaloneQuery, /双塔模型/);
+  assert.doesNotMatch(state.standaloneQuery, /上一篇/);
+});
+
 test('unresolved pronouns request clarification without inventing a referent', () => {
   const corpus = makeAgentCorpus();
   const state = stateFor(makeInput({

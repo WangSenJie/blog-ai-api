@@ -5,7 +5,9 @@
     {
       apiBaseUrl: '',
       dataBasePath: '/ai-data',
-      apiTimeoutMs: 20000
+      apiTimeoutMs: 20000,
+      memoryV1Enabled: true,
+      memoryTimeoutMs: 5000
     },
     window.__BLOG_AI_CONFIG__ || {}
   );
@@ -13,6 +15,9 @@
   const CONVERSATION_STORAGE_KEY = 'blog-ai-agent-conversation-v1';
   const CONVERSATION_SCHEMA_VERSION = 1;
   const CONVERSATION_TTL_MS = 2 * 60 * 60 * 1000;
+  const MEMORY_STORAGE_KEY = 'blog-ai-agent-memory-v1';
+  const MEMORY_SCHEMA_VERSION = 1;
+  const MAX_STORED_MEMORY_CHARACTERS = 1000;
   const MAX_HISTORY_MESSAGES = 8;
   const MAX_HISTORY_CHARACTERS = 8000;
   const MAX_MESSAGE_CHARACTERS = 2000;
@@ -36,7 +41,19 @@
     lastStandaloneQuery: '',
     busy: false,
     requestEpoch: 0,
-    activeController: null
+    activeController: null,
+    memoryBootstrap: null,
+    memoryActionBusy: false,
+    memory: {
+      status: config.memoryV1Enabled === false ? 'disabled' : 'idle',
+      token: '',
+      threadId: '',
+      version: null,
+      expiresAt: '',
+      restored: false,
+      persistent: false,
+      reason: ''
+    }
   };
   function escapeHtml(value) {
     return String(value || '')
@@ -91,6 +108,47 @@
 
   function isValidSessionId(value) {
     return /^session_[A-Za-z0-9_-]{8,72}$/.test(String(value || ''));
+  }
+
+  function createRequestId() {
+    const cryptoApi = window.crypto;
+    if (cryptoApi && typeof cryptoApi.randomUUID === 'function') {
+      return cryptoApi.randomUUID();
+    }
+
+    if (cryptoApi && typeof cryptoApi.getRandomValues === 'function') {
+      const bytes = new Uint8Array(16);
+      cryptoApi.getRandomValues(bytes);
+      bytes[6] = (bytes[6] & 0x0f) | 0x40;
+      bytes[8] = (bytes[8] & 0x3f) | 0x80;
+      const hex = Array.from(bytes, value => value.toString(16).padStart(2, '0'));
+      return `${hex.slice(0, 4).join('')}-${hex.slice(4, 6).join('')}-${hex.slice(6, 8).join('')}-${hex.slice(8, 10).join('')}-${hex.slice(10).join('')}`;
+    }
+
+    return `00000000-0000-4000-8000-${Date.now().toString(16).padStart(12, '0').slice(-12)}`;
+  }
+
+  function isValidMemoryToken(value) {
+    return /^m1\.[A-Za-z0-9_-]{43}\.[A-Za-z0-9_-]{43}$/.test(String(value || ''));
+  }
+
+  function isValidThreadId(value) {
+    return /^thread_[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(value || ''));
+  }
+
+  function isValidMemoryVersion(value) {
+    return Number.isSafeInteger(value) && value >= 1;
+  }
+
+  function apiBaseUrl() {
+    return String(config.apiBaseUrl || '').replace(/\/$/, '');
+  }
+
+  function boundedTimeout(value, fallback) {
+    const timeout = Number(value);
+    return Number.isFinite(timeout) && timeout > 0
+      ? Math.min(Math.max(Math.round(timeout), 1000), 60000)
+      : fallback;
   }
 
   function compactCitation(value) {
@@ -243,6 +301,7 @@
 
     if (/前者/.test(question) && !indexes.includes(1)) indexes.push(1);
     if (/后者/.test(question) && !indexes.includes(2)) indexes.push(2);
+    if (/上一篇(?:文章)?/.test(question) && !indexes.includes(1)) indexes.push(1);
 
     for (const index of indexes) {
       const reference = references[index - 1];
@@ -398,6 +457,375 @@
       payload.lastStandaloneQuery,
       MAX_MESSAGE_CHARACTERS
     );
+  }
+
+  function memoryStorage() {
+    try {
+      return window.localStorage || null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function removeStoredMemory() {
+    const localStorage = memoryStorage();
+    if (!localStorage) return;
+    try {
+      localStorage.removeItem(MEMORY_STORAGE_KEY);
+    } catch (error) {
+      // The widget remains usable when persistent browser storage is blocked.
+    }
+  }
+
+  function readStoredMemory() {
+    const localStorage = memoryStorage();
+    if (!localStorage) return null;
+    let payload;
+    try {
+      const serialized = localStorage.getItem(MEMORY_STORAGE_KEY);
+      if (!serialized || serialized.length > MAX_STORED_MEMORY_CHARACTERS) {
+        return null;
+      }
+      payload = JSON.parse(serialized);
+    } catch (error) {
+      payload = null;
+    }
+
+    const expiresAt = String(payload && payload.expiresAt || '');
+    const expiresAtMs = Date.parse(expiresAt);
+    if (
+      !payload ||
+      payload.schemaVersion !== MEMORY_SCHEMA_VERSION ||
+      !isValidMemoryToken(payload.memoryToken) ||
+      (expiresAt && (!Number.isFinite(expiresAtMs) || expiresAtMs <= Date.now()))
+    ) {
+      removeStoredMemory();
+      return null;
+    }
+
+    return {
+      memoryToken: payload.memoryToken,
+      threadId: isValidThreadId(payload.threadId) ? payload.threadId : '',
+      memoryVersion: isValidMemoryVersion(payload.memoryVersion)
+        ? payload.memoryVersion
+        : null,
+      expiresAt
+    };
+  }
+
+  function saveStoredMemory() {
+    if (!isValidMemoryToken(state.memory.token)) return false;
+    const localStorage = memoryStorage();
+    if (!localStorage) return false;
+    const payload = {
+      schemaVersion: MEMORY_SCHEMA_VERSION,
+      memoryToken: state.memory.token,
+      threadId: isValidThreadId(state.memory.threadId)
+        ? state.memory.threadId
+        : '',
+      memoryVersion: isValidMemoryVersion(state.memory.version)
+        ? state.memory.version
+        : null,
+      expiresAt: state.memory.expiresAt || ''
+    };
+    try {
+      localStorage.setItem(MEMORY_STORAGE_KEY, JSON.stringify(payload));
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function memoryStatusCopy() {
+    const status = state.memory.status;
+    if (status === 'active') {
+      if (state.memory.persistent === false) {
+        return '记忆已开启 · 浏览器存储受限，关闭页面后无法恢复';
+      }
+      return state.memory.restored
+        ? '记忆已恢复 · 30 天未使用后自动删除'
+        : '记忆已开启 · 本浏览器可恢复最近对话，30 天未使用后自动删除';
+    }
+    if (status === 'initializing') return '正在连接匿名记忆…';
+    if (status === 'degraded') return '记忆暂不可用 · 当前对话仍可继续';
+    if (status === 'cleared') return '记忆已清除 · 后续将从空白记忆开始';
+    return '记忆未启用 · 仅保留当前标签页短历史';
+  }
+
+  function updateMemoryUi() {
+    if (!state.elements) return;
+    if (state.elements.memoryStatus) {
+      state.elements.memoryStatus.textContent = memoryStatusCopy();
+      state.elements.memoryStatus.setAttribute(
+        'data-memory-state',
+        state.memory.status
+      );
+    }
+    if (state.elements.clearMemory) {
+      state.elements.clearMemory.disabled = (
+        state.memoryActionBusy ||
+        state.memory.status === 'initializing' ||
+        !isValidMemoryToken(state.memory.token)
+      );
+    }
+    if (state.elements.newConversation) {
+      state.elements.newConversation.disabled = (
+        state.memoryActionBusy || state.memory.status === 'initializing'
+      );
+    }
+  }
+
+  function setMemoryStatus(status, values) {
+    state.memory = Object.assign({}, state.memory, values || {}, { status });
+    updateMemoryUi();
+  }
+
+  function clearMemoryCredential(status, reason) {
+    removeStoredMemory();
+    state.memory = {
+      status: status || 'cleared',
+      token: '',
+      threadId: '',
+      version: null,
+      expiresAt: '',
+      restored: false,
+      persistent: false,
+      reason: reason || ''
+    };
+    updateMemoryUi();
+  }
+
+  function replaceConversationHistory() {
+    if (!state.elements || !state.elements.messages) return;
+    state.elements.messages.innerHTML = GREETING_HTML;
+    renderConversationHistory();
+  }
+
+  function hydrateMemoryContext(context) {
+    const source = context && typeof context === 'object' ? context : {};
+    const recentMessages = trimConversationMessages(source.recentMessages);
+    state.messages = recentMessages;
+    replaceConversationHistory();
+
+    state.lastArticleRefs = collectArticleReferences(source.articleRefs, []);
+    const latestAssistant = [...recentMessages].reverse().find(message => (
+      message.role === 'assistant' && message.standaloneQuery
+    ));
+    state.lastStandaloneQuery = compactText(
+      latestAssistant && latestAssistant.standaloneQuery || source.activeTopic,
+      MAX_MESSAGE_CHARACTERS
+    );
+    saveConversation();
+  }
+
+  function applyActiveMemory(payload, options) {
+    const settings = options || {};
+    const memory = payload && payload.memory;
+    const token = String(
+      settings.memoryToken || state.memory.token || payload && payload.memoryToken || ''
+    );
+    if (
+      !memory || memory.status !== 'active' ||
+      !isValidMemoryToken(token) ||
+      !isValidThreadId(memory.threadId) ||
+      !isValidMemoryVersion(memory.version)
+    ) {
+      throw new Error('Memory API returned an invalid response');
+    }
+
+    state.memory = {
+      status: 'active',
+      token,
+      threadId: memory.threadId,
+      version: memory.version,
+      expiresAt: String(memory.expiresAt || ''),
+      restored: memory.restored === true || settings.restored === true,
+      persistent: false,
+      reason: ''
+    };
+    state.memory.persistent = saveStoredMemory();
+    updateMemoryUi();
+    if (settings.hydrate && payload.context) {
+      hydrateMemoryContext(payload.context);
+    }
+    return state.memory;
+  }
+
+  async function memoryApiRequest(path, method, body) {
+    const baseUrl = apiBaseUrl();
+    if (!baseUrl) throw new Error('Remote API is not configured');
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(
+      () => controller.abort(),
+      boundedTimeout(config.memoryTimeoutMs, 5000)
+    );
+    try {
+      const response = await fetch(`${baseUrl}${path}`, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'omit',
+        body: JSON.stringify(body || {}),
+        signal: controller.signal
+      });
+      let payload = {};
+      if (response.status !== 204) {
+        try {
+          payload = await response.json();
+        } catch (error) {
+          payload = {};
+        }
+      }
+      if (!response.ok) {
+        const requestError = new Error(payload.error || `Memory API failed: ${response.status}`);
+        requestError.statusCode = response.status;
+        requestError.code = payload.code || '';
+        requestError.memoryStatus = payload.memory && payload.memory.status;
+        const retryAfter = response.headers && response.headers.get
+          ? Number(response.headers.get('Retry-After'))
+          : 0;
+        requestError.retryAfterMs = Number.isFinite(retryAfter) && retryAfter > 0
+          ? Math.min(retryAfter * 1000, 3000)
+          : 0;
+        throw requestError;
+      }
+      return { payload, statusCode: response.status };
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  }
+
+  async function createMemorySession(options) {
+    const settings = options || {};
+    const response = await memoryApiRequest('/api/memory/session', 'POST', {});
+    return applyActiveMemory(response.payload, {
+      memoryToken: response.payload.memoryToken,
+      hydrate: settings.hydrate === true,
+      restored: false
+    });
+  }
+
+  async function restoreMemorySession(options) {
+    const settings = options || {};
+    const token = settings.memoryToken || state.memory.token;
+    if (!isValidMemoryToken(token)) throw new Error('Memory token is unavailable');
+    const response = await memoryApiRequest('/api/memory/session', 'POST', {
+      memoryToken: token
+    });
+    return applyActiveMemory(response.payload, {
+      memoryToken: token,
+      hydrate: settings.hydrate !== false,
+      restored: true
+    });
+  }
+
+  function memoryUnavailable(error) {
+    const status = error && error.memoryStatus === 'disabled'
+      ? 'disabled'
+      : 'degraded';
+    setMemoryStatus(status, {
+      reason: error && error.code || 'memory_unavailable'
+    });
+  }
+
+  async function bootstrapMemory() {
+    const stored = readStoredMemory();
+    if (stored) {
+      state.memory.token = stored.memoryToken;
+      state.memory.threadId = stored.threadId;
+      state.memory.version = stored.memoryVersion;
+      state.memory.expiresAt = stored.expiresAt;
+      state.memory.persistent = true;
+    }
+    if (config.memoryV1Enabled === false || !apiBaseUrl()) {
+      setMemoryStatus('disabled', { reason: 'feature_disabled' });
+      return state.memory;
+    }
+
+    setMemoryStatus('initializing', { reason: '' });
+    if (stored) {
+      try {
+        return await restoreMemorySession({
+          memoryToken: stored.memoryToken,
+          hydrate: true
+        });
+      } catch (error) {
+        if (![400, 401, 410].includes(error && error.statusCode)) {
+          memoryUnavailable(error);
+          return state.memory;
+        }
+        clearMemoryCredential('initializing', 'credential_rejected');
+      }
+    }
+
+    try {
+      return await createMemorySession({ hydrate: false });
+    } catch (error) {
+      memoryUnavailable(error);
+      return state.memory;
+    }
+  }
+
+  function startMemoryBootstrap() {
+    if (!state.memoryBootstrap) {
+      state.memoryBootstrap = bootstrapMemory().finally(() => {
+        state.memoryBootstrap = null;
+      });
+    }
+    return state.memoryBootstrap;
+  }
+
+  async function ensureMemoryReady() {
+    if (state.memoryBootstrap) await state.memoryBootstrap;
+    if (state.memory.status === 'idle' || state.memory.status === 'cleared') {
+      await startMemoryBootstrap();
+    }
+    return state.memory;
+  }
+
+  function managedMemoryFields(requestId) {
+    if (
+      state.memory.status !== 'active' ||
+      !isValidMemoryToken(state.memory.token) ||
+      !isValidThreadId(state.memory.threadId) ||
+      !isValidMemoryVersion(state.memory.version)
+    ) {
+      return {};
+    }
+    return {
+      memoryToken: state.memory.token,
+      threadId: state.memory.threadId,
+      expectedMemoryVersion: state.memory.version,
+      requestId
+    };
+  }
+
+  function applyAskMemory(memory) {
+    if (!memory || typeof memory !== 'object') return;
+    if (
+      memory.status === 'active' &&
+      isValidThreadId(memory.threadId) &&
+      isValidMemoryVersion(memory.version)
+    ) {
+      state.memory = Object.assign({}, state.memory, {
+        status: 'active',
+        threadId: memory.threadId,
+        version: memory.version,
+        expiresAt: String(memory.expiresAt || state.memory.expiresAt || ''),
+        restored: state.memory.restored,
+        persistent: state.memory.persistent,
+        reason: memory.writeStatus && memory.writeStatus !== 'committed'
+          ? memory.writeStatus
+          : ''
+      });
+      state.memory.persistent = saveStoredMemory();
+      updateMemoryUi();
+      return;
+    }
+    if (memory.status === 'degraded' || memory.status === 'disabled') {
+      setMemoryStatus(memory.status, {
+        reason: memory.reason || memory.writeStatus || 'memory_unavailable'
+      });
+    }
   }
 
   function ensureMathJaxLoaded() {
@@ -722,40 +1150,56 @@
     };
   }
 
-  async function remoteAsk(question, mode, context, messages) {
-    const apiBaseUrl = String(config.apiBaseUrl || '').replace(/\/$/, '');
-    if (!apiBaseUrl) throw new Error('Remote API is not configured');
-    const configuredTimeout = Number(config.apiTimeoutMs);
-    const timeoutMs = Number.isFinite(configuredTimeout) && configuredTimeout > 0
-      ? Math.min(Math.max(Math.round(configuredTimeout), 1000), 60000)
-      : 20000;
+  async function remoteAsk(question, mode, context, messages, requestId) {
+    const baseUrl = apiBaseUrl();
+    if (!baseUrl) throw new Error('Remote API is not configured');
+    const timeoutMs = boundedTimeout(config.apiTimeoutMs, 20000);
     const controller = new AbortController();
     state.activeController = controller;
     const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      const response = await fetch(`${apiBaseUrl}/api/ask`, {
+      const response = await fetch(`${baseUrl}/api/ask`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
+        credentials: 'omit',
+        body: JSON.stringify(Object.assign({
           question,
           sessionId: state.sessionId,
           messages,
           mode,
           page: context
-        }),
+        }, managedMemoryFields(requestId))),
         signal: controller.signal
       });
       if (!response.ok) {
-        throw new Error(`Remote API failed: ${response.status}`);
+        let errorPayload = {};
+        try {
+          errorPayload = await response.json();
+        } catch (error) {
+          errorPayload = {};
+        }
+        const requestError = new Error(
+          errorPayload.error || `Remote API failed: ${response.status}`
+        );
+        requestError.statusCode = response.status;
+        requestError.code = errorPayload.code || '';
+        const retryAfter = response.headers && response.headers.get
+          ? Number(response.headers.get('Retry-After'))
+          : 0;
+        requestError.retryAfterMs = Number.isFinite(retryAfter) && retryAfter > 0
+          ? Math.min(retryAfter * 1000, 3000)
+          : 0;
+        throw requestError;
       }
 
       const result = await response.json();
       if (!result || typeof result.answer !== 'string' || !result.answer.trim()) {
         throw new Error('Remote API returned an invalid response');
       }
+      applyAskMemory(result.memory);
 
       return {
         answer: result.answer,
@@ -772,13 +1216,60 @@
           ? result.codeExplanation
           : null,
         meta: result.meta || null,
-        feedback: result.feedback || null
+        feedback: result.feedback || null,
+        memory: result.memory || null
       };
     } finally {
       window.clearTimeout(timeoutId);
       if (state.activeController === controller) {
         state.activeController = null;
       }
+    }
+  }
+
+  function wait(milliseconds) {
+    return new Promise(resolve => window.setTimeout(resolve, milliseconds));
+  }
+
+  async function remoteAskWithMemoryRecovery(
+    question,
+    mode,
+    context,
+    messages,
+    requestId
+  ) {
+    try {
+      return await remoteAsk(question, mode, context, messages, requestId);
+    } catch (error) {
+      const hadManagedMemory = isValidMemoryToken(state.memory.token);
+      if (!hadManagedMemory) throw error;
+
+      if ([400, 401, 410].includes(error && error.statusCode)) {
+        clearMemoryCredential('idle', 'credential_rejected');
+        await startMemoryBootstrap();
+        if (state.memory.status !== 'active') throw error;
+        return remoteAsk(question, mode, context, messages, requestId);
+      }
+
+      if (error && error.statusCode === 409) {
+        if (error.code === 'MEMORY_REQUEST_PROCESSING' && error.retryAfterMs) {
+          await wait(error.retryAfterMs);
+        } else {
+          try {
+            await restoreMemorySession({ hydrate: false });
+          } catch (restoreError) {
+            memoryUnavailable(restoreError);
+          }
+        }
+        return remoteAsk(question, mode, context, messages, requestId);
+      }
+
+      if (error && error.statusCode === 503) {
+        memoryUnavailable(error);
+        return remoteAsk(question, mode, context, messages, requestId);
+      }
+
+      throw error;
     }
   }
 
@@ -1100,29 +1591,40 @@
   async function ask(question) {
     const trimmed = compactText(question, MAX_MESSAGE_CHARACTERS);
     if (!trimmed || state.busy) return;
-
-    const context = getCurrentContext();
-    const mode = detectMode(trimmed);
-    const fallbackPlan = rewriteFollowUpQuestion(trimmed, mode, context);
-    const requestMessages = trimConversationMessages([
-      ...state.messages,
-      { role: 'user', content: trimmed }
-    ]);
     const requestEpoch = ++state.requestEpoch;
-
-    appendMessage(renderUserMessage(trimmed));
-
     setBusy(true);
     state.elements.input.value = '';
 
     try {
+      await ensureMemoryReady();
+      if (requestEpoch !== state.requestEpoch) return;
+
+      const context = getCurrentContext();
+      const mode = detectMode(trimmed);
+      const fallbackPlan = rewriteFollowUpQuestion(trimmed, mode, context);
+      const requestMessages = trimConversationMessages([
+        ...state.messages,
+        { role: 'user', content: trimmed }
+      ]);
+      const requestId = createRequestId();
+      appendMessage(renderUserMessage(trimmed));
+
       let result = null;
       let usedFallback = false;
 
       try {
-        result = await remoteAsk(trimmed, mode, context, requestMessages);
+        result = await remoteAskWithMemoryRecovery(
+          trimmed,
+          mode,
+          context,
+          requestMessages,
+          requestId
+        );
       } catch (error) {
         if (requestEpoch !== state.requestEpoch) return;
+        if (isValidMemoryToken(state.memory.token)) {
+          setMemoryStatus('degraded', { reason: 'api_unavailable' });
+        }
         result = fallbackPlan.clarification
           ? {
               answer: fallbackPlan.clarification,
@@ -1175,13 +1677,15 @@
     }
   }
 
-  function resetConversation() {
+  function abortActiveWork() {
     state.requestEpoch += 1;
     if (state.activeController) {
       state.activeController.abort();
       state.activeController = null;
     }
+  }
 
+  function resetLocalConversation() {
     state.sessionId = createSessionId();
     state.messages = [];
     state.lastArticleRefs = [];
@@ -1191,6 +1695,104 @@
     saveConversation();
     state.elements.input.value = '';
     state.elements.input.focus();
+  }
+
+  async function resetConversation() {
+    abortActiveWork();
+    const canRotateManagedThread = (
+      config.memoryV1Enabled !== false &&
+      state.memory.status !== 'disabled' &&
+      isValidMemoryToken(state.memory.token) &&
+      isValidThreadId(state.memory.threadId) &&
+      isValidMemoryVersion(state.memory.version)
+    );
+    if (!canRotateManagedThread) {
+      resetLocalConversation();
+      return true;
+    }
+
+    state.memoryActionBusy = true;
+    updateMemoryUi();
+    setBusy(true);
+    try {
+      let response;
+      try {
+        response = await memoryApiRequest('/api/memory/thread', 'POST', {
+          memoryToken: state.memory.token,
+          currentThreadId: state.memory.threadId,
+          expectedMemoryVersion: state.memory.version,
+          requestId: createRequestId()
+        });
+      } catch (error) {
+        if (error && error.statusCode === 409) {
+          await restoreMemorySession({ hydrate: false });
+          response = await memoryApiRequest('/api/memory/thread', 'POST', {
+            memoryToken: state.memory.token,
+            currentThreadId: state.memory.threadId,
+            expectedMemoryVersion: state.memory.version,
+            requestId: createRequestId()
+          });
+        } else {
+          throw error;
+        }
+      }
+      applyActiveMemory(response.payload, {
+        memoryToken: state.memory.token,
+        hydrate: false,
+        restored: true
+      });
+      resetLocalConversation();
+      return true;
+    } catch (error) {
+      if ([400, 401, 410].includes(error && error.statusCode)) {
+        clearMemoryCredential('idle', 'credential_rejected');
+        resetLocalConversation();
+        return true;
+      }
+      memoryUnavailable(error);
+      return false;
+    } finally {
+      state.memoryActionBusy = false;
+      setBusy(false);
+      updateMemoryUi();
+    }
+  }
+
+  async function clearMemory(options) {
+    const settings = options || {};
+    const confirmed = settings.skipConfirm === true || (
+      typeof window.confirm === 'function' &&
+      window.confirm('清除记忆会删除服务端最近对话，且无法恢复。确定继续吗？')
+    );
+    if (!confirmed) return false;
+
+    abortActiveWork();
+    state.memoryActionBusy = true;
+    updateMemoryUi();
+    setBusy(true);
+    try {
+      if (isValidMemoryToken(state.memory.token)) {
+        await memoryApiRequest('/api/memory/session', 'DELETE', {
+          memoryToken: state.memory.token,
+          requestId: createRequestId()
+        });
+      }
+      clearMemoryCredential('cleared', 'user_cleared');
+      resetLocalConversation();
+      return true;
+    } catch (error) {
+      if ([400, 401, 410].includes(error && error.statusCode)) {
+        clearMemoryCredential('cleared', 'credential_rejected');
+        resetLocalConversation();
+        return true;
+      }
+      memoryUnavailable(error);
+      return false;
+    } finally {
+      state.memoryActionBusy = false;
+      setBusy(false);
+      updateMemoryUi();
+    }
   }
 
   function togglePanel(forceOpen) {
@@ -1218,10 +1820,14 @@
             <p>向导会先翻翻站内资料帮你找答案，慢一点点，但会认真找哦。</p>
           </div>
           <div class="blog-ai-agent__header-actions">
-            <button class="blog-ai-agent__new-conversation" type="button" aria-label="开始新对话" title="清空当前会话">新对话</button>
+            <button class="blog-ai-agent__new-conversation" type="button" aria-label="开始新对话并保留长期记忆" title="新建线程，保留长期记忆">新对话</button>
+            <button class="blog-ai-agent__clear-memory" type="button" aria-label="清除全部匿名记忆" title="删除服务端记忆并撤销此浏览器令牌">清除记忆</button>
             <button class="blog-ai-agent__close" type="button" aria-label="关闭">×</button>
           </div>
         </header>
+        <div class="blog-ai-agent__memory-bar">
+          <span class="blog-ai-agent__memory-status" data-memory-state="${escapeHtml(state.memory.status)}" role="status" aria-live="polite">${escapeHtml(memoryStatusCopy())}</span>
+        </div>
         <div class="blog-ai-agent__suggestions">
           <button type="button" data-question="总结这篇文章">总结本页</button>
           <button type="button" data-question="这篇文章适合什么基础的人看？">这篇适合谁</button>
@@ -1241,6 +1847,8 @@
       panel: root.querySelector('.blog-ai-agent__panel'),
       close: root.querySelector('.blog-ai-agent__close'),
       newConversation: root.querySelector('.blog-ai-agent__new-conversation'),
+      clearMemory: root.querySelector('.blog-ai-agent__clear-memory'),
+      memoryStatus: root.querySelector('.blog-ai-agent__memory-status'),
       messages: root.querySelector('.blog-ai-agent__messages'),
       form: root.querySelector('.blog-ai-agent__form'),
       input: root.querySelector('.blog-ai-agent__input'),
@@ -1250,7 +1858,12 @@
 
     state.elements.toggle.addEventListener('click', () => togglePanel());
     state.elements.close.addEventListener('click', () => togglePanel(false));
-    state.elements.newConversation.addEventListener('click', resetConversation);
+    state.elements.newConversation.addEventListener('click', () => {
+      resetConversation();
+    });
+    state.elements.clearMemory.addEventListener('click', () => {
+      clearMemory();
+    });
     state.elements.messages.addEventListener('click', event => {
       const button = event.target.closest('button[data-feedback-rating]');
       if (!button) return;
@@ -1281,6 +1894,7 @@
     });
 
     renderConversationHistory();
+    updateMemoryUi();
   }
 
   function init() {
@@ -1288,6 +1902,7 @@
     if (!root) return;
     restoreConversation();
     createUi(root);
+    startMemoryBootstrap();
   }
 
   if (
@@ -1296,8 +1911,11 @@
   ) {
     window.__BLOG_AI_AGENT_TEST_HOOK__({
       ask,
+      bootstrapMemory,
+      clearMemory,
       resetConversation,
       restoreConversation,
+      restoreMemorySession,
       submitFeedback,
       setElements(elements) {
         state.elements = elements;

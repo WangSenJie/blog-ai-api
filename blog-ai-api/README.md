@@ -193,7 +193,7 @@ Start a new thread without deleting long-term memory with `POST /api/memory/thre
 
 Clear the memory with `DELETE /api/memory/session` and a JSON body containing `memoryToken` and a UUID `requestId`. Existing and already-missing records both return 204.
 
-The browser integration is deliberately deferred to phase 9. Phase 8 only exposes the server contract and keeps legacy callers unchanged.
+The phase 9 browser integration stores only a versioned anonymous credential record in `localStorage`; conversation text remains bounded in `sessionStorage` for compatibility and degradation. On startup it creates or restores a session, hydrates trusted recent messages, and sends `memoryToken`, `threadId`, `expectedMemoryVersion`, and a fresh UUID `requestId` with managed asks. “New conversation” rotates the server thread without clearing long-term memory, while “Clear memory” deletes server state before removing the local token. A failed clear retains the token so deletion can be retried safely.
 
 ## Request
 

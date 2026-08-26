@@ -11,10 +11,61 @@ const agentSource = fs.readFileSync(
   'utf8'
 );
 
-function createStorage(initialValue) {
+const MEMORY_TOKEN_A = `m1.${'a'.repeat(43)}.${'b'.repeat(43)}`;
+const MEMORY_TOKEN_B = `m1.${'c'.repeat(43)}.${'d'.repeat(43)}`;
+const THREAD_A = 'thread_10000000-0000-4000-8000-000000000001';
+const THREAD_B = 'thread_20000000-0000-4000-8000-000000000002';
+
+function response(status, payload, headers) {
+  const values = Object.assign({}, headers || {});
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    headers: {
+      get(name) {
+        return values[name] || values[String(name || '').toLowerCase()] || null;
+      }
+    },
+    async json() {
+      return payload;
+    }
+  };
+}
+
+function activeMemory(token, threadId, version, options) {
+  const settings = options || {};
+  return {
+    memoryToken: settings.includeToken === false ? undefined : token,
+    memory: {
+      status: 'active',
+      threadId,
+      version,
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      restored: settings.restored === true
+    },
+    context: settings.context || {
+      summary: '',
+      activeTopic: '',
+      recentMessages: [],
+      articleRefs: []
+    }
+  };
+}
+
+function storedMemory(token, threadId, version) {
+  return JSON.stringify({
+    schemaVersion: 1,
+    memoryToken: token,
+    threadId,
+    memoryVersion: version,
+    expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+  });
+}
+
+function createStorage(initialValue, initialKey) {
   const values = new Map();
   if (initialValue !== undefined) {
-    values.set('blog-ai-agent-conversation-v1', initialValue);
+    values.set(initialKey || 'blog-ai-agent-conversation-v1', initialValue);
   }
 
   return {
@@ -69,6 +120,15 @@ function createElements() {
   return {
     messages,
     input,
+    newConversation: { disabled: false },
+    clearMemory: { disabled: false },
+    memoryStatus: {
+      textContent: '',
+      attributes: {},
+      setAttribute(name, value) {
+        this.attributes[name] = value;
+      }
+    },
     submit: {
       disabled: false,
       textContent: ''
@@ -80,10 +140,15 @@ function createElements() {
   };
 }
 
-function createHarness(fetchImplementation, storedConversation) {
+function createHarness(fetchImplementation, storedConversation, options) {
+  const settings = options || {};
   let testApi;
   let uuidCounter = 0;
   const sessionStorage = createStorage(storedConversation);
+  const localStorage = createStorage(
+    settings.storedMemory,
+    'blog-ai-agent-memory-v1'
+  );
   const elements = createElements();
   const retrievalCore = {
     normalizeText(value) {
@@ -139,6 +204,8 @@ function createHarness(fetchImplementation, storedConversation) {
     __BLOG_AI_CONFIG__: {
       apiBaseUrl: 'https://api.example',
       apiTimeoutMs: 1000,
+      memoryV1Enabled: settings.memoryV1Enabled === true,
+      memoryTimeoutMs: 1000,
       testMode: true
     },
     __BLOG_AI_AGENT_TEST_HOOK__(api) {
@@ -146,6 +213,7 @@ function createHarness(fetchImplementation, storedConversation) {
     },
     BlogAIRetrieval: retrievalCore,
     sessionStorage,
+    localStorage,
     location: {
       href: 'https://wangsenjie.github.io/test/'
     },
@@ -154,6 +222,9 @@ function createHarness(fetchImplementation, storedConversation) {
         uuidCounter += 1;
         return `00000000-0000-4000-8000-${String(uuidCounter).padStart(12, '0')}`;
       }
+    },
+    confirm() {
+      return settings.confirmClear !== false;
     },
     setTimeout,
     clearTimeout
@@ -177,9 +248,323 @@ function createHarness(fetchImplementation, storedConversation) {
   return {
     api: testApi,
     elements,
+    localStorage,
     sessionStorage
   };
 }
+
+test('first browser visit creates and stores only the anonymous memory credential', async () => {
+  const requests = [];
+  const harness = createHarness(async (url, options) => {
+    requests.push({ url, body: JSON.parse(options.body) });
+    return response(201, activeMemory(MEMORY_TOKEN_A, THREAD_A, 1));
+  }, undefined, { memoryV1Enabled: true });
+
+  await harness.api.bootstrapMemory();
+
+  assert.deepEqual(requests, [{
+    url: 'https://api.example/api/memory/session',
+    body: {}
+  }]);
+  assert.equal(harness.api.state.memory.status, 'active');
+  assert.equal(harness.api.state.memory.version, 1);
+  const persisted = harness.localStorage.values.get('blog-ai-agent-memory-v1');
+  assert.ok(persisted);
+  assert.equal(JSON.parse(persisted).memoryToken, MEMORY_TOKEN_A);
+  assert.equal(/messages|summary|articleRefs/.test(persisted), false);
+  assert.match(harness.elements.memoryStatus.textContent, /记忆已开启/);
+});
+
+test('a later browser visit restores server messages and article references', async () => {
+  const context = {
+    summary: '正在学习双塔模型',
+    activeTopic: '双塔模型',
+    recentMessages: [{
+      role: 'user',
+      content: '双塔模型是什么？'
+    }, {
+      role: 'assistant',
+      content: '双塔模型包含用户塔和物品塔。',
+      citations: [{
+        chunkId: 'tower#0',
+        title: '双塔模型',
+        url: 'https://wangsenjie.github.io/double-tower/',
+        section: '结构'
+      }],
+      standaloneQuery: '双塔模型'
+    }],
+    articleRefs: [{
+      chunkId: 'tower#0',
+      title: '双塔模型',
+      url: 'https://wangsenjie.github.io/double-tower/'
+    }]
+  };
+  const harness = createHarness(async (url, options) => {
+    assert.equal(url, 'https://api.example/api/memory/session');
+    assert.deepEqual(JSON.parse(options.body), { memoryToken: MEMORY_TOKEN_A });
+    return response(200, activeMemory(MEMORY_TOKEN_A, THREAD_A, 7, {
+      includeToken: false,
+      restored: true,
+      context
+    }));
+  }, undefined, {
+    memoryV1Enabled: true,
+    storedMemory: storedMemory(MEMORY_TOKEN_A, THREAD_A, 6)
+  });
+
+  await harness.api.bootstrapMemory();
+
+  assert.equal(harness.api.state.memory.restored, true);
+  assert.equal(harness.api.state.messages.length, 2);
+  assert.equal(harness.api.state.lastStandaloneQuery, '双塔模型');
+  assert.equal(harness.api.state.lastArticleRefs[0].title, '双塔模型');
+  assert.match(harness.elements.messages.innerHTML, /双塔模型包含用户塔和物品塔/);
+  assert.match(harness.elements.memoryStatus.textContent, /记忆已恢复/);
+});
+
+test('an empty trusted server thread replaces stale tab history on restore', async () => {
+  const storedConversation = JSON.stringify({
+    version: 1,
+    expiresAt: Date.now() + 60000,
+    sessionId: 'session_stalehistory123',
+    messages: [
+      { role: 'user', content: '不应继续保留的问题' },
+      { role: 'assistant', content: '不应继续保留的回答' }
+    ],
+    lastArticleRefs: [{
+      chunkId: 'stale#0',
+      title: '旧文章',
+      url: 'https://wangsenjie.github.io/stale/'
+    }],
+    lastStandaloneQuery: '旧主题'
+  });
+  const harness = createHarness(async () => response(200, activeMemory(
+    MEMORY_TOKEN_A,
+    THREAD_A,
+    2,
+    { includeToken: false, restored: true }
+  )), storedConversation, {
+    memoryV1Enabled: true,
+    storedMemory: storedMemory(MEMORY_TOKEN_A, THREAD_A, 1)
+  });
+
+  harness.api.restoreConversation();
+  assert.equal(harness.api.state.messages.length, 2);
+  await harness.api.bootstrapMemory();
+
+  assert.equal(harness.api.state.messages.length, 0);
+  assert.equal(harness.api.state.lastArticleRefs.length, 0);
+  assert.equal(harness.api.state.lastStandaloneQuery, '');
+  assert.equal(
+    harness.elements.messages.innerHTML.includes('不应继续保留的回答'),
+    false
+  );
+});
+
+test('managed asks carry token, thread, version, and UUID then persist the new version', async () => {
+  let askBody;
+  const harness = createHarness(async (url, options) => {
+    if (String(url).endsWith('/api/memory/session')) {
+      return response(201, activeMemory(MEMORY_TOKEN_A, THREAD_A, 1));
+    }
+    askBody = JSON.parse(options.body);
+    return response(200, {
+      answer: '服务端回答',
+      citations: [],
+      related: [],
+      memory: {
+        status: 'active',
+        writeStatus: 'committed',
+        threadId: THREAD_A,
+        version: 2,
+        expiresAt: new Date(Date.now() + 10000).toISOString()
+      },
+      meta: { standaloneQuery: '双塔模型' }
+    });
+  }, undefined, { memoryV1Enabled: true });
+
+  await harness.api.bootstrapMemory();
+  await harness.api.ask('双塔模型');
+
+  assert.equal(askBody.memoryToken, MEMORY_TOKEN_A);
+  assert.equal(askBody.threadId, THREAD_A);
+  assert.equal(askBody.expectedMemoryVersion, 1);
+  assert.match(
+    askBody.requestId,
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-8[0-9a-f]{3}-[0-9a-f]{12}$/
+  );
+  assert.equal(harness.api.state.memory.version, 2);
+  assert.equal(
+    JSON.parse(harness.localStorage.values.get('blog-ai-agent-memory-v1')).memoryVersion,
+    2
+  );
+});
+
+test('an expired server record is replaced explicitly with a new anonymous memory', async () => {
+  const calls = [];
+  const harness = createHarness(async (url, options) => {
+    const body = JSON.parse(options.body);
+    calls.push(body);
+    if (body.memoryToken) {
+      return response(410, {
+        error: 'Memory session is no longer available',
+        code: 'MEMORY_SESSION_GONE'
+      });
+    }
+    return response(201, activeMemory(MEMORY_TOKEN_B, THREAD_B, 1));
+  }, undefined, {
+    memoryV1Enabled: true,
+    storedMemory: storedMemory(MEMORY_TOKEN_A, THREAD_A, 3)
+  });
+
+  await harness.api.bootstrapMemory();
+
+  assert.deepEqual(calls, [{ memoryToken: MEMORY_TOKEN_A }, {}]);
+  assert.equal(harness.api.state.memory.token, MEMORY_TOKEN_B);
+  assert.equal(
+    JSON.parse(harness.localStorage.values.get('blog-ai-agent-memory-v1')).memoryToken,
+    MEMORY_TOKEN_B
+  );
+});
+
+test('memory outage keeps bounded session history and sends a compatibility ask', async () => {
+  let askBody;
+  const storedConversation = JSON.stringify({
+    version: 1,
+    expiresAt: Date.now() + 60000,
+    sessionId: 'session_compatibility123',
+    messages: [
+      { role: 'user', content: '旧问题' },
+      { role: 'assistant', content: '旧回答' }
+    ],
+    lastArticleRefs: [],
+    lastStandaloneQuery: '旧问题'
+  });
+  const harness = createHarness(async (url, options) => {
+    if (String(url).endsWith('/api/memory/session')) {
+      return response(503, {
+        error: 'Memory service is temporarily unavailable',
+        memory: { status: 'degraded' }
+      });
+    }
+    askBody = JSON.parse(options.body);
+    return response(200, {
+      answer: '兼容历史回答',
+      citations: [],
+      related: [],
+      meta: {}
+    });
+  }, storedConversation, { memoryV1Enabled: true });
+
+  harness.api.restoreConversation();
+  await harness.api.bootstrapMemory();
+  await harness.api.ask('继续解释');
+
+  assert.equal(harness.api.state.memory.status, 'degraded');
+  assert.equal(Object.hasOwn(askBody, 'memoryToken'), false);
+  assert.equal(askBody.messages.some(message => message.content === '旧回答'), true);
+  assert.match(harness.elements.memoryStatus.textContent, /当前对话仍可继续/);
+});
+
+test('a version conflict restores the latest metadata and retries without local fallback', async () => {
+  let askCount = 0;
+  let restoreCount = 0;
+  const harness = createHarness(async (url, options) => {
+    const body = JSON.parse(options.body);
+    if (String(url).endsWith('/api/memory/session')) {
+      if (!body.memoryToken) {
+        return response(201, activeMemory(MEMORY_TOKEN_A, THREAD_A, 1));
+      }
+      restoreCount += 1;
+      return response(200, activeMemory(MEMORY_TOKEN_A, THREAD_A, 2, {
+        includeToken: false,
+        restored: true
+      }));
+    }
+    askCount += 1;
+    if (askCount === 1) {
+      return response(409, {
+        error: 'Memory version conflict',
+        code: 'MEMORY_VERSION_CONFLICT'
+      });
+    }
+    assert.equal(body.expectedMemoryVersion, 2);
+    return response(200, {
+      answer: '重试后的回答',
+      citations: [],
+      related: [],
+      memory: {
+        status: 'active',
+        writeStatus: 'committed',
+        threadId: THREAD_A,
+        version: 3
+      },
+      meta: {}
+    });
+  }, undefined, { memoryV1Enabled: true });
+
+  await harness.api.bootstrapMemory();
+  await harness.api.ask('并发后的问题');
+
+  assert.equal(askCount, 2);
+  assert.equal(restoreCount, 1);
+  assert.equal(harness.api.state.memory.version, 3);
+  assert.equal(harness.elements.messages.innerHTML.includes('本地检索'), false);
+});
+
+test('new conversation rotates the server thread and clear memory revokes local state', async () => {
+  const requests = [];
+  const harness = createHarness(async (url, options) => {
+    const body = JSON.parse(options.body);
+    requests.push({ url, method: options.method, body });
+    if (String(url).endsWith('/api/memory/session') && options.method === 'POST') {
+      return response(201, activeMemory(MEMORY_TOKEN_A, THREAD_A, 1));
+    }
+    if (String(url).endsWith('/api/memory/thread')) {
+      return response(201, activeMemory(MEMORY_TOKEN_A, THREAD_B, 2, {
+        includeToken: false
+      }));
+    }
+    return response(204, {});
+  }, undefined, { memoryV1Enabled: true });
+
+  await harness.api.bootstrapMemory();
+  harness.api.state.messages = [{ role: 'user', content: '旧线程' }];
+  assert.equal(await harness.api.resetConversation(), true);
+  assert.equal(harness.api.state.memory.threadId, THREAD_B);
+  assert.equal(harness.api.state.messages.length, 0);
+  assert.equal(
+    requests.find(item => String(item.url).endsWith('/api/memory/thread')).body.currentThreadId,
+    THREAD_A
+  );
+
+  assert.equal(await harness.api.clearMemory({ skipConfirm: true }), true);
+  assert.equal(harness.api.state.memory.status, 'cleared');
+  assert.equal(harness.api.state.memory.token, '');
+  assert.equal(harness.localStorage.values.has('blog-ai-agent-memory-v1'), false);
+  assert.equal(
+    requests.some(item => item.method === 'DELETE' && item.body.memoryToken === MEMORY_TOKEN_A),
+    true
+  );
+});
+
+test('a failed clear keeps the credential so the user can retry safely', async () => {
+  const harness = createHarness(async (url, options) => {
+    if (options.method === 'POST') {
+      return response(201, activeMemory(MEMORY_TOKEN_A, THREAD_A, 1));
+    }
+    return response(503, {
+      error: 'Memory service is temporarily unavailable',
+      memory: { status: 'degraded' }
+    });
+  }, undefined, { memoryV1Enabled: true });
+
+  await harness.api.bootstrapMemory();
+  assert.equal(await harness.api.clearMemory({ skipConfirm: true }), false);
+  assert.equal(harness.api.state.memory.status, 'degraded');
+  assert.equal(harness.api.state.memory.token, MEMORY_TOKEN_A);
+  assert.equal(harness.localStorage.values.has('blog-ai-agent-memory-v1'), true);
+});
 
 test('a valid evidence-insufficient server response never enters local fallback', async () => {
   const requestedUrls = [];
