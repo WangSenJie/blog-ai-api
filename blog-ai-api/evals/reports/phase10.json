@@ -1,6 +1,6 @@
 {
   "phase": 10,
-  "generatedAt": "2026-08-26T08:01:52.545Z",
+  "generatedAt": "2026-08-26T08:42:31.867Z",
   "strategy": "grounded-answer-v2-with-trusted-memory-update",
   "implementation": {
     "checks": {
@@ -52,9 +52,86 @@
     },
     "passed": true
   },
+  "production": {
+    "available": true,
+    "generatedAt": "2026-08-26T08:41:08.785Z",
+    "endpointHost": "blog-ai-api.vercel.app",
+    "dataset": {
+      "version": "phase10-production-v1",
+      "hash": "a874cf93daba15c3dd2ddea91159b9cf453a4c3d85e1380fb225334896457d49",
+      "cases": 20,
+      "repetitions": 5,
+      "executedRequests": 100
+    },
+    "metrics": {
+      "requests": 100,
+      "httpSuccessRate": 1,
+      "rolloutSelectionRate": 1,
+      "generationAttempts": 60,
+      "generationSchemaSuccessRate": 1,
+      "verificationAttempts": 60,
+      "verificationSchemaSuccessRate": 1,
+      "unsafeAnswers": 0,
+      "unsafeAnswerRate": 0,
+      "acceptedWithoutCitation": 0,
+      "acceptedWithoutCitationRate": 0,
+      "answerablePublished": 40,
+      "answerableCoverage": 0.8,
+      "serverLatencyMs": {
+        "p50": 2744.732,
+        "p95": 4227.889
+      },
+      "dualModelLatencyMs": {
+        "requests": 60,
+        "p50": 3042.956,
+        "p95": 4497.878
+      },
+      "categories": {
+        "answerable": {
+          "requests": 50,
+          "passed": 40,
+          "passRate": 0.8
+        },
+        "refusal": {
+          "requests": 25,
+          "passed": 25,
+          "passRate": 1
+        },
+        "near_match": {
+          "requests": 25,
+          "passed": 25,
+          "passRate": 1
+        }
+      },
+      "transportRetriedRequests": 0
+    },
+    "targets": {
+      "httpSuccessRate": 1,
+      "rolloutSelectionRate": 1,
+      "generationSchemaSuccessRate": 0.99,
+      "verificationSchemaSuccessRate": 0.99,
+      "unsafeAnswerRate": 0,
+      "acceptedWithoutCitationRate": 0,
+      "answerableCoverage": 0.5,
+      "dualModelP95Ms": 12000
+    },
+    "checks": {
+      "httpSuccessRate": true,
+      "rolloutSelectionRate": true,
+      "generationSchemaSuccessRate": true,
+      "verificationSchemaSuccessRate": true,
+      "unsafeAnswerRate": true,
+      "acceptedWithoutCitationRate": true,
+      "answerableCoverage": true,
+      "dualModelP95Ms": true
+    },
+    "formalSampleReady": true,
+    "passed": true
+  },
   "acceptance": {
     "localReleaseReady": true,
-    "productionValidationRequired": true,
-    "status": "local_passed"
+    "productionValidationRequired": false,
+    "releaseReady": true,
+    "status": "passed"
   }
 }

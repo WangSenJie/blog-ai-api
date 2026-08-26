@@ -1,0 +1,148 @@
+{
+  "version": "phase10-production-v1",
+  "strategy": "grounded-answer-v2-production-gray",
+  "description": "Production validation set covering answerable, refusal, and semantic near-match cases.",
+  "formalSampleMin": 100,
+  "targets": {
+    "httpSuccessRate": 1,
+    "rolloutSelectionRate": 1,
+    "generationSchemaSuccessRate": 0.99,
+    "verificationSchemaSuccessRate": 0.99,
+    "unsafeAnswerRate": 0,
+    "acceptedWithoutCitationRate": 0,
+    "answerableCoverage": 0.5,
+    "dualModelP95Ms": 12000
+  },
+  "cases": [
+    {
+      "id": "answer_double_tower_structure",
+      "category": "answerable",
+      "question": "双塔模型的结构是什么？",
+      "expected": "answer",
+      "expectedTitles": ["双塔模型"]
+    },
+    {
+      "id": "answer_double_tower_online",
+      "category": "answerable",
+      "question": "双塔模型如何进行线上召回？",
+      "expected": "answer",
+      "expectedTitles": ["双塔模型"]
+    },
+    {
+      "id": "answer_gbdt_definition",
+      "category": "answerable",
+      "question": "GBDT 是什么？",
+      "expected": "answer",
+      "expectedTitles": ["GBDT"]
+    },
+    {
+      "id": "answer_lstm_definition",
+      "category": "answerable",
+      "question": "LSTM 的定义是什么？",
+      "expected": "answer",
+      "expectedTitles": ["门控循环神经网络"]
+    },
+    {
+      "id": "answer_svd_core",
+      "category": "answerable",
+      "question": "SVD 的核心思想是什么？",
+      "expected": "answer",
+      "expectedTitles": ["SVD 排序算法"]
+    },
+    {
+      "id": "answer_cnn_convolution",
+      "category": "answerable",
+      "question": "卷积神经网络中的卷积是什么？",
+      "expected": "answer",
+      "expectedTitles": ["卷积神经网络 CNN"]
+    },
+    {
+      "id": "answer_transformer_structure",
+      "category": "answerable",
+      "question": "Transformer 的基本结构是什么？",
+      "expected": "answer",
+      "expectedTitles": ["Transformer 架构 —— Attention Is All You Need"]
+    },
+    {
+      "id": "answer_adaboost_definition",
+      "category": "answerable",
+      "question": "AdaBoost 是什么？",
+      "expected": "answer",
+      "expectedTitles": ["AdaBoost"]
+    },
+    {
+      "id": "answer_als_flow",
+      "category": "answerable",
+      "question": "ALS 排序的完整流程是什么？",
+      "expected": "answer",
+      "expectedTitles": ["ALS 排序算法"]
+    },
+    {
+      "id": "answer_itemcf_flow",
+      "category": "answerable",
+      "question": "ItemCF 召回的完整流程是什么？",
+      "expected": "answer",
+      "expectedTitles": ["ItemCF"]
+    },
+    {
+      "id": "refuse_redis_replication",
+      "category": "refusal",
+      "question": "Redis 主从复制应该如何配置？",
+      "expected": "refuse"
+    },
+    {
+      "id": "refuse_kubernetes_network",
+      "category": "refusal",
+      "question": "Kubernetes 的网络策略如何配置？",
+      "expected": "refuse"
+    },
+    {
+      "id": "refuse_quantum_shor",
+      "category": "refusal",
+      "question": "Shor 算法如何分解大整数？",
+      "expected": "refuse"
+    },
+    {
+      "id": "refuse_swiftui_navigation",
+      "category": "refusal",
+      "question": "SwiftUI 的 NavigationStack 如何使用？",
+      "expected": "refuse"
+    },
+    {
+      "id": "refuse_kafka_exactly_once",
+      "category": "refusal",
+      "question": "Kafka 如何实现 exactly-once 语义？",
+      "expected": "refuse"
+    },
+    {
+      "id": "near_random_forest_dropout",
+      "category": "near_match",
+      "question": "随机森林如何通过 Dropout 降低过拟合风险？",
+      "expected": "refuse"
+    },
+    {
+      "id": "near_tower_dropout",
+      "category": "near_match",
+      "question": "双塔模型如何通过 Dropout 降低过拟合风险？",
+      "expected": "refuse"
+    },
+    {
+      "id": "near_gbdt_attention",
+      "category": "near_match",
+      "question": "GBDT 如何使用多头注意力处理序列？",
+      "expected": "refuse"
+    },
+    {
+      "id": "near_transformer_usercf",
+      "category": "near_match",
+      "question": "Transformer 如何使用协同过滤计算用户相似度？",
+      "expected": "refuse"
+    },
+    {
+      "id": "near_svd_convolution",
+      "category": "near_match",
+      "question": "SVD 如何通过卷积提取图像特征？",
+      "expected": "refuse"
+    }
+  ]
+}

@@ -16,6 +16,11 @@ const {
 } = require('../memory/trusted-update');
 
 const DEFAULT_OUTPUT_PATH = path.join(__dirname, 'reports', 'phase10.json');
+const DEFAULT_PRODUCTION_REPORT_PATH = path.join(
+  __dirname,
+  'reports',
+  'phase10-production.json'
+);
 const ROOT = path.resolve(__dirname, '..');
 const BLOG_ROOT = path.resolve(ROOT, '..');
 const TARGETS = Object.freeze({
@@ -273,11 +278,45 @@ function memoryEvaluation() {
   return { checks, passed: Object.values(checks).every(Boolean) };
 }
 
-function buildPhase10Report() {
+function productionEvaluation(reportPath) {
+  const resolvedPath = reportPath || DEFAULT_PRODUCTION_REPORT_PATH;
+  if (!fs.existsSync(resolvedPath)) {
+    return {
+      available: false,
+      formalSampleReady: false,
+      passed: false
+    };
+  }
+  const report = JSON.parse(fs.readFileSync(resolvedPath, 'utf8'));
+  if (
+    report.phase !== 10 ||
+    report.kind !== 'production-gray-evaluation' ||
+    !report.dataset ||
+    !report.acceptance
+  ) {
+    throw new Error('Invalid Phase 10 production report');
+  }
+  return {
+    available: true,
+    generatedAt: report.generatedAt,
+    endpointHost: report.endpointHost,
+    dataset: Object.assign({}, report.dataset),
+    metrics: Object.assign({}, report.acceptance.metrics),
+    targets: Object.assign({}, report.acceptance.targets),
+    checks: Object.assign({}, report.acceptance.checks),
+    formalSampleReady: report.acceptance.formalSampleReady === true,
+    passed: report.acceptance.passed === true
+  };
+}
+
+function buildPhase10Report(options) {
+  const settings = options || {};
   const implementation = implementationAudit();
   const quality = qualityEvaluation();
   const memory = memoryEvaluation();
+  const production = productionEvaluation(settings.productionReportPath);
   const localReleaseReady = implementation.passed && quality.passed && memory.passed;
+  const releaseReady = localReleaseReady && production.passed;
   return {
     phase: 10,
     generatedAt: new Date().toISOString(),
@@ -285,10 +324,16 @@ function buildPhase10Report() {
     implementation,
     quality,
     memory,
+    production,
     acceptance: {
       localReleaseReady,
-      productionValidationRequired: true,
-      status: localReleaseReady ? 'local_passed' : 'failed'
+      productionValidationRequired: !production.passed,
+      releaseReady,
+      status: releaseReady
+        ? 'passed'
+        : localReleaseReady
+          ? 'local_passed'
+          : 'failed'
     }
   };
 }
@@ -314,7 +359,12 @@ function main() {
     `status=${report.acceptance.status}`
   );
   console.log(`Report written to ${options.outputPath}`);
-  if (!report.acceptance.localReleaseReady) process.exitCode = 1;
+  if (
+    !report.acceptance.localReleaseReady ||
+    report.production.available && !report.production.passed
+  ) {
+    process.exitCode = 1;
+  }
 }
 
 if (require.main === module) main();
@@ -323,5 +373,6 @@ module.exports = {
   buildPhase10Report,
   implementationAudit,
   memoryEvaluation,
+  productionEvaluation,
   qualityEvaluation
 };
