@@ -272,11 +272,13 @@ function initializePhase10ModelMeta(state) {
     generationErrorCode: '',
     generationFinishReason: '',
     generationContentChars: 0,
+    generationReasoningContentChars: 0,
     verificationAttempted: false,
     verificationSchemaValid: false,
     verificationErrorCode: '',
     verificationFinishReason: '',
-    verificationContentChars: 0
+    verificationContentChars: 0,
+    verificationReasoningContentChars: 0
   });
 }
 
@@ -289,7 +291,8 @@ function stageDiagnostic(error, stage) {
   return {
     errorCode: timedOut ? `${stage}_timeout` : 'provider_request_error',
     finishReason: '',
-    contentChars: 0
+    contentChars: 0,
+    reasoningContentChars: 0
   };
 }
 
@@ -299,6 +302,11 @@ function applyStageDiagnostic(model, stage, diagnostic) {
   model[`${stage}FinishReason`] = String(source.finishReason || '');
   model[`${stage}ContentChars`] = Number.isFinite(source.contentChars)
     ? Math.max(0, Math.round(source.contentChars))
+    : 0;
+  model[`${stage}ReasoningContentChars`] = Number.isFinite(
+    source.reasoningContentChars
+  )
+    ? Math.max(0, Math.round(source.reasoningContentChars))
     : 0;
 }
 

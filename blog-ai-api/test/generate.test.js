@@ -6,7 +6,8 @@ const test = require('node:test');
 const {
   generateGroundedV2Answer,
   getModelConfig,
-  getModelDiagnostic
+  getModelDiagnostic,
+  getVerifierConfig
 } = require('../lib/generate');
 
 async function withMockedModel(fetchImplementation, operation) {
@@ -14,11 +15,13 @@ async function withMockedModel(fetchImplementation, operation) {
   const originalEnvironment = {
     LLM_API_BASE_URL: process.env.LLM_API_BASE_URL,
     LLM_API_KEY: process.env.LLM_API_KEY,
-    LLM_MODEL: process.env.LLM_MODEL
+    LLM_MODEL: process.env.LLM_MODEL,
+    LLM_THINKING_ENABLED: process.env.LLM_THINKING_ENABLED
   };
-  process.env.LLM_API_BASE_URL = 'https://model.invalid/v1';
+  process.env.LLM_API_BASE_URL = 'https://api.deepseek.com';
   process.env.LLM_API_KEY = 'test-key';
-  process.env.LLM_MODEL = 'test-model';
+  process.env.LLM_MODEL = 'deepseek-v4-flash';
+  delete process.env.LLM_THINKING_ENABLED;
   global.fetch = fetchImplementation;
   try {
     return await operation();
@@ -76,6 +79,35 @@ test('model output tokens use a bounded default and clamp configured values', ()
   }
 });
 
+test('DeepSeek structured calls disable thinking by default with bounded overrides', () => {
+  const originalEnvironment = {
+    LLM_API_BASE_URL: process.env.LLM_API_BASE_URL,
+    LLM_MODEL: process.env.LLM_MODEL,
+    LLM_THINKING_ENABLED: process.env.LLM_THINKING_ENABLED,
+    VERIFIER_THINKING_ENABLED: process.env.VERIFIER_THINKING_ENABLED
+  };
+  try {
+    process.env.LLM_API_BASE_URL = 'https://api.deepseek.com';
+    process.env.LLM_MODEL = 'deepseek-v4-flash';
+    delete process.env.LLM_THINKING_ENABLED;
+    delete process.env.VERIFIER_THINKING_ENABLED;
+    assert.equal(getModelConfig().thinkingEnabled, false);
+    assert.equal(getVerifierConfig().thinkingEnabled, false);
+
+    process.env.LLM_THINKING_ENABLED = 'true';
+    assert.equal(getModelConfig().thinkingEnabled, true);
+    assert.equal(getVerifierConfig().thinkingEnabled, true);
+
+    process.env.VERIFIER_THINKING_ENABLED = 'false';
+    assert.equal(getVerifierConfig().thinkingEnabled, false);
+  } finally {
+    for (const [key, value] of Object.entries(originalEnvironment)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
 test('phase 10 generation requests deterministic compact JSON and records safe diagnostics', async () => {
   let requestBody;
   const result = await withMockedModel(async (url, options) => {
@@ -87,6 +119,7 @@ test('phase 10 generation requests deterministic compact JSON and records safe d
           choices: [{
             finish_reason: 'stop',
             message: {
+              reasoning_content: '不应公开的内部推理',
               content: JSON.stringify({
                 claims: [],
                 unansweredSubquestions: ['sq_1']
@@ -104,6 +137,7 @@ test('phase 10 generation requests deterministic compact JSON and records safe d
 
   assert.equal(requestBody.temperature, 0);
   assert.equal(requestBody.response_format.type, 'json_object');
+  assert.equal(requestBody.thinking.type, 'disabled');
   assert.doesNotMatch(requestBody.messages[1].content, /draftAnswer/);
   assert.deepEqual(result, {
     claims: [],
@@ -113,7 +147,9 @@ test('phase 10 generation requests deterministic compact JSON and records safe d
   assert.equal(diagnostic.errorCode, '');
   assert.equal(diagnostic.finishReason, 'stop');
   assert.ok(diagnostic.contentChars > 0);
+  assert.ok(diagnostic.reasoningContentChars > 0);
   assert.equal(JSON.stringify(result).includes('finishReason'), false);
+  assert.equal(JSON.stringify(result).includes('内部推理'), false);
 });
 
 test('phase 10 generation distinguishes invalid JSON from an invalid schema', async () => {

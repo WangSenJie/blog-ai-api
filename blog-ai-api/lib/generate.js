@@ -10,7 +10,8 @@ class ModelResponseError extends Error {
     this.modelDiagnostic = Object.assign({
       errorCode: code,
       finishReason: '',
-      contentChars: 0
+      contentChars: 0,
+      reasoningContentChars: 0
     }, diagnostic || {});
   }
 }
@@ -30,6 +31,33 @@ function getModelDiagnostic(value) {
   return value && typeof value === 'object' && value[MODEL_DIAGNOSTIC]
     ? Object.assign({}, value[MODEL_DIAGNOSTIC])
     : null;
+}
+
+function optionalBoolean(value) {
+  const normalized = String(value === undefined ? '' : value)
+    .trim()
+    .toLowerCase();
+  if (['1', 'true', 'yes', 'on'].includes(normalized)) return true;
+  if (['0', 'false', 'no', 'off'].includes(normalized)) return false;
+  return null;
+}
+
+function deepSeekProvider(apiBaseUrl, model) {
+  try {
+    const hostname = new URL(apiBaseUrl).hostname.toLowerCase();
+    if (hostname === 'deepseek.com' || hostname.endsWith('.deepseek.com')) {
+      return true;
+    }
+  } catch (error) {
+    // Invalid provider URLs are rejected later by fetch/config readiness.
+  }
+  return /^deepseek(?:-|$)/i.test(String(model || '').trim());
+}
+
+function thinkingSetting(value, apiBaseUrl, model) {
+  const configured = optionalBoolean(value);
+  if (configured !== null) return configured;
+  return deepSeekProvider(apiBaseUrl, model) ? false : null;
 }
 
 function getModelConfig() {
@@ -57,7 +85,12 @@ function getModelConfig() {
     apiPath,
     timeoutMs,
     maxOutputTokens,
-    jsonMode
+    jsonMode,
+    thinkingEnabled: thinkingSetting(
+      process.env.LLM_THINKING_ENABLED,
+      apiBaseUrl,
+      model
+    )
   };
 }
 
@@ -65,12 +98,20 @@ function getVerifierConfig() {
   const generation = getModelConfig();
   const configuredTimeout = Number(process.env.VERIFIER_TIMEOUT_MS);
   const configuredMaxOutputTokens = Number(process.env.VERIFIER_MAX_OUTPUT_TOKENS);
+  const apiBaseUrl = String(
+    process.env.VERIFIER_API_BASE_URL || generation.apiBaseUrl
+  ).replace(/\/$/, '');
+  const model = process.env.VERIFIER_MODEL || generation.model;
+  const configuredThinking = optionalBoolean(
+    process.env.VERIFIER_THINKING_ENABLED
+  );
+  const verifierProviderOverridden = Boolean(
+    process.env.VERIFIER_API_BASE_URL || process.env.VERIFIER_MODEL
+  );
   return {
-    apiBaseUrl: String(
-      process.env.VERIFIER_API_BASE_URL || generation.apiBaseUrl
-    ).replace(/\/$/, ''),
+    apiBaseUrl,
     apiKey: process.env.VERIFIER_API_KEY || generation.apiKey,
-    model: process.env.VERIFIER_MODEL || generation.model,
+    model,
     apiPath: process.env.VERIFIER_API_PATH || generation.apiPath,
     timeoutMs: Number.isFinite(configuredTimeout) && configuredTimeout > 0
       ? Math.min(Math.max(Math.round(configuredTimeout), 1000), 60000)
@@ -79,7 +120,12 @@ function getVerifierConfig() {
       configuredMaxOutputTokens > 0
       ? Math.min(Math.max(Math.round(configuredMaxOutputTokens), 128), 1200)
       : 700,
-    jsonMode: generation.jsonMode
+    jsonMode: generation.jsonMode,
+    thinkingEnabled: configuredThinking === null
+      ? verifierProviderOverridden
+        ? thinkingSetting(undefined, apiBaseUrl, model)
+        : generation.thinkingEnabled
+      : configuredThinking
   };
 }
 
@@ -355,7 +401,8 @@ async function requestGeneratedAnswer(
     apiPath,
     timeoutMs,
     maxOutputTokens,
-    jsonMode
+    jsonMode,
+    thinkingEnabled
   } = config;
   const endpoint = `${apiBaseUrl}${apiPath}`;
   const controller = new AbortController();
@@ -410,7 +457,9 @@ async function requestGeneratedAnswer(
         max_tokens: boundedOutputTokens
       }, jsonMode ? {
         response_format: { type: 'json_object' }
-      } : {})),
+      } : {}, thinkingEnabled === null ? {} : {
+        thinking: { type: thinkingEnabled ? 'enabled' : 'disabled' }
+      })),
       signal: controller.signal
     });
 
@@ -434,11 +483,20 @@ async function requestGeneratedAnswer(
       payload.choices[0] &&
       payload.choices[0].message &&
       payload.choices[0].message.content;
+    const reasoningContent = payload &&
+      payload.choices &&
+      payload.choices[0] &&
+      payload.choices[0].message &&
+      payload.choices[0].message.reasoning_content;
     const contentChars = Array.from(String(content || '')).length;
+    const reasoningContentChars = Array.from(
+      String(reasoningContent || '')
+    ).length;
     if (!String(content || '').trim()) {
       throw new ModelResponseError('provider_empty_content', {
         finishReason,
-        contentChars
+        contentChars,
+        reasoningContentChars
       });
     }
     const answer = (extract || extractAnswer)(content);
@@ -449,14 +507,15 @@ async function requestGeneratedAnswer(
             ? 'invalid_verification_schema'
             : 'invalid_generation_schema'
           : 'provider_invalid_json',
-        { finishReason, contentChars }
+        { finishReason, contentChars, reasoningContentChars }
       );
     }
 
     return attachModelDiagnostic(answer, {
       errorCode: '',
       finishReason,
-      contentChars
+      contentChars,
+      reasoningContentChars
     });
   } catch (error) {
     if (error instanceof ModelResponseError) throw error;

@@ -205,11 +205,15 @@ function createAskHandler(options) {
         generationErrorCode: payload.meta.model.generationErrorCode,
         generationFinishReason: payload.meta.model.generationFinishReason,
         generationContentChars: payload.meta.model.generationContentChars,
+        generationReasoningContentChars:
+          payload.meta.model.generationReasoningContentChars,
         verificationAttempted: payload.meta.model.verificationAttempted,
         verificationSchemaValid: payload.meta.model.verificationSchemaValid,
         verificationErrorCode: payload.meta.model.verificationErrorCode,
         verificationFinishReason: payload.meta.model.verificationFinishReason,
         verificationContentChars: payload.meta.model.verificationContentChars,
+        verificationReasoningContentChars:
+          payload.meta.model.verificationReasoningContentChars,
         citationVerification: payload.meta.citationVerification &&
           payload.meta.citationVerification.status,
         claims: (payload.claims || []).length,

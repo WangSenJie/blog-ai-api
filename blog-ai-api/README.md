@@ -113,6 +113,8 @@ apiBaseUrl: 'https://your-blog-ai-api.vercel.app'
   - Optional generation ceiling, defaults to `700` and is clamped to 128–1,200 tokens.
 - `LLM_JSON_MODE_ENABLED`
   - Optional; defaults to `true`. Set to `false` only when the OpenAI-compatible provider does not support `response_format: { "type": "json_object" }`.
+- `LLM_THINKING_ENABLED`
+  - Optional structured-generation thinking override. DeepSeek endpoints/model IDs default to `false` so reasoning tokens cannot consume the bounded JSON output budget; other providers omit the non-standard `thinking` field unless explicitly configured.
 - `GROUNDED_SYNTHESIS_ENABLED` and `SEMANTIC_VERIFICATION_ENABLED`
   - Phase 10 feature flags. Both must be `true` before a natural claim can be published. If either path fails, the request falls back to the verified deterministic answer.
 - `GROUNDED_SYNTHESIS_ROLLOUT_PERCENT`
@@ -121,6 +123,8 @@ apiBaseUrl: 'https://your-blog-ai-api.vercel.app'
   - Optional independent semantic-verifier provider settings. Each value falls back to the corresponding `LLM_*` setting, but verification is always a separate bounded model call.
 - `VERIFIER_TIMEOUT_MS` and `VERIFIER_MAX_OUTPUT_TOKENS`
   - Optional verifier limits. The Agent defaults to a 5-second verification budget, clamps the environment timeout to 1–6 seconds, and defaults to 700 output tokens.
+- `VERIFIER_THINKING_ENABLED`
+  - Optional verifier-specific thinking override. It inherits the generator setting when the verifier uses the same provider/model, and otherwise applies the same DeepSeek-safe default detection.
 - `RETRIEVAL_ROUND_TIMEOUT_MS`
   - Optional timeout for one retrieval round; defaults to `1500` and is clamped to 500–5,000 milliseconds. A timed-out first round may still use the bounded second attempt.
 - `LLM_MAX_REQUEST_COST_USD`, `LLM_INPUT_COST_PER_MILLION_TOKENS`, and `LLM_OUTPUT_COST_PER_MILLION_TOKENS`
@@ -353,7 +357,7 @@ Only the most recent assistant turn contributes article-reference and standalone
 
 `claims` is an audit array for the factual statements that form the answer. In Grounded Answer v2 every claim belongs to one required subquestion, has exactly one server-selected citation, and contains a continuous source `quote`. Natural `text` may paraphrase the quote only after the independent semantic verifier confirms support and directness; server code then validates IDs, quote origin, limits, negation, duplicates, and subquestion coverage. The browser renders the server-rebuilt `answer`, while `claims` remains available for citation positioning, feedback, and audit. Missing required parts appear in `unansweredSubquestions`. `feedback` is omitted unless feedback collection is fully configured.
 
-`meta.model` reports bounded Phase 10 diagnostics without exposing model output: `generationErrorCode`, `generationFinishReason`, `generationContentChars`, plus the corresponding `verification*` fields. Error codes distinguish deadline, provider HTTP/network, empty content, invalid JSON, and invalid generation or verification schemas. Raw provider content is never copied into the response or completion log.
+`meta.model` reports bounded Phase 10 diagnostics without exposing model output: `generationErrorCode`, `generationFinishReason`, `generationContentChars`, `generationReasoningContentChars`, plus the corresponding `verification*` fields. Error codes distinguish deadline, provider HTTP/network, empty content, invalid JSON, and invalid generation or verification schemas. Raw provider content and reasoning content are never copied into the response or completion log.
 
 The same trace ID is returned in the `X-Trace-Id` response header. Internal errors return a trace ID without exposing implementation details to the browser.
 

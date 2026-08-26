@@ -360,7 +360,8 @@ test('phase 10 exposes safe generation failure diagnostics without model content
   error.modelDiagnostic = {
     errorCode: 'provider_invalid_json',
     finishReason: 'length',
-    contentChars: 321
+    contentChars: 321,
+    reasoningContentChars: 777
   };
   const payload = await runAgent(makeInput(), {
     corpus,
@@ -377,6 +378,7 @@ test('phase 10 exposes safe generation failure diagnostics without model content
   assert.equal(payload.meta.model.generationErrorCode, 'provider_invalid_json');
   assert.equal(payload.meta.model.generationFinishReason, 'length');
   assert.equal(payload.meta.model.generationContentChars, 321);
+  assert.equal(payload.meta.model.generationReasoningContentChars, 777);
   assert.equal(payload.meta.model.verificationAttempted, false);
   assert.equal(payload.meta.citationVerification.source, 'deterministic');
   assert.equal(JSON.stringify(payload).includes(error.message), false);
