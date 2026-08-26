@@ -23,9 +23,9 @@ function applyCors(req, res, environment) {
     res.setHeader('Access-Control-Allow-Origin', requestOrigin);
   }
 
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Expose-Headers', 'X-Trace-Id');
+  res.setHeader('Access-Control-Expose-Headers', 'X-Trace-Id, Retry-After');
   return originAllowed;
 }
 

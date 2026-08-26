@@ -9,6 +9,9 @@ blog-ai-api/
   api/
     ask.js
     feedback.js
+    memory/
+      session.js
+      thread.js
   agent/
     run.js
     state.js
@@ -21,6 +24,11 @@ blog-ai-api/
   memory/
     session.js
     feedback.js
+    token.js
+    record.js
+    store.js
+    redis-store.js
+    service.js
   data/
     posts.json
     chunks.json
@@ -49,7 +57,6 @@ blog-ai-api/
   scripts/
     sync-corpus.js
   package.json
-  vercel.json
 ```
 
 ## Local setup
@@ -126,10 +133,67 @@ apiBaseUrl: 'https://your-blog-ai-api.vercel.app'
   - Optional and disabled by default. Set to `true`, `1`, or `yes` together with `FEEDBACK_REVIEW_CONTEXT_SECRET` to include a bounded current question for negative-feedback review.
 - `FEEDBACK_REVIEW_CONTEXT_SECRET`
   - Optional independent secret of at least 32 characters. It encrypts the opt-in review context inside the browser receipt; do not reuse the receipt or webhook secret.
+- `MEMORY_V1_ENABLED`
+  - Optional phase 8 feature flag. Keep it unset or `false` for a dark deployment; set it to `true` only after the managed Redis variables below are configured.
+- `REDIS_URL`
+  - Server-only standard Redis connection string injected by the Vercel Marketplace Redis integration. It contains credentials and must be stored as a secret. Provision separate databases for Development, Preview, and Production instead of sharing key space.
+- `MEMORY_TOKEN_SECRET` and `MEMORY_KEY_SECRET`
+  - Independent server-only secrets, each containing at least 32 bytes of high-entropy material. The first signs browser bearer tokens; the second derives opaque Redis key digests. Do not reuse either secret for another feature.
+- `MEMORY_TTL_SECONDS`
+  - Optional rolling memory TTL; defaults to 2,592,000 seconds (30 days).
+- `MEMORY_REQUEST_TTL_SECONDS`
+  - Optional idempotency TTL; defaults to 86,400 seconds (24 hours).
+- `MEMORY_STORE_TIMEOUT_MS` and `MEMORY_SERVICE_BUDGET_MS`
+  - Optional storage deadlines; defaults are 800 ms per operation and 1,500 ms per Memory Service call.
 
 If `LLM_API_*` variables are not set, `/api/ask` will still work in retrieval-only mode.
 
 Feedback is disabled unless `FEEDBACK_RECEIPT_SECRET`, `FEEDBACK_WEBHOOK_URL`, and `FEEDBACK_WEBHOOK_SECRET` are all valid. It is independent of whether an external generation model is configured. The review-context switch does not enable feedback by itself and remains disabled unless both of its settings are valid.
+
+Memory is disabled unless `MEMORY_V1_ENABLED=true`, `REDIS_URL`, and both memory secrets are valid. A disabled or unavailable MemoryStore does not fall back to process memory. `/api/ask` continues without persistent memory and reports `memory.status` as `disabled` or `degraded`.
+
+Use the Vercel Marketplace Redis integration to inject `REDIS_URL` into the API project. Treat the connection string and both memory secrets as secrets. Configure provider quota/cost alerts, choose a region close to the Vercel functions, and document the database retention/backup policy before enabling Production.
+
+## Anonymous memory API
+
+Create a session with `POST /api/memory/session` and an empty JSON object. HTTP 201 returns the only copy of the new bearer token:
+
+```json
+{
+  "memoryToken": "m1.<random-id>.<signature>",
+  "memory": {
+    "status": "active",
+    "version": 1,
+    "threadId": "thread_<uuid>",
+    "expiresAt": "2026-09-24T00:00:00.000Z",
+    "restored": false
+  },
+  "context": {
+    "summary": "",
+    "activeTopic": "",
+    "recentMessages": [],
+    "articleRefs": []
+  },
+  "meta": { "traceId": "trace_..." }
+}
+```
+
+Restore by POSTing `{ "memoryToken": "m1...." }` to the same endpoint. A restore response does not repeat the token. A malformed token returns 400, a forged signature returns 401, and a valid token whose record is absent returns 410.
+
+Start a new thread without deleting long-term memory with `POST /api/memory/thread`:
+
+```json
+{
+  "memoryToken": "m1....",
+  "currentThreadId": "thread_<uuid>",
+  "expectedMemoryVersion": 7,
+  "requestId": "123e4567-e89b-42d3-a456-426614174000"
+}
+```
+
+Clear the memory with `DELETE /api/memory/session` and a JSON body containing `memoryToken` and a UUID `requestId`. Existing and already-missing records both return 204.
+
+The browser integration is deliberately deferred to phase 9. Phase 8 only exposes the server contract and keeps legacy callers unchanged.
 
 ## Request
 
@@ -166,11 +230,17 @@ Feedback is disabled unless `FEEDBACK_RECEIPT_SECRET`, `FEEDBACK_WEBHOOK_URL`, a
     "title": "双塔模型",
     "url": "https://wangsenjie.github.io/2026/03/31/...",
     "description": "双塔模型的原理"
-  }
+  },
+  "memoryToken": "m1....",
+  "threadId": "thread_<uuid>",
+  "expectedMemoryVersion": 7,
+  "requestId": "123e4567-e89b-42d3-a456-426614174000"
 }
 ```
 
 `question` remains supported for legacy callers. The current frontend also sends at most eight recent `user`/`assistant` messages. `sessionId` is a correlation identifier, not an authentication token or server-side persistent session. Historical citations are untrusted reference hints: the API resolves their chunk IDs and URLs against the current corpus before using them for reference resolution, and never treats prior assistant text as factual evidence.
+
+The four memory fields are optional as a group. If supplied, all four are required. Server memory takes precedence over client-provided compatibility history. The response includes a top-level `memory` object whose status is `active`, `degraded`, or `disabled`; write status is one of `committed`, `duplicate`, `stale_thread`, `version_conflict`, `size_limit`, `failed`, or `not_attempted`. A duplicate completed `requestId` replays its bounded response without invoking the Agent again; a duplicate still being processed returns 409 with `Retry-After`.
 
 The frontend does not send locally retrieved candidates. If an older client includes a `retrieval.sources` field, the API ignores it and always retrieves against its own verified corpus.
 

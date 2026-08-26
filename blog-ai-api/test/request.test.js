@@ -211,3 +211,42 @@ test('sessionId and page context accept only bounded safe values', () => {
     );
   }
 });
+
+test('managed memory fields are optional as a group and strictly versioned', () => {
+  const valid = normalizeAskRequest({
+    question: '双塔模型',
+    memoryToken: `m1.${'a'.repeat(43)}.${'b'.repeat(43)}`,
+    threadId: 'thread_123e4567-e89b-42d3-a456-426614174000',
+    expectedMemoryVersion: 3,
+    requestId: '123e4567-e89b-42d3-a456-426614174001'
+  });
+  assert.equal(valid.expectedMemoryVersion, 3);
+  assert.match(valid.threadId, /^thread_/);
+
+  for (const body of [
+    { memoryToken: valid.memoryToken },
+    {
+      memoryToken: valid.memoryToken,
+      threadId: valid.threadId,
+      expectedMemoryVersion: 0,
+      requestId: valid.requestId
+    },
+    {
+      memoryToken: valid.memoryToken,
+      threadId: '../thread',
+      expectedMemoryVersion: 1,
+      requestId: valid.requestId
+    },
+    {
+      memoryToken: valid.memoryToken,
+      threadId: valid.threadId,
+      expectedMemoryVersion: 1,
+      requestId: 'not-a-uuid'
+    }
+  ]) {
+    assert.throws(
+      () => normalizeAskRequest(Object.assign({ question: '双塔模型' }, body)),
+      RequestValidationError
+    );
+  }
+});

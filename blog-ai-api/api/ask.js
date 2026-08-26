@@ -13,9 +13,14 @@ const {
 } = require('../lib/http');
 const { createRequestTrace } = require('../lib/trace');
 const {
+  MemoryServiceError,
+  getMemoryService
+} = require('../memory/service');
+const {
   normalizeAskRequest,
   REQUEST_LIMITS,
-  RequestValidationError
+  RequestValidationError,
+  trimConversation
 } = require('../memory/session');
 
 function buildMeta(trace, values) {
@@ -25,7 +30,33 @@ function buildMeta(trace, values) {
   });
 }
 
-module.exports = async (req, res) => {
+function publicMemoryMeta(context) {
+  const source = context || {};
+  const result = {
+    status: source.status || 'disabled',
+    writeStatus: source.writeStatus || 'not_attempted'
+  };
+  if (source.reason) result.reason = source.reason;
+  if (source.threadId) result.threadId = source.threadId;
+  if (source.version) result.version = source.version;
+  if (source.expiresAt) result.expiresAt = source.expiresAt;
+  if (source.replayed !== undefined) result.replayed = source.replayed;
+  return result;
+}
+
+function trustedConversation(context, question) {
+  if (!context || context.status !== 'active') return null;
+  return trimConversation((context.trustedMessages || []).concat([{
+    role: 'user',
+    content: question
+  }]));
+}
+
+function createAskHandler(options) {
+  const settings = options || {};
+  const executeAgent = settings.runAgent || runAgent;
+
+  return async (req, res) => {
   const trace = createRequestTrace();
   const originAllowed = applyCors(req, res);
   res.setHeader('X-Trace-Id', trace.traceId);
@@ -81,12 +112,27 @@ module.exports = async (req, res) => {
 
   try {
     const input = normalizeAskRequest(req.body || {});
+    const memoryService = settings.memoryService || getMemoryService();
+    const memoryContext = await memoryService.prepareAsk(input);
+
+    if (memoryContext.replayed && memoryContext.responseSnapshot) {
+      const replay = clonePayload(memoryContext.responseSnapshot);
+      replay.meta = buildMeta(trace, Object.assign({}, replay.meta, {
+        replayed: true
+      }));
+      replay.memory = publicMemoryMeta(memoryContext);
+      sendJson(res, 200, replay);
+      return;
+    }
+
+    const storedConversation = trustedConversation(memoryContext, input.question);
+    if (storedConversation) input.messages = storedConversation;
 
     const corpusStartedAt = trace.start();
     const corpus = loadCorpus();
     trace.end('corpusMs', corpusStartedAt);
 
-    const payload = await runAgent(input, {
+    const payload = await executeAgent(input, {
       corpus,
       indexVersion: corpus.manifest && corpus.manifest.corpusVersion,
       trace,
@@ -106,8 +152,10 @@ module.exports = async (req, res) => {
     payload.meta = buildMeta(trace, Object.assign({}, payload.meta, {
       indexVersion: corpus.manifest && corpus.manifest.corpusVersion
         ? corpus.manifest.corpusVersion
-        : null
+        : null,
+      memoryStatus: memoryContext.status
     }));
+    payload.memory = publicMemoryMeta(memoryContext);
 
     if (feedbackCollectionConfigured()) {
       const feedback = issueFeedbackReceipt({
@@ -126,6 +174,13 @@ module.exports = async (req, res) => {
       if (feedback) payload.feedback = feedback;
     }
 
+    const memoryResult = await memoryService.completeAsk(
+      memoryContext,
+      input,
+      payload
+    );
+    payload.memory = publicMemoryMeta(memoryResult);
+
     if (process.env.NODE_ENV !== 'test') {
       console.info('ask.js completed', {
         traceId: trace.traceId,
@@ -140,15 +195,19 @@ module.exports = async (req, res) => {
         citationVerification: payload.meta.citationVerification &&
           payload.meta.citationVerification.status,
         feedbackEnabled: Boolean(payload.feedback),
+        memoryStatus: payload.memory.status,
+        memoryWriteStatus: payload.memory.writeStatus,
         timings: payload.meta.timings
       });
     }
 
     sendJson(res, 200, payload);
   } catch (error) {
-    if (error instanceof RequestValidationError) {
+    if (error instanceof RequestValidationError || error instanceof MemoryServiceError) {
+      if (error.retryAfter) res.setHeader('Retry-After', String(error.retryAfter));
       sendJson(res, error.statusCode, {
         error: error.message,
+        code: error.code,
         meta: buildMeta(trace, {})
       });
       return;
@@ -164,4 +223,13 @@ module.exports = async (req, res) => {
       meta: buildMeta(trace, {})
     });
   }
-};
+  };
+}
+
+function clonePayload(payload) {
+  return JSON.parse(JSON.stringify(payload));
+}
+
+const handler = createAskHandler();
+handler.createAskHandler = createAskHandler;
+module.exports = handler;

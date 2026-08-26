@@ -97,7 +97,10 @@ test('successful ask response includes trace metadata and safe embedding fallbac
 
   assert.equal(res.statusCode, 200);
   assert.equal(res.getHeader('x-trace-id'), payload.meta.traceId);
-  assert.equal(res.getHeader('access-control-expose-headers'), 'X-Trace-Id');
+  assert.equal(
+    res.getHeader('access-control-expose-headers'),
+    'X-Trace-Id, Retry-After'
+  );
   assert.equal(payload.meta.mode, 'site');
   assert.match(payload.meta.indexVersion, /^[a-f0-9]{64}$/);
   assert.equal(payload.meta.retrieval.strategy, 'bm25');

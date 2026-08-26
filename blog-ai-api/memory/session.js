@@ -20,7 +20,10 @@ const REQUEST_LIMITS = Object.freeze({
   maxReferenceTitleChars: 300,
   maxReferenceSectionChars: 300,
   maxChunkIdChars: 300,
-  maxStandaloneQueryChars: 1000
+  maxStandaloneQueryChars: 1000,
+  maxMemoryTokenChars: 160,
+  maxThreadIdChars: 64,
+  maxRequestIdChars: 36
 });
 
 const ALLOWED_MESSAGE_ROLES = new Set(['user', 'assistant']);
@@ -258,6 +261,59 @@ function normalizePage(value) {
   return page.title || page.url || page.description ? page : null;
 }
 
+function normalizeUuid(value, field) {
+  const uuid = boundedString(value, field, REQUEST_LIMITS.maxRequestIdChars);
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid)) {
+    validationError(`Invalid ${field}`);
+  }
+  return uuid;
+}
+
+function normalizeMemoryContext(body) {
+  const hasMemoryFields = [
+    'memoryToken',
+    'threadId',
+    'expectedMemoryVersion',
+    'requestId'
+  ].some(field => body[field] !== undefined && body[field] !== null);
+  if (!hasMemoryFields) {
+    return {
+      memoryToken: '',
+      threadId: '',
+      expectedMemoryVersion: null,
+      requestId: ''
+    };
+  }
+
+  const memoryToken = boundedString(
+    body.memoryToken,
+    'memoryToken',
+    REQUEST_LIMITS.maxMemoryTokenChars
+  );
+  const threadId = boundedString(
+    body.threadId,
+    'threadId',
+    REQUEST_LIMITS.maxThreadIdChars
+  );
+  if (!/^thread_[0-9a-f-]{36}$/i.test(threadId)) {
+    validationError('Invalid threadId');
+  }
+  if (
+    !Number.isInteger(body.expectedMemoryVersion) ||
+    body.expectedMemoryVersion < 1 ||
+    body.expectedMemoryVersion > Number.MAX_SAFE_INTEGER
+  ) {
+    validationError('Invalid expectedMemoryVersion');
+  }
+
+  return {
+    memoryToken,
+    threadId,
+    expectedMemoryVersion: body.expectedMemoryVersion,
+    requestId: normalizeUuid(body.requestId, 'requestId')
+  };
+}
+
 function parseRawBody(rawBody) {
   let serialized;
 
@@ -303,15 +359,16 @@ function normalizeAskRequest(rawBody) {
   );
   const conversation = normalizeMessages(body.messages, explicitQuestion);
   const rawMode = boundedString(body.mode, 'mode', 50, { optional: true });
+  const memory = normalizeMemoryContext(body);
 
-  return {
+  return Object.assign({
     question: conversation.question,
     messages: conversation.messages,
     sessionId: normalizeSessionId(body.sessionId),
     page: normalizePage(body.page),
     mode: ALLOWED_LEGACY_MODES.has(rawMode) ? rawMode : '',
     compatibilityWarnings: conversation.warnings
-  };
+  }, memory);
 }
 
 module.exports = {
@@ -319,6 +376,7 @@ module.exports = {
   REQUEST_LIMITS,
   RequestValidationError,
   normalizeAskRequest,
+  normalizeMemoryContext,
   normalizeMessages,
   normalizePage,
   trimConversation
