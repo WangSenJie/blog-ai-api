@@ -154,6 +154,10 @@ npm run build:embeddings
 | `LLM_API_KEY` | 可选，模型服务密钥。 |
 | `LLM_MODEL` | 可选，模型名称。 |
 | `LLM_API_PATH` | 可选，默认 `/chat/completions`。 |
+| `GROUNDED_SYNTHESIS_ENABLED` | 阶段 10 自然回答开关；需与语义验证开关同时启用。 |
+| `SEMANTIC_VERIFICATION_ENABLED` | 阶段 10 独立语义验证开关；不可用时回退确定性回答。 |
+| `GROUNDED_SYNTHESIS_ROLLOUT_PERCENT` | 可选，0–100 的稳定灰度比例，默认 100。 |
+| `VERIFIER_API_BASE_URL` / `VERIFIER_API_KEY` / `VERIFIER_MODEL` | 可选的独立验证器配置；未设置时逐项沿用 `LLM_*`，但仍发起独立验证调用。 |
 | `EMBEDDING_PROVIDER` | 托管建库时设为 `dashscope`；普通静态构建不会读取它调用远程 API。 |
 | `DASHSCOPE_API_KEY` | 仅服务端使用的 Model Studio API Key。 |
 | `DASHSCOPE_WORKSPACE_ID` | Model Studio Workspace ID；也可用 `DASHSCOPE_BASE_URL` 显式指定兼容端点。 |

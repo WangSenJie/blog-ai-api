@@ -601,7 +601,7 @@ test('a valid evidence-insufficient server response never enters local fallback'
   );
 });
 
-test('a structured server answer renders inline citations and keeps feedback receipts out of storage', async () => {
+test('a verified natural server answer wins over claim audit text and keeps feedback receipts out of storage', async () => {
   const receipt = 'f1.feedback_payload.feedback_signature';
   const harness = createHarness(async url => {
     assert.equal(url, 'https://api.example/api/ask');
@@ -609,9 +609,9 @@ test('a structured server answer renders inline citations and keeps feedback rec
       ok: true,
       async json() {
         return {
-          answer: '此字段只用作无结构化客户端的后备展示。',
+          answer: '双塔模型会分别编码用户与物品，再比较两个向量。[1]',
           claims: [{
-            text: '双塔模型由用户塔和物品塔组成。',
+            text: '这段 claim 仅用于审计，不应覆盖自然答案。',
             citationIds: ['tower#0']
           }],
           citations: [{
@@ -635,7 +635,8 @@ test('a structured server answer renders inline citations and keeps feedback rec
 
   await harness.api.ask('双塔模型');
 
-  assert.match(harness.elements.messages.innerHTML, /双塔模型由用户塔和物品塔组成。/);
+  assert.match(harness.elements.messages.innerHTML, /分别编码用户与物品/);
+  assert.doesNotMatch(harness.elements.messages.innerHTML, /仅用于审计/);
   assert.match(harness.elements.messages.innerHTML, /blog-ai-agent__claim-citation/);
   assert.match(harness.elements.messages.innerHTML, /data-feedback-receipt/);
   const stored = harness.sessionStorage.values.get(

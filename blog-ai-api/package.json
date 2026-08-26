@@ -20,7 +20,8 @@
     "eval:phase6": "node evals/phase6-run.js",
     "eval:phase7": "node evals/phase7-run.js",
     "eval:phase8": "node evals/phase8-run.js",
-    "eval:phase9": "node evals/phase9-run.js"
+    "eval:phase9": "node evals/phase9-run.js",
+    "eval:phase10": "node evals/phase10-run.js"
   },
   "dependencies": {
     "redis": "5.8.2"

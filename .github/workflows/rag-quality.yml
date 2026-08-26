@@ -32,3 +32,4 @@ jobs:
       - run: npm --prefix blog-ai-api run eval:phase7
       - run: npm --prefix blog-ai-api run eval:phase8
       - run: npm --prefix blog-ai-api run eval:phase9
+      - run: npm --prefix blog-ai-api run eval:phase10

@@ -19,6 +19,16 @@ const CLAIM_NOISE_TERMS = new Set([
   '显示', '说明', '相关', '阅读', '推荐', '一个', '一些'
 ]);
 const NEGATION_PATTERN = /(?:不是|没有|没(?:有|能|法)?|无|非|未|不能|不会|无法|禁止|避免|拒绝|\bnot\b|\bno\b|\bnever\b|\bwithout\b)/i;
+const VERIFIER_REASON_CODES = new Set([
+  'supported',
+  'quote_mismatch',
+  'not_entailed',
+  'does_not_answer_question',
+  'scope_expansion',
+  'negation_mismatch',
+  'duplicate',
+  'unknown_subquestion'
+]);
 
 function compactText(value, limit) {
   const text = String(value || '').replace(/\s+/g, ' ').trim();
@@ -47,6 +57,10 @@ function claimQuoteCoverage(claimText, quote) {
 
 function hasNegation(value) {
   return NEGATION_PATTERN.test(String(value || ''));
+}
+
+function numericTerms(value) {
+  return String(value || '').match(/\d+(?:\.\d+)?%?/g) || [];
 }
 
 function isDeterministicSource(source) {
@@ -192,6 +206,219 @@ function formatAnswer(claims, citationNumbers) {
   }).join('\n');
 }
 
+function groundedClaimShape(rawClaim, index) {
+  if (!rawClaim || typeof rawClaim !== 'object' || Array.isArray(rawClaim)) {
+    return { valid: false, reason: 'invalid_claim_shape' };
+  }
+  const sourceId = compactText(rawClaim.id, 64);
+  const subquestionId = compactText(rawClaim.subquestionId, 64);
+  const text = compactText(rawClaim.text, MAX_CLAIM_CHARS);
+  const quote = compactText(rawClaim.quote, MAX_QUOTE_CHARS);
+  const citationIds = Array.isArray(rawClaim.citationIds)
+    ? [...new Set(rawClaim.citationIds.map(id => String(id || '').trim()))]
+      .filter(Boolean)
+    : [];
+  if (!sourceId || !/^[A-Za-z0-9_-]+$/.test(sourceId)) {
+    return { valid: false, reason: 'invalid_claim_id' };
+  }
+  if (!subquestionId) return { valid: false, reason: 'unknown_subquestion' };
+  if (!text) return { valid: false, reason: 'invalid_claim_text' };
+  if (quote.length < MIN_QUOTE_CHARS) {
+    return { valid: false, reason: 'invalid_evidence_quote' };
+  }
+  if (citationIds.length !== 1) {
+    return { valid: false, reason: 'claim_requires_one_citation' };
+  }
+  return {
+    valid: true,
+    claim: {
+      id: `claim_${index + 1}`,
+      sourceId,
+      subquestionId,
+      text,
+      quote,
+      citationIds
+    }
+  };
+}
+
+function formatGroundedAnswer(claims, subquestions, citationNumbers) {
+  const claimsBySubquestion = new Map();
+  for (const claim of claims) {
+    if (!claimsBySubquestion.has(claim.subquestionId)) {
+      claimsBySubquestion.set(claim.subquestionId, []);
+    }
+    claimsBySubquestion.get(claim.subquestionId).push(claim);
+  }
+  const sentence = claim => (
+    `${claim.text} [${citationNumbers.get(claim.citationIds[0])}]`
+  );
+  if (subquestions.length <= 1) {
+    const values = claimsBySubquestion.get(subquestions[0] && subquestions[0].id) || [];
+    return values.length
+      ? `站内资料可以确认：${values.map(sentence).join(' ')}`
+      : '站内资料暂时不能直接回答这个问题。你可以补充文章标题或更具体的关键词。';
+  }
+  return subquestions.map(subquestion => {
+    const values = claimsBySubquestion.get(subquestion.id) || [];
+    return values.length
+      ? `关于“${subquestion.question}”：${values.map(sentence).join(' ')}`
+      : `关于“${subquestion.question}”：站内资料暂时没有可直接支持的答案。`;
+  }).join('\n');
+}
+
+function verifyGroundedV2Response(rawResponse, semanticVerification, selectedChunks, subquestions) {
+  const rawClaims = rawResponse && rawResponse.claims;
+  const plan = Array.isArray(subquestions) ? subquestions : [];
+  if (!Array.isArray(rawClaims) || rawClaims.length > MAX_CLAIMS || !plan.length) {
+    const reason = !Array.isArray(rawClaims)
+      ? 'missing_claims'
+      : rawClaims.length > MAX_CLAIMS
+        ? 'too_many_claims'
+        : 'missing_subquestions';
+    return {
+      valid: false,
+      reason,
+      verification: verificationSummary('rejected', {
+        totalClaims: Array.isArray(rawClaims) ? rawClaims.length : 0,
+        rejectedClaims: Array.isArray(rawClaims) ? rawClaims.length : 0,
+        reasons: [reason],
+        source: 'semantic_verifier_v2'
+      })
+    };
+  }
+
+  const questionIds = new Set(plan.map(item => item.id));
+  const candidatesById = sourceCandidates(selectedChunks);
+  const verdicts = new Map((semanticVerification.claims || []).map(item => [
+    String(item && item.id || '').trim(),
+    item
+  ]));
+  const subquestionVerdicts = new Map((semanticVerification.subquestions || []).map(item => [
+    String(item && item.id || '').trim(),
+    item
+  ]));
+  const seenText = new Set();
+  const seenQuotes = new Set();
+  const seenSourceIds = new Set();
+  const accepted = [];
+  const rejectedReasons = [];
+
+  rawClaims.forEach((rawClaim, index) => {
+    const shaped = groundedClaimShape(rawClaim, index);
+    if (!shaped.valid) {
+      rejectedReasons.push(shaped.reason);
+      return;
+    }
+    const claim = shaped.claim;
+    if (seenSourceIds.has(claim.sourceId)) {
+      rejectedReasons.push('duplicate');
+      return;
+    }
+    seenSourceIds.add(claim.sourceId);
+    if (!questionIds.has(claim.subquestionId)) {
+      rejectedReasons.push('unknown_subquestion');
+      return;
+    }
+    const candidate = candidatesById.get(claim.citationIds[0]);
+    if (!candidate) {
+      rejectedReasons.push('unknown_or_unselected_citation');
+      return;
+    }
+    const normalizedQuote = quoteComparable(claim.quote);
+    const normalizedContent = quoteComparable(candidate.chunk.content);
+    if (!normalizedContent.includes(normalizedQuote)) {
+      rejectedReasons.push('quote_not_in_cited_chunk');
+      return;
+    }
+    if (hasNegation(claim.text) !== hasNegation(claim.quote)) {
+      rejectedReasons.push('negation_mismatch');
+      return;
+    }
+    const quoteNumbers = new Set(numericTerms(claim.quote));
+    if (numericTerms(claim.text).some(value => !quoteNumbers.has(value))) {
+      rejectedReasons.push('scope_expansion');
+      return;
+    }
+    const normalizedText = normalizeText(claim.text);
+    const quoteKey = normalizeText(claim.quote);
+    if (seenText.has(normalizedText) || seenQuotes.has(quoteKey)) {
+      rejectedReasons.push('duplicate');
+      return;
+    }
+    const verdict = verdicts.get(claim.sourceId);
+    const subquestionVerdict = subquestionVerdicts.get(claim.subquestionId);
+    const reasonCode = String(verdict && verdict.reasonCode || 'not_entailed');
+    if (
+      !verdict ||
+      verdict.supported !== true ||
+      verdict.directlyAnswers !== true ||
+      reasonCode !== 'supported' ||
+      !VERIFIER_REASON_CODES.has(reasonCode) ||
+      !subquestionVerdict ||
+      subquestionVerdict.covered !== true
+    ) {
+      rejectedReasons.push(
+        VERIFIER_REASON_CODES.has(reasonCode) ? reasonCode : 'not_entailed'
+      );
+      return;
+    }
+    seenText.add(normalizedText);
+    seenQuotes.add(quoteKey);
+    accepted.push({ claim, candidate });
+  });
+
+  const citationNumbers = new Map();
+  const citations = [];
+  const claims = accepted.map((item, index) => {
+    const citationId = item.claim.citationIds[0];
+    if (!citationNumbers.has(citationId)) {
+      citationNumbers.set(citationId, citationNumbers.size + 1);
+      citations.push(citationFromCandidate(item.candidate, item.claim.quote));
+    }
+    return {
+      id: `claim_${index + 1}`,
+      subquestionId: item.claim.subquestionId,
+      text: item.claim.text,
+      quote: item.claim.quote,
+      citationIds: item.claim.citationIds,
+      citationIndexes: [citationNumbers.get(citationId)]
+    };
+  });
+  const covered = new Set(claims.map(claim => claim.subquestionId));
+  const unansweredSubquestions = plan
+    .filter(item => item.required !== false && !covered.has(item.id))
+    .map(item => ({
+      id: item.id,
+      question: item.question,
+      reason: 'no_verified_direct_claim'
+    }));
+  const totalClaims = rawClaims.length;
+  const rejectedClaims = totalClaims - claims.length;
+
+  return {
+    valid: true,
+    answer: formatGroundedAnswer(claims, plan, citationNumbers),
+    claims,
+    citations,
+    unansweredSubquestions,
+    verification: verificationSummary('verified', {
+      totalClaims,
+      supportedClaims: claims.length,
+      rejectedClaims,
+      citationCompleteness: claims.length ? 1 : 0,
+      citationSupport: claims.length ? 1 : 0,
+      unsupportedClaimRate: 0,
+      rejectedClaimRate: totalClaims ? rejectedClaims / totalClaims : 0,
+      subquestionCoverage: plan.length
+        ? (plan.length - unansweredSubquestions.length) / plan.length
+        : 0,
+      reasons: [...new Set(rejectedReasons)],
+      source: 'semantic_verifier_v2'
+    })
+  };
+}
+
 function verifyStructuredResponse(rawClaims, selectedChunks, options) {
   const settings = Object.assign({ source: 'deterministic' }, options);
   if (!Array.isArray(rawClaims) || !rawClaims.length) {
@@ -288,9 +515,11 @@ module.exports = {
   isExtractiveClaim,
   isDeterministicSource,
   meaningfulTerms,
+  numericTerms,
   notRequiredVerification,
   quoteComparable,
   sourceCandidates,
   validateClaim,
+  verifyGroundedV2Response,
   verifyStructuredResponse
 };

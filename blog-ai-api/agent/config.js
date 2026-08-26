@@ -1,5 +1,7 @@
 'use strict';
 
+const { createHash } = require('crypto');
+
 const AGENT_LIMITS = Object.freeze({
   maxRetrievalAttempts: 2,
   maxSubqueries: 3,
@@ -7,13 +9,14 @@ const AGENT_LIMITS = Object.freeze({
   maxContextChunks: 8,
   maxContextChars: 12000,
   maxContextTokens: 6000,
-  maxModelCalls: 1,
+  maxModelCalls: 2,
   maxOutputTokens: 700,
   maxStandaloneQueryChars: 1000,
   maxSubqueryChars: 500,
   overallTimeoutMs: 17000,
   retrievalRoundTimeoutMs: 1200,
-  generationTimeoutMs: 10000
+  generationTimeoutMs: 7000,
+  verificationTimeoutMs: 4000
 });
 
 // These values are selected by the Phase 4 offline calibration runner. They
@@ -56,6 +59,58 @@ function estimateTokens(value) {
 function positiveNumber(value) {
   const number = Number(value);
   return Number.isFinite(number) && number > 0 ? number : 0;
+}
+
+function enabledValue(value) {
+  return ['1', 'true', 'yes', 'on'].includes(
+    String(value === undefined ? '' : value).trim().toLowerCase()
+  );
+}
+
+function rolloutPercent(value, fallback) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return fallback;
+  return Math.min(100, Math.max(0, number));
+}
+
+function stableRollout(key, percent) {
+  if (percent <= 0) return false;
+  if (percent >= 100) return true;
+  const digest = createHash('sha256')
+    .update(String(key || 'anonymous-request'))
+    .digest();
+  return digest.readUInt32BE(0) / 0x100000000 * 100 < percent;
+}
+
+function phase10Features(environment, rolloutKey, overrides) {
+  const source = environment || process.env;
+  const settings = overrides || {};
+  const synthesisConfigured = settings.groundedSynthesisEnabled === undefined
+    ? enabledValue(source.GROUNDED_SYNTHESIS_ENABLED)
+    : Boolean(settings.groundedSynthesisEnabled);
+  const verificationConfigured = settings.semanticVerificationEnabled === undefined
+    ? enabledValue(source.SEMANTIC_VERIFICATION_ENABLED)
+    : Boolean(settings.semanticVerificationEnabled);
+  const percent = rolloutPercent(
+    settings.groundedSynthesisRolloutPercent === undefined
+      ? source.GROUNDED_SYNTHESIS_ROLLOUT_PERCENT
+      : settings.groundedSynthesisRolloutPercent,
+    100
+  );
+  const selected = stableRollout(rolloutKey, percent);
+
+  return {
+    groundedSynthesisEnabled: synthesisConfigured &&
+      verificationConfigured &&
+      selected,
+    semanticVerificationEnabled: synthesisConfigured &&
+      verificationConfigured &&
+      selected,
+    synthesisConfigured,
+    verificationConfigured,
+    rolloutPercent: percent,
+    rolloutSelected: selected
+  };
 }
 
 function getCostControls(environment) {
@@ -138,8 +193,11 @@ module.exports = {
   EVIDENCE_CALIBRATION,
   createEvidenceCalibration,
   createBudget,
+  enabledValue,
   estimatedGenerationCost,
   estimateTokens,
   getCostControls,
+  phase10Features,
+  rolloutPercent,
   snapshotBudget
 };

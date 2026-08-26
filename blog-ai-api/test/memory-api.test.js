@@ -5,6 +5,7 @@ const test = require('node:test');
 const { randomUUID } = require('crypto');
 
 const askModule = require('../api/ask');
+const { INTERNAL_MEMORY_DELTA } = require('../agent/run');
 const sessionModule = require('../api/memory/session');
 const threadModule = require('../api/memory/thread');
 const { createMemoryService } = require('../memory/service');
@@ -128,6 +129,86 @@ test('thread API rotates one active thread and replays the same request id', asy
     replay.memory.threadId,
     first.memory.threadId
   );
+});
+
+test('ask API commits the private verified memory delta without exposing it', async () => {
+  const delta = {
+    activeTopic: '',
+    summaryUpdate: '',
+    explicitLearningProgress: [],
+    responsePreferences: [{
+      kind: 'answer_style',
+      value: 'concise',
+      source: 'explicit_user_statement'
+    }]
+  };
+  let committedDelta;
+  const managedMemory = {
+    async prepareAsk() {
+      return {
+        status: 'active',
+        writeStatus: 'pending',
+        tokenDigest: 'digest-for-rollout',
+        trustedMessages: [],
+        trustedMemory: {
+          summary: '',
+          activeTopic: '',
+          learningProgress: [],
+          responsePreferences: []
+        }
+      };
+    },
+    async completeAsk(context, input, payload, memoryDelta) {
+      committedDelta = memoryDelta;
+      return {
+        status: 'active',
+        writeStatus: 'committed',
+        threadId: 'thread_00000000-0000-4000-8000-000000000000',
+        version: 2
+      };
+    }
+  };
+  const handler = askModule.createAskHandler({
+    memoryService: managedMemory,
+    async runAgent(input) {
+      assert.deepEqual(input.trustedMemory.responsePreferences, []);
+      const payload = {
+        answer: '已记录你明确表达的回答偏好。',
+        citations: [],
+        claims: [],
+        unansweredSubquestions: [],
+        related: [],
+        comparison: null,
+        learningPath: null,
+        codeExplanation: null,
+        meta: {
+          route: 'site_qa',
+          mode: 'site',
+          standaloneQuery: input.question,
+          evidenceStatus: 'insufficient',
+          citationVerification: { status: 'not_required' },
+          retrieval: { strategy: 'none', candidates: 0 },
+          retrievalAttempts: 0,
+          model: { attempted: true }
+        }
+      };
+      Object.defineProperty(payload, INTERNAL_MEMORY_DELTA, {
+        value: delta,
+        enumerable: false
+      });
+      return payload;
+    }
+  });
+  const res = response();
+  await handler(request('POST', {
+    question: '以后回答都简洁一点。'
+  }), res);
+  const payload = json(res);
+
+  assert.equal(res.statusCode, 200);
+  assert.deepEqual(committedDelta, delta);
+  assert.equal(JSON.stringify(payload).includes('responsePreferences'), false);
+  assert.equal(payload.memory.writeStatus, 'committed');
 });
 
 test('ask API replays a completed request without invoking the Agent twice', async () => {

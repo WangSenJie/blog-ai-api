@@ -6,6 +6,7 @@ const {
   createMemoryRecord,
   publicSession,
   startNewThread,
+  trustedMemoryContext,
   trustedMessages
 } = require('./record');
 const { createRedisMemoryStore } = require('./redis-store');
@@ -371,7 +372,8 @@ class MemoryService {
           version: record.version,
           expiresAt: expiresAt(this.now(), this.memoryTtlSeconds),
           record,
-          trustedMessages: trustedMessages(record)
+          trustedMessages: trustedMessages(record),
+          trustedMemory: trustedMemoryContext(record)
         };
       })(), this.serviceBudgetMs);
     } catch (error) {
@@ -388,7 +390,7 @@ class MemoryService {
     }
   }
 
-  async completeAsk(context, input, payload) {
+  async completeAsk(context, input, payload, memoryDelta) {
     if (!context || context.status !== 'active' || context.replayed) {
       return context || {
         status: 'disabled',
@@ -431,7 +433,8 @@ class MemoryService {
             next = appendTurn(record, input, payload, {
               now: this.now(),
               ttlSeconds: this.memoryTtlSeconds,
-              requestId: context.requestId
+              requestId: context.requestId,
+              memoryDelta
             });
           } catch (error) {
             if (

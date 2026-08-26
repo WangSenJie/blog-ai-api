@@ -116,7 +116,7 @@ test('assistant conversation history keeps only compact article references', () 
   assert.match(commitConversation, /indexVersion:\s*result\.meta && result\.meta\.indexVersion/);
 });
 
-test('structured claims render with server-owned inline citations', () => {
+test('the verified natural answer renders server-owned inline citations without claim override', () => {
   const agent = readWorkspaceFile('source/js/blog-ai-agent.js');
   const renderAnswerBody = sourceSection(
     agent,
@@ -124,11 +124,11 @@ test('structured claims render with server-owned inline citations', () => {
     'function feedbackHtml'
   );
 
-  assert.match(renderAnswerBody, /result\.claims/);
-  assert.match(renderAnswerBody, /claim\.citationIds/);
-  assert.match(renderAnswerBody, /citationsById/);
+  assert.match(renderAnswerBody, /result\.answer/);
+  assert.doesNotMatch(renderAnswerBody, /result\.claims/);
+  assert.match(renderAnswerBody, /citations\[index - 1\]/);
   assert.match(renderAnswerBody, /blog-ai-agent__claim-citation/);
-  assert.match(renderAnswerBody, /escapeHtml\(text\)/);
+  assert.match(renderAnswerBody, /escapeHtml\(answer\)/);
   assert.match(renderAnswerBody, /safePostUrl/);
 });
 

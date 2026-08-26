@@ -1,0 +1,60 @@
+{
+  "phase": 10,
+  "generatedAt": "2026-08-26T05:24:17.658Z",
+  "strategy": "grounded-answer-v2-with-trusted-memory-update",
+  "implementation": {
+    "checks": {
+      "separateGenerationAndVerification": true,
+      "stableSubquestionContract": true,
+      "naturalClaimProtocol": true,
+      "serverFinalRebuild": true,
+      "duplicateAndQuoteGuards": true,
+      "explicitMemoryOnly": true,
+      "browserRendersAnswer": true
+    },
+    "passed": true
+  },
+  "quality": {
+    "metrics": {
+      "unsupportedClaimPublishedRate": 0,
+      "citationSourceValidity": 1,
+      "duplicateClaimRate": 0,
+      "requiredSubquestionCoverage": 1,
+      "generationSchemaSuccessRate": 1,
+      "verificationSchemaSuccessRate": 1,
+      "modelStageBudgetMs": 11000
+    },
+    "targets": {
+      "unsupportedClaimPublishedRate": 0,
+      "citationSourceValidity": 1,
+      "duplicateClaimRate": 0,
+      "requiredSubquestionCoverage": 0.9,
+      "generationSchemaSuccessRate": 0.99,
+      "verificationSchemaSuccessRate": 0.99,
+      "modelStageBudgetMs": 12000
+    },
+    "cases": {
+      "naturalParaphrasePublished": true,
+      "unsupportedClaimFiltered": true,
+      "requiredGapReported": true,
+      "duplicateFiltered": true,
+      "draftAnswerIgnored": true
+    },
+    "passed": true
+  },
+  "memory": {
+    "checks": {
+      "explicitProgressAccepted": true,
+      "explicitPreferenceAccepted": true,
+      "serverOwnedSummary": true,
+      "inferredProgressRejected": true,
+      "inferredPreferenceRejected": true
+    },
+    "passed": true
+  },
+  "acceptance": {
+    "localReleaseReady": true,
+    "productionValidationRequired": true,
+    "status": "local_passed"
+  }
+}

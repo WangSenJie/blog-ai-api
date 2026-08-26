@@ -2,8 +2,15 @@
 
 const {
   canUseModel,
-  generateGroundedAnswer
+  canUseVerifier,
+  generateGroundedAnswer,
+  generateGroundedV2Answer,
+  verifyGroundedAnswer
 } = require('../lib/generate');
+const {
+  hasExplicitMemoryIntent,
+  sanitizeMemoryDelta
+} = require('../memory/trusted-update');
 const {
   createAgentTools
 } = require('../tools');
@@ -12,6 +19,7 @@ const {
   createEvidenceCalibration,
   estimatedGenerationCost,
   estimateTokens,
+  phase10Features,
   snapshotBudget
 } = require('./config');
 const {
@@ -22,6 +30,7 @@ const {
 } = require('./nodes/generate-answer');
 const {
   notRequiredVerification,
+  verifyGroundedV2Response,
   verifyStructuredResponse
 } = require('./nodes/verify-citations');
 const {
@@ -33,6 +42,7 @@ const {
   retrieveEvidence
 } = require('./nodes/retrieve');
 const {
+  buildSubquestionPlan,
   rewriteForRetry,
   rewriteStandaloneQuery,
   splitStandaloneQuery
@@ -44,6 +54,8 @@ const {
   ROUTES,
   routeQuestion
 } = require('./nodes/route');
+
+const INTERNAL_MEMORY_DELTA = Symbol('internalMemoryDelta');
 
 function traceStart(trace) {
   return trace && typeof trace.start === 'function' ? trace.start() : null;
@@ -67,6 +79,7 @@ function responseMode(route) {
 
 function isSpecialistRoute(route) {
   return [
+    ROUTES.RELATED_ARTICLES,
     ROUTES.ARTICLE_COMPARE,
     ROUTES.LEARNING_PATH,
     ROUTES.CODE_EXPLANATION
@@ -86,10 +99,11 @@ function finishPayload(state) {
       : state.subqueries.length > 1 || state.retrievalAttempts > 1
         ? 'bm25_multi_query'
         : retrievalStrategies[0] || 'bm25';
-  return {
+  const payload = {
     answer: state.answer,
     citations: state.citations,
     claims: state.claims,
+    unansweredSubquestions: state.unansweredSubquestions,
     related: state.related,
     comparison: state.comparison,
     learningPath: state.learningPath,
@@ -103,7 +117,9 @@ function finishPayload(state) {
       retrievalAttempts: state.retrievalAttempts,
       evidenceStatus: state.evidenceStatus,
       evidenceReason: state.evidenceReason,
-      evidenceGrading: 'calibrated_structural_v1',
+      evidenceGrading: state.phase10.groundedSynthesisEnabled
+        ? 'topic_directness_v2'
+        : 'calibrated_structural_v1',
       evidenceCalibration: {
         version: state.evidenceCalibration && state.evidenceCalibration.version,
         score: state.evidenceScore,
@@ -126,10 +142,19 @@ function finishPayload(state) {
       toolCalls: state.toolCalls.slice(),
       budget: snapshotBudget(state.budget),
       model: Object.assign({}, state.model),
+      phase10: Object.assign({}, state.phase10, {
+        subquestions: state.subquestionPlan.map(item => Object.assign({}, item)),
+        evidenceAssignments: state.evidenceAssignments.map(item => Object.assign({}, item))
+      }),
       llmFallback: state.llmFallback,
       compatibilityWarnings: state.compatibilityWarnings.slice()
     }
   };
+  Object.defineProperty(payload, INTERNAL_MEMORY_DELTA, {
+    value: state.memoryDelta,
+    enumerable: false
+  });
+  return payload;
 }
 
 async function maybeGenerateWithModel(state, dependencies, trace) {
@@ -238,6 +263,207 @@ async function maybeGenerateWithModel(state, dependencies, trace) {
   }
 }
 
+function initializePhase10ModelMeta(state) {
+  Object.assign(state.model, {
+    generationAttempted: false,
+    generationSchemaValid: false,
+    verificationAttempted: false,
+    verificationSchemaValid: false
+  });
+}
+
+async function boundedModelStage(state, operation, timeoutLimit, trace, timingName) {
+  const controller = new AbortController();
+  const remainingMs = Math.max(1, state.deadlineAtMs - Date.now());
+  const timeoutMs = Math.min(timeoutLimit, remainingMs);
+  const startedAt = traceStart(trace);
+  let timeoutId;
+  try {
+    const operationPromise = Promise.resolve(operation({
+      signal: controller.signal,
+      timeoutMs,
+      maxOutputTokens: state.budget.limits.maxOutputTokens
+    }));
+    const timeout = new Promise((resolve, reject) => {
+      timeoutId = setTimeout(() => {
+        controller.abort();
+        reject(new AgentDeadlineError(`${timingName} timed out`));
+      }, timeoutMs);
+    });
+    return await Promise.race([operationPromise, timeout]);
+  } finally {
+    clearTimeout(timeoutId);
+    traceEnd(trace, timingName, startedAt);
+  }
+}
+
+async function maybeVerifyExplicitMemory(state, dependencies, trace) {
+  if (
+    !hasExplicitMemoryIntent(state.question) ||
+    !state.phase10.semanticVerificationEnabled ||
+    !dependencies.canUseVerifier() ||
+    state.budget.used.modelCalls >= state.budget.limits.maxModelCalls
+  ) {
+    return false;
+  }
+  state.model.attempted = true;
+  state.model.verificationAttempted = true;
+  state.budget.used.modelCalls += 1;
+  try {
+    const verification = await boundedModelStage(
+      state,
+      options => dependencies.verify({
+        question: state.question,
+        subquestions: state.subquestionPlan,
+        claims: [],
+        evidence: state.retrievedChunks.slice(
+          0,
+          state.budget.limits.maxContextChunks
+        )
+      }, options),
+      state.budget.limits.verificationTimeoutMs,
+      trace,
+      'semanticVerificationMs'
+    );
+    if (
+      !verification ||
+      !Array.isArray(verification.claims) ||
+      !Array.isArray(verification.subquestions) ||
+      !verification.memoryDelta ||
+      typeof verification.memoryDelta !== 'object'
+    ) {
+      state.model.rejectionReason = 'invalid_verification_schema';
+      return false;
+    }
+    state.model.verificationSchemaValid = true;
+    state.semanticVerification = verification;
+    state.memoryOnlyVerification = true;
+    return true;
+  } catch (error) {
+    if (typeof dependencies.onModelError === 'function') {
+      dependencies.onModelError(error);
+    }
+    return false;
+  }
+}
+
+async function maybeGenerateGroundedV2(state, dependencies, trace) {
+  initializePhase10ModelMeta(state);
+  if (isSpecialistRoute(state.route)) {
+    state.model.skipped = 'specialist_deterministic';
+    return;
+  }
+  if (state.evidenceStatus !== 'sufficient' || !state.selectedChunks.length) {
+    await maybeVerifyExplicitMemory(state, dependencies, trace);
+    return;
+  }
+  if (!state.phase10.semanticVerificationEnabled || !dependencies.canUseVerifier()) {
+    state.model.skipped = 'semantic_verifier_unavailable';
+    state.llmFallback = true;
+    return;
+  }
+  if (!dependencies.canUseModel()) {
+    state.model.skipped = 'generation_model_unavailable';
+    state.llmFallback = true;
+    return;
+  }
+  if (state.budget.used.modelCalls + 2 > state.budget.limits.maxModelCalls) {
+    state.model.skipped = 'model_call_budget';
+    state.llmFallback = true;
+    return;
+  }
+
+  const reservedCost = estimatedGenerationCost(state.budget);
+  const phase10ReservedCost = reservedCost === null
+    ? null
+    : Number((reservedCost * 2).toFixed(8));
+  if (
+    phase10ReservedCost !== null &&
+    phase10ReservedCost > state.budget.cost.maxUsd
+  ) {
+    state.model.skipped = 'cost_budget';
+    state.stopReason = 'cost_budget_exhausted';
+    return;
+  }
+  if (phase10ReservedCost !== null) {
+    state.budget.cost.reservedEstimatedUsd = phase10ReservedCost;
+  }
+
+  try {
+    state.model.attempted = true;
+    state.model.generationAttempted = true;
+    state.budget.used.modelCalls += 1;
+    const generated = await boundedModelStage(
+      state,
+      options => dependencies.generateV2({
+        question: state.question,
+        standaloneQuery: state.standaloneQuery,
+        route: state.route,
+        page: state.page,
+        messages: state.messages,
+        trustedMemory: state.trustedMemory,
+        subquestions: state.subquestionPlan,
+        evidenceAssignments: state.evidenceAssignments,
+        evidence: state.selectedChunks
+      }, options),
+      state.budget.limits.generationTimeoutMs,
+      trace,
+      'generationMs'
+    );
+    state.model.answered = Boolean(generated);
+    if (
+      !generated ||
+      typeof generated !== 'object' ||
+      Array.isArray(generated) ||
+      !Array.isArray(generated.claims)
+    ) {
+      state.model.rejectionReason = 'invalid_generation_schema';
+      state.llmFallback = true;
+      return;
+    }
+    state.model.generationSchemaValid = true;
+    state.modelResponse = generated;
+
+    state.model.verificationAttempted = true;
+    state.budget.used.modelCalls += 1;
+    const verification = await boundedModelStage(
+      state,
+      options => dependencies.verify({
+        question: state.question,
+        subquestions: state.subquestionPlan,
+        claims: generated.claims,
+        evidence: state.selectedChunks
+      }, options),
+      state.budget.limits.verificationTimeoutMs,
+      trace,
+      'semanticVerificationMs'
+    );
+    if (
+      !verification ||
+      typeof verification !== 'object' ||
+      Array.isArray(verification) ||
+      !Array.isArray(verification.claims) ||
+      !Array.isArray(verification.subquestions) ||
+      !verification.memoryDelta ||
+      typeof verification.memoryDelta !== 'object'
+    ) {
+      state.model.rejectionReason = 'invalid_verification_schema';
+      state.llmFallback = true;
+      state.modelResponse = null;
+      return;
+    }
+    state.model.verificationSchemaValid = true;
+    state.semanticVerification = verification;
+  } catch (error) {
+    state.llmFallback = true;
+    state.modelResponse = null;
+    state.semanticVerification = null;
+    if (typeof dependencies.onModelError === 'function') {
+      dependencies.onModelError(error);
+    }
+  }
+}
+
 function applyVerifiedResponse(state, response, source) {
   const claims = response && response.claims;
   if (!Array.isArray(claims) || !claims.length) {
@@ -301,6 +527,13 @@ function applyCitationVerificationRefusal(state, verification) {
   state.answer = '站内暂时无法为这个问题生成带可验证引用的回答。你可以补充文章标题或更具体的关键词。';
   state.citations = [];
   state.claims = [];
+  state.unansweredSubquestions = state.subquestionPlan
+    .filter(item => item.required !== false)
+    .map(item => ({
+      id: item.id,
+      question: item.question,
+      reason: 'citation_verification_failed'
+    }));
   state.related = [];
   state.comparison = null;
   state.learningPath = null;
@@ -310,11 +543,97 @@ function applyCitationVerificationRefusal(state, verification) {
   });
 }
 
+function memoryReferenceCandidates(state) {
+  return []
+    .concat(state.currentQuestionRefs || [])
+    .concat(state.resolvedArticleRefs || [])
+    .concat(state.history && state.history.articleRefs || [])
+    .map(reference => ({
+      chunkId: reference && reference.chunkId || '',
+      title: reference && reference.title || '',
+      url: reference && reference.url || '',
+      section: reference && reference.section || ''
+    }));
+}
+
+function applyGroundedV2Response(state) {
+  const verified = verifyGroundedV2Response(
+    state.modelResponse,
+    state.semanticVerification,
+    state.selectedChunks,
+    state.subquestionPlan
+  );
+  if (!verified.valid) return verified;
+  state.answer = verified.answer;
+  state.claims = verified.claims;
+  state.citations = verified.citations;
+  state.unansweredSubquestions = verified.unansweredSubquestions;
+  state.citationVerification = verified.verification;
+  state.memoryDelta = sanitizeMemoryDelta(
+    state.semanticVerification.memoryDelta,
+    {
+      question: state.question,
+      citations: state.citations.concat(memoryReferenceCandidates(state)),
+      claims: state.claims
+    }
+  );
+  state.phase10.memoryUpdateAccepted = Boolean(state.memoryDelta);
+  return verified;
+}
+
+function applyMemoryOnlyVerification(state) {
+  if (!state.memoryOnlyVerification || !state.semanticVerification) return;
+  state.memoryDelta = sanitizeMemoryDelta(
+    state.semanticVerification.memoryDelta,
+    {
+      question: state.question,
+      citations: memoryReferenceCandidates(state),
+      claims: []
+    }
+  );
+  state.phase10.memoryUpdateAccepted = Boolean(state.memoryDelta);
+  if (!state.memoryDelta || state.evidenceStatus === 'sufficient') return;
+  const progressCount = state.memoryDelta.explicitLearningProgress.length;
+  const preferenceCount = state.memoryDelta.responsePreferences.length;
+  const values = [];
+  if (progressCount) values.push('学习进度');
+  if (preferenceCount) values.push('回答偏好');
+  if (values.length) {
+    state.answer = `已记录你明确表达的${values.join('和')}。你可以随时通过“清除记忆”删除。`;
+    state.claims = [];
+    state.citations = [];
+    state.unansweredSubquestions = [];
+    state.citationVerification = notRequiredVerification(
+      'explicit_memory_update'
+    );
+  }
+}
+
 function finalizeAnswer(state, trace) {
   const verificationStartedAt = traceStart(trace);
   let result;
 
-  if (state.modelResponse) {
+  if (
+    state.phase10.groundedSynthesisEnabled &&
+    state.modelResponse &&
+    state.semanticVerification
+  ) {
+    result = applyGroundedV2Response(state);
+    if (result.valid) {
+      state.model.accepted = true;
+    } else {
+      state.llmFallback = true;
+      state.model.accepted = false;
+      state.model.rejectionReason = result.reason || 'grounded_v2_verification_failed';
+      state.modelResponse = null;
+      state.semanticVerification = null;
+      result = applyVerifiedResponse(
+        state,
+        state.deterministicResponse,
+        'deterministic_fallback'
+      );
+    }
+  } else if (state.modelResponse) {
     result = applyVerifiedResponse(state, state.modelResponse, 'model');
     if (result.valid) {
       state.model.accepted = true;
@@ -334,6 +653,11 @@ function finalizeAnswer(state, trace) {
       state.deterministicResponse,
       'deterministic'
     );
+  }
+
+  if (!state.phase10.groundedSynthesisEnabled || state.llmFallback) {
+    state.unansweredSubquestions = [];
+    state.memoryDelta = null;
   }
 
   if (!result.valid) {
@@ -366,7 +690,12 @@ async function runAgent(input, options) {
   const trace = settings.trace || null;
   const dependencies = {
     canUseModel: settings.canUseModel || canUseModel,
+    canUseVerifier: settings.canUseVerifier || (
+      settings.verify ? () => true : canUseVerifier
+    ),
     generate: settings.generate || generateGroundedAnswer,
+    generateV2: settings.generateV2 || settings.generate || generateGroundedV2Answer,
+    verify: settings.verify || verifyGroundedAnswer,
     onModelError: settings.onModelError
   };
   const tools = settings.tools || createAgentTools(corpus);
@@ -377,6 +706,11 @@ async function runAgent(input, options) {
     evidenceCalibration,
     costControls: settings.costControls
   });
+  state.phase10 = phase10Features(
+    settings.environment || process.env,
+    settings.rolloutKey || input.requestId || input.sessionId,
+    settings
+  );
 
   let startedAt = traceStart(trace);
   state.route = routeQuestion(state);
@@ -413,6 +747,7 @@ async function runAgent(input, options) {
   }
   const split = splitStandaloneQuery(state, corpus.posts);
   state.subqueries = split.subqueries;
+  state.subquestionPlan = buildSubquestionPlan(state.subqueries);
   state.targetQueries = split.targetQueries;
   state.budget.used.subqueries = state.subqueries.length;
   traceEnd(trace, 'rewriteMs', startedAt);
@@ -505,12 +840,28 @@ async function runAgent(input, options) {
   state.deterministicResponse = deterministic;
   traceEnd(trace, 'buildResponseMs', startedAt);
 
-  await maybeGenerateWithModel(state, dependencies, trace);
+  if (state.phase10.groundedSynthesisEnabled) {
+    const historyCharacters = state.messages
+      .slice(-6)
+      .reduce((total, message) => total + String(message.content || '').length, 0);
+    state.budget.used.estimatedGenerationInputTokens = estimateTokens(
+      state.budget.used.contextChars +
+      historyCharacters +
+      String(state.question || '').length +
+      String(state.standaloneQuery || '').length +
+      3500
+    );
+    await maybeGenerateGroundedV2(state, dependencies, trace);
+  } else {
+    await maybeGenerateWithModel(state, dependencies, trace);
+  }
   finalizeAnswer(state, trace);
+  applyMemoryOnlyVerification(state);
   return finishPayload(state);
 }
 
 module.exports = {
+  INTERNAL_MEMORY_DELTA,
   finishPayload,
   applyVerifiedResponse,
   finalizeAnswer,

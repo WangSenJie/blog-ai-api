@@ -111,6 +111,16 @@ apiBaseUrl: 'https://your-blog-ai-api.vercel.app'
   - Optional model request timeout, defaults to `15000` and is clamped to 1–60 seconds.
 - `LLM_MAX_OUTPUT_TOKENS`
   - Optional generation ceiling, defaults to `700` and is clamped to 128–1,200 tokens.
+- `LLM_JSON_MODE_ENABLED`
+  - Optional; defaults to `true`. Set to `false` only when the OpenAI-compatible provider does not support `response_format: { "type": "json_object" }`.
+- `GROUNDED_SYNTHESIS_ENABLED` and `SEMANTIC_VERIFICATION_ENABLED`
+  - Phase 10 feature flags. Both must be `true` before a natural claim can be published. If either path fails, the request falls back to the verified deterministic answer.
+- `GROUNDED_SYNTHESIS_ROLLOUT_PERCENT`
+  - Optional stable rollout percentage from 0–100. Bucketing uses the opaque memory digest when available and never uses IP or browser fingerprinting.
+- `VERIFIER_API_BASE_URL`, `VERIFIER_API_KEY`, `VERIFIER_MODEL`, and `VERIFIER_API_PATH`
+  - Optional independent semantic-verifier provider settings. Each value falls back to the corresponding `LLM_*` setting, but verification is always a separate bounded model call.
+- `VERIFIER_TIMEOUT_MS` and `VERIFIER_MAX_OUTPUT_TOKENS`
+  - Optional verifier limits; defaults are at most 6 seconds and 700 output tokens.
 - `LLM_MAX_REQUEST_COST_USD`, `LLM_INPUT_COST_PER_MILLION_TOKENS`, and `LLM_OUTPUT_COST_PER_MILLION_TOKENS`
   - Optional cost guard. All three must be configured before the API estimates and enforces a per-request model cost ceiling.
 - `DASHSCOPE_API_KEY` and `DASHSCOPE_WORKSPACE_ID`
@@ -252,16 +262,18 @@ Only the most recent assistant turn contributes article-reference and standalone
 
 ```json
 {
-  "answer": "- 双塔模型由用户塔和物品塔组成。 [1]",
+  "answer": "站内资料可以确认：双塔模型会分别编码用户与物品，再比较两侧向量。 [1]",
   "claims": [
     {
       "id": "claim_1",
-      "text": "双塔模型由用户塔和物品塔组成。",
+      "subquestionId": "sq_1",
+      "text": "双塔模型会分别编码用户与物品，再比较两侧向量。",
       "citationIds": ["post-id#0"],
       "citationIndexes": [1],
       "quote": "双塔模型模型由用户塔和物品塔两部分组成"
     }
   ],
+  "unansweredSubquestions": [],
   "citations": [
     {
       "chunkId": "post-id#0",
@@ -337,7 +349,7 @@ Only the most recent assistant turn contributes article-reference and standalone
 }
 ```
 
-`claims` is an array of the factual statements that form the answer. Every returned factual claim has exactly one `citationIds` entry and a `quote` whose normalized text occurs in that selected server chunk. The public statement is extractive: a model claim `text` must equal its `quote`; a deterministic claim may only add the server-owned `《title》：` prefix to that exact quote. `answer` is a display rendering of those verified claims; consumers that need claim-level UI should use `claims` and the server-generated `citations`, not invent citation metadata from model text. `feedback` is omitted unless feedback collection is fully configured.
+`claims` is an audit array for the factual statements that form the answer. In Grounded Answer v2 every claim belongs to one required subquestion, has exactly one server-selected citation, and contains a continuous source `quote`. Natural `text` may paraphrase the quote only after the independent semantic verifier confirms support and directness; server code then validates IDs, quote origin, limits, negation, duplicates, and subquestion coverage. The browser renders the server-rebuilt `answer`, while `claims` remains available for citation positioning, feedback, and audit. Missing required parts appear in `unansweredSubquestions`. `feedback` is omitted unless feedback collection is fully configured.
 
 The same trace ID is returned in the `X-Trace-Id` response header. Internal errors return a trace ID without exposing implementation details to the browser.
 
@@ -353,7 +365,7 @@ route -> rewrite -> split (<= 3) -> retrieve -> grade
                               -> answer or safe stop
 ```
 
-It has fixed routes for direct replies, current-page summary and Q&A, related articles, article comparison, and site-wide Q&A. Only three allow-listed, read-only tools are callable: `search_blog`, `get_article`, and `get_related_articles`. Retrieval is capped at two rounds, six tool calls, eight complete context chunks, a conservatively estimated 6,000 context tokens, one model call, and a 17-second overall server deadline. The current estimate counts at most one token per Unicode character; it is a safety bound, not the provider model's tokenizer.
+It has fixed routes for direct replies, current-page summary and Q&A, related articles, article comparison, and site-wide Q&A. Only three allow-listed, read-only tools are callable: `search_blog`, `get_article`, and `get_related_articles`. Retrieval is capped at two rounds, six tool calls, eight complete context chunks, a conservatively estimated 6,000 context tokens, and at most two sequential model calls (generation plus independent verification) inside the overall deadline. The current estimate counts at most one token per Unicode character; it is a safety bound, not the provider model's tokenizer.
 
 The generator receives the selected full chunks rather than UI snippets. Retrieved text and conversation history are explicitly marked as untrusted data, while citations and URLs are always rebuilt from server corpus chunks. An evidence-insufficient 200 response is a valid safe stop and is not a browser-fallback trigger.
 

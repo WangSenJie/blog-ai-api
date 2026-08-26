@@ -13,6 +13,33 @@ const {
   ROUTES
 } = require('./route');
 
+const DIRECTNESS_RULES = Object.freeze([
+  {
+    question: /缺点|局限|不足|问题|风险|代价|劣势/,
+    evidence: /缺点|局限|不足|问题|风险|代价|劣势|瓶颈|无法|难以/
+  },
+  {
+    question: /优点|优势|好处|价值/,
+    evidence: /优点|优势|好处|价值|提升|降低|减少|更快|更准/
+  },
+  {
+    question: /为什么|原因|为何/,
+    evidence: /因为|由于|原因|导致|因此|所以|取决于/
+  },
+  {
+    question: /如何|怎么|怎样|流程|步骤/,
+    evidence: /通过|首先|然后|最后|先|再|步骤|流程|使用|计算|检索|构建/
+  },
+  {
+    question: /用途|作用|解决什么|用来做什么|适用场景/,
+    evidence: /用于|用来|作用|解决|适用|场景|召回|推荐|检索|预测/
+  },
+  {
+    question: /是什么|定义|结构|组成|原理/,
+    evidence: /是|指|定义|结构|组成|包含|由|根据|一种|原理/
+  }
+]);
+
 function searchableCandidateText(candidate) {
   const chunk = candidate.chunk;
   return normalizeText([
@@ -75,6 +102,19 @@ function candidateCoverage(candidate, query, calibration, options) {
     ? Math.min(1, vectorScore / 0.6)
     : 0;
   return Math.max(lexical, semantic);
+}
+
+function candidateDirectness(candidate, query) {
+  if (!candidate || !candidate.chunk) return 0;
+  const normalizedQuery = normalizeText(query);
+  const rules = DIRECTNESS_RULES.filter(rule => rule.question.test(normalizedQuery));
+  if (!rules.length) return 1;
+  const text = [
+    candidate.chunk.sectionTitle,
+    candidate.chunk.content
+  ].join(' ');
+  const matched = rules.filter(rule => rule.evidence.test(text)).length;
+  return matched / rules.length;
 }
 
 function bestCoverage(candidates, query, calibration, options) {
@@ -276,19 +316,29 @@ function gradeEvidence(state) {
         state.standaloneQuery
       )
     );
-    const sufficient = pageCandidates.length && (
+    const coverageEnough = pageCandidates.length && (
       coverage >= calibration.pageQaMinCoverage ||
       genericArticleQuestion
+    );
+    const directness = pageCandidates.reduce((best, candidate) => Math.max(
+      best,
+      candidateDirectness(candidate, coverageQuery)
+    ), 0);
+    const sufficient = coverageEnough && (
+      !state.phase10.groundedSynthesisEnabled || directness >= 0.5
     );
     return gradeResult(
       sufficient ? 'sufficient' : 'insufficient',
       sufficient
         ? 'current_page_terms_covered'
-        : 'current_page_terms_not_covered',
+        : coverageEnough
+          ? 'current_page_direct_answer_missing'
+          : 'current_page_terms_not_covered',
       genericArticleQuestion ? 1 : coverage,
       calibration.pageQaMinCoverage,
       {
         coverage,
+        directness,
         coverageQuery,
         semanticAllowed: coverageOptions.allowSemantic,
         genericArticleQuestion,
@@ -375,15 +425,26 @@ function gradeEvidence(state) {
     const allSubqueriesCovered = coverageBySubquery.every(coverage => (
       coverage >= calibration.compoundMinCoverage
     ));
+    const directnessBySubquery = state.subqueries.map(query => {
+      const candidate = bestQueryCandidate(candidates, query, calibration);
+      return candidateDirectness(candidate, query);
+    });
+    const directEnough = directnessBySubquery.every(score => score >= 0.5);
+    const sufficient = allSubqueriesCovered && (
+      !state.phase10.groundedSynthesisEnabled || directEnough
+    );
     return gradeResult(
-      allSubqueriesCovered ? 'sufficient' : 'insufficient',
-      allSubqueriesCovered
+      sufficient ? 'sufficient' : 'insufficient',
+      sufficient
         ? 'all_subqueries_covered'
-        : 'subquery_evidence_missing',
+        : allSubqueriesCovered
+          ? 'subquery_direct_answer_missing'
+          : 'subquery_evidence_missing',
       coverageBySubquery.length ? Math.min(...coverageBySubquery) : 0,
       calibration.compoundMinCoverage,
       {
         coverageBySubquery,
+        directnessBySubquery,
         coverageQuery,
         semanticAllowed: coverageOptions.allowSemantic,
         calibrationVersion: calibration.version
@@ -397,15 +458,29 @@ function gradeEvidence(state) {
     calibration,
     coverageOptions
   );
+  const directnessCandidate = bestQueryCandidate(
+    candidates,
+    state.subqueries[0] || coverageQuery,
+    calibration
+  ) || candidates[0];
+  const directness = candidateDirectness(directnessCandidate, coverageQuery);
+  const coverageEnough = coverage >= calibration.siteQaMinCoverage;
+  const directEnough = directness >= 0.5;
+  const sufficient = coverageEnough && (
+    !state.phase10.groundedSynthesisEnabled || directEnough
+  );
   return gradeResult(
-    coverage >= calibration.siteQaMinCoverage ? 'sufficient' : 'insufficient',
-    coverage >= calibration.siteQaMinCoverage
+    sufficient ? 'sufficient' : 'insufficient',
+    sufficient
       ? 'query_terms_covered'
-      : 'query_terms_not_covered',
+      : coverageEnough
+        ? 'direct_answer_terms_not_covered'
+        : 'query_terms_not_covered',
     coverage,
     calibration.siteQaMinCoverage,
     {
       coverage,
+      directness,
       coverageQuery,
       semanticAllowed: coverageOptions.allowSemantic,
       candidates: candidates.length,
@@ -423,11 +498,11 @@ function selectContext(state) {
   const limits = state.budget.limits;
 
   function add(candidate) {
-    if (!candidate || seen.has(candidate.chunk.id)) return;
+    if (!candidate || seen.has(candidate.chunk.id)) return false;
     const contentKey = normalizeText(candidate.chunk.content);
     const postUrl = normalizePostUrl(candidate.chunk.postUrl);
     const postCount = perPost.get(postUrl) || 0;
-    if (seenContent.has(contentKey) || postCount >= 3) return;
+    if (seenContent.has(contentKey) || postCount >= 3) return false;
     const chunkCharacters = String(candidate.chunk.content || '').length;
     const nextCharacters = characters + chunkCharacters;
     const nextTokens = estimateTokens(nextCharacters);
@@ -436,13 +511,14 @@ function selectContext(state) {
       nextCharacters > limits.maxContextChars ||
       nextTokens > limits.maxContextTokens
     ) {
-      return;
+      return false;
     }
     seen.add(candidate.chunk.id);
     seenContent.add(contentKey);
     perPost.set(postUrl, postCount + 1);
     selected.push(candidate);
     characters = nextCharacters;
+    return true;
   }
 
   if (state.route === ROUTES.ARTICLE_COMPARE) {
@@ -457,6 +533,39 @@ function selectContext(state) {
         target,
         state.evidenceCalibration
       ));
+    }
+  } else if (state.phase10.groundedSynthesisEnabled) {
+    const assignedChunks = new Set();
+    state.evidenceAssignments = [];
+    for (const subquestion of state.subquestionPlan) {
+      const ranked = matchingQueryCandidates(
+        state.retrievedChunks,
+        subquestion.question
+      ).slice().sort((left, right) => (
+        candidateDirectness(right, subquestion.question) -
+          candidateDirectness(left, subquestion.question) ||
+        candidateCoverage(right, subquestion.question, state.evidenceCalibration) -
+          candidateCoverage(left, subquestion.question, state.evidenceCalibration) ||
+        (right.score || 0) - (left.score || 0)
+      ));
+      const candidate = ranked.find(item => !assignedChunks.has(item.chunk.id)) ||
+        ranked[0] || null;
+      if (candidate) {
+        assignedChunks.add(candidate.chunk.id);
+        const added = add(candidate);
+        if (added || seen.has(candidate.chunk.id)) {
+          state.evidenceAssignments.push({
+            subquestionId: subquestion.id,
+            chunkId: candidate.chunk.id,
+            topicalScore: candidateCoverage(
+              candidate,
+              subquestion.question,
+              state.evidenceCalibration
+            ),
+            directnessScore: candidateDirectness(candidate, subquestion.question)
+          });
+        }
+      }
     }
   } else if (state.subqueries.length > 1) {
     for (const query of state.subqueries) {
@@ -481,6 +590,7 @@ module.exports = {
   bestQueryCandidate,
   bestTargetCandidate,
   candidateCoverage,
+  candidateDirectness,
   gradeResult,
   gradeEvidence,
   isGenericArticleDetailQuery,

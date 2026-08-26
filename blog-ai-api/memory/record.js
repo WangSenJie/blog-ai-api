@@ -9,6 +9,7 @@ const MEMORY_LIMITS = Object.freeze({
   maxSummaryChars: 2000,
   maxTopics: 20,
   maxLearningProgress: 50,
+  maxResponsePreferences: 20,
   maxArticleRefs: 8
 });
 
@@ -81,7 +82,8 @@ function createMemoryRecord(options) {
     longTerm: {
       summary: '',
       topics: [],
-      learningProgress: []
+      learningProgress: [],
+      responsePreferences: []
     }
   };
   assertRecordSize(record);
@@ -96,6 +98,22 @@ function startNewThread(record, options) {
   next.version = record.version + 1;
   next.updatedAt = timestamp(now);
   next.expiresAt = timestamp(now + ttlSeconds * 1000);
+  next.longTerm = Object.assign({
+    summary: '',
+    topics: [],
+    learningProgress: [],
+    responsePreferences: []
+  }, next.longTerm || {});
+  const threadSummary = boundedText(
+    next.activeThread && next.activeThread.summary,
+    MEMORY_LIMITS.maxSummaryChars
+  );
+  if (threadSummary && !next.longTerm.summary.includes(threadSummary)) {
+    next.longTerm.summary = boundedText(
+      [next.longTerm.summary, threadSummary].filter(Boolean).join(' '),
+      MEMORY_LIMITS.maxSummaryChars
+    );
+  }
   next.activeThread = createThread(now);
   assertRecordSize(next);
   return next;
@@ -124,6 +142,10 @@ function appendTurn(record, input, payload, options) {
     .slice(0, MEMORY_LIMITS.maxArticleRefs)
     .map(normalizeCitation)
     .filter(Boolean);
+  const memoryDelta = settings.memoryDelta &&
+    typeof settings.memoryDelta === 'object'
+    ? settings.memoryDelta
+    : null;
   const userMessage = {
     role: 'user',
     content: boundedText(input.question, MEMORY_LIMITS.maxMessageChars),
@@ -155,6 +177,74 @@ function appendTurn(record, input, payload, options) {
     1000
   );
   next.activeThread.articleRefs = citations;
+  next.longTerm = Object.assign({
+    summary: '',
+    topics: [],
+    learningProgress: [],
+    responsePreferences: []
+  }, next.longTerm || {});
+  if (memoryDelta) {
+    const activeTopic = boundedText(memoryDelta.activeTopic, 200);
+    const summaryUpdate = boundedText(
+      memoryDelta.summaryUpdate,
+      MEMORY_LIMITS.maxSummaryChars
+    );
+    if (activeTopic) {
+      next.activeThread.activeTopic = activeTopic;
+      const topic = {
+        name: activeTopic,
+        lastDiscussedAt: createdAt,
+        articleUrls: [...new Set(citations.map(citation => citation.url))]
+      };
+      next.longTerm.topics = (next.longTerm.topics || [])
+        .filter(item => item && item.name !== activeTopic)
+        .concat([topic])
+        .slice(-MEMORY_LIMITS.maxTopics);
+    }
+    if (summaryUpdate) {
+      next.activeThread.summary = summaryUpdate;
+      next.longTerm.summary = boundedText(
+        [next.longTerm.summary, summaryUpdate]
+          .filter(Boolean)
+          .filter((value, index, values) => values.indexOf(value) === index)
+          .join(' '),
+        MEMORY_LIMITS.maxSummaryChars
+      );
+    }
+    for (const item of memoryDelta.explicitLearningProgress || []) {
+      if (!item || typeof item !== 'object') continue;
+      const articleUrl = boundedText(item.articleUrl, 2000);
+      const status = boundedText(item.status, 40);
+      if (!articleUrl || !['completed', 'in_progress', 'planned'].includes(status)) {
+        continue;
+      }
+      next.longTerm.learningProgress = (next.longTerm.learningProgress || [])
+        .filter(progress => progress && progress.articleUrl !== articleUrl)
+        .concat([{
+          articleUrl,
+          articleTitle: boundedText(item.articleTitle, 300),
+          status,
+          source: 'explicit_user_statement',
+          updatedAt: createdAt
+        }])
+        .slice(-MEMORY_LIMITS.maxLearningProgress);
+    }
+    for (const item of memoryDelta.responsePreferences || []) {
+      if (!item || typeof item !== 'object') continue;
+      const kind = boundedText(item.kind, 80);
+      const value = boundedText(item.value, 120);
+      if (!kind || !value) continue;
+      next.longTerm.responsePreferences = (next.longTerm.responsePreferences || [])
+        .filter(preference => preference && preference.kind !== kind)
+        .concat([{
+          kind,
+          value,
+          source: 'explicit_user_statement',
+          updatedAt: createdAt
+        }])
+        .slice(-MEMORY_LIMITS.maxResponsePreferences);
+    }
+  }
   assertRecordSize(next);
   return next;
 }
@@ -182,6 +272,22 @@ function trustedMessages(record) {
       return normalized;
     })
     .filter(message => message.content);
+}
+
+function trustedMemoryContext(record) {
+  if (!record || !record.activeThread) return null;
+  const longTerm = Object.assign({
+    summary: '',
+    topics: [],
+    learningProgress: [],
+    responsePreferences: []
+  }, record.longTerm || {});
+  return {
+    summary: boundedText(longTerm.summary, MEMORY_LIMITS.maxSummaryChars),
+    activeTopic: boundedText(record.activeThread.activeTopic, 200),
+    learningProgress: clone(longTerm.learningProgress || []),
+    responsePreferences: clone(longTerm.responsePreferences || [])
+  };
 }
 
 function publicSession(record, ttlSeconds, now) {
@@ -222,5 +328,6 @@ module.exports = {
   createMemoryRecord,
   publicSession,
   startNewThread,
+  trustedMemoryContext,
   trustedMessages
 };

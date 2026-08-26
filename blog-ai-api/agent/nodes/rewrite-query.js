@@ -428,6 +428,14 @@ function splitStandaloneQuery(state, posts) {
   };
 }
 
+function buildSubquestionPlan(subqueries) {
+  return (subqueries || []).map((question, index) => ({
+    id: `sq_${index + 1}`,
+    question: String(question || '').trim(),
+    required: true
+  })).filter(item => item.question);
+}
+
 function rewriteForRetry(state) {
   const anchors = []
     .concat(state.history.pageRef || [])
@@ -448,6 +456,7 @@ function rewriteForRetry(state) {
 }
 
 module.exports = {
+  buildSubquestionPlan,
   hasExplicitRelatedTopic,
   parseOrdinal,
   replaceReferenceExpressions,

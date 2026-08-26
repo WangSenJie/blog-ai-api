@@ -1205,6 +1205,9 @@
         answer: result.answer,
         citations: Array.isArray(result.citations) ? result.citations : [],
         claims: Array.isArray(result.claims) ? result.claims : [],
+        unansweredSubquestions: Array.isArray(result.unansweredSubquestions)
+          ? result.unansweredSubquestions
+          : [],
         related: Array.isArray(result.related) ? result.related : [],
         comparison: result.comparison && typeof result.comparison === 'object'
           ? result.comparison
@@ -1288,28 +1291,21 @@
 
   function renderAnswerBody(result) {
     const citations = Array.isArray(result.citations) ? result.citations : [];
-    const citationsById = new Map(citations.map((citation, index) => [
-      String(citation && citation.chunkId || ''),
-      { citation, index: index + 1 }
-    ]));
-    const claims = (Array.isArray(result.claims) ? result.claims : [])
-      .map(claim => {
-        const text = compactText(claim && claim.text, 600);
-        const citationId = Array.isArray(claim && claim.citationIds)
-          ? String(claim.citationIds[0] || '')
-          : '';
-        const linked = citationsById.get(citationId);
-        if (!text || !linked) return '';
-        const url = safePostUrl(linked.citation && linked.citation.url);
-        const citationLink = url
-          ? `<a class="blog-ai-agent__claim-citation" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="查看结论引用 ${linked.index}">[${linked.index}]</a>`
-          : `<span class="blog-ai-agent__claim-citation">[${linked.index}]</span>`;
-        return `<p class="blog-ai-agent__claim">${escapeHtml(text)} ${citationLink}</p>`;
-      })
-      .filter(Boolean);
-
-    if (claims.length) return claims.join('');
-    return escapeHtml(result.answer || '');
+    const answer = String(result.answer || '').trim();
+    if (!answer) return '';
+    const linked = escapeHtml(answer).replace(/\[(\d+)\]/g, (marker, value) => {
+      const index = Number(value);
+      const citation = citations[index - 1];
+      if (!citation) return marker;
+      const url = safePostUrl(citation.url);
+      return url
+        ? `<a class="blog-ai-agent__claim-citation" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="查看回答引用 ${index}">[${index}]</a>`
+        : `<span class="blog-ai-agent__claim-citation">[${index}]</span>`;
+    });
+    return linked
+      .split(/\n+/)
+      .map(line => `<p class="blog-ai-agent__claim">${line.replace(/^-\s*/, '')}</p>`)
+      .join('');
   }
 
   function safeCodeAnchor(value) {

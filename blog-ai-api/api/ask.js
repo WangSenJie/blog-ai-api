@@ -1,6 +1,9 @@
 'use strict';
 
-const { runAgent } = require('../agent/run');
+const {
+  INTERNAL_MEMORY_DELTA,
+  runAgent
+} = require('../agent/run');
 const { loadCorpus } = require('../lib/corpus');
 const { getModelConfig } = require('../lib/generate');
 const { issueFeedbackReceipt } = require('../lib/feedback-receipt');
@@ -127,6 +130,9 @@ function createAskHandler(options) {
 
     const storedConversation = trustedConversation(memoryContext, input.question);
     if (storedConversation) input.messages = storedConversation;
+    if (memoryContext.status === 'active' && memoryContext.trustedMemory) {
+      input.trustedMemory = memoryContext.trustedMemory;
+    }
 
     const corpusStartedAt = trace.start();
     const corpus = loadCorpus();
@@ -135,6 +141,7 @@ function createAskHandler(options) {
     const payload = await executeAgent(input, {
       corpus,
       indexVersion: corpus.manifest && corpus.manifest.corpusVersion,
+      rolloutKey: memoryContext.tokenDigest || input.requestId || input.sessionId,
       trace,
       onModelError(error) {
         const modelConfig = getModelConfig();
@@ -177,7 +184,8 @@ function createAskHandler(options) {
     const memoryResult = await memoryService.completeAsk(
       memoryContext,
       input,
-      payload
+      payload,
+      payload[INTERNAL_MEMORY_DELTA]
     );
     payload.memory = publicMemoryMeta(memoryResult);
 
@@ -192,8 +200,17 @@ function createAskHandler(options) {
         retrievalAttempts: payload.meta.retrievalAttempts,
         modelAttempted: payload.meta.model.attempted,
         modelAnswered: payload.meta.model.answered,
+        generationSchemaValid: payload.meta.model.generationSchemaValid,
+        verificationAttempted: payload.meta.model.verificationAttempted,
+        verificationSchemaValid: payload.meta.model.verificationSchemaValid,
         citationVerification: payload.meta.citationVerification &&
           payload.meta.citationVerification.status,
+        claims: (payload.claims || []).length,
+        unansweredSubquestions: (payload.unansweredSubquestions || []).length,
+        subquestionCoverage: payload.meta.citationVerification &&
+          payload.meta.citationVerification.subquestionCoverage,
+        phase10Enabled: payload.meta.phase10 &&
+          payload.meta.phase10.groundedSynthesisEnabled,
         feedbackEnabled: Boolean(payload.feedback),
         memoryStatus: payload.memory.status,
         memoryWriteStatus: payload.memory.writeStatus,
