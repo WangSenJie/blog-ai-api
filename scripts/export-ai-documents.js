@@ -26,7 +26,13 @@ const publishOutputDir = path.join(rootDir, 'source', 'ai-data');
 const retrievalCorePath = path.join(rootDir, 'blog-ai-api', 'lib', 'retrieval-core.js');
 const browserRetrievalPath = path.join(rootDir, 'source', 'js', 'blog-ai-retrieval.js');
 
-const chunkSchemaMode = String(process.env.RAG_CHUNK_SCHEMA || 'chunk-v2').trim();
+const chunkV2Flag = String(process.env.RAG_CHUNK_V2_ENABLED || '').trim();
+const flagSelectedMode = chunkV2Flag && !/^(1|true|yes|on)$/i.test(chunkV2Flag)
+  ? 'legacy-v3'
+  : 'chunk-v2';
+const chunkSchemaMode = String(
+  process.env.RAG_CHUNK_SCHEMA || flagSelectedMode
+).trim();
 if (!['chunk-v2', 'legacy-v3'].includes(chunkSchemaMode)) {
   throw new Error(`Unsupported RAG_CHUNK_SCHEMA mode: ${chunkSchemaMode}`);
 }

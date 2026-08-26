@@ -1,6 +1,7 @@
 'use strict';
 
 const { createHash } = require('crypto');
+const { getReleaseFlags } = require('../lib/release-flags');
 
 const AGENT_LIMITS = Object.freeze({
   maxRetrievalAttempts: 2,
@@ -112,11 +113,12 @@ function stableRollout(key, percent) {
 function phase10Features(environment, rolloutKey, overrides) {
   const source = environment || process.env;
   const settings = overrides || {};
+  const releaseFlags = getReleaseFlags(source);
   const synthesisConfigured = settings.groundedSynthesisEnabled === undefined
-    ? enabledValue(source.GROUNDED_SYNTHESIS_ENABLED)
+    ? releaseFlags.naturalAnswerV2Enabled
     : Boolean(settings.groundedSynthesisEnabled);
   const verificationConfigured = settings.semanticVerificationEnabled === undefined
-    ? enabledValue(source.SEMANTIC_VERIFICATION_ENABLED)
+    ? releaseFlags.semanticVerifierEnabled
     : Boolean(settings.semanticVerificationEnabled);
   const percent = rolloutPercent(
     settings.groundedSynthesisRolloutPercent === undefined

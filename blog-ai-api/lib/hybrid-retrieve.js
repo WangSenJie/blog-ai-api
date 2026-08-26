@@ -16,6 +16,7 @@ const {
   providerMetadata,
   queryInput
 } = require('./embedding');
+const { getReleaseFlags } = require('./release-flags');
 
 const HYBRID_CONFIG = Object.freeze({
   bm25TopK: 20,
@@ -216,7 +217,29 @@ function dedupeAndDiversify(candidates, page, options) {
   ));
 }
 
-function bm25Fallback(bm25, question, settings, reason, errorCode) {
+function embeddingCostEstimate(question, environment) {
+  const source = environment || process.env;
+  const rate = Number(source.EMBEDDING_INPUT_COST_PER_MILLION_TOKENS);
+  if (!Number.isFinite(rate) || rate < 0) return null;
+  const estimatedTokens = Array.from(queryInput(question)).length;
+  return Number(((estimatedTokens * rate) / 1000000).toFixed(8));
+}
+
+function bm25Fallback(
+  bm25,
+  question,
+  settings,
+  reason,
+  errorCode,
+  telemetry
+) {
+  const metrics = Object.assign({
+    embeddingRequests: 0,
+    embeddingFailures: 0,
+    embedding429: 0,
+    embedding5xx: 0,
+    embeddingEstimatedCostUsd: null
+  }, telemetry || {});
   return {
     strategy: 'bm25',
     ranked: bm25.slice(0, settings.rerankTopK).map((item, index) => ({
@@ -239,7 +262,12 @@ function bm25Fallback(bm25, question, settings, reason, errorCode) {
       rerankedCandidates: Math.min(bm25.length, settings.rerankTopK),
       parentExpandedCandidates: 0,
       fallback: reason,
-      fallbackCode: errorCode || null
+      fallbackCode: errorCode || null,
+      embeddingRequests: metrics.embeddingRequests,
+      embeddingFailures: metrics.embeddingFailures,
+      embedding429: metrics.embedding429,
+      embedding5xx: metrics.embedding5xx,
+      embeddingEstimatedCostUsd: metrics.embeddingEstimatedCostUsd
     }
   };
 }
@@ -297,6 +325,7 @@ function expandParentContext(chunks, ranked, options) {
 
 function hybridRankChunks(chunks, vectors, question, mode, page, options) {
   const settings = Object.assign({}, HYBRID_CONFIG, options || {});
+  const semanticRerankerEnabled = settings.semanticRerankerEnabled !== false;
   const bm25 = rankChunks(chunks, question, mode, page);
   const vector = rankVectorChunks(chunks, vectors, question, mode, page, settings);
 
@@ -305,30 +334,58 @@ function hybridRankChunks(chunks, vectors, question, mode, page, options) {
   }
 
   const fused = mergeRrfCandidates(bm25, vector, question, page, settings);
-  const ranked = dedupeAndDiversify(fused, page, settings);
+  const rerankerInput = semanticRerankerEnabled
+    ? fused
+    : fused.map(candidate => Object.assign({}, candidate, {
+      rerankScore: candidate.rrfScore
+    }));
+  const ranked = dedupeAndDiversify(rerankerInput, page, settings);
   return {
-    strategy: 'hybrid_rrf_rerank',
+    strategy: semanticRerankerEnabled ? 'hybrid_rrf_rerank' : 'hybrid_rrf',
     ranked,
     stats: {
       bm25Candidates: bm25.length,
       vectorCandidates: vector.length,
       fusedCandidates: fused.length,
       rerankedCandidates: ranked.length,
-      fallback: null
+      semanticRerankerEnabled,
+      fallback: null,
+      fallbackCode: null,
+      embeddingRequests: 0,
+      embeddingFailures: 0,
+      embedding429: 0,
+      embedding5xx: 0,
+      embeddingEstimatedCostUsd: 0
     }
   };
 }
 
 async function hybridRankChunksAsync(chunks, vectors, question, mode, page, options) {
   const settings = Object.assign({}, HYBRID_CONFIG, options || {});
+  const releaseFlags = getReleaseFlags(settings.environment || process.env);
+  const remoteEmbeddingEnabled = settings.remoteEmbeddingEnabled === undefined
+    ? releaseFlags.remoteEmbeddingEnabled
+    : Boolean(settings.remoteEmbeddingEnabled);
+  const semanticRerankerEnabled = settings.semanticRerankerEnabled === undefined
+    ? releaseFlags.semanticRerankerEnabled
+    : Boolean(settings.semanticRerankerEnabled);
   const bm25 = rankChunks(chunks, question, mode, page);
   if (
+    !remoteEmbeddingEnabled ||
     settings.retrievalMode === 'bm25' ||
     String(process.env.RAG_RETRIEVAL_MODE || '').toLowerCase() === 'bm25'
   ) {
-    return bm25Fallback(bm25, question, settings, 'bm25_feature_flag');
+    return bm25Fallback(
+      bm25,
+      question,
+      settings,
+      !remoteEmbeddingEnabled
+        ? 'remote_embedding_feature_flag'
+        : 'bm25_feature_flag'
+    );
   }
 
+  let queryAttempted = false;
   try {
     const manifest = settings.manifest || null;
     const provider = settings.provider || (manifest
@@ -346,6 +403,7 @@ async function hybridRankChunksAsync(chunks, vectors, question, mode, page, opti
     if (!vectorMap.size || vectorMap.size !== expectedVectorCount) {
       return bm25Fallback(bm25, question, settings, 'vector_index_incomplete', 'EMBEDDING_INDEX_INCOMPLETE');
     }
+    queryAttempted = true;
     const queryEmbedding = await provider.embedQuery(queryInput(question), { signal: settings.signal });
     if (!isFiniteVector(queryEmbedding, metadata.dimensions) || !queryEmbedding.some(value => value !== 0)) {
       return bm25Fallback(bm25, question, settings, 'empty_query_vector', 'EMBEDDING_EMPTY_VECTOR');
@@ -362,10 +420,15 @@ async function hybridRankChunksAsync(chunks, vectors, question, mode, page, opti
       return bm25Fallback(bm25, question, settings, 'vectors_below_threshold');
     }
     const fused = mergeRrfCandidates(bm25, vector, question, page, settings);
-    const primary = dedupeAndDiversify(fused, page, settings);
+    const rerankerInput = semanticRerankerEnabled
+      ? fused
+      : fused.map(candidate => Object.assign({}, candidate, {
+        rerankScore: candidate.rrfScore
+      }));
+    const primary = dedupeAndDiversify(rerankerInput, page, settings);
     const ranked = expandParentContext(chunks, primary, settings);
     return {
-      strategy: 'hybrid_rrf_rerank',
+      strategy: semanticRerankerEnabled ? 'hybrid_rrf_rerank' : 'hybrid_rrf',
       ranked,
       stats: {
         bm25Candidates: bm25.length,
@@ -373,8 +436,17 @@ async function hybridRankChunksAsync(chunks, vectors, question, mode, page, opti
         fusedCandidates: fused.length,
         rerankedCandidates: ranked.length,
         parentExpandedCandidates: ranked.filter(item => item.contextExpansion).length,
+        semanticRerankerEnabled,
         embeddingProvider: metadata.provider,
         embeddingFingerprint: metadata.fingerprint,
+        embeddingRequests: 1,
+        embeddingFailures: 0,
+        embedding429: 0,
+        embedding5xx: 0,
+        embeddingEstimatedCostUsd: embeddingCostEstimate(
+          question,
+          settings.environment
+        ),
         fallback: null,
         fallbackCode: null
       }
@@ -388,7 +460,16 @@ async function hybridRankChunksAsync(chunks, vectors, question, mode, page, opti
         : code === 'EMBEDDING_FINGERPRINT_MISMATCH'
           ? 'embedding_fingerprint_mismatch'
           : 'embedding_error';
-    return bm25Fallback(bm25, question, settings, reason, code);
+    const status = Number(error && error.status);
+    return bm25Fallback(bm25, question, settings, reason, code, {
+      embeddingRequests: queryAttempted ? 1 : 0,
+      embeddingFailures: queryAttempted ? 1 : 0,
+      embedding429: code === 'EMBEDDING_RATE_LIMITED' || status === 429 ? 1 : 0,
+      embedding5xx: status >= 500 && status <= 599 ? 1 : 0,
+      embeddingEstimatedCostUsd: queryAttempted
+        ? embeddingCostEstimate(question, settings.environment)
+        : null
+    });
   }
 }
 
@@ -396,6 +477,7 @@ module.exports = {
   HYBRID_CONFIG,
   dedupeAndDiversify,
   expandParentContext,
+  embeddingCostEstimate,
   hybridRankChunks,
   hybridRankChunksAsync,
   lexicalCoverage,

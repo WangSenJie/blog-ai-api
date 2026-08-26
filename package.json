@@ -21,7 +21,8 @@
     "eval:phase7": "npm --prefix blog-ai-api run eval:phase7 --",
     "eval:phase8": "npm --prefix blog-ai-api run eval:phase8 --",
     "eval:phase9": "npm --prefix blog-ai-api run eval:phase9 --",
-    "eval:phase10": "npm --prefix blog-ai-api run eval:phase10 --"
+    "eval:phase10": "npm --prefix blog-ai-api run eval:phase10 --",
+    "eval:phase11": "npm --prefix blog-ai-api run eval:phase11 --"
   },
   "hexo": {
     "version": "7.3.0"

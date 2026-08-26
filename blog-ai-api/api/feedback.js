@@ -15,6 +15,7 @@ const {
   declaredContentLength,
   sendJson
 } = require('../lib/http');
+const { safeErrorCode } = require('../lib/observability');
 const {
   createRequestTrace
 } = require('../lib/trace');
@@ -110,9 +111,9 @@ module.exports = async (req, res) => {
       return;
     }
 
-    console.error('feedback.js failed', {
+    console.error('feedback.failed.v1', {
       traceId: trace.traceId,
-      message: error && error.message ? error.message : 'Unknown error'
+      code: safeErrorCode(error, 'FEEDBACK_FORWARD_FAILED')
     });
     sendJson(res, 503, {
       error: 'Feedback collection is temporarily unavailable',

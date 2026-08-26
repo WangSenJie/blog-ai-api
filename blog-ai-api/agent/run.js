@@ -98,6 +98,8 @@ function finishPayload(state) {
     ? 'none'
     : retrievalStrategies.includes('hybrid_rrf_rerank')
       ? 'hybrid_rrf_rerank'
+      : retrievalStrategies.includes('hybrid_rrf')
+        ? 'hybrid_rrf'
       : state.subqueries.length > 1 || state.retrievalAttempts > 1
         ? 'bm25_multi_query'
         : retrievalStrategies[0] || 'bm25';

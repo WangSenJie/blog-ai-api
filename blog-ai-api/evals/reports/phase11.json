@@ -1,0 +1,843 @@
+{
+  "phase": 11,
+  "generatedAt": "2026-08-26T09:03:18.947Z",
+  "strategy": "release-governance-observability-rollback-v1",
+  "corpusVersion": "5255a48fc93de09cd70f16957f35b4e74abc713903a9389acb617244424c60ad",
+  "ingestion": {
+    "profiles": {
+      "generic-article": 56,
+      "math-note": 15
+    },
+    "profileSources": {
+      "migration-fallback": 56,
+      "path-rule": 15
+    },
+    "blockTypes": {
+      "code": 395,
+      "formula": 459,
+      "image": 46,
+      "list": 348,
+      "paragraph": 1378,
+      "quote": 154,
+      "table": 1
+    },
+    "chunkTypes": {
+      "code": 397,
+      "formula": 92,
+      "formula-context": 356,
+      "image": 10,
+      "list": 404,
+      "metadata": 4,
+      "proof": 15,
+      "quote": 99,
+      "table": 1,
+      "text": 521,
+      "theorem": 5
+    },
+    "tokenCount": {
+      "min": 1,
+      "p50": 67,
+      "p95": 433,
+      "max": 1211
+    },
+    "anomalies": {
+      "empty": [],
+      "duplicate": {
+        "duplicatedChunks": 55,
+        "groups": 32,
+        "samples": [
+          [
+            "chunk_1ee9e5da1e3ecaec10bd2ce8",
+            "chunk_9bdc9cf8d90b65035e1d12e6",
+            "chunk_fdb86e0aca37097b0d14a260"
+          ],
+          [
+            "chunk_296e0fcf1a7c26ec5d6e12f8",
+            "chunk_e9af7f1d0196407ce9e68e4f"
+          ],
+          [
+            "chunk_9c40afbf39d614eb22e2ce69",
+            "chunk_ce2694af9fca08230840e37f"
+          ],
+          [
+            "chunk_e81a2615a6d10c10f99c5513",
+            "chunk_de5819b9fac9cc301e09d1eb",
+            "chunk_d9f0a6f17b3006e7399c105d"
+          ],
+          [
+            "chunk_a65cfe46e5d03a38d2a201ed",
+            "chunk_8e883f6d59c258e216abd1e9"
+          ],
+          [
+            "chunk_b315e11aa8abcb60752ed455",
+            "chunk_7b0cd1d938f2dce20d9c2ed6"
+          ],
+          [
+            "chunk_41776c3a470884cbc721f45f",
+            "chunk_0f1a8ffb7f104dd80cfd3ee2",
+            "chunk_44d42e56878b1be7bfc0503e",
+            "chunk_2fb7f77aedb2abc571db681e"
+          ],
+          [
+            "chunk_85e58a5dd8bca0d55052cbc6",
+            "chunk_2a72481492125ef0403725d3",
+            "chunk_3d18cfad2dd5bef659787755"
+          ],
+          [
+            "chunk_d4ce998ae91f289ee9da0fe5",
+            "chunk_3c2dec6eea3ba8f6f8cc601f"
+          ],
+          [
+            "chunk_ad3bd87e8e746ec197444bbe",
+            "chunk_e2e32623b7a288304af2f68d"
+          ],
+          [
+            "chunk_241ff43bca0498a59c662535",
+            "chunk_280cc6f1ba8951595d55050b",
+            "chunk_a832e9a96bcdd04663c5c84a",
+            "chunk_2dbb71aa8aba6448c9c30e8a"
+          ],
+          [
+            "chunk_ec14cb13bb16a0f820f47858",
+            "chunk_8c25c4e37e219aae9c0c4cd5"
+          ],
+          [
+            "chunk_217258719a8e20ca10b51c56",
+            "chunk_dac1f3e079a951fe9132c380"
+          ],
+          [
+            "chunk_fc8d1821ce36a49734e658c0",
+            "chunk_3fd7fb00f755a5f63593db38"
+          ],
+          [
+            "chunk_4688156b8be3cf7212917370",
+            "chunk_228d0c48012e1cfcdf272a48",
+            "chunk_8b009087825a23d65c729509",
+            "chunk_7ec9c1f86753b96a86e27566",
+            "chunk_bb85ec83411883dca64727f1"
+          ],
+          [
+            "chunk_bed0cd5d3c90f189846c7c33",
+            "chunk_cad02ccd3fd4c7f8127bb45a",
+            "chunk_b7fff2e4b09419b0abc683df"
+          ],
+          [
+            "chunk_9e800b86248fe100bd53de7b",
+            "chunk_bfc14ef468672183b37fae7d"
+          ],
+          [
+            "chunk_2ac8f5955bfcd6dc8bed9264",
+            "chunk_9a5c83caec6aed4621b20f98"
+          ],
+          [
+            "chunk_6d93b19b905501937a8bf7a7",
+            "chunk_e801c3cc5dcf154a2591ab26"
+          ],
+          [
+            "chunk_c2d89b7376c3055952b67714",
+            "chunk_8028caf514406c350db31236",
+            "chunk_357f3795513850688371cb2d"
+          ]
+        ]
+      },
+      "tooShort": {
+        "thresholdTokens": 8,
+        "count": 122,
+        "samples": [
+          {
+            "id": "chunk_a0d7c8a1e0c84e8dd11e11fa",
+            "tokens": 7,
+            "type": "code"
+          },
+          {
+            "id": "chunk_80a6c4bc0ce49d151191ed6f",
+            "tokens": 3,
+            "type": "text"
+          },
+          {
+            "id": "chunk_d24bed9e8bd0d44250145ef3",
+            "tokens": 6,
+            "type": "text"
+          },
+          {
+            "id": "chunk_d5f97ed127120c01770bd199",
+            "tokens": 5,
+            "type": "text"
+          },
+          {
+            "id": "chunk_1ee9e5da1e3ecaec10bd2ce8",
+            "tokens": 4,
+            "type": "text"
+          },
+          {
+            "id": "chunk_296e0fcf1a7c26ec5d6e12f8",
+            "tokens": 3,
+            "type": "text"
+          },
+          {
+            "id": "chunk_e3e9b068f4725050a31b4fe2",
+            "tokens": 4,
+            "type": "text"
+          },
+          {
+            "id": "chunk_e81a2615a6d10c10f99c5513",
+            "tokens": 4,
+            "type": "text"
+          },
+          {
+            "id": "chunk_572cab64182275b05840b8e2",
+            "tokens": 4,
+            "type": "text"
+          },
+          {
+            "id": "chunk_e9af7f1d0196407ce9e68e4f",
+            "tokens": 3,
+            "type": "text"
+          },
+          {
+            "id": "chunk_a02145f5b898927bf666362c",
+            "tokens": 3,
+            "type": "text"
+          },
+          {
+            "id": "chunk_de5819b9fac9cc301e09d1eb",
+            "tokens": 4,
+            "type": "text"
+          },
+          {
+            "id": "chunk_9bdc9cf8d90b65035e1d12e6",
+            "tokens": 4,
+            "type": "text"
+          },
+          {
+            "id": "chunk_acadff76414262efdc780e2d",
+            "tokens": 4,
+            "type": "text"
+          },
+          {
+            "id": "chunk_3c7351c672a15feb544c348d",
+            "tokens": 5,
+            "type": "text"
+          },
+          {
+            "id": "chunk_35e0e3a302bc866ea69dbc2e",
+            "tokens": 4,
+            "type": "text"
+          },
+          {
+            "id": "chunk_e46a5d11f7810d2e9dab5447",
+            "tokens": 4,
+            "type": "text"
+          },
+          {
+            "id": "chunk_b607f48aa8afec67c74a1849",
+            "tokens": 5,
+            "type": "text"
+          },
+          {
+            "id": "chunk_d9f0a6f17b3006e7399c105d",
+            "tokens": 4,
+            "type": "text"
+          },
+          {
+            "id": "chunk_f7a0b9416e1fb0b836f74478",
+            "tokens": 5,
+            "type": "text"
+          },
+          {
+            "id": "chunk_fdb86e0aca37097b0d14a260",
+            "tokens": 4,
+            "type": "text"
+          },
+          {
+            "id": "chunk_5ef4b73a19f48190cd8407a1",
+            "tokens": 4,
+            "type": "text"
+          },
+          {
+            "id": "chunk_b603e89a2efdf61f63c5c295",
+            "tokens": 7,
+            "type": "text"
+          },
+          {
+            "id": "chunk_0150d30e709639c5f3d9651b",
+            "tokens": 7,
+            "type": "text"
+          },
+          {
+            "id": "chunk_79f073558668b626f7bac40d",
+            "tokens": 6,
+            "type": "list"
+          },
+          {
+            "id": "chunk_01526dbf739da4f5f3583668",
+            "tokens": 7,
+            "type": "text"
+          },
+          {
+            "id": "chunk_db3f665c8616795d854881f2",
+            "tokens": 6,
+            "type": "text"
+          },
+          {
+            "id": "chunk_29ba915da5a8b52145b14d4e",
+            "tokens": 3,
+            "type": "text"
+          },
+          {
+            "id": "chunk_41776c3a470884cbc721f45f",
+            "tokens": 3,
+            "type": "text"
+          },
+          {
+            "id": "chunk_0f1a8ffb7f104dd80cfd3ee2",
+            "tokens": 3,
+            "type": "text"
+          }
+        ]
+      },
+      "tooLong": {
+        "definition": "profile maxTokens exceeded",
+        "count": 3,
+        "samples": [
+          {
+            "id": "chunk_a431eae8a2927e781f1fd462",
+            "tokens": 1211,
+            "reason": "formula_exceeds_token_limit"
+          },
+          {
+            "id": "chunk_174840d08f17e861b53951ea",
+            "tokens": 620,
+            "reason": "formula_exceeds_token_limit"
+          },
+          {
+            "id": "chunk_7a91decb6e0c5377723b826a",
+            "tokens": 763,
+            "reason": "formula_exceeds_token_limit"
+          }
+        ]
+      },
+      "specialStructureOverflow": [
+        {
+          "id": "chunk_a431eae8a2927e781f1fd462",
+          "type": "formula",
+          "tokens": 1211,
+          "reason": "formula_exceeds_token_limit"
+        },
+        {
+          "id": "chunk_174840d08f17e861b53951ea",
+          "type": "formula",
+          "tokens": 620,
+          "reason": "formula_exceeds_token_limit"
+        },
+        {
+          "id": "chunk_7a91decb6e0c5377723b826a",
+          "type": "formula",
+          "tokens": 763,
+          "reason": "formula_exceeds_token_limit"
+        }
+      ],
+      "codeContamination": [],
+      "tablesMissingHeader": [],
+      "formulaAbnormalSplit": [
+        "chunk_4773c224f13944644af175f8"
+      ]
+    },
+    "vectors": {
+      "added": 0,
+      "updated": 1904,
+      "reused": 0,
+      "deleted": 0,
+      "failed": 0,
+      "coverage": 1,
+      "model": "qwen3.7-text-embedding",
+      "dimensions": 1024
+    },
+    "chunkIdChurn": {
+      "deployment": {
+        "baseline": 1904,
+        "candidate": 1904,
+        "added": 0,
+        "deleted": 0,
+        "retained": 1904,
+        "updated": 0,
+        "chunkIdChurnRatio": 0,
+        "contentUpdateRatio": 0,
+        "samples": {
+          "added": [],
+          "deleted": [],
+          "updated": []
+        }
+      },
+      "reproducibleSourceBuild": {
+        "baseline": 1904,
+        "candidate": 1904,
+        "added": 0,
+        "deleted": 0,
+        "retained": 1904,
+        "updated": 0,
+        "chunkIdChurnRatio": 0,
+        "contentUpdateRatio": 0,
+        "samples": {
+          "added": [],
+          "deleted": [],
+          "updated": []
+        }
+      }
+    },
+    "articleLists": {
+      "undeclaredProfile": [
+        "source/_posts/Basic Abstract Algebra/Basic Abstract Algebra Exercises Notes.md",
+        "source/_posts/Hexo-指令.md",
+        "source/_posts/Python 数据分析/Pandas数据分析题解汇总.md",
+        "source/_posts/frontend/Vue.md",
+        "source/_posts/frontend/frontend-basic.md",
+        "source/_posts/从零开始——AI应用开发/LangChain/human-in-the-loop.md",
+        "source/_posts/从零开始——AI应用开发/LangChain/langchain-basic.md",
+        "source/_posts/从零开始——AI应用开发/LangChain/langgraph-foundations.md",
+        "source/_posts/从零开始——AI应用开发/LangChain/state-and-short-term-memory.md",
+        "source/_posts/从零开始——AI应用开发/报告生成Agent/报告生成Agent—环境配置.md",
+        "source/_posts/推荐算法/ALS.md",
+        "source/_posts/推荐算法/BPR.md",
+        "source/_posts/推荐算法/ItemCF.md",
+        "source/_posts/推荐算法/LightFM.md",
+        "source/_posts/推荐算法/SVD.md",
+        "source/_posts/推荐算法/UserCF.md",
+        "source/_posts/推荐算法/deep-retrieval.md",
+        "source/_posts/推荐算法/双塔模型.md",
+        "source/_posts/推荐算法/地理位置召回作者召回.md",
+        "source/_posts/推荐算法/曝光过滤.md",
+        "source/_posts/推荐算法/离散特征的处理——Embedding.md",
+        "source/_posts/数学分析/习题集/1.数列极限与函数极限.md",
+        "source/_posts/数学分析/习题集/2.函数的连续性.md",
+        "source/_posts/数学分析/习题集/3.实数完备性.md",
+        "source/_posts/数学分析/习题集/4.一元微分学.md",
+        "source/_posts/数学分析/习题集/5.一元积分学.md",
+        "source/_posts/数学分析/习题集/6.数项级数.md",
+        "source/_posts/数学分析/习题集/7.函数项级数.md",
+        "source/_posts/机器学习与深度学习/AdaBoost.md",
+        "source/_posts/机器学习与深度学习/AlexNet.md",
+        "source/_posts/机器学习与深度学习/GBDT.md",
+        "source/_posts/机器学习与深度学习/LSTM.md",
+        "source/_posts/机器学习与深度学习/Logistic Regression.md",
+        "source/_posts/机器学习与深度学习/MLP.md",
+        "source/_posts/机器学习与深度学习/ResNet.md",
+        "source/_posts/机器学习与深度学习/Transformer架构.md",
+        "source/_posts/机器学习与深度学习/卷积神经网络.md",
+        "source/_posts/机器学习与深度学习/循环神经网络.md",
+        "source/_posts/机器学习与深度学习/支持向量机.md",
+        "source/_posts/测度论/Carathéodory扩张.md",
+        "source/_posts/测度论/单调收敛定理.md",
+        "source/_posts/测度论/完备的测度空间.md",
+        "source/_posts/算法题/hash.md",
+        "source/_posts/算法题/leetcode hot 100.md",
+        "source/_posts/算法题/二分查找.md",
+        "source/_posts/算法题/二叉树.md",
+        "source/_posts/算法题/动态规划.md",
+        "source/_posts/算法题/双指针.md",
+        "source/_posts/算法题/回溯.md",
+        "source/_posts/算法题/图论.md",
+        "source/_posts/算法题/堆.md",
+        "source/_posts/算法题/子串.md",
+        "source/_posts/算法题/普通数组.md",
+        "source/_posts/算法题/滑动窗口.md",
+        "source/_posts/算法题/矩阵.md",
+        "source/_posts/算法题/链表.md"
+      ],
+      "noUrl": [
+        "/Users/wangsenjie/Sites/blog/source/_posts/从零开始——AI应用开发/Hermes-Agent.md",
+        "/Users/wangsenjie/Sites/blog/source/_posts/概率论/第一章 事件与概率.md",
+        "/Users/wangsenjie/Sites/blog/source/_posts/概率论/第三章 随机变量与分布函数.md",
+        "/Users/wangsenjie/Sites/blog/source/_posts/概率论/第二章 条件概率与统计独立性.md",
+        "/Users/wangsenjie/Sites/blog/source/_posts/概率论/第四章 数字特征与特征函数.md"
+      ],
+      "unindexable": [],
+      "unpublished": [
+        "Exercises for Section 1.1 copy",
+        "Exercises for Section 1.1",
+        "Exercises for Section 1.2",
+        "Exercises for Section 1.3",
+        "Exercises for Section 1.4",
+        "Exercises for Section 1.5",
+        "Exercises for Section 1.6",
+        "Exercises for Section 2.1",
+        "Exercises for Section 2.2",
+        "Exercises for Section 2.3",
+        "Exercises for Section 2.4 Permutation groups",
+        "Exercises for Section 2.5",
+        "Exercises for Section 3.1",
+        "Exercises for Section 3.2",
+        "Exercises for Section 3.3",
+        "Exercises for Section 3.4",
+        "Exercises for Section 3.5 Fundamental Isomorphism theorem of group",
+        "组合两张表",
+        "第二高的薪水",
+        "第n高的薪水",
+        "分数排名",
+        "连续出现的数",
+        "超过经理收入的员工",
+        "查找重复的电子邮箱",
+        "从不订购的客户",
+        "部门工资最高的员工",
+        "部门工资前三高的所有员工",
+        "删除重复的电子邮箱",
+        "上升的温度",
+        "报告生成Agent——Word解析",
+        "报告生成Agent开发方案",
+        "集成学习"
+      ]
+    },
+    "findings": {
+      "criticalIntegrityErrors": 0,
+      "declaredFormulaSplitFindings": 1,
+      "sourceBuildMatchesDeployment": true
+    }
+  },
+  "onlineMetrics": {
+    "event": "ask.completed.v1",
+    "retrievalCandidates": [
+      "retrieval.bm25Candidates",
+      "retrieval.denseCandidates",
+      "retrieval.rrfCandidates",
+      "retrieval.rerankerCandidates",
+      "retrieval.finalCandidates"
+    ],
+    "latency": [
+      "latencyMs.retrieval",
+      "latencyMs.generation",
+      "latencyMs.verification",
+      "latencyMs.total"
+    ],
+    "embedding": {
+      "fields": [
+        "retrieval.embeddingRequests",
+        "retrieval.embeddingFailures",
+        "retrieval.embedding429",
+        "retrieval.embedding5xx",
+        "retrieval.embeddingEstimatedCostUsd"
+      ],
+      "build": {
+        "status": "passed",
+        "requestsUsageTokens": {
+          "promptTokens": 267196,
+          "totalTokens": 267196
+        },
+        "durationMs": 20435,
+        "failures": 0,
+        "estimatedCostUsd": null,
+        "costReason": "provider billing rate is not stored in source control"
+      }
+    },
+    "redis": [
+      "memory.hit",
+      "memory.updateConflict",
+      "memory.ttlSecondsRemaining",
+      "memory.idempotencyHit",
+      "memory.degraded"
+    ],
+    "answers": [
+      "answer.published",
+      "answer.refused",
+      "answer.citations",
+      "answer.unansweredSubquestions",
+      "answer.verificationStatus",
+      "answer.verificationReasons"
+    ],
+    "productionBaseline": {
+      "metrics": {
+        "requests": 100,
+        "httpSuccessRate": 1,
+        "rolloutSelectionRate": 1,
+        "generationAttempts": 60,
+        "generationSchemaSuccessRate": 1,
+        "verificationAttempts": 60,
+        "verificationSchemaSuccessRate": 1,
+        "unsafeAnswers": 0,
+        "unsafeAnswerRate": 0,
+        "acceptedWithoutCitation": 0,
+        "acceptedWithoutCitationRate": 0,
+        "answerablePublished": 40,
+        "answerableCoverage": 0.8,
+        "serverLatencyMs": {
+          "p50": 2744.732,
+          "p95": 4227.889
+        },
+        "dualModelLatencyMs": {
+          "requests": 60,
+          "p50": 3042.956,
+          "p95": 4497.878
+        },
+        "categories": {
+          "answerable": {
+            "requests": 50,
+            "passed": 40,
+            "passRate": 0.8
+          },
+          "refusal": {
+            "requests": 25,
+            "passed": 25,
+            "passRate": 1
+          },
+          "near_match": {
+            "requests": 25,
+            "passed": 25,
+            "passRate": 1
+          }
+        },
+        "transportRetriedRequests": 0
+      },
+      "targets": {
+        "httpSuccessRate": 1,
+        "rolloutSelectionRate": 1,
+        "generationSchemaSuccessRate": 0.99,
+        "verificationSchemaSuccessRate": 0.99,
+        "unsafeAnswerRate": 0,
+        "acceptedWithoutCitationRate": 0,
+        "answerableCoverage": 0.5,
+        "dualModelP95Ms": 12000
+      },
+      "checks": {
+        "httpSuccessRate": true,
+        "rolloutSelectionRate": true,
+        "generationSchemaSuccessRate": true,
+        "verificationSchemaSuccessRate": true,
+        "unsafeAnswerRate": true,
+        "acceptedWithoutCitationRate": true,
+        "answerableCoverage": true,
+        "dualModelP95Ms": true
+      },
+      "formalSampleReady": true,
+      "passed": true
+    },
+    "policy": {
+      "schemaVersion": 1,
+      "environmentIsolation": {
+        "development": {
+          "memoryDefault": "disabled",
+          "redisResource": "dedicated-if-enabled",
+          "secretSet": "dedicated-if-enabled"
+        },
+        "preview": {
+          "memoryDefault": "disabled",
+          "redisResource": "dedicated-if-enabled",
+          "secretSet": "dedicated-if-enabled"
+        },
+        "production": {
+          "memoryDefault": "explicit-feature-flag",
+          "redisResource": "managed-production-resource",
+          "secretSet": "production-only"
+        }
+      },
+      "alerts": {
+        "redisConnectionErrors": {
+          "windowMinutes": 5,
+          "threshold": 3,
+          "event": "ask.completed.v1",
+          "field": "memory.degraded"
+        },
+        "redisDegradedRate": {
+          "windowMinutes": 15,
+          "threshold": 0.01,
+          "event": "ask.completed.v1",
+          "field": "memory.degraded"
+        },
+        "redisConflictRate": {
+          "windowMinutes": 15,
+          "threshold": 0.02,
+          "event": "ask.completed.v1",
+          "field": "memory.updateConflict"
+        },
+        "embeddingFailureRate": {
+          "windowMinutes": 15,
+          "threshold": 0.02,
+          "event": "ask.completed.v1",
+          "field": "retrieval.embeddingFailures"
+        },
+        "embeddingRateLimit": {
+          "windowMinutes": 5,
+          "threshold": 1,
+          "event": "ask.completed.v1",
+          "field": "retrieval.embedding429"
+        },
+        "embeddingProvider5xx": {
+          "windowMinutes": 5,
+          "threshold": 1,
+          "event": "ask.completed.v1",
+          "field": "retrieval.embedding5xx"
+        },
+        "serverP95Ms": {
+          "windowMinutes": 15,
+          "threshold": 12000,
+          "event": "ask.completed.v1",
+          "field": "latencyMs.total"
+        },
+        "redisQuotaPercent": {
+          "threshold": 80,
+          "source": "managed-provider-console"
+        },
+        "redisMonthlyCostPercent": {
+          "threshold": 80,
+          "source": "managed-provider-console"
+        },
+        "modelMonthlyCostPercent": {
+          "threshold": 80,
+          "source": "model-provider-console"
+        }
+      },
+      "redisProviderAudit": {
+        "integration": "vercel-marketplace-managed-redis",
+        "connectionSecret": "REDIS_URL",
+        "storage": "durable-storage-required-for-production",
+        "highAvailability": "review-in-provider-console",
+        "backupRetention": "review-in-provider-console",
+        "region": "co-locate-with-vercel-functions",
+        "quotaAndCost": "provider-console-alerts-required",
+        "externalEvidenceOwner": "operator"
+      },
+      "secretRotation": {
+        "current": [
+          "MEMORY_TOKEN_SECRET",
+          "MEMORY_KEY_SECRET"
+        ],
+        "previousCompatibilityWindow": [
+          "MEMORY_TOKEN_SECRET_PREVIOUS",
+          "MEMORY_KEY_SECRET_PREVIOUS"
+        ],
+        "issueWith": "current-only",
+        "verifyWith": "current-then-previous",
+        "retirePreviousAfter": "MEMORY_TTL_SECONDS plus deployment overlap",
+        "invalidAfterRetirement": "HTTP 401; user creates a new anonymous memory session"
+      },
+      "logPrivacy": {
+        "allowed": "bounded operational counters, statuses, durations, error codes and opaque trace IDs",
+        "forbidden": [
+          "API keys",
+          "Redis URLs",
+          "memoryToken",
+          "token digests",
+          "memory content",
+          "user input",
+          "model output",
+          "exception messages",
+          "stack traces"
+        ]
+      }
+    }
+  },
+  "privacy": {
+    "checks": {
+      "askUsesWhitelistMetricBuilder": true,
+      "rawExceptionMessageNotLogged": true,
+      "stackTraceNotLogged": true,
+      "metricBuilderDoesNotCopyQuestion": true,
+      "metricBuilderDoesNotCopyMemoryToken": true,
+      "metricBuilderDoesNotCopyAnswerText": true
+    },
+    "passed": true,
+    "policy": {
+      "allowed": "bounded operational counters, statuses, durations, error codes and opaque trace IDs",
+      "forbidden": [
+        "API keys",
+        "Redis URLs",
+        "memoryToken",
+        "token digests",
+        "memory content",
+        "user input",
+        "model output",
+        "exception messages",
+        "stack traces"
+      ]
+    }
+  },
+  "featureFlags": {
+    "ragChunkV2Enabled": true,
+    "remoteEmbeddingEnabled": true,
+    "semanticRerankerEnabled": true,
+    "memoryV1Enabled": true,
+    "naturalAnswerV2Enabled": true,
+    "semanticVerifierEnabled": true
+  },
+  "rollback": {
+    "single": {
+      "chunkV2ToLegacyArtifacts": true,
+      "remoteEmbeddingToBm25": true,
+      "semanticRerankerToRrf": true,
+      "memoryV1DisabledWithoutDeletion": true,
+      "naturalAnswerToDeterministic": true,
+      "semanticVerifierDisabled": true,
+      "fullRollbackAllFlagsOff": true
+    },
+    "full": {
+      "flags": {
+        "ragChunkV2Enabled": false,
+        "remoteEmbeddingEnabled": false,
+        "semanticRerankerEnabled": false,
+        "memoryV1Enabled": false,
+        "naturalAnswerV2Enabled": false,
+        "semanticVerifierEnabled": false
+      },
+      "command": "RAG_CHUNK_V2_ENABLED=false REMOTE_EMBEDDING_ENABLED=false SEMANTIC_RERANKER_ENABLED=false MEMORY_V1_ENABLED=false NATURAL_ANSWER_V2_ENABLED=false SEMANTIC_VERIFIER_ENABLED=false",
+      "memoryRecordRetained": true
+    },
+    "legacy": {
+      "revision": "7e6d67b",
+      "command": "RAG_CHUNK_V2_ENABLED=false npm run export:ai",
+      "available": {
+        "posts.json": true,
+        "chunks.json": true,
+        "manifest.json": true,
+        "vectors.json": true,
+        "code-blocks.json": true,
+        "learning-graph.json": true
+      },
+      "manifest": {
+        "schemaVersion": 3,
+        "corpusVersion": "3f287d5997e3977eb94c32e326691d9ac4863114166eb3d134a2b17700393f5f",
+        "chunks": 964
+      },
+      "passed": true
+    },
+    "passed": true
+  },
+  "regressions": {
+    "embeddingFailurePaths": true,
+    "redisNormalConflictDegradationAndClear": true,
+    "browserMemoryEndToEnd": true,
+    "groundedAnswerProduction": true
+  },
+  "production": {
+    "available": false,
+    "passed": false,
+    "report": "evals/reports/phase11-production.json"
+  },
+  "knownFindings": [
+    {
+      "code": "FORMULA_COMMENT_BOUNDARY",
+      "severity": "low",
+      "chunkIds": [
+        "chunk_4773c224f13944644af175f8"
+      ],
+      "action": "declared in ingestion report; citations remain source-backed"
+    }
+  ],
+  "acceptance": {
+    "checks": {
+      "ingestionReportComplete": true,
+      "criticalIngestionIntegrity": true,
+      "vectorCoverage": true,
+      "onlineMetricContractComplete": true,
+      "privacyLogging": true,
+      "featureFlagsComplete": true,
+      "providerControlsDocumented": true,
+      "secretRotationContract": true,
+      "rollbackRehearsal": true,
+      "regressionEvidence": true,
+      "phase10ProductionBaseline": true
+    },
+    "implementationPassed": true,
+    "productionValidationRequired": true,
+    "releaseReady": false,
+    "status": "local_passed_production_pending",
+    "passed": true
+  }
+}

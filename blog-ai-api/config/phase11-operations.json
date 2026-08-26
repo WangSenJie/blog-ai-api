@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "environmentIsolation": {
+    "development": {
+      "memoryDefault": "disabled",
+      "redisResource": "dedicated-if-enabled",
+      "secretSet": "dedicated-if-enabled"
+    },
+    "preview": {
+      "memoryDefault": "disabled",
+      "redisResource": "dedicated-if-enabled",
+      "secretSet": "dedicated-if-enabled"
+    },
+    "production": {
+      "memoryDefault": "explicit-feature-flag",
+      "redisResource": "managed-production-resource",
+      "secretSet": "production-only"
+    }
+  },
+  "alerts": {
+    "redisConnectionErrors": {
+      "windowMinutes": 5,
+      "threshold": 3,
+      "event": "ask.completed.v1",
+      "field": "memory.degraded"
+    },
+    "redisDegradedRate": {
+      "windowMinutes": 15,
+      "threshold": 0.01,
+      "event": "ask.completed.v1",
+      "field": "memory.degraded"
+    },
+    "redisConflictRate": {
+      "windowMinutes": 15,
+      "threshold": 0.02,
+      "event": "ask.completed.v1",
+      "field": "memory.updateConflict"
+    },
+    "embeddingFailureRate": {
+      "windowMinutes": 15,
+      "threshold": 0.02,
+      "event": "ask.completed.v1",
+      "field": "retrieval.embeddingFailures"
+    },
+    "embeddingRateLimit": {
+      "windowMinutes": 5,
+      "threshold": 1,
+      "event": "ask.completed.v1",
+      "field": "retrieval.embedding429"
+    },
+    "embeddingProvider5xx": {
+      "windowMinutes": 5,
+      "threshold": 1,
+      "event": "ask.completed.v1",
+      "field": "retrieval.embedding5xx"
+    },
+    "serverP95Ms": {
+      "windowMinutes": 15,
+      "threshold": 12000,
+      "event": "ask.completed.v1",
+      "field": "latencyMs.total"
+    },
+    "redisQuotaPercent": {
+      "threshold": 80,
+      "source": "managed-provider-console"
+    },
+    "redisMonthlyCostPercent": {
+      "threshold": 80,
+      "source": "managed-provider-console"
+    },
+    "modelMonthlyCostPercent": {
+      "threshold": 80,
+      "source": "model-provider-console"
+    }
+  },
+  "redisProviderAudit": {
+    "integration": "vercel-marketplace-managed-redis",
+    "connectionSecret": "REDIS_URL",
+    "storage": "durable-storage-required-for-production",
+    "highAvailability": "review-in-provider-console",
+    "backupRetention": "review-in-provider-console",
+    "region": "co-locate-with-vercel-functions",
+    "quotaAndCost": "provider-console-alerts-required",
+    "externalEvidenceOwner": "operator"
+  },
+  "secretRotation": {
+    "current": [
+      "MEMORY_TOKEN_SECRET",
+      "MEMORY_KEY_SECRET"
+    ],
+    "previousCompatibilityWindow": [
+      "MEMORY_TOKEN_SECRET_PREVIOUS",
+      "MEMORY_KEY_SECRET_PREVIOUS"
+    ],
+    "issueWith": "current-only",
+    "verifyWith": "current-then-previous",
+    "retirePreviousAfter": "MEMORY_TTL_SECONDS plus deployment overlap",
+    "invalidAfterRetirement": "HTTP 401; user creates a new anonymous memory session"
+  },
+  "logPrivacy": {
+    "allowed": "bounded operational counters, statuses, durations, error codes and opaque trace IDs",
+    "forbidden": [
+      "API keys",
+      "Redis URLs",
+      "memoryToken",
+      "token digests",
+      "memory content",
+      "user input",
+      "model output",
+      "exception messages",
+      "stack traces"
+    ]
+  }
+}

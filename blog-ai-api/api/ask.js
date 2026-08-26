@@ -14,6 +14,12 @@ const {
   declaredContentLength,
   sendJson
 } = require('../lib/http');
+const {
+  buildAskMetrics,
+  emitOperationalEvent,
+  safeErrorCode
+} = require('../lib/observability');
+const { publicReleaseFlags } = require('../lib/release-flags');
 const { createRequestTrace } = require('../lib/trace');
 const {
   MemoryServiceError,
@@ -58,6 +64,7 @@ function trustedConversation(context, question) {
 function createAskHandler(options) {
   const settings = options || {};
   const executeAgent = settings.runAgent || runAgent;
+  const logger = settings.logger || console;
 
   return async (req, res) => {
   const trace = createRequestTrace();
@@ -121,9 +128,19 @@ function createAskHandler(options) {
     if (memoryContext.replayed && memoryContext.responseSnapshot) {
       const replay = clonePayload(memoryContext.responseSnapshot);
       replay.meta = buildMeta(trace, Object.assign({}, replay.meta, {
-        replayed: true
+        replayed: true,
+        releaseFlags: publicReleaseFlags()
       }));
       replay.memory = publicMemoryMeta(memoryContext);
+      if (process.env.NODE_ENV !== 'test') {
+        emitOperationalEvent(
+          logger,
+          'ask.completed.v1',
+          buildAskMetrics(replay, {
+            releaseFlags: replay.meta.releaseFlags
+          })
+        );
+      }
       sendJson(res, 200, replay);
       return;
     }
@@ -145,14 +162,11 @@ function createAskHandler(options) {
       trace,
       onModelError(error) {
         const modelConfig = getModelConfig();
-        console.error('LLM fallback triggered', {
+        logger.error('model.fallback.v1', {
           traceId: trace.traceId,
-          code: error && error.code || 'MODEL_REQUEST_FAILED',
-          message: error && error.message ? error.message : 'Unknown LLM error',
-          apiBaseUrl: modelConfig.apiBaseUrl,
-          apiPath: modelConfig.apiPath,
+          code: safeErrorCode(error, 'MODEL_REQUEST_FAILED'),
           model: modelConfig.model,
-          hasApiKey: Boolean(modelConfig.apiKey)
+          providerConfigured: Boolean(modelConfig.apiBaseUrl && modelConfig.apiKey)
         });
       }
     });
@@ -163,6 +177,7 @@ function createAskHandler(options) {
         : null,
       memoryStatus: memoryContext.status
     }));
+    payload.meta.releaseFlags = publicReleaseFlags();
     payload.memory = publicMemoryMeta(memoryContext);
 
     if (feedbackCollectionConfigured()) {
@@ -191,42 +206,13 @@ function createAskHandler(options) {
     payload.memory = publicMemoryMeta(memoryResult);
 
     if (process.env.NODE_ENV !== 'test') {
-      console.info('ask.js completed', {
-        traceId: trace.traceId,
-        sessionPresent: Boolean(input.sessionId),
-        route: payload.meta.route,
-        mode: payload.meta.mode,
-        citations: payload.citations.length,
-        candidates: payload.meta.retrieval.candidates,
-        retrievalAttempts: payload.meta.retrievalAttempts,
-        modelAttempted: payload.meta.model.attempted,
-        modelAnswered: payload.meta.model.answered,
-        generationSchemaValid: payload.meta.model.generationSchemaValid,
-        generationErrorCode: payload.meta.model.generationErrorCode,
-        generationFinishReason: payload.meta.model.generationFinishReason,
-        generationContentChars: payload.meta.model.generationContentChars,
-        generationReasoningContentChars:
-          payload.meta.model.generationReasoningContentChars,
-        verificationAttempted: payload.meta.model.verificationAttempted,
-        verificationSchemaValid: payload.meta.model.verificationSchemaValid,
-        verificationErrorCode: payload.meta.model.verificationErrorCode,
-        verificationFinishReason: payload.meta.model.verificationFinishReason,
-        verificationContentChars: payload.meta.model.verificationContentChars,
-        verificationReasoningContentChars:
-          payload.meta.model.verificationReasoningContentChars,
-        citationVerification: payload.meta.citationVerification &&
-          payload.meta.citationVerification.status,
-        claims: (payload.claims || []).length,
-        unansweredSubquestions: (payload.unansweredSubquestions || []).length,
-        subquestionCoverage: payload.meta.citationVerification &&
-          payload.meta.citationVerification.subquestionCoverage,
-        phase10Enabled: payload.meta.phase10 &&
-          payload.meta.phase10.groundedSynthesisEnabled,
-        feedbackEnabled: Boolean(payload.feedback),
-        memoryStatus: payload.memory.status,
-        memoryWriteStatus: payload.memory.writeStatus,
-        timings: payload.meta.timings
-      });
+      emitOperationalEvent(
+        logger,
+        'ask.completed.v1',
+        buildAskMetrics(payload, {
+          releaseFlags: payload.meta.releaseFlags
+        })
+      );
     }
 
     sendJson(res, 200, payload);
@@ -241,10 +227,9 @@ function createAskHandler(options) {
       return;
     }
 
-    console.error('ask.js failed', {
+    logger.error('ask.failed.v1', {
       traceId: trace.traceId,
-      message: error && error.message ? error.message : 'Unknown error',
-      stack: error && error.stack ? error.stack : null
+      code: safeErrorCode(error, 'ASK_INTERNAL_ERROR')
     });
     sendJson(res, 500, {
       error: 'Internal server error',

@@ -115,8 +115,9 @@ apiBaseUrl: 'https://your-blog-ai-api.vercel.app'
   - Optional; defaults to `true`. Set to `false` only when the OpenAI-compatible provider does not support `response_format: { "type": "json_object" }`.
 - `LLM_THINKING_ENABLED`
   - Optional structured-generation thinking override. DeepSeek endpoints/model IDs default to `false` so reasoning tokens cannot consume the bounded JSON output budget; other providers omit the non-standard `thinking` field unless explicitly configured.
-- `GROUNDED_SYNTHESIS_ENABLED` and `SEMANTIC_VERIFICATION_ENABLED`
-  - Phase 10 feature flags. Both must be `true` before a natural claim can be published. If either path fails, the request falls back to the verified deterministic answer.
+- `NATURAL_ANSWER_V2_ENABLED` and `SEMANTIC_VERIFIER_ENABLED`
+  - Canonical Phase 11 release flags for the Phase 10 natural answer and independent verifier. Both must be `true` before a natural claim can be published. If either path fails, the request falls back to the verified deterministic answer.
+  - `GROUNDED_SYNTHESIS_ENABLED` and `SEMANTIC_VERIFICATION_ENABLED` remain compatible aliases so an existing deployment keeps its behavior while the environment variables are migrated.
 - `GROUNDED_SYNTHESIS_ROLLOUT_PERCENT`
   - Optional stable rollout percentage from 0–100. Bucketing uses the opaque memory digest when available and never uses IP or browser fingerprinting.
 - `VERIFIER_API_BASE_URL`, `VERIFIER_API_KEY`, `VERIFIER_MODEL`, and `VERIFIER_API_PATH`
@@ -137,6 +138,14 @@ apiBaseUrl: 'https://your-blog-ai-api.vercel.app'
   - Optional bounded managed embedding build/query controls.
 - `RAG_RETRIEVAL_MODE`
   - Set to `bm25` to disable the Dense path without changing corpus artifacts.
+- `RAG_CHUNK_V2_ENABLED`
+  - Canonical artifact switch. It defaults to `true`; setting it to `false` makes `npm run export:ai` restore the frozen legacy corpus. Explicit `RAG_CHUNK_SCHEMA=chunk-v2|legacy-v3` remains supported and takes precedence.
+- `REMOTE_EMBEDDING_ENABLED`
+  - Defaults to `true`. Set it to `false` to prevent a remote query-embedding request and use BM25. `RAG_RETRIEVAL_MODE=bm25` remains a compatible emergency switch.
+- `SEMANTIC_RERANKER_ENABLED`
+  - Defaults to `true`. Set it to `false` to retain BM25 + Dense + RRF but bypass semantic/lexical reranking.
+- `EMBEDDING_INPUT_COST_PER_MILLION_TOKENS`
+  - Optional provider billing rate used only to estimate the query-embedding cost in the operational metric. If absent, the cost field is `null`; authoritative cost and quota alerts remain in the provider console.
 - `FEEDBACK_RECEIPT_SECRET`
   - Optional secret of at least 32 characters. Together with the webhook settings, it enables short-lived signed feedback receipts.
 - `FEEDBACK_WEBHOOK_URL`
@@ -155,6 +164,8 @@ apiBaseUrl: 'https://your-blog-ai-api.vercel.app'
   - Server-only standard Redis connection string injected by the Vercel Marketplace Redis integration. It contains credentials and must be stored as a secret. Provision separate databases for Development, Preview, and Production instead of sharing key space.
 - `MEMORY_TOKEN_SECRET` and `MEMORY_KEY_SECRET`
   - Independent server-only secrets, each containing at least 32 bytes of high-entropy material. The first signs browser bearer tokens; the second derives opaque Redis key digests. Do not reuse either secret for another feature.
+- `MEMORY_TOKEN_SECRET_PREVIOUS` and `MEMORY_KEY_SECRET_PREVIOUS`
+  - Optional rotation window. New tokens use only the current pair; verification tries the current pair and then the previous pair. Either previous value may be omitted when only one secret was rotated. Remove both previous values after `MEMORY_TTL_SECONDS` plus the deployment-overlap window; old tokens then receive 401 and must create a new anonymous session.
 - `MEMORY_TTL_SECONDS`
   - Optional rolling memory TTL; defaults to 2,592,000 seconds (30 days).
 - `MEMORY_REQUEST_TTL_SECONDS`
@@ -361,6 +372,14 @@ Only the most recent assistant turn contributes article-reference and standalone
 
 The same trace ID is returned in the `X-Trace-Id` response header. Internal errors return a trace ID without exposing implementation details to the browser.
 
+## Phase 11 operational metrics and alerts
+
+Each completed request emits one `ask.completed.v1` structured event. It contains only bounded counters, booleans, status/error codes, timings, release flags, index version and an opaque trace ID. The event includes BM25, Dense, RRF, Reranker and final candidate counts; retrieval, generation, verification and total latency; Embedding request/failure/429/5xx/cost counters; Redis hit/conflict/TTL/idempotency/degradation fields; and answer publish/refusal/citation/unanswered/verification fields.
+
+The whitelist builder deliberately does not copy the question, answer text, model output, Memory content, `memoryToken`, token digest, Redis URL, API keys, provider error message or stack trace. Provider/model fallbacks emit a stable error code rather than raw exception content.
+
+Alert thresholds and the external-provider review contract live in `config/phase11-operations.json`. Create Vercel log alerts from its `ask.completed.v1` fields, and configure Redis/model quota and cost alerts in their provider consoles. Production requires durable managed Redis storage; confirm its backup retention, HA option and region in the provider console. Development and Preview keep Memory disabled unless each scope has a dedicated Redis resource and secret set.
+
 ## Controlled Agent workflow
 
 The phase 3 server path is an explicit JavaScript state machine:
@@ -454,7 +473,7 @@ The phase 7 corpus contains 71 published/indexed posts, 451 section parents, 1,9
 
 `content` is the only citation source. `retrievalText` adds deterministic title, heading, tag, category, structure-type, and content context for BM25/vector retrieval, but it is marked non-citeable in the manifest. New posts default to `rag.chunk_profile: generic-article`; Front Matter overrides exact document rules, which override directory rules, which override the migration fallback.
 
-The legacy v3 corpus is frozen at Git revision `7e6d67b`. To rehearse or perform the scoped artifact rollback, run `RAG_CHUNK_SCHEMA=legacy-v3 npm run export:ai`, then synchronize the API corpus. Normal exports use `RAG_CHUNK_SCHEMA=chunk-v2`; `RAG_RETRIEVAL_MODE=bm25` independently disables managed Dense retrieval.
+The legacy v3 corpus is frozen at Git revision `7e6d67b`. To rehearse or perform the scoped artifact rollback, run `RAG_CHUNK_V2_ENABLED=false npm run export:ai`, then synchronize the API corpus. `RAG_CHUNK_SCHEMA=legacy-v3` remains an equivalent explicit override. Normal exports use Chunk v2; `REMOTE_EMBEDDING_ENABLED=false` independently disables managed Dense retrieval.
 
 Managed vectors are built only by the explicit root command `npm run build:embeddings`. The default `qwen3.7-text-embedding` provider batches at most 20 inputs per request (`text-embedding-v4` overrides remain capped at 10), applies bounded concurrency, timeout and retry controls, and publishes only a complete index whose Chunk IDs, content hashes and embedding fingerprint match. A failed build leaves the current vector index and manifest unchanged. Static browser artifacts deliberately omit `vectors.json` and all provider credentials.
 
@@ -469,6 +488,10 @@ npm run eval:phase4
 npm run eval:phase5
 npm run eval:phase6
 npm run eval:phase7
+npm run eval:phase8
+npm run eval:phase9
+npm run eval:phase10
+npm run eval:phase11
 ```
 
 To intentionally refresh the committed baseline report after reviewing a retrieval change:
@@ -492,6 +515,27 @@ Phase 4 uses `evals/phase4-dataset.json`. Its calibration split selects the conf
 Phase 6 writes `evals/reports/phase6-ingestion.json`. It compares the frozen v3 hashes and metrics with the structured corpus, rebuilds every chunk from Markdown, validates source locations and code boundaries, and requires the current Hybrid, Agent, phase 4, and phase 5 regression reports to match the serving corpus.
 
 Phase 7 writes `evals/reports/phase7.json`. It validates Chunk v2 hierarchy and Token budgets, full vector/fingerprint coverage, Hybrid quality thresholds, BM25 failure paths, the browser no-vector boundary and rollback switches. `implementationPassed` is a local/CI gate; `releaseReady` becomes true only after a real managed 1024-dimensional index is active, so the report cannot confuse the local semantic-hash proxy with production Model Studio validation.
+
+Phase 11 writes `evals/reports/phase11.json`. It audits ingestion distributions and anomalies, vector changes and Chunk ID churn, the structured online metric/privacy contract, all six release flags, provider alert policy, secret rotation and actual single/full rollback drills. It consumes the accepted Phase 7–10 reports as regression evidence. After deployment, run the bounded production audit through the local proxy when required:
+
+```bash
+npm run eval:phase11:production -- --execute --proxy http://127.0.0.1:7890
+```
+
+That audit sends three distinct asks plus one idempotent replay, creates and explicitly clears a temporary Memory session, and writes `evals/reports/phase11-production.json` without retaining the token, question or answer text.
+
+### Phase 11 rollback matrix
+
+| Failure | Switch | Safe behavior |
+| --- | --- | --- |
+| Chunk v2 artifact | `RAG_CHUNK_V2_ENABLED=false` | Restore the frozen v3 posts, chunks, vectors, Manifest and browser artifacts. |
+| Managed Embedding | `REMOTE_EMBEDDING_ENABLED=false` | Skip remote calls and serve BM25. |
+| Semantic Reranker | `SEMANTIC_RERANKER_ENABLED=false` | Keep Hybrid RRF ordering without semantic reranking. |
+| Managed Redis | `MEMORY_V1_ENABLED=false` | Continue with request/browser compatibility history; stored Redis records are not deleted. |
+| Natural answer | `NATURAL_ANSWER_V2_ENABLED=false` | Publish only the verified deterministic citation answer. |
+| Semantic verifier | `SEMANTIC_VERIFIER_ENABLED=false` | Natural-answer publication is disabled and deterministic verification remains. |
+
+For a full rollback, set all six switches to `false`. Never delete Redis data as part of a release rollback; deletion remains a separate, explicit user action.
 
 The evaluation runner reports article-level Recall@5/20, HitRate@5, MRR@20, nDCG@20, no-answer accuracy, per-category results, and failed cases. Results are deduplicated by normalized published post URL.
 

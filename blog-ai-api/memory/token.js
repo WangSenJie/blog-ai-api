@@ -144,9 +144,35 @@ function verifyMemoryToken(token, options) {
   };
 }
 
+function verifyMemoryTokenWithRotation(token, options) {
+  const settings = options || {};
+  try {
+    return Object.assign(verifyMemoryToken(token, settings), {
+      secretVersion: 'current'
+    });
+  } catch (currentError) {
+    const hasPrevious = Boolean(
+      String(settings.previousTokenSecret || '').trim() ||
+      String(settings.previousKeySecret || '').trim()
+    );
+    if (!hasPrevious) throw currentError;
+    try {
+      return Object.assign(verifyMemoryToken(token, {
+        tokenSecret: settings.previousTokenSecret || settings.tokenSecret,
+        keySecret: settings.previousKeySecret || settings.keySecret
+      }), {
+        secretVersion: 'previous'
+      });
+    } catch (previousError) {
+      throw currentError;
+    }
+  }
+}
+
 module.exports = {
   MEMORY_TOKEN_PREFIX: TOKEN_PREFIX,
   MemoryTokenError,
   issueMemoryToken,
-  verifyMemoryToken
+  verifyMemoryToken,
+  verifyMemoryTokenWithRotation
 };

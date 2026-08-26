@@ -19,8 +19,9 @@ const {
 const {
   MemoryTokenError,
   issueMemoryToken,
-  verifyMemoryToken
+  verifyMemoryTokenWithRotation
 } = require('./token');
+const { getReleaseFlags } = require('../lib/release-flags');
 
 const DEFAULT_SERVICE_BUDGET_MS = 1500;
 const MAX_CREATE_ATTEMPTS = 3;
@@ -38,10 +39,6 @@ class MemoryServiceError extends Error {
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
-}
-
-function enabledValue(value) {
-  return /^(1|true|yes|on)$/i.test(String(value || '').trim());
 }
 
 function positiveInteger(value, fallback, limits) {
@@ -116,6 +113,8 @@ class MemoryService {
     this.store = settings.store || new DisabledMemoryStore();
     this.tokenSecret = settings.tokenSecret;
     this.keySecret = settings.keySecret;
+    this.previousTokenSecret = settings.previousTokenSecret;
+    this.previousKeySecret = settings.previousKeySecret;
     this.memoryTtlSeconds = positiveInteger(
       settings.memoryTtlSeconds,
       DEFAULT_MEMORY_TTL_SECONDS
@@ -135,7 +134,9 @@ class MemoryService {
   tokenOptions() {
     return {
       tokenSecret: this.tokenSecret,
-      keySecret: this.keySecret
+      keySecret: this.keySecret,
+      previousTokenSecret: this.previousTokenSecret,
+      previousKeySecret: this.previousKeySecret
     };
   }
 
@@ -145,7 +146,7 @@ class MemoryService {
 
   verify(token) {
     try {
-      return verifyMemoryToken(token, this.tokenOptions());
+      return verifyMemoryTokenWithRotation(token, this.tokenOptions());
     } catch (error) {
       throw mapTokenError(error);
     }
@@ -538,11 +539,7 @@ function createMemoryService(options) {
 
 function createMemoryServiceFromEnvironment(environment) {
   const source = environment || process.env;
-  const enabled = enabledValue(
-    source.MEMORY_V1_ENABLED === undefined
-      ? source.MEMORY_ENABLED
-      : source.MEMORY_V1_ENABLED
-  );
+  const enabled = getReleaseFlags(source).memoryV1Enabled;
   if (!enabled) {
     return new MemoryService({
       enabled: false,
@@ -556,6 +553,18 @@ function createMemoryServiceFromEnvironment(environment) {
       keySecret: source.MEMORY_KEY_SECRET,
       randomBytes: () => Buffer.alloc(32)
     });
+    if (
+      String(source.MEMORY_TOKEN_SECRET_PREVIOUS || '').trim() ||
+      String(source.MEMORY_KEY_SECRET_PREVIOUS || '').trim()
+    ) {
+      issueMemoryToken({
+        tokenSecret: source.MEMORY_TOKEN_SECRET_PREVIOUS ||
+          source.MEMORY_TOKEN_SECRET,
+        keySecret: source.MEMORY_KEY_SECRET_PREVIOUS ||
+          source.MEMORY_KEY_SECRET,
+        randomBytes: () => Buffer.alloc(32, 1)
+      });
+    }
     const store = createRedisMemoryStore({
       url: source.REDIS_URL,
       timeoutMs: positiveInteger(source.MEMORY_STORE_TIMEOUT_MS, 800)
@@ -565,6 +574,8 @@ function createMemoryServiceFromEnvironment(environment) {
       store,
       tokenSecret: source.MEMORY_TOKEN_SECRET,
       keySecret: source.MEMORY_KEY_SECRET,
+      previousTokenSecret: source.MEMORY_TOKEN_SECRET_PREVIOUS,
+      previousKeySecret: source.MEMORY_KEY_SECRET_PREVIOUS,
       memoryTtlSeconds: positiveInteger(
         source.MEMORY_TTL_SECONDS,
         DEFAULT_MEMORY_TTL_SECONDS,
