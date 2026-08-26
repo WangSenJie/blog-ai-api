@@ -393,6 +393,7 @@ test('runAgent uses two bounded model calls and publishes only verifier-approved
     async generateV2(input) {
       generationCalls += 1;
       assert.equal(input.subquestions[0].id, 'sq_1');
+      assert.deepEqual(input.evidence.map(item => item.chunk.id), ['tower#0']);
       return {
         draftAnswer: '不发布的草稿',
         claims: [{
@@ -423,6 +424,45 @@ test('runAgent uses two bounded model calls and publishes only verifier-approved
   assert.match(payload.answer, /分别编码用户与物品/);
   assert.doesNotMatch(payload.answer, /不发布的草稿/);
   assert.deepEqual(payload.unansweredSubquestions, []);
+});
+
+test('zero published claims are not reported as an accepted model answer', async () => {
+  const corpus = makeAgentCorpus();
+  const wrongQuote = corpus.chunks.find(chunk => chunk.id === 'usercf#0').content;
+  const payload = await runAgent(makeInput({
+    question: '双塔模型的结构是什么？',
+    messages: [{ role: 'user', content: '双塔模型的结构是什么？' }]
+  }), {
+    corpus,
+    groundedSynthesisEnabled: true,
+    semanticVerificationEnabled: true,
+    canUseModel: () => true,
+    canUseVerifier: () => true,
+    async generateV2(input) {
+      assert.deepEqual(input.evidence.map(item => item.chunk.id), ['tower#0']);
+      return {
+        claims: [{
+          id: 'draft_claim_1',
+          subquestionId: 'sq_1',
+          text: 'UserCF 根据共同喜欢的物品计算用户相似度。',
+          citationIds: ['usercf#0'],
+          quote: wrongQuote
+        }],
+        unansweredSubquestions: []
+      };
+    },
+    async verify() {
+      return semanticVerification();
+    }
+  });
+
+  assert.equal(payload.meta.model.generationSchemaValid, true);
+  assert.equal(payload.meta.model.verificationSchemaValid, true);
+  assert.equal(payload.meta.model.accepted, false);
+  assert.equal(payload.meta.model.rejectionReason, 'unknown_or_unselected_citation');
+  assert.equal(payload.meta.llmFallback, true);
+  assert.deepEqual(payload.claims, []);
+  assert.deepEqual(payload.citations, []);
 });
 
 test('an unavailable or invalid semantic verifier falls back to deterministic evidence', async () => {

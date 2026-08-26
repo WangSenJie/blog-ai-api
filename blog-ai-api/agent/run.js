@@ -394,6 +394,15 @@ async function maybeVerifyExplicitMemory(state, dependencies, trace) {
   }
 }
 
+function assignedGroundedEvidence(state) {
+  const assignedIds = new Set((state.evidenceAssignments || [])
+    .map(item => String(item && item.chunkId || '').trim())
+    .filter(Boolean));
+  return (state.selectedChunks || []).filter(candidate => (
+    assignedIds.has(String(candidate && candidate.chunk && candidate.chunk.id || ''))
+  ));
+}
+
 async function maybeGenerateGroundedV2(state, dependencies, trace) {
   initializePhase10ModelMeta(state);
   if (isSpecialistRoute(state.route)) {
@@ -402,6 +411,11 @@ async function maybeGenerateGroundedV2(state, dependencies, trace) {
   }
   if (state.evidenceStatus !== 'sufficient' || !state.selectedChunks.length) {
     await maybeVerifyExplicitMemory(state, dependencies, trace);
+    return;
+  }
+  const groundedEvidence = assignedGroundedEvidence(state);
+  if (!groundedEvidence.length) {
+    state.model.skipped = 'subquestion_evidence_unassigned';
     return;
   }
   if (!state.phase10.semanticVerificationEnabled || !dependencies.canUseVerifier()) {
@@ -451,7 +465,7 @@ async function maybeGenerateGroundedV2(state, dependencies, trace) {
         trustedMemory: state.trustedMemory,
         subquestions: state.subquestionPlan,
         evidenceAssignments: state.evidenceAssignments,
-        evidence: state.selectedChunks
+        evidence: groundedEvidence
       }, options),
       state.budget.limits.generationTimeoutMs,
       trace,
@@ -485,7 +499,7 @@ async function maybeGenerateGroundedV2(state, dependencies, trace) {
         question: state.question,
         subquestions: state.subquestionPlan,
         claims: generated.claims,
-        evidence: state.selectedChunks
+        evidence: groundedEvidence
       }, options),
       state.budget.limits.verificationTimeoutMs,
       trace,
@@ -686,7 +700,12 @@ function finalizeAnswer(state, trace) {
   ) {
     result = applyGroundedV2Response(state);
     if (result.valid) {
-      state.model.accepted = true;
+      state.model.accepted = result.claims.length > 0;
+      if (!state.model.accepted) {
+        state.llmFallback = true;
+        state.model.rejectionReason = result.verification.reasons[0] ||
+          'no_verified_direct_claim';
+      }
     } else {
       state.llmFallback = true;
       state.model.accepted = false;
