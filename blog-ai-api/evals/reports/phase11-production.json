@@ -1,0 +1,204 @@
+{
+  "phase": 11,
+  "kind": "production-release-audit",
+  "generatedAt": "2026-08-26T09:05:10.355Z",
+  "endpointHost": "blog-ai-api.vercel.app",
+  "memorySession": {
+    "createStatus": 201,
+    "ttlPresent": true,
+    "clearStatus": 204
+  },
+  "results": [
+    {
+      "id": "answer",
+      "status": 200,
+      "traceId": "trace_4e41409b-3465-420b-9e2c-682e9dc344a9",
+      "releaseFlags": {
+        "ragChunkV2": true,
+        "remoteEmbedding": true,
+        "semanticReranker": true,
+        "memoryV1": true,
+        "naturalAnswerV2": true,
+        "semanticVerifier": true
+      },
+      "retrievalStrategy": "hybrid_rrf_rerank",
+      "stageMetrics": {
+        "bm25Candidates": 298,
+        "denseCandidates": 20,
+        "rrfCandidates": 25,
+        "rerankerCandidates": 3,
+        "finalCandidates": 3,
+        "embeddingRequests": 1,
+        "embeddingFailures": 0,
+        "embedding429": 0,
+        "embedding5xx": 0,
+        "contractPresent": true
+      },
+      "claims": 1,
+      "citations": 1,
+      "verificationStatus": "verified",
+      "memory": {
+        "status": "disabled",
+        "writeStatus": "not_attempted",
+        "replayed": false,
+        "ttlPresent": false
+      },
+      "latencyMs": {
+        "retrieval": 1282.801,
+        "generation": 1477.83,
+        "verification": 1301.616,
+        "total": 5069.036,
+        "client": 5820
+      }
+    },
+    {
+      "id": "refusal",
+      "status": 200,
+      "traceId": "trace_840ac79d-375c-4340-aadf-02d4393b3eef",
+      "releaseFlags": {
+        "ragChunkV2": true,
+        "remoteEmbedding": true,
+        "semanticReranker": true,
+        "memoryV1": true,
+        "naturalAnswerV2": true,
+        "semanticVerifier": true
+      },
+      "retrievalStrategy": "hybrid_rrf_rerank",
+      "stageMetrics": {
+        "bm25Candidates": 449,
+        "denseCandidates": 40,
+        "rrfCandidates": 77,
+        "rerankerCandidates": 40,
+        "finalCandidates": 0,
+        "embeddingRequests": 2,
+        "embeddingFailures": 0,
+        "embedding429": 0,
+        "embedding5xx": 0,
+        "contractPresent": true
+      },
+      "claims": 0,
+      "citations": 0,
+      "verificationStatus": "not_required",
+      "memory": {
+        "status": "disabled",
+        "writeStatus": "not_attempted",
+        "replayed": false,
+        "ttlPresent": false
+      },
+      "latencyMs": {
+        "retrieval": 997.156,
+        "generation": null,
+        "verification": 0.139,
+        "total": 1011.934,
+        "client": 1712
+      }
+    },
+    {
+      "id": "memory_write",
+      "status": 200,
+      "traceId": "trace_b6212557-feab-4592-a90c-4b29619d5aaf",
+      "releaseFlags": {
+        "ragChunkV2": true,
+        "remoteEmbedding": true,
+        "semanticReranker": true,
+        "memoryV1": true,
+        "naturalAnswerV2": true,
+        "semanticVerifier": true
+      },
+      "retrievalStrategy": "hybrid_rrf_rerank",
+      "stageMetrics": {
+        "bm25Candidates": 257,
+        "denseCandidates": 20,
+        "rrfCandidates": 24,
+        "rerankerCandidates": 3,
+        "finalCandidates": 3,
+        "embeddingRequests": 1,
+        "embeddingFailures": 0,
+        "embedding429": 0,
+        "embedding5xx": 0,
+        "contractPresent": true
+      },
+      "claims": 6,
+      "citations": 3,
+      "verificationStatus": "verified",
+      "memory": {
+        "status": "active",
+        "writeStatus": "committed",
+        "replayed": false,
+        "ttlPresent": true
+      },
+      "latencyMs": {
+        "retrieval": 421.969,
+        "generation": 2379.268,
+        "verification": 1.045,
+        "total": 3542.669,
+        "client": 4778
+      }
+    },
+    {
+      "id": "memory_replay",
+      "status": 200,
+      "traceId": "trace_0e7d9f6c-36d9-419c-8d2e-fb9b86539812",
+      "releaseFlags": {
+        "ragChunkV2": true,
+        "remoteEmbedding": true,
+        "semanticReranker": true,
+        "memoryV1": true,
+        "naturalAnswerV2": true,
+        "semanticVerifier": true
+      },
+      "retrievalStrategy": "hybrid_rrf_rerank",
+      "stageMetrics": {
+        "bm25Candidates": 257,
+        "denseCandidates": 20,
+        "rrfCandidates": 24,
+        "rerankerCandidates": 3,
+        "finalCandidates": 3,
+        "embeddingRequests": 1,
+        "embeddingFailures": 0,
+        "embedding429": 0,
+        "embedding5xx": 0,
+        "contractPresent": true
+      },
+      "claims": 6,
+      "citations": 3,
+      "verificationStatus": "verified",
+      "memory": {
+        "status": "active",
+        "writeStatus": "duplicate",
+        "replayed": true,
+        "ttlPresent": true
+      },
+      "latencyMs": {
+        "retrieval": null,
+        "generation": null,
+        "verification": null,
+        "total": 288.992,
+        "client": 950
+      }
+    }
+  ],
+  "metrics": {
+    "requests": 4,
+    "serverP95Ms": 5069.036,
+    "clientP95Ms": 5820,
+    "embeddingRequests": 5,
+    "embeddingFailures": 0
+  },
+  "acceptance": {
+    "checks": {
+      "httpSuccess": true,
+      "featureFlagContract": true,
+      "productionFlagsEnabled": true,
+      "candidateMetricContract": true,
+      "hybridObserved": true,
+      "answerPublishedWithCitation": true,
+      "refusalSafe": true,
+      "memoryCommitted": true,
+      "idempotencyReplay": true,
+      "explicitClear": true,
+      "latencyP95": true
+    },
+    "passed": true
+  }
+}
