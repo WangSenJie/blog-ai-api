@@ -240,15 +240,16 @@ function buildGroundedV2Prompt(input) {
   }
   const evidenceText = evidence.map((item, index) => {
     const chunk = item && item.chunk || {};
-    const allowed = assignments.get(chunk.id) ||
-      (input.subquestions || []).map(question => question.id);
-    return `${evidenceBlock(item, index)}\n可用于子问题: ${allowed.join(', ')}`;
+    const allowed = assignments.get(chunk.id) || [];
+    return `${evidenceBlock(item, index)}\n可用于子问题: ${
+      allowed.length ? allowed.join(', ') : '无（不得引用）'
+    }`;
   }).join('\n\n');
 
   return [
     '你必须只返回一个合法 JSON 对象，不能使用 Markdown、代码围栏或额外解释。',
     'JSON 格式严格为：{"claims":[{"id":"claim_1","subquestionId":"sq_1","text":"基于证据的自然语言结论","citationIds":["chunkId"],"quote":"同一 chunk 正文中的连续原文"}],"unansweredSubquestions":["sq_2"]}。',
-    '每条 claim 必须且只能关联一个给出的 subquestionId 和一个给出的 chunkId。quote 必须逐字来自该 chunk；text 可以自然改写，但不得增加证据中没有的因果、数字、比较、程度或建议。',
+    '每条 claim 必须且只能关联一个给出的 subquestionId 和一个明确标记为可用于该子问题的 chunkId；标记为“无（不得引用）”的证据只能帮助判断资料不足，不能生成 claim。quote 必须逐字来自该 chunk；text 可以自然改写，但不得增加证据中没有的因果、数字、比较、程度或建议。',
     '同一 claim 不能回答多个问题，不要重复结论或重复使用同一句 quote。最多 3 条 claim；证据不能直接回答时，把对应 ID 放入 unansweredSubquestions。',
     '不要输出 URL、文章标题、工具调用、citation 元数据或其他字段。',
     `用户原问题: ${input.question || ''}`,

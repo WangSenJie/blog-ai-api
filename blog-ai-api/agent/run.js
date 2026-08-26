@@ -626,7 +626,8 @@ function applyGroundedV2Response(state) {
     state.modelResponse,
     state.semanticVerification,
     state.selectedChunks,
-    state.subquestionPlan
+    state.subquestionPlan,
+    state.evidenceAssignments
   );
   if (!verified.valid) return verified;
   state.answer = verified.answer;

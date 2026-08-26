@@ -22,12 +22,13 @@ const AGENT_LIMITS = Object.freeze({
 // These values are selected by the Phase 4 offline calibration runner. They
 // are retrieval/evidence gates, not probabilities or user-facing confidence.
 const EVIDENCE_CALIBRATION = Object.freeze({
-  version: 'phase4-v1',
+  version: 'phase10-topic-anchor-v1',
   vectorEvidenceFloor: 0.3,
   siteQaMinCoverage: 0.3,
   pageQaMinCoverage: 0.35,
   compoundMinCoverage: 0.3,
-  compareTargetMinCoverage: 0.45
+  compareTargetMinCoverage: 0.45,
+  topicAnchorMinCoverage: 0.5
 });
 
 function createEvidenceCalibration(overrides) {
@@ -37,7 +38,8 @@ function createEvidenceCalibration(overrides) {
     'siteQaMinCoverage',
     'pageQaMinCoverage',
     'compoundMinCoverage',
-    'compareTargetMinCoverage'
+    'compareTargetMinCoverage',
+    'topicAnchorMinCoverage'
   ]) {
     const value = Number(settings[key]);
     if (!Number.isFinite(value) || value < 0 || value > 1) {

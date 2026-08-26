@@ -199,7 +199,10 @@ test('messages API resolves a trusted multi-turn reference and exposes Agent met
   assert.match(payload.meta.standaloneQuery, /双塔模型/);
   assert.ok(payload.meta.retrievalAttempts <= 2);
   assert.equal(payload.meta.evidenceGrading, 'calibrated_structural_v1');
-  assert.equal(payload.meta.evidenceCalibration.version, 'phase4-v1');
+  assert.equal(
+    payload.meta.evidenceCalibration.version,
+    'phase10-topic-anchor-v1'
+  );
   assert.ok(payload.meta.toolCalls.some(call => call.name === 'search_blog'));
   assert.ok(payload.citations.some(citation => citation.title === '双塔模型'));
   assert.equal(Object.prototype.hasOwnProperty.call(payload, 'messages'), false);

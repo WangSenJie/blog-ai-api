@@ -9,12 +9,17 @@ const {
 } = require('../agent/run');
 const {
   AGENT_LIMITS,
+  createEvidenceCalibration,
   getAgentLimits,
   phase10Features
 } = require('../agent/config');
 const {
-  candidateDirectness
+  candidateDirectness,
+  candidateTopicCoverage,
+  gradeEvidence,
+  topicAnchorQuery
 } = require('../agent/nodes/grade-evidence');
+const { ROUTES } = require('../agent/nodes/route');
 const {
   verifyGroundedV2Response
 } = require('../agent/nodes/verify-citations');
@@ -271,6 +276,105 @@ test('topic relevance and direct answer evidence are scored separately', () => {
     candidateDirectness(candidate(corpus, 'tower#0'), '双塔模型的结构是什么？'),
     1
   );
+  assert.equal(topicAnchorQuery('随机森林如何降低过拟合风险？'), '随机森林');
+  assert.ok(
+    candidateTopicCoverage(
+      candidate(corpus, 'tower#0'),
+      '双塔模型的基本结构是什么？'
+    ) >= 0.5
+  );
+  assert.equal(
+    candidateTopicCoverage(
+      candidate(corpus, 'tower#0'),
+      '随机森林如何降低过拟合风险？'
+    ),
+    0
+  );
+});
+
+test('semantic similarity cannot make an unrelated topic sufficient evidence', () => {
+  const question = '随机森林如何降低过拟合风险？';
+  const misleading = {
+    chunk: {
+      id: 'alexnet-dropout',
+      postTitle: 'AlexNet',
+      postUrl: 'https://wangsenjie.github.io/alexnet/',
+      sectionTitle: 'Dropout',
+      tags: ['卷积神经网络'],
+      categories: ['机器学习与深度学习'],
+      content: 'Dropout 通过随机丢弃神经元输出减少过拟合风险。'
+    },
+    rank: 1,
+    score: 10,
+    matchedQueries: [question],
+    ranking: { vectorScore: 0.55 }
+  };
+  const grade = gradeEvidence({
+    route: ROUTES.SITE_QA,
+    standaloneQuery: question,
+    subqueries: [question],
+    retrievedChunks: [misleading],
+    currentQuestionRefs: [],
+    resolvedArticleRefs: [],
+    history: { pageRef: null, articleRefs: [] },
+    specialistResults: {},
+    phase10: { groundedSynthesisEnabled: true },
+    evidenceCalibration: createEvidenceCalibration()
+  });
+
+  assert.equal(grade.status, 'insufficient');
+  assert.equal(grade.features.directness, 1);
+  assert.equal(grade.features.topicCoverage, 0);
+});
+
+test('grounded verification rejects a citation not assigned to its subquestion', () => {
+  const corpus = makeAgentCorpus();
+  const quote = corpus.chunks.find(chunk => chunk.id === 'tower#0').content;
+  const result = verifyGroundedV2Response({
+    claims: [{
+      id: 'draft_claim_1',
+      subquestionId: 'sq_1',
+      text: '双塔模型分别编码用户与物品。',
+      citationIds: ['tower#0'],
+      quote
+    }]
+  }, semanticVerification(), [candidate(corpus, 'tower#0')], [{
+    id: 'sq_1',
+    question: '双塔模型的结构是什么？',
+    required: true
+  }], [{
+    subquestionId: 'sq_1',
+    chunkId: 'itemcf#0'
+  }]);
+
+  assert.equal(result.valid, true);
+  assert.deepEqual(result.claims, []);
+  assert.deepEqual(result.citations, []);
+  assert.ok(result.verification.reasons.includes('citation_not_assigned'));
+});
+
+test('grounded prompt marks unassigned evidence as unavailable for claims', () => {
+  const corpus = makeAgentCorpus();
+  const evidence = [
+    candidate(corpus, 'tower#0'),
+    candidate(corpus, 'usercf#0')
+  ];
+  const prompt = buildGroundedV2Prompt({
+    question: '双塔模型的结构是什么？',
+    subquestions: [{
+      id: 'sq_1',
+      question: '双塔模型的结构是什么？',
+      required: true
+    }],
+    evidence,
+    evidenceAssignments: [{
+      subquestionId: 'sq_1',
+      chunkId: 'tower#0'
+    }]
+  });
+
+  assert.match(prompt, /可用于子问题: sq_1/);
+  assert.match(prompt, /可用于子问题: 无（不得引用）/);
 });
 
 test('runAgent uses two bounded model calls and publishes only verifier-approved claims', async () => {

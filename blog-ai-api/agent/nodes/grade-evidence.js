@@ -56,6 +56,30 @@ function meaningfulTerms(query) {
     .filter(term => !/^(文章|相关|内容|博客|继续|展开)$/.test(term));
 }
 
+function topicAnchorQuery(query) {
+  const normalized = normalizeText(query)
+    .replace(/[《》：:，,。！？?!]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!normalized) return '';
+
+  const leadingDefinition = normalized.match(
+    /^(?:什么是|何为|介绍一下|解释一下|请介绍|请解释)\s*(.+)$/
+  );
+  if (leadingDefinition && leadingDefinition[1]) {
+    return leadingDefinition[1].replace(/^的|的$/g, '').trim();
+  }
+
+  const marker = normalized.match(
+    /为什么|为何|如何|怎么|怎样|是什么|有何|有什么|有哪些|区别是什么|作用是什么/
+  );
+  if (marker && marker.index > 0) {
+    return normalized.slice(0, marker.index).replace(/的$/g, '').trim();
+  }
+
+  return normalized;
+}
+
 function knownArticleTitles(state) {
   const references = []
     .concat(state.currentQuestionRefs || [])
@@ -115,6 +139,34 @@ function candidateDirectness(candidate, query) {
   ].join(' ');
   const matched = rules.filter(rule => rule.evidence.test(text)).length;
   return matched / rules.length;
+}
+
+function candidateTopicCoverage(candidate, query, calibration) {
+  if (!candidate || !candidate.chunk) return 0;
+  const anchor = topicAnchorQuery(query);
+  if (!anchor) return 0;
+  return candidateCoverage(candidate, anchor, calibration, {
+    allowSemantic: false
+  });
+}
+
+function groundedCandidate(candidates, query, calibration) {
+  const policy = Object.assign({}, EVIDENCE_CALIBRATION, calibration || {});
+  return matchingQueryCandidates(candidates, query)
+    .filter(candidate => (
+      candidateTopicCoverage(candidate, query, policy) >=
+        policy.topicAnchorMinCoverage &&
+      candidateDirectness(candidate, query) >= 0.5
+    ))
+    .slice()
+    .sort((left, right) => (
+      candidateTopicCoverage(right, query, policy) -
+        candidateTopicCoverage(left, query, policy) ||
+      candidateDirectness(right, query) - candidateDirectness(left, query) ||
+      candidateCoverage(right, query, policy) -
+        candidateCoverage(left, query, policy) ||
+      (right.score || 0) - (left.score || 0)
+    ))[0] || null;
 }
 
 function bestCoverage(candidates, query, calibration, options) {
@@ -426,12 +478,24 @@ function gradeEvidence(state) {
       coverage >= calibration.compoundMinCoverage
     ));
     const directnessBySubquery = state.subqueries.map(query => {
-      const candidate = bestQueryCandidate(candidates, query, calibration);
+      const candidate = state.phase10.groundedSynthesisEnabled
+        ? groundedCandidate(candidates, query, calibration)
+        : bestQueryCandidate(candidates, query, calibration);
       return candidateDirectness(candidate, query);
     });
+    const topicCoverageBySubquery = state.subqueries.map(query => (
+      candidateTopicCoverage(
+        groundedCandidate(candidates, query, calibration),
+        query,
+        calibration
+      )
+    ));
     const directEnough = directnessBySubquery.every(score => score >= 0.5);
+    const topicEnough = topicCoverageBySubquery.every(score => (
+      score >= calibration.topicAnchorMinCoverage
+    ));
     const sufficient = allSubqueriesCovered && (
-      !state.phase10.groundedSynthesisEnabled || directEnough
+      !state.phase10.groundedSynthesisEnabled || directEnough && topicEnough
     );
     return gradeResult(
       sufficient ? 'sufficient' : 'insufficient',
@@ -445,6 +509,8 @@ function gradeEvidence(state) {
       {
         coverageBySubquery,
         directnessBySubquery,
+        topicCoverageBySubquery,
+        topicAnchorMinCoverage: calibration.topicAnchorMinCoverage,
         coverageQuery,
         semanticAllowed: coverageOptions.allowSemantic,
         calibrationVersion: calibration.version
@@ -464,10 +530,21 @@ function gradeEvidence(state) {
     calibration
   ) || candidates[0];
   const directness = candidateDirectness(directnessCandidate, coverageQuery);
+  const phase10Candidate = groundedCandidate(
+    candidates,
+    state.subqueries[0] || coverageQuery,
+    calibration
+  );
+  const topicCoverage = candidateTopicCoverage(
+    phase10Candidate,
+    state.subqueries[0] || coverageQuery,
+    calibration
+  );
   const coverageEnough = coverage >= calibration.siteQaMinCoverage;
   const directEnough = directness >= 0.5;
+  const topicEnough = topicCoverage >= calibration.topicAnchorMinCoverage;
   const sufficient = coverageEnough && (
-    !state.phase10.groundedSynthesisEnabled || directEnough
+    !state.phase10.groundedSynthesisEnabled || directEnough && topicEnough
   );
   return gradeResult(
     sufficient ? 'sufficient' : 'insufficient',
@@ -481,6 +558,9 @@ function gradeEvidence(state) {
     {
       coverage,
       directness,
+      topicCoverage,
+      topicAnchor: topicAnchorQuery(state.subqueries[0] || coverageQuery),
+      topicAnchorMinCoverage: calibration.topicAnchorMinCoverage,
       coverageQuery,
       semanticAllowed: coverageOptions.allowSemantic,
       candidates: candidates.length,
@@ -538,18 +618,32 @@ function selectContext(state) {
     const assignedChunks = new Set();
     state.evidenceAssignments = [];
     for (const subquestion of state.subquestionPlan) {
-      const ranked = matchingQueryCandidates(
+      const eligible = matchingQueryCandidates(
         state.retrievedChunks,
         subquestion.question
-      ).slice().sort((left, right) => (
+      ).filter(candidate => (
+        candidateTopicCoverage(
+          candidate,
+          subquestion.question,
+          state.evidenceCalibration
+        ) >= state.evidenceCalibration.topicAnchorMinCoverage &&
+        candidateDirectness(candidate, subquestion.question) >= 0.5
+      )).slice().sort((left, right) => (
+        candidateTopicCoverage(
+          right,
+          subquestion.question,
+          state.evidenceCalibration
+        ) - candidateTopicCoverage(
+          left,
+          subquestion.question,
+          state.evidenceCalibration
+        ) ||
         candidateDirectness(right, subquestion.question) -
           candidateDirectness(left, subquestion.question) ||
-        candidateCoverage(right, subquestion.question, state.evidenceCalibration) -
-          candidateCoverage(left, subquestion.question, state.evidenceCalibration) ||
         (right.score || 0) - (left.score || 0)
       ));
-      const candidate = ranked.find(item => !assignedChunks.has(item.chunk.id)) ||
-        ranked[0] || null;
+      const candidate = eligible.find(item => !assignedChunks.has(item.chunk.id)) ||
+        eligible[0] || null;
       if (candidate) {
         assignedChunks.add(candidate.chunk.id);
         const added = add(candidate);
@@ -591,6 +685,7 @@ module.exports = {
   bestTargetCandidate,
   candidateCoverage,
   candidateDirectness,
+  candidateTopicCoverage,
   gradeResult,
   gradeEvidence,
   isGenericArticleDetailQuery,
@@ -598,5 +693,6 @@ module.exports = {
   meaningfulTerms,
   matchingQueryCandidates,
   removeKnownArticleTitles,
-  selectContext
+  selectContext,
+  topicAnchorQuery
 };

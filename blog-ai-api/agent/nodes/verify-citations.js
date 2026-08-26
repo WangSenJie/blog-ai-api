@@ -267,7 +267,13 @@ function formatGroundedAnswer(claims, subquestions, citationNumbers) {
   }).join('\n');
 }
 
-function verifyGroundedV2Response(rawResponse, semanticVerification, selectedChunks, subquestions) {
+function verifyGroundedV2Response(
+  rawResponse,
+  semanticVerification,
+  selectedChunks,
+  subquestions,
+  evidenceAssignments
+) {
   const rawClaims = rawResponse && rawResponse.claims;
   const plan = Array.isArray(subquestions) ? subquestions : [];
   if (!Array.isArray(rawClaims) || rawClaims.length > MAX_CLAIMS || !plan.length) {
@@ -289,6 +295,19 @@ function verifyGroundedV2Response(rawResponse, semanticVerification, selectedChu
   }
 
   const questionIds = new Set(plan.map(item => item.id));
+  const assignmentList = Array.isArray(evidenceAssignments)
+    ? evidenceAssignments
+    : null;
+  const assignedCitations = new Map();
+  for (const assignment of assignmentList || []) {
+    const subquestionId = String(assignment && assignment.subquestionId || '').trim();
+    const chunkId = String(assignment && assignment.chunkId || '').trim();
+    if (!subquestionId || !chunkId) continue;
+    if (!assignedCitations.has(subquestionId)) {
+      assignedCitations.set(subquestionId, new Set());
+    }
+    assignedCitations.get(subquestionId).add(chunkId);
+  }
   const candidatesById = sourceCandidates(selectedChunks);
   const verdicts = new Map((semanticVerification.claims || []).map(item => [
     String(item && item.id || '').trim(),
@@ -323,6 +342,13 @@ function verifyGroundedV2Response(rawResponse, semanticVerification, selectedChu
     const candidate = candidatesById.get(claim.citationIds[0]);
     if (!candidate) {
       rejectedReasons.push('unknown_or_unselected_citation');
+      return;
+    }
+    if (
+      assignmentList &&
+      !assignedCitations.get(claim.subquestionId)?.has(claim.citationIds[0])
+    ) {
+      rejectedReasons.push('citation_not_assigned');
       return;
     }
     const normalizedQuote = quoteComparable(claim.quote);
