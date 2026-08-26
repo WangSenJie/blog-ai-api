@@ -18,7 +18,11 @@ jobs:
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            blog-ai-api/package-lock.json
       - run: npm ci
+      - run: npm ci --prefix blog-ai-api
       - run: npm --prefix blog-ai-api test
       - run: npm --prefix blog-ai-api run eval:hybrid
       - run: node blog-ai-api/evals/agent-run.js --output blog-ai-api/evals/reports/agent-phase6.json
@@ -26,3 +30,5 @@ jobs:
       - run: node blog-ai-api/evals/phase5-run.js --output blog-ai-api/evals/reports/phase5-after-phase6.json
       - run: npm --prefix blog-ai-api run eval:phase6
       - run: npm --prefix blog-ai-api run eval:phase7
+      - run: npm --prefix blog-ai-api run eval:phase8
+      - run: npm --prefix blog-ai-api run eval:phase9
