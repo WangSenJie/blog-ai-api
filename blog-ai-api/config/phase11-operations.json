@@ -4,17 +4,20 @@
     "development": {
       "memoryDefault": "disabled",
       "redisResource": "dedicated-if-enabled",
-      "secretSet": "dedicated-if-enabled"
+      "secretSet": "dedicated-if-enabled",
+      "activationGuard": "MEMORY_ENVIRONMENT_SCOPE=development"
     },
     "preview": {
       "memoryDefault": "disabled",
       "redisResource": "dedicated-if-enabled",
-      "secretSet": "dedicated-if-enabled"
+      "secretSet": "dedicated-if-enabled",
+      "activationGuard": "MEMORY_ENVIRONMENT_SCOPE=preview"
     },
     "production": {
       "memoryDefault": "explicit-feature-flag",
       "redisResource": "managed-production-resource",
-      "secretSet": "production-only"
+      "secretSet": "production-only",
+      "activationGuard": "VERCEL_ENV=production"
     }
   },
   "alerts": {

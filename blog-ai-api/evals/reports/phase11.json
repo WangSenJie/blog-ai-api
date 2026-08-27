@@ -1,8 +1,8 @@
 {
   "phase": 11,
-  "generatedAt": "2026-08-26T09:05:17.640Z",
+  "generatedAt": "2026-08-27T03:20:06.978Z",
   "strategy": "release-governance-observability-rollback-v1",
-  "corpusVersion": "5255a48fc93de09cd70f16957f35b4e74abc713903a9389acb617244424c60ad",
+  "corpusVersion": "130c532f3dd45f5e5f27ddfda60384764826b14bfb0093dd6549f04a7f544504",
   "ingestion": {
     "profiles": {
       "generic-article": 56,
@@ -14,37 +14,37 @@
     },
     "blockTypes": {
       "code": 395,
-      "formula": 459,
+      "formula": 456,
       "image": 46,
-      "list": 348,
-      "paragraph": 1378,
-      "quote": 154,
+      "list": 318,
+      "paragraph": 1320,
+      "quote": 151,
       "table": 1
     },
     "chunkTypes": {
       "code": 397,
-      "formula": 92,
-      "formula-context": 356,
+      "formula": 90,
+      "formula-context": 355,
       "image": 10,
-      "list": 404,
+      "list": 374,
       "metadata": 4,
       "proof": 15,
       "quote": 99,
       "table": 1,
-      "text": 521,
+      "text": 482,
       "theorem": 5
     },
     "tokenCount": {
       "min": 1,
-      "p50": 67,
-      "p95": 433,
+      "p50": 69,
+      "p95": 434,
       "max": 1211
     },
     "anomalies": {
       "empty": [],
       "duplicate": {
-        "duplicatedChunks": 55,
-        "groups": 32,
+        "duplicatedChunks": 51,
+        "groups": 29,
         "samples": [
           [
             "chunk_1ee9e5da1e3ecaec10bd2ce8",
@@ -130,19 +130,23 @@
             "chunk_9a5c83caec6aed4621b20f98"
           ],
           [
-            "chunk_6d93b19b905501937a8bf7a7",
-            "chunk_e801c3cc5dcf154a2591ab26"
+            "chunk_1b3ca5e98d78fed2881ca9ad",
+            "chunk_6406af212ff0cba44040c90c",
+            "chunk_782dcb4963fb4fafc3f14081",
+            "chunk_6c3582b2d8dc3570b9f034f6",
+            "chunk_6854827292d8bbdaa0c5ed8a",
+            "chunk_36c45f7808e3274b2e391729"
           ],
           [
-            "chunk_c2d89b7376c3055952b67714",
-            "chunk_8028caf514406c350db31236",
-            "chunk_357f3795513850688371cb2d"
+            "chunk_83bced1191a1aed6847be1b1",
+            "chunk_b780de354ce38a550e6361f8",
+            "chunk_f3d3a5e739a6b8d881ad7a14"
           ]
         ]
       },
       "tooShort": {
         "thresholdTokens": 8,
-        "count": 122,
+        "count": 117,
         "samples": [
           {
             "id": "chunk_a0d7c8a1e0c84e8dd11e11fa",
@@ -255,16 +259,6 @@
             "type": "text"
           },
           {
-            "id": "chunk_b603e89a2efdf61f63c5c295",
-            "tokens": 7,
-            "type": "text"
-          },
-          {
-            "id": "chunk_0150d30e709639c5f3d9651b",
-            "tokens": 7,
-            "type": "text"
-          },
-          {
             "id": "chunk_79f073558668b626f7bac40d",
             "tokens": 6,
             "type": "list"
@@ -291,6 +285,16 @@
           },
           {
             "id": "chunk_0f1a8ffb7f104dd80cfd3ee2",
+            "tokens": 3,
+            "type": "text"
+          },
+          {
+            "id": "chunk_697d50ed874ed2d6ccf16a38",
+            "tokens": 7,
+            "type": "text"
+          },
+          {
+            "id": "chunk_85e58a5dd8bca0d55052cbc6",
             "tokens": 3,
             "type": "text"
           }
@@ -339,15 +343,13 @@
       ],
       "codeContamination": [],
       "tablesMissingHeader": [],
-      "formulaAbnormalSplit": [
-        "chunk_4773c224f13944644af175f8"
-      ]
+      "formulaAbnormalSplit": []
     },
     "vectors": {
-      "added": 0,
-      "updated": 1904,
-      "reused": 0,
-      "deleted": 0,
+      "added": 3,
+      "updated": 11,
+      "reused": 1818,
+      "deleted": 6,
       "failed": 0,
       "coverage": 1,
       "model": "qwen3.7-text-embedding",
@@ -355,11 +357,11 @@
     },
     "chunkIdChurn": {
       "deployment": {
-        "baseline": 1904,
-        "candidate": 1904,
+        "baseline": 1832,
+        "candidate": 1832,
         "added": 0,
         "deleted": 0,
-        "retained": 1904,
+        "retained": 1832,
         "updated": 0,
         "chunkIdChurnRatio": 0,
         "contentUpdateRatio": 0,
@@ -370,11 +372,11 @@
         }
       },
       "reproducibleSourceBuild": {
-        "baseline": 1904,
-        "candidate": 1904,
+        "baseline": 1832,
+        "candidate": 1832,
         "added": 0,
         "deleted": 0,
-        "retained": 1904,
+        "retained": 1832,
         "updated": 0,
         "chunkIdChurnRatio": 0,
         "contentUpdateRatio": 0,
@@ -489,7 +491,7 @@
     },
     "findings": {
       "criticalIntegrityErrors": 0,
-      "declaredFormulaSplitFindings": 1,
+      "declaredFormulaSplitFindings": 0,
       "sourceBuildMatchesDeployment": true
     }
   },
@@ -519,10 +521,10 @@
       "build": {
         "status": "passed",
         "requestsUsageTokens": {
-          "promptTokens": 267196,
-          "totalTokens": 267196
+          "promptTokens": 1379,
+          "totalTokens": 1379
         },
-        "durationMs": 20435,
+        "durationMs": 953,
         "failures": 0,
         "estimatedCostUsd": null,
         "costReason": "provider billing rate is not stored in source control"
@@ -615,17 +617,20 @@
         "development": {
           "memoryDefault": "disabled",
           "redisResource": "dedicated-if-enabled",
-          "secretSet": "dedicated-if-enabled"
+          "secretSet": "dedicated-if-enabled",
+          "activationGuard": "MEMORY_ENVIRONMENT_SCOPE=development"
         },
         "preview": {
           "memoryDefault": "disabled",
           "redisResource": "dedicated-if-enabled",
-          "secretSet": "dedicated-if-enabled"
+          "secretSet": "dedicated-if-enabled",
+          "activationGuard": "MEMORY_ENVIRONMENT_SCOPE=preview"
         },
         "production": {
           "memoryDefault": "explicit-feature-flag",
           "redisResource": "managed-production-resource",
-          "secretSet": "production-only"
+          "secretSet": "production-only",
+          "activationGuard": "VERCEL_ENV=production"
         }
       },
       "alerts": {
@@ -829,19 +834,11 @@
       "explicitClear": true,
       "latencyP95": true
     },
-    "passed": true,
+    "indexVersionCurrent": false,
+    "passed": false,
     "report": "evals/reports/phase11-production.json"
   },
-  "knownFindings": [
-    {
-      "code": "FORMULA_COMMENT_BOUNDARY",
-      "severity": "low",
-      "chunkIds": [
-        "chunk_4773c224f13944644af175f8"
-      ],
-      "action": "declared in ingestion report; citations remain source-backed"
-    }
-  ],
+  "knownFindings": [],
   "acceptance": {
     "checks": {
       "ingestionReportComplete": true,
@@ -851,15 +848,16 @@
       "privacyLogging": true,
       "featureFlagsComplete": true,
       "providerControlsDocumented": true,
+      "environmentIsolationGuard": true,
       "secretRotationContract": true,
       "rollbackRehearsal": true,
       "regressionEvidence": true,
       "phase10ProductionBaseline": true
     },
     "implementationPassed": true,
-    "productionValidationRequired": false,
-    "releaseReady": true,
-    "status": "passed",
+    "productionValidationRequired": true,
+    "releaseReady": false,
+    "status": "local_passed_production_pending",
     "passed": true
   }
 }

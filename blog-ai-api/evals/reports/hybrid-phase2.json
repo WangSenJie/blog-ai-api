@@ -1,6 +1,6 @@
 {
   "phase": 2,
-  "generatedAt": "2026-08-25T06:09:23.466Z",
+  "generatedAt": "2026-08-27T03:14:59.552Z",
   "strategy": "bm25_vector_rrf_reranker",
   "acceptance": {
     "semanticImproved": true,
@@ -13,16 +13,16 @@
         "recallAt5": 0.8,
         "recallAt20": 0.9,
         "hitRateAt5": 0.8,
-        "mrrAt20": 0.545,
-        "ndcgAt20": 0.6288,
+        "mrrAt20": 0.475,
+        "ndcgAt20": 0.5762,
         "cases": 10
       },
       "hybrid": {
         "recallAt5": 0.8,
         "recallAt20": 0.8,
         "hitRateAt5": 0.8,
-        "mrrAt20": 0.6333,
-        "ndcgAt20": 0.6762,
+        "mrrAt20": 0.6533,
+        "ndcgAt20": 0.6887,
         "cases": 10
       }
     },
@@ -46,7 +46,7 @@
     }
   },
   "baseline": {
-    "generatedAt": "2026-08-25T06:09:22.724Z",
+    "generatedAt": "2026-08-27T03:14:58.568Z",
     "dataset": {
       "version": 1,
       "cases": 20,
@@ -56,10 +56,10 @@
       "posts": 71,
       "postsWithUrl": 71,
       "indexedPublishedPosts": 71,
-      "chunks": 1904,
-      "publishedChunks": 1904,
+      "chunks": 1832,
+      "publishedChunks": 1832,
       "chunksWithoutUrl": 0,
-      "sha256": "497531e17f3994eadf3935631363076e556b378bd32675a9908e4a8c81003ef2"
+      "sha256": "4c5b29faa00b71ce25e3f3c4d214a2fe9f17efa2de1dda66b090d98094c2fca1"
     },
     "retriever": {
       "name": "bm25-custom",
@@ -74,11 +74,11 @@
       "recallAt5": 0.9,
       "recallAt20": 0.95,
       "hitRateAt5": 0.9,
-      "mrrAt20": 0.7725,
-      "ndcgAt20": 0.8144,
+      "mrrAt20": 0.7375,
+      "ndcgAt20": 0.7881,
       "noAnswerCases": 0,
       "noAnswerAccuracy": 0,
-      "averageWarmRetrievalMs": 20.277,
+      "averageWarmRetrievalMs": 27.764,
       "failedCases": 2
     },
     "byCategory": {
@@ -95,8 +95,8 @@
         "recallAt5": 0.8,
         "recallAt20": 0.9,
         "hitRateAt5": 0.8,
-        "mrrAt20": 0.545,
-        "ndcgAt20": 0.6288
+        "mrrAt20": 0.475,
+        "ndcgAt20": 0.5762
       }
     },
     "failedCases": [
@@ -111,27 +111,27 @@
           {
             "title": "ALS 排序算法",
             "url": "https://wangsenjie.github.io/2026/03/30/als/",
-            "score": 33.747
+            "score": 33.695
           },
           {
             "title": "SVD 排序算法",
             "url": "https://wangsenjie.github.io/2026/03/30/svd/",
-            "score": 33.193
+            "score": 33.145
           },
           {
             "title": "Transformer 架构 —— Attention Is All You Need",
             "url": "https://wangsenjie.github.io/2025/10/16/transformer-architecture/",
-            "score": 22.784
+            "score": 22.725
           },
           {
             "title": "循环神经网络",
             "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
-            "score": 18.018
+            "score": 17.997
           },
           {
             "title": "Deep Retrieval",
             "url": "https://wangsenjie.github.io/2026/04/01/deep-retrieval/",
-            "score": 15.018
+            "score": 15.019
           }
         ]
       },
@@ -146,27 +146,27 @@
           {
             "title": "SVD 排序算法",
             "url": "https://wangsenjie.github.io/2026/03/30/svd/",
-            "score": 18.215
+            "score": 19.2
           },
           {
             "title": "ItemCF",
             "url": "https://wangsenjie.github.io/2026/03/29/itemcf/",
-            "score": 13.661
-          },
-          {
-            "title": "ALS 排序算法",
-            "url": "https://wangsenjie.github.io/2026/03/30/als/",
-            "score": 13.323
+            "score": 14.094
           },
           {
             "title": "FRONTEND-BASIC",
             "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-            "score": 12.827
+            "score": 12.88
           },
           {
-            "title": "LightFM",
-            "url": "https://wangsenjie.github.io/2026/03/30/lightfm/",
-            "score": 12.625
+            "title": "LeetCode Hot100 —— 动态规划",
+            "url": "https://wangsenjie.github.io/2026/04/22/post-20260422-47fa06/",
+            "score": 12.441
+          },
+          {
+            "title": "BPR",
+            "url": "https://wangsenjie.github.io/2026/03/30/bpr/",
+            "score": 12.036
           }
         ]
       }
@@ -183,8 +183,8 @@
         "relevantRanks": [
           1
         ],
-        "candidateChunks": 185,
-        "durationMs": 23.195,
+        "candidateChunks": 179,
+        "durationMs": 27.95,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -196,27 +196,27 @@
           {
             "title": "双塔模型",
             "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/",
-            "score": 57.69
-          },
-          {
-            "title": "BPR",
-            "url": "https://wangsenjie.github.io/2026/03/30/bpr/",
-            "score": 23.201
+            "score": 57.682
           },
           {
             "title": "Deep Retrieval",
             "url": "https://wangsenjie.github.io/2026/04/01/deep-retrieval/",
-            "score": 19.598
+            "score": 19.623
           },
           {
             "title": "LangGraph 基础",
             "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
-            "score": 5.852
+            "score": 5.848
           },
           {
             "title": "LangChain 基础",
             "url": "https://wangsenjie.github.io/2026/07/03/langchain-basic/",
-            "score": 5.817
+            "score": 5.816
+          },
+          {
+            "title": "MLP",
+            "url": "https://wangsenjie.github.io/2026/04/30/mlp/",
+            "score": 5.141
           }
         ]
       },
@@ -232,7 +232,7 @@
           1
         ],
         "candidateChunks": 29,
-        "durationMs": 22.944,
+        "durationMs": 29.039,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -244,27 +244,27 @@
           {
             "title": "Transformer 架构 —— Attention Is All You Need",
             "url": "https://wangsenjie.github.io/2025/10/16/transformer-architecture/",
-            "score": 44.069
+            "score": 43.971
           },
           {
             "title": "LightFM",
             "url": "https://wangsenjie.github.io/2026/03/30/lightfm/",
-            "score": 4.51
+            "score": 4.486
           },
           {
             "title": "ResNet",
             "url": "https://wangsenjie.github.io/2026/04/29/resnet/",
-            "score": 4.266
+            "score": 4.245
           },
           {
             "title": "ALS 排序算法",
             "url": "https://wangsenjie.github.io/2026/03/30/als/",
-            "score": 4.132
+            "score": 4.112
           },
           {
             "title": "循环神经网络",
             "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
-            "score": 3.343
+            "score": 3.332
           }
         ]
       },
@@ -280,7 +280,7 @@
           1
         ],
         "candidateChunks": 172,
-        "durationMs": 20.566,
+        "durationMs": 26.791,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -292,27 +292,27 @@
           {
             "title": "Picard 存在唯一性定理",
             "url": "https://wangsenjie.github.io/2025/09/03/3-1picard/",
-            "score": 85.078
+            "score": 84.827
           },
           {
             "title": "解对初值与参数的连续性与可微性",
             "url": "https://wangsenjie.github.io/2025/09/03/3-4/",
-            "score": 26.034
+            "score": 25.98
           },
           {
             "title": "不动点定理与解的存在性",
             "url": "https://wangsenjie.github.io/2025/09/03/3-2/",
-            "score": 22.639
+            "score": 22.555
           },
           {
             "title": "解的延拓",
             "url": "https://wangsenjie.github.io/2025/09/03/3-3/",
-            "score": 21.09
+            "score": 20.991
           },
           {
             "title": "高阶线性微分方程的一般理论",
             "url": "https://wangsenjie.github.io/2025/09/03/4-2/",
-            "score": 20.561
+            "score": 20.466
           }
         ]
       },
@@ -327,8 +327,8 @@
         "relevantRanks": [
           1
         ],
-        "candidateChunks": 411,
-        "durationMs": 20.169,
+        "candidateChunks": 407,
+        "durationMs": 27.559,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -340,27 +340,27 @@
           {
             "title": "LeetCode Hot100 —— 动态规划",
             "url": "https://wangsenjie.github.io/2026/04/22/post-20260422-47fa06/",
-            "score": 48.968
+            "score": 49.01
           },
           {
             "title": "LeetCode Hot100 题解",
             "url": "https://wangsenjie.github.io/2026/04/23/leetcode-hot-100/",
-            "score": 27.166
+            "score": 27.188
           },
           {
             "title": "LeetCode Hot100 —— 普通数组",
             "url": "https://wangsenjie.github.io/2026/04/17/leetcode-hot100-6/",
-            "score": 20.667
+            "score": 20.72
           },
           {
             "title": "LeetCode Hot100 —— 链表",
             "url": "https://wangsenjie.github.io/2026/03/23/leetcode-hot100-9/",
-            "score": 13.719
+            "score": 13.628
           },
           {
             "title": "LeetCode Hot100 —— 回溯",
             "url": "https://wangsenjie.github.io/2026/03/28/leetcode-hot100-11/",
-            "score": 12.851
+            "score": 12.776
           }
         ]
       },
@@ -375,8 +375,8 @@
         "relevantRanks": [
           1
         ],
-        "candidateChunks": 163,
-        "durationMs": 16.724,
+        "candidateChunks": 159,
+        "durationMs": 23.068,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -388,27 +388,27 @@
           {
             "title": "LangGraph 基础",
             "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
-            "score": 37.383
+            "score": 37.302
           },
           {
             "title": "LangChain 基础",
             "url": "https://wangsenjie.github.io/2026/07/03/langchain-basic/",
-            "score": 10.41
+            "score": 10.37
           },
           {
             "title": "人机协作与执行控制",
             "url": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
-            "score": 5.988
+            "score": 5.942
           },
           {
             "title": "FRONTEND-BASIC",
             "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-            "score": 5.807
+            "score": 5.795
           },
           {
             "title": "Basic Abstract Algebra Exercises Notes",
             "url": "https://wangsenjie.github.io/2026/03/25/basic-abstract-algebra-exercises-notes/",
-            "score": 3.453
+            "score": 3.445
           }
         ]
       },
@@ -424,7 +424,7 @@
           1
         ],
         "candidateChunks": 6,
-        "durationMs": 14.489,
+        "durationMs": 22.421,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -436,7 +436,7 @@
           {
             "title": "ResNet",
             "url": "https://wangsenjie.github.io/2026/04/29/resnet/",
-            "score": 35.243
+            "score": 35.199
           }
         ]
       },
@@ -452,7 +452,7 @@
           1
         ],
         "candidateChunks": 25,
-        "durationMs": 15.015,
+        "durationMs": 23.014,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -464,17 +464,17 @@
           {
             "title": "ItemCF",
             "url": "https://wangsenjie.github.io/2026/03/29/itemcf/",
-            "score": 33.928
+            "score": 33.864
           },
           {
             "title": "SVD 排序算法",
             "url": "https://wangsenjie.github.io/2026/03/30/svd/",
-            "score": 16.694
+            "score": 16.648
           },
           {
             "title": "ALS 排序算法",
             "url": "https://wangsenjie.github.io/2026/03/30/als/",
-            "score": 16.613
+            "score": 16.568
           }
         ]
       },
@@ -490,7 +490,7 @@
           1
         ],
         "candidateChunks": 94,
-        "durationMs": 15.057,
+        "durationMs": 23.756,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -502,27 +502,27 @@
           {
             "title": "积分因子法",
             "url": "https://wangsenjie.github.io/2025/09/03/2-3/",
-            "score": 62.929
+            "score": 62.821
           },
           {
             "title": "一元积分学",
             "url": "https://wangsenjie.github.io/2025/09/07/5/",
-            "score": 11.186
+            "score": 11.129
           },
           {
             "title": "参数法",
             "url": "https://wangsenjie.github.io/2025/09/03/2-4/",
-            "score": 6.211
+            "score": 6.17
           },
           {
             "title": "变量替换法",
             "url": "https://wangsenjie.github.io/2025/09/03/2-2/",
-            "score": 5.66
+            "score": 5.624
           },
           {
             "title": "ALS 排序算法",
             "url": "https://wangsenjie.github.io/2026/03/30/als/",
-            "score": 5.461
+            "score": 5.448
           }
         ]
       },
@@ -537,8 +537,8 @@
         "relevantRanks": [
           1
         ],
-        "candidateChunks": 80,
-        "durationMs": 17.356,
+        "candidateChunks": 79,
+        "durationMs": 24.407,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -550,27 +550,27 @@
           {
             "title": "报告生成Agent——环境配置",
             "url": "https://wangsenjie.github.io/2026/05/17/agent-2/",
-            "score": 91.069
+            "score": 90.735
           },
           {
             "title": "人机协作与执行控制",
             "url": "https://wangsenjie.github.io/2026/07/15/human-in-the-loop/",
-            "score": 9.095
+            "score": 9.059
           },
           {
             "title": "LeetCode Hot100 —— 回溯",
             "url": "https://wangsenjie.github.io/2026/03/28/leetcode-hot100-11/",
-            "score": 8.528
+            "score": 8.516
           },
           {
             "title": "LangGraph 基础",
             "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
-            "score": 7.659
+            "score": 7.639
           },
           {
             "title": "状态与短期记忆",
             "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
-            "score": 5.976
+            "score": 5.968
           }
         ]
       },
@@ -585,8 +585,8 @@
         "relevantRanks": [
           1
         ],
-        "candidateChunks": 727,
-        "durationMs": 16.124,
+        "candidateChunks": 693,
+        "durationMs": 23.824,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -598,27 +598,27 @@
           {
             "title": "SVD 排序算法",
             "url": "https://wangsenjie.github.io/2026/03/30/svd/",
-            "score": 59.093
+            "score": 59.633
           },
           {
             "title": "ALS 排序算法",
             "url": "https://wangsenjie.github.io/2026/03/30/als/",
-            "score": 31.661
+            "score": 32.114
           },
           {
             "title": "BPR",
             "url": "https://wangsenjie.github.io/2026/03/30/bpr/",
-            "score": 16.21
+            "score": 16.577
           },
           {
             "title": "LightFM",
             "url": "https://wangsenjie.github.io/2026/03/30/lightfm/",
-            "score": 15.745
+            "score": 16.098
           },
           {
             "title": "LeetCode Hot100 —— 链表",
             "url": "https://wangsenjie.github.io/2026/03/23/leetcode-hot100-9/",
-            "score": 8.929
+            "score": 9.148
           }
         ]
       },
@@ -633,8 +633,8 @@
         "relevantRanks": [
           12
         ],
-        "candidateChunks": 396,
-        "durationMs": 24.488,
+        "candidateChunks": 375,
+        "durationMs": 37.163,
         "metrics": {
           "recallAt5": 0,
           "recallAt20": 1,
@@ -646,27 +646,27 @@
           {
             "title": "ALS 排序算法",
             "url": "https://wangsenjie.github.io/2026/03/30/als/",
-            "score": 33.747
+            "score": 33.695
           },
           {
             "title": "SVD 排序算法",
             "url": "https://wangsenjie.github.io/2026/03/30/svd/",
-            "score": 33.193
+            "score": 33.145
           },
           {
             "title": "Transformer 架构 —— Attention Is All You Need",
             "url": "https://wangsenjie.github.io/2025/10/16/transformer-architecture/",
-            "score": 22.784
+            "score": 22.725
           },
           {
             "title": "循环神经网络",
             "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
-            "score": 18.018
+            "score": 17.997
           },
           {
             "title": "Deep Retrieval",
             "url": "https://wangsenjie.github.io/2026/04/01/deep-retrieval/",
-            "score": 15.018
+            "score": 15.019
           }
         ]
       },
@@ -681,8 +681,8 @@
         "relevantRanks": [
           3
         ],
-        "candidateChunks": 425,
-        "durationMs": 24.015,
+        "candidateChunks": 408,
+        "durationMs": 33.705,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -694,27 +694,27 @@
           {
             "title": "卷积神经网络 CNN",
             "url": "https://wangsenjie.github.io/2026/04/27/cnn/",
-            "score": 32.921
+            "score": 32.805
           },
           {
             "title": "循环神经网络",
             "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
-            "score": 23.725
+            "score": 23.684
           },
           {
             "title": "ResNet",
             "url": "https://wangsenjie.github.io/2026/04/29/resnet/",
-            "score": 22.594
+            "score": 22.571
           },
           {
             "title": "双塔模型",
             "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/",
-            "score": 22.37
+            "score": 22.397
           },
           {
             "title": "AlexNet",
             "url": "https://wangsenjie.github.io/2026/04/28/alexnet/",
-            "score": 21.449
+            "score": 21.422
           }
         ]
       },
@@ -729,8 +729,8 @@
         "relevantRanks": [
           1
         ],
-        "candidateChunks": 306,
-        "durationMs": 22.055,
+        "candidateChunks": 303,
+        "durationMs": 27.724,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -742,27 +742,27 @@
           {
             "title": "门控循环神经网络",
             "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
-            "score": 41.88
+            "score": 41.807
           },
           {
             "title": "循环神经网络",
             "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
-            "score": 24.946
+            "score": 24.885
           },
           {
             "title": "LeetCode Hot100 —— Hash",
             "url": "https://wangsenjie.github.io/2026/04/17/hash/",
-            "score": 19.018
+            "score": 18.963
           },
           {
             "title": "卷积神经网络 CNN",
             "url": "https://wangsenjie.github.io/2026/04/27/cnn/",
-            "score": 16.249
+            "score": 16.211
           },
           {
             "title": "AlexNet",
             "url": "https://wangsenjie.github.io/2026/04/28/alexnet/",
-            "score": 12.914
+            "score": 12.863
           }
         ]
       },
@@ -775,42 +775,42 @@
           "ItemCF"
         ],
         "relevantRanks": [
-          5
+          4
         ],
-        "candidateChunks": 172,
-        "durationMs": 21.971,
+        "candidateChunks": 146,
+        "durationMs": 26.79,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
           "hitAt5": 1,
-          "reciprocalRankAt20": 0.2,
-          "ndcgAt20": 0.3869
+          "reciprocalRankAt20": 0.25,
+          "ndcgAt20": 0.4307
         },
         "topResults": [
           {
             "title": "BPR",
             "url": "https://wangsenjie.github.io/2026/03/30/bpr/",
-            "score": 26.469
+            "score": 26.95
           },
           {
             "title": "LightFM",
             "url": "https://wangsenjie.github.io/2026/03/30/lightfm/",
-            "score": 25.025
-          },
-          {
-            "title": "FRONTEND-BASIC",
-            "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-            "score": 17.774
+            "score": 26.353
           },
           {
             "title": "SVD 排序算法",
             "url": "https://wangsenjie.github.io/2026/03/30/svd/",
-            "score": 15.948
+            "score": 16.661
           },
           {
             "title": "ItemCF",
             "url": "https://wangsenjie.github.io/2026/03/29/itemcf/",
-            "score": 13.201
+            "score": 13.369
+          },
+          {
+            "title": "FRONTEND-BASIC",
+            "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+            "score": 12.695
           }
         ]
       },
@@ -825,8 +825,8 @@
         "relevantRanks": [
           3
         ],
-        "candidateChunks": 473,
-        "durationMs": 22.046,
+        "candidateChunks": 438,
+        "durationMs": 30.429,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -838,27 +838,27 @@
           {
             "title": "SVD 排序算法",
             "url": "https://wangsenjie.github.io/2026/03/30/svd/",
-            "score": 15.71
+            "score": 15.771
           },
           {
             "title": "ItemCF",
             "url": "https://wangsenjie.github.io/2026/03/29/itemcf/",
-            "score": 12.181
+            "score": 12.273
           },
           {
             "title": "UserCF",
             "url": "https://wangsenjie.github.io/2026/03/29/usercf/",
-            "score": 12.018
+            "score": 12.111
           },
           {
             "title": "双塔模型",
             "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/",
-            "score": 11.61
+            "score": 11.704
           },
           {
             "title": "Deep Retrieval",
             "url": "https://wangsenjie.github.io/2026/04/01/deep-retrieval/",
-            "score": 11.373
+            "score": 11.468
           }
         ]
       },
@@ -873,8 +873,8 @@
         "relevantRanks": [
           2
         ],
-        "candidateChunks": 396,
-        "durationMs": 22.523,
+        "candidateChunks": 385,
+        "durationMs": 32.304,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -886,27 +886,27 @@
           {
             "title": "循环神经网络",
             "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
-            "score": 30.172
+            "score": 30.092
           },
           {
             "title": "Transformer 架构 —— Attention Is All You Need",
             "url": "https://wangsenjie.github.io/2025/10/16/transformer-architecture/",
-            "score": 27.892
+            "score": 27.825
           },
           {
             "title": "门控循环神经网络",
             "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
-            "score": 23.91
+            "score": 23.865
           },
           {
             "title": "LeetCode Hot100 —— 动态规划",
             "url": "https://wangsenjie.github.io/2026/04/22/post-20260422-47fa06/",
-            "score": 17.345
+            "score": 17.265
           },
           {
             "title": "状态与短期记忆",
             "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
-            "score": 14.074
+            "score": 14.045
           }
         ]
       },
@@ -919,8 +919,8 @@
           "曝光过滤"
         ],
         "relevantRanks": [],
-        "candidateChunks": 253,
-        "durationMs": 21.248,
+        "candidateChunks": 236,
+        "durationMs": 30.09,
         "metrics": {
           "recallAt5": 0,
           "recallAt20": 0,
@@ -932,27 +932,27 @@
           {
             "title": "SVD 排序算法",
             "url": "https://wangsenjie.github.io/2026/03/30/svd/",
-            "score": 18.215
+            "score": 19.2
           },
           {
             "title": "ItemCF",
             "url": "https://wangsenjie.github.io/2026/03/29/itemcf/",
-            "score": 13.661
-          },
-          {
-            "title": "ALS 排序算法",
-            "url": "https://wangsenjie.github.io/2026/03/30/als/",
-            "score": 13.323
+            "score": 14.094
           },
           {
             "title": "FRONTEND-BASIC",
             "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-            "score": 12.827
+            "score": 12.88
           },
           {
-            "title": "LightFM",
-            "url": "https://wangsenjie.github.io/2026/03/30/lightfm/",
-            "score": 12.625
+            "title": "LeetCode Hot100 —— 动态规划",
+            "url": "https://wangsenjie.github.io/2026/04/22/post-20260422-47fa06/",
+            "score": 12.441
+          },
+          {
+            "title": "BPR",
+            "url": "https://wangsenjie.github.io/2026/03/30/bpr/",
+            "score": 12.036
           }
         ]
       },
@@ -967,8 +967,8 @@
         "relevantRanks": [
           1
         ],
-        "candidateChunks": 428,
-        "durationMs": 21.428,
+        "candidateChunks": 404,
+        "durationMs": 25.398,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -980,27 +980,27 @@
           {
             "title": "Deep Retrieval",
             "url": "https://wangsenjie.github.io/2026/04/01/deep-retrieval/",
-            "score": 25.847
+            "score": 25.851
           },
           {
             "title": "UserCF",
             "url": "https://wangsenjie.github.io/2026/03/29/usercf/",
-            "score": 14.027
+            "score": 14.072
           },
           {
             "title": "循环神经网络",
             "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
-            "score": 13.703
+            "score": 13.752
           },
           {
-            "title": "BPR",
-            "url": "https://wangsenjie.github.io/2026/03/30/bpr/",
-            "score": 13.686
+            "title": "LeetCode Hot100 —— 回溯",
+            "url": "https://wangsenjie.github.io/2026/03/28/leetcode-hot100-11/",
+            "score": 12.813
           },
           {
-            "title": "LeetCode Hot100 —— 二叉树",
-            "url": "https://wangsenjie.github.io/2026/04/20/leetcode-hot100/",
-            "score": 12.541
+            "title": "SVD 排序算法",
+            "url": "https://wangsenjie.github.io/2026/03/30/svd/",
+            "score": 12.81
           }
         ]
       },
@@ -1015,8 +1015,8 @@
         "relevantRanks": [
           1
         ],
-        "candidateChunks": 760,
-        "durationMs": 22.281,
+        "candidateChunks": 733,
+        "durationMs": 29.065,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1028,27 +1028,27 @@
           {
             "title": "LangChain 基础",
             "url": "https://wangsenjie.github.io/2026/07/03/langchain-basic/",
-            "score": 30.56
+            "score": 30.653
           },
           {
             "title": "状态与短期记忆",
             "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
-            "score": 23.474
+            "score": 23.393
           },
           {
             "title": "LangGraph 基础",
             "url": "https://wangsenjie.github.io/2026/07/03/langgraph-foundations/",
-            "score": 22.593
+            "score": 22.471
           },
           {
             "title": "双塔模型",
             "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/",
-            "score": 17.038
+            "score": 17.179
           },
           {
-            "title": "VUE-BASIC",
-            "url": "https://wangsenjie.github.io/2026/05/11/vue/",
-            "score": 15.411
+            "title": "LeetCode Hot100 —— 回溯",
+            "url": "https://wangsenjie.github.io/2026/03/28/leetcode-hot100-11/",
+            "score": 15.441
           }
         ]
       },
@@ -1061,49 +1061,49 @@
           "VUE-BASIC"
         ],
         "relevantRanks": [
-          1
+          4
         ],
-        "candidateChunks": 524,
-        "durationMs": 21.844,
+        "candidateChunks": 488,
+        "durationMs": 30.785,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
           "hitAt5": 1,
-          "reciprocalRankAt20": 1,
-          "ndcgAt20": 1
+          "reciprocalRankAt20": 0.25,
+          "ndcgAt20": 0.4307
         },
         "topResults": [
           {
-            "title": "VUE-BASIC",
-            "url": "https://wangsenjie.github.io/2026/05/11/vue/",
-            "score": 28.164
-          },
-          {
             "title": "状态与短期记忆",
             "url": "https://wangsenjie.github.io/2026/07/14/state-and-short-term-memory/",
-            "score": 22.434
+            "score": 22.304
           },
           {
             "title": "报告生成Agent——环境配置",
             "url": "https://wangsenjie.github.io/2026/05/17/agent-2/",
-            "score": 19.917
+            "score": 20.527
           },
           {
             "title": "FRONTEND-BASIC",
             "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-            "score": 19.808
+            "score": 20.267
+          },
+          {
+            "title": "VUE-BASIC",
+            "url": "https://wangsenjie.github.io/2026/05/11/vue/",
+            "score": 17.098
           },
           {
             "title": "门控循环神经网络",
             "url": "https://wangsenjie.github.io/2026/05/04/lstm/",
-            "score": 14.332
+            "score": 14.722
           }
         ]
       }
     ]
   },
   "hybrid": {
-    "generatedAt": "2026-08-25T06:09:23.459Z",
+    "generatedAt": "2026-08-27T03:14:59.545Z",
     "dataset": {
       "version": 1,
       "cases": 20,
@@ -1113,10 +1113,10 @@
       "posts": 71,
       "postsWithUrl": 71,
       "indexedPublishedPosts": 71,
-      "chunks": 1904,
-      "publishedChunks": 1904,
+      "chunks": 1832,
+      "publishedChunks": 1832,
       "chunksWithoutUrl": 0,
-      "sha256": "497531e17f3994eadf3935631363076e556b378bd32675a9908e4a8c81003ef2"
+      "sha256": "4c5b29faa00b71ce25e3f3c4d214a2fe9f17efa2de1dda66b090d98094c2fca1"
     },
     "retriever": {
       "name": "hybrid-local-semantic-hash",
@@ -1133,11 +1133,11 @@
       "recallAt5": 0.9,
       "recallAt20": 0.9,
       "hitRateAt5": 0.9,
-      "mrrAt20": 0.8167,
-      "ndcgAt20": 0.8381,
+      "mrrAt20": 0.8267,
+      "ndcgAt20": 0.8443,
       "noAnswerCases": 0,
       "noAnswerAccuracy": 0,
-      "averageWarmRetrievalMs": 34.398,
+      "averageWarmRetrievalMs": 45.489,
       "failedCases": 2
     },
     "byCategory": {
@@ -1154,8 +1154,8 @@
         "recallAt5": 0.8,
         "recallAt20": 0.8,
         "hitRateAt5": 0.8,
-        "mrrAt20": 0.6333,
-        "ndcgAt20": 0.6762
+        "mrrAt20": 0.6533,
+        "ndcgAt20": 0.6887
       }
     },
     "failedCases": [
@@ -1242,8 +1242,8 @@
         "relevantRanks": [
           1
         ],
-        "candidateChunks": 4,
-        "durationMs": 34.784,
+        "candidateChunks": 3,
+        "durationMs": 57.444,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1256,11 +1256,6 @@
             "title": "双塔模型",
             "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/",
             "score": 0.189
-          },
-          {
-            "title": "BPR",
-            "url": "https://wangsenjie.github.io/2026/03/30/bpr/",
-            "score": 0.031
           }
         ]
       },
@@ -1276,7 +1271,7 @@
           1
         ],
         "candidateChunks": 3,
-        "durationMs": 21.888,
+        "durationMs": 31.33,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1304,7 +1299,7 @@
           1
         ],
         "candidateChunks": 20,
-        "durationMs": 36.668,
+        "durationMs": 48.393,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1352,7 +1347,7 @@
           1
         ],
         "candidateChunks": 3,
-        "durationMs": 35.761,
+        "durationMs": 50.331,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1380,7 +1375,7 @@
           1
         ],
         "candidateChunks": 3,
-        "durationMs": 34.268,
+        "durationMs": 44.895,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1408,7 +1403,7 @@
           1
         ],
         "candidateChunks": 11,
-        "durationMs": 33.14,
+        "durationMs": 43.182,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1456,7 +1451,7 @@
           1
         ],
         "candidateChunks": 8,
-        "durationMs": 33.201,
+        "durationMs": 42.681,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1494,7 +1489,7 @@
           1
         ],
         "candidateChunks": 20,
-        "durationMs": 34.507,
+        "durationMs": 50.707,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1542,7 +1537,7 @@
           1
         ],
         "candidateChunks": 9,
-        "durationMs": 35.869,
+        "durationMs": 48.67,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1585,7 +1580,7 @@
           1
         ],
         "candidateChunks": 13,
-        "durationMs": 34.903,
+        "durationMs": 42.361,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1630,23 +1625,18 @@
           "双塔模型"
         ],
         "relevantRanks": [
-          2
+          1
         ],
-        "candidateChunks": 17,
-        "durationMs": 41.322,
+        "candidateChunks": 16,
+        "durationMs": 51.36,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
           "hitAt5": 1,
-          "reciprocalRankAt20": 0.5,
-          "ndcgAt20": 0.6309
+          "reciprocalRankAt20": 1,
+          "ndcgAt20": 1
         },
         "topResults": [
-          {
-            "title": "BPR",
-            "url": "https://wangsenjie.github.io/2026/03/30/bpr/",
-            "score": 0.023
-          },
           {
             "title": "双塔模型",
             "url": "https://wangsenjie.github.io/2026/03/31/post-20260331-2061fb/",
@@ -1666,6 +1656,11 @@
             "title": "SVD 排序算法",
             "url": "https://wangsenjie.github.io/2026/03/30/svd/",
             "score": 0.017
+          },
+          {
+            "title": "循环神经网络",
+            "url": "https://wangsenjie.github.io/2026/04/30/post-20260430-1a596f/",
+            "score": 0.016
           }
         ]
       },
@@ -1679,7 +1674,7 @@
         ],
         "relevantRanks": [],
         "candidateChunks": 12,
-        "durationMs": 42.513,
+        "durationMs": 48.604,
         "metrics": {
           "recallAt5": 0,
           "recallAt20": 0,
@@ -1727,7 +1722,7 @@
           1
         ],
         "candidateChunks": 10,
-        "durationMs": 40.695,
+        "durationMs": 53.185,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1770,7 +1765,7 @@
           1
         ],
         "candidateChunks": 13,
-        "durationMs": 41.982,
+        "durationMs": 57.721,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1815,8 +1810,8 @@
           "UserCF"
         ],
         "relevantRanks": [],
-        "candidateChunks": 19,
-        "durationMs": 41.086,
+        "candidateChunks": 18,
+        "durationMs": 53.545,
         "metrics": {
           "recallAt5": 0,
           "recallAt20": 0,
@@ -1864,7 +1859,7 @@
           3
         ],
         "candidateChunks": 10,
-        "durationMs": 28.791,
+        "durationMs": 51.628,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1912,7 +1907,7 @@
           1
         ],
         "candidateChunks": 20,
-        "durationMs": 28.295,
+        "durationMs": 33.809,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1960,7 +1955,7 @@
           1
         ],
         "candidateChunks": 14,
-        "durationMs": 28.857,
+        "durationMs": 34.987,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -1980,9 +1975,9 @@
             "score": 0.017
           },
           {
-            "title": "BPR",
-            "url": "https://wangsenjie.github.io/2026/03/30/bpr/",
-            "score": 0.017
+            "title": "LeetCode Hot100 —— 回溯",
+            "url": "https://wangsenjie.github.io/2026/03/28/leetcode-hot100-11/",
+            "score": 0.016
           },
           {
             "title": "循环神经网络",
@@ -1990,8 +1985,8 @@
             "score": 0.016
           },
           {
-            "title": "LeetCode Hot100 —— 二叉树",
-            "url": "https://wangsenjie.github.io/2026/04/20/leetcode-hot100/",
+            "title": "SVD 排序算法",
+            "url": "https://wangsenjie.github.io/2026/03/30/svd/",
             "score": 0.016
           }
         ]
@@ -2008,7 +2003,7 @@
           1
         ],
         "candidateChunks": 13,
-        "durationMs": 29.843,
+        "durationMs": 34.636,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
@@ -2038,8 +2033,8 @@
             "score": 0.015
           },
           {
-            "title": "VUE-BASIC",
-            "url": "https://wangsenjie.github.io/2026/05/11/vue/",
+            "title": "LeetCode Hot100 —— 回溯",
+            "url": "https://wangsenjie.github.io/2026/03/28/leetcode-hot100-11/",
             "score": 0.015
           }
         ]
@@ -2053,16 +2048,16 @@
           "VUE-BASIC"
         ],
         "relevantRanks": [
-          2
+          5
         ],
         "candidateChunks": 15,
-        "durationMs": 29.59,
+        "durationMs": 30.319,
         "metrics": {
           "recallAt5": 1,
           "recallAt20": 1,
           "hitAt5": 1,
-          "reciprocalRankAt20": 0.5,
-          "ndcgAt20": 0.6309
+          "reciprocalRankAt20": 0.2,
+          "ndcgAt20": 0.3869
         },
         "topResults": [
           {
@@ -2071,9 +2066,9 @@
             "score": 0.023
           },
           {
-            "title": "VUE-BASIC",
-            "url": "https://wangsenjie.github.io/2026/05/11/vue/",
-            "score": 0.018
+            "title": "报告生成Agent——环境配置",
+            "url": "https://wangsenjie.github.io/2026/05/17/agent-2/",
+            "score": 0.017
           },
           {
             "title": "状态与短期记忆",
@@ -2081,13 +2076,13 @@
             "score": 0.017
           },
           {
-            "title": "报告生成Agent——环境配置",
-            "url": "https://wangsenjie.github.io/2026/05/17/agent-2/",
+            "title": "FRONTEND-BASIC",
+            "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
             "score": 0.017
           },
           {
-            "title": "FRONTEND-BASIC",
-            "url": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
+            "title": "VUE-BASIC",
+            "url": "https://wangsenjie.github.io/2026/05/11/vue/",
             "score": 0.016
           }
         ]

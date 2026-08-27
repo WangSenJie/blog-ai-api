@@ -7,7 +7,8 @@ const { randomUUID } = require('crypto');
 const {
   MemoryServiceError,
   createMemoryService,
-  createMemoryServiceFromEnvironment
+  createMemoryServiceFromEnvironment,
+  memoryEnvironmentIsolation
 } = require('../memory/service');
 const {
   InMemoryMemoryStore,
@@ -147,7 +148,8 @@ function managedConfiguration(environment) {
     featureEnabled: /^(1|true|yes|on)$/i.test(String(
       source.MEMORY_V1_ENABLED || source.MEMORY_ENABLED || ''
     )),
-    credentialsPresent: required.every(key => Boolean(String(source[key] || '').trim()))
+    credentialsPresent: required.every(key => Boolean(String(source[key] || '').trim())),
+    environmentIsolation: memoryEnvironmentIsolation(source)
   };
 }
 

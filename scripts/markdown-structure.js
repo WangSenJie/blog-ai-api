@@ -16,10 +16,67 @@ const STRUCTURED_BLOCK_TYPES = Object.freeze([
 ]);
 
 const markdownParser = new MarkdownIt({
-  html: false,
+  // Parse HTML so Markdown comments become html_block/html_inline tokens and
+  // can be excluded without touching comment text inside fenced code blocks.
+  html: true,
   linkify: false,
   typographer: false
 });
+
+function stripHtmlCommentsOutsideFences(markdown) {
+  const lines = String(markdown || '').replace(/\r\n/g, '\n').split('\n');
+  let fence = null;
+  let inComment = false;
+
+  return lines.map(line => {
+    const fenceMatch = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
+    if (fence) {
+      if (
+        fenceMatch &&
+        fenceMatch[1][0] === fence.marker &&
+        fenceMatch[1].length >= fence.length &&
+        !String(fenceMatch[2] || '').trim()
+      ) fence = null;
+      return line;
+    }
+    if (!inComment && fenceMatch) {
+      fence = {
+        marker: fenceMatch[1][0],
+        length: fenceMatch[1].length
+      };
+      return line;
+    }
+
+    let cursor = 0;
+    let output = '';
+    while (cursor < line.length) {
+      if (inComment) {
+        const close = line.indexOf('-->', cursor);
+        if (close < 0) {
+          output += ' '.repeat(line.length - cursor);
+          cursor = line.length;
+          continue;
+        }
+        output += ' '.repeat(close + 3 - cursor);
+        cursor = close + 3;
+        inComment = false;
+        continue;
+      }
+
+      const open = line.indexOf('<!--', cursor);
+      if (open < 0) {
+        output += line.slice(cursor);
+        cursor = line.length;
+        continue;
+      }
+      output += line.slice(cursor, open);
+      output += ' '.repeat(4);
+      cursor = open + 4;
+      inComment = true;
+    }
+    return output;
+  }).join('\n');
+}
 
 function parseFrontMatter(frontMatterText, sourceName) {
   const source = String(frontMatterText || '').trim();
@@ -76,7 +133,7 @@ function inlineContent(token) {
 }
 
 function markdownToText(markdown) {
-  const source = String(markdown || '').replace(/\r\n/g, '\n');
+  const source = stripHtmlCommentsOutsideFences(markdown);
   if (!source.trim()) return '';
 
   const tokens = markdownParser.parse(source, {});
@@ -342,7 +399,7 @@ function splitDisplayFormulaBlocks(block) {
 }
 
 function parseMarkdownDocument(markdown) {
-  const source = String(markdown || '').replace(/\r\n/g, '\n');
+  const source = stripHtmlCommentsOutsideFences(markdown);
   const lines = source.split('\n');
   const tokens = markdownParser.parse(source, {});
   const headingStack = [];
@@ -412,5 +469,6 @@ module.exports = {
   markdownToText,
   parseFrontMatter,
   parseMarkdownDocument,
-  sectionAnchor
+  sectionAnchor,
+  stripHtmlCommentsOutsideFences
 };

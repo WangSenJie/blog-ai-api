@@ -31,7 +31,13 @@ test('managed Redis readiness reports presence without exposing secret values', 
   const configuration = managedConfiguration(environment);
   assert.deepEqual(configuration, {
     featureEnabled: true,
-    credentialsPresent: true
+    credentialsPresent: true,
+    environmentIsolation: {
+      runtime: 'local',
+      declaredScope: '',
+      required: false,
+      allowed: true
+    }
   });
   assert.equal(JSON.stringify(configuration).includes('redis-secret'), false);
 });

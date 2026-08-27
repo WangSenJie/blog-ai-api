@@ -1,6 +1,6 @@
 {
   "phase": 6,
-  "generatedAt": "2026-08-25T06:10:05.833Z",
+  "generatedAt": "2026-08-27T03:15:09.954Z",
   "strategy": "structured-markdown-ingestion-v1",
   "baseline": {
     "gitRevision": "7e6d67bd9653bd2fb48f161e0c438f56215b83de",
@@ -28,20 +28,20 @@
     "buildDurationMs": 400
   },
   "current": {
-    "corpusVersion": "5255a48fc93de09cd70f16957f35b4e74abc713903a9389acb617244424c60ad",
+    "corpusVersion": "130c532f3dd45f5e5f27ddfda60384764826b14bfb0093dd6549f04a7f544504",
     "manifestSchemaVersion": 3,
     "posts": 71,
-    "chunks": 1904,
-    "vectors": 1904,
+    "chunks": 1832,
+    "vectors": 1832,
     "codeBlocks": 395,
-    "structuredBlocks": 2781,
+    "structuredBlocks": 2687,
     "blockTypeCounts": {
       "code": 395,
-      "formula": 459,
+      "formula": 456,
       "image": 46,
-      "list": 348,
-      "paragraph": 1378,
-      "quote": 154,
+      "list": 318,
+      "paragraph": 1320,
+      "quote": 151,
       "table": 1
     },
     "profileCounts": {
@@ -57,8 +57,8 @@
     "linkResolution": 1,
     "contentLength": {
       "min": 1,
-      "p50": 101,
-      "p95": 651,
+      "p50": 106,
+      "p95": 652,
       "max": 2043
     },
     "warnings": {
@@ -134,11 +134,11 @@
         "recallAt5": 0.9,
         "recallAt20": 0.9,
         "hitRateAt5": 0.9,
-        "mrrAt20": 0.8167,
-        "ndcgAt20": 0.8381,
+        "mrrAt20": 0.8267,
+        "ndcgAt20": 0.8443,
         "noAnswerCases": 0,
         "noAnswerAccuracy": 0,
-        "averageWarmRetrievalMs": 34.398,
+        "averageWarmRetrievalMs": 45.489,
         "failedCases": 2
       },
       "agent": {
@@ -156,22 +156,22 @@
         "averageRetrievalAttempts": 0.9643,
         "maxRetrievalAttempts": 2,
         "warmLatencyMs": {
-          "p50": 71.932,
-          "p95": 149.843,
-          "max": 199.99
+          "p50": 117.769,
+          "p95": 282.464,
+          "max": 303.005
         }
       },
       "phase4Passed": true,
       "phase5Passed": true
     },
     "sourceBuildAudit": {
-      "buildDurationMs": 403.674,
+      "buildDurationMs": 434.466,
       "rebuiltPosts": 71,
-      "rebuiltChunks": 1904,
+      "rebuiltChunks": 1832,
       "rebuiltCodeBlocks": 395,
-      "matchingChunks": 1904,
+      "matchingChunks": 1832,
       "sourceRebuildMatchRate": 1,
-      "validSourceLocations": 1904,
+      "validSourceLocations": 1832,
       "sourceLocationCoverage": 1
     }
   },

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-25T06:09:22.284Z",
+  "generatedAt": "2026-08-27T03:14:57.914Z",
   "phase": 5,
   "strategy": "structured_agentic_rag_phase5",
   "notes": [
@@ -18,10 +18,10 @@
   "corpus": {
     "schemaVersion": 3,
     "posts": 71,
-    "chunks": 1904,
+    "chunks": 1832,
     "codeBlocks": 395,
     "learningTracks": 4,
-    "indexVersion": "5255a48fc93de09cd70f16957f35b4e74abc713903a9389acb617244424c60ad"
+    "indexVersion": "130c532f3dd45f5e5f27ddfda60384764826b14bfb0093dd6549f04a7f544504"
   },
   "summary": {
     "cases": 9,

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-25T06:09:26.824Z",
+  "generatedAt": "2026-08-27T03:15:03.055Z",
   "phase": 4,
   "strategy": "grounded_agent_quality_phase4",
   "notes": [
@@ -17,17 +17,18 @@
   },
   "corpus": {
     "posts": 71,
-    "chunks": 1904,
-    "indexVersion": "5255a48fc93de09cd70f16957f35b4e74abc713903a9389acb617244424c60ad"
+    "chunks": 1832,
+    "indexVersion": "130c532f3dd45f5e5f27ddfda60384764826b14bfb0093dd6549f04a7f544504"
   },
   "calibration": {
     "configured": {
-      "version": "phase4-v1",
+      "version": "phase10-topic-anchor-v1",
       "vectorEvidenceFloor": 0.3,
       "siteQaMinCoverage": 0.3,
       "pageQaMinCoverage": 0.35,
       "compoundMinCoverage": 0.3,
-      "compareTargetMinCoverage": 0.45
+      "compareTargetMinCoverage": 0.45,
+      "topicAnchorMinCoverage": 0.5
     },
     "candidates": [
       {

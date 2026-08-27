@@ -1,21 +1,21 @@
 {
   "schemaVersion": 3,
-  "corpusVersion": "5255a48fc93de09cd70f16957f35b4e74abc713903a9389acb617244424c60ad",
+  "corpusVersion": "130c532f3dd45f5e5f27ddfda60384764826b14bfb0093dd6549f04a7f544504",
   "files": {
     "posts": {
       "sha256": "3951188bd19146671fcf1b080e3b90d3f62c813e7978af083d77107d2c3d9485",
       "count": 71
     },
     "chunks": {
-      "sha256": "497531e17f3994eadf3935631363076e556b378bd32675a9908e4a8c81003ef2",
-      "count": 1904
+      "sha256": "4c5b29faa00b71ce25e3f3c4d214a2fe9f17efa2de1dda66b090d98094c2fca1",
+      "count": 1832
     },
     "vectors": {
-      "sha256": "0d4e682e48458c50346e27dc9c6cc68e1c2f74dc0dd6d0c61f3567f3fd19c25c",
-      "count": 1904
+      "sha256": "849347aff3cca3849605b8a8266bfee05bd3eab583925956d1636ca538201cb0",
+      "count": 1832
     },
     "codeBlocks": {
-      "sha256": "276cb5ae484f97bdc30dc35e0450c75aad658416d88a0ae14722a48a150f5df3",
+      "sha256": "92d1498edc54d5c9f3745d64413b3c0b9e14026e570e2089bb4451f1f18bd42d",
       "count": 395
     },
     "learningGraph": {
@@ -27,7 +27,7 @@
     "sourcePosts": 108,
     "publishedPosts": 71,
     "indexedPosts": 71,
-    "indexedChunks": 1904,
+    "indexedChunks": 1832,
     "skippedUnpublishedPosts": 32,
     "skippedPostsWithoutUrl": 5,
     "skippedPostsWithoutIndexableContent": 0,
@@ -55,10 +55,10 @@
     "queryTemplateVersion": "technical-blog-query-v1",
     "tokenizerVersion": "dashscope-compatible-estimate-v1",
     "build": {
-      "added": 0,
-      "updated": 1904,
-      "reused": 0,
-      "deleted": 0,
+      "added": 3,
+      "updated": 11,
+      "reused": 1818,
+      "deleted": 6,
       "failed": 0
     }
   },
@@ -133,14 +133,14 @@
     },
     "stats": {
       "structuredPosts": 71,
-      "structuredBlocks": 2781,
+      "structuredBlocks": 2687,
       "blockTypeCounts": {
         "code": 395,
-        "formula": 459,
+        "formula": 456,
         "image": 46,
-        "list": 348,
-        "paragraph": 1378,
-        "quote": 154,
+        "list": 318,
+        "paragraph": 1320,
+        "quote": 151,
         "table": 1
       },
       "profileCounts": {
@@ -153,35 +153,35 @@
       },
       "internalLinkEdges": 20,
       "resolvedInternalLinkEdges": 20,
-      "chunksWithRetrievalText": 1904,
-      "sourceLocatedChunks": 1900,
+      "chunksWithRetrievalText": 1832,
+      "sourceLocatedChunks": 1828,
       "metadataOnlyChunks": 4,
-      "duplicateChunkContents": 55,
-      "parentSections": 451,
+      "duplicateChunkContents": 51,
+      "parentSections": 448,
       "overflowChunks": 3,
       "chunkTypeCounts": {
         "code": 397,
-        "formula": 92,
-        "formula-context": 356,
+        "formula": 90,
+        "formula-context": 355,
         "image": 10,
-        "list": 404,
+        "list": 374,
         "metadata": 4,
         "proof": 15,
         "quote": 99,
         "table": 1,
-        "text": 521,
+        "text": 482,
         "theorem": 5
       },
       "tokenCount": {
         "min": 1,
-        "p50": 67,
-        "p95": 433,
+        "p50": 69,
+        "p95": 434,
         "max": 1211
       },
       "contentLength": {
         "min": 1,
-        "p50": 101,
-        "p95": 651,
+        "p50": 106,
+        "p95": 652,
         "max": 2043
       }
     },

@@ -7,7 +7,8 @@ const { randomUUID } = require('crypto');
 const {
   MemoryServiceError,
   createMemoryService,
-  createMemoryServiceFromEnvironment
+  createMemoryServiceFromEnvironment,
+  memoryEnvironmentIsolation
 } = require('../memory/service');
 const {
   InMemoryMemoryStore,
@@ -158,4 +159,32 @@ test('storage failures explicitly degrade ask while direct memory APIs remain un
     () => disabled.createSession(),
     error => error instanceof MemoryServiceError && error.statusCode === 503
   );
+});
+
+test('preview and development memory fail closed without an explicit matching scope', () => {
+  const common = {
+    MEMORY_V1_ENABLED: 'true',
+    REDIS_URL: 'rediss://default:secret@example.redis.cloud:6379',
+    MEMORY_TOKEN_SECRET: TOKEN_SECRET,
+    MEMORY_KEY_SECRET: KEY_SECRET
+  };
+  const preview = createMemoryServiceFromEnvironment(Object.assign({}, common, {
+    VERCEL_ENV: 'preview'
+  }));
+  assert.equal(preview.enabled, false);
+  assert.equal(preview.store.reason, 'environment_isolation_required');
+  assert.equal(preview.unavailableReason, 'environment_isolation_required');
+
+  const mismatched = memoryEnvironmentIsolation(Object.assign({}, common, {
+    VERCEL_ENV: 'development',
+    MEMORY_ENVIRONMENT_SCOPE: 'preview'
+  }));
+  assert.equal(mismatched.allowed, false);
+
+  const isolated = createMemoryServiceFromEnvironment(Object.assign({}, common, {
+    VERCEL_ENV: 'preview',
+    MEMORY_ENVIRONMENT_SCOPE: 'preview'
+  }));
+  assert.equal(isolated.enabled, true);
+  assert.equal(isolated.store.kind, 'redis');
 });

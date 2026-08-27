@@ -1577,57 +1577,14 @@
     ],
     "sourceLines": {
       "start": 361,
-      "end": 372
+      "end": 376
     },
     "resourceLinks": [
       "https://www.cnblogs.com/sufewsj/p/18622102"
     ],
     "metadataOnly": false,
     "id": "chunk_a5629346ce59408da002103b",
-    "contentHash": "sha256:cf75183aac58c39bb9a0bf09a8f1e195a8e61c126fc0b3fe497517e37c015267"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/25/basic-abstract-algebra-exercises-notes/",
-    "postId": "Basic Abstract Algebra Exercises Notes",
-    "postTitle": "Basic Abstract Algebra Exercises Notes",
-    "tags": [
-      "Abstract Algebra"
-    ],
-    "categories": [
-      "数学",
-      "抽象代数"
-    ],
-    "sourcePath": "source/_posts/Basic Abstract Algebra/Basic Abstract Algebra Exercises Notes.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_5eb8895ec36fbb24bf9b829f",
-    "sectionTitle": "Exercises for Section 3.4",
-    "headingPath": [
-      "Exercises for Section 3.4"
-    ],
-    "sectionAnchor": "section_4fd690c0dac4092f",
-    "chunkIndex": 37,
-    "childOrdinal": 1,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 26,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- 3. Prove $S_4\\not\\cong D_{12}$.\n\nPf: -->",
-    "retrievalText": "Basic Abstract Algebra Exercises Notes\nAbstract Algebra\n数学 抽象代数\ngeneric-article\nExercises for Section 3.4\ntext\nparagraph\n<!-- 3. Prove $S_4\\not\\cong D_{12}$.\n\nPf: -->",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 373,
-      "end": 375
-    },
-    "resourceLinks": [
-      "https://www.cnblogs.com/sufewsj/p/18622102"
-    ],
-    "metadataOnly": false,
-    "id": "chunk_527635b36414da76bcab0099",
-    "contentHash": "sha256:9a15da7d71f377d1d9ab6d08bc67f66006beb735c377a12f43d8a378bf481af6"
+    "contentHash": "sha256:0fae90758eb32b7525c7c076a1de90782f233517e170aa0175cec458304c955e"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/03/25/basic-abstract-algebra-exercises-notes/",
@@ -1649,7 +1606,7 @@
       "Exercises for Section 3.5 Fundamental Isomorphism theorem of group"
     ],
     "sectionAnchor": "section_d0376715d26e1541",
-    "chunkIndex": 38,
+    "chunkIndex": 37,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -1692,7 +1649,7 @@
       "Exercises for Section 3.5 Fundamental Isomorphism theorem of group"
     ],
     "sectionAnchor": "section_d0376715d26e1541",
-    "chunkIndex": 39,
+    "chunkIndex": 38,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -1735,7 +1692,7 @@
       "Exercises for Section 3.5 Fundamental Isomorphism theorem of group"
     ],
     "sectionAnchor": "section_d0376715d26e1541",
-    "chunkIndex": 40,
+    "chunkIndex": 39,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -5686,23 +5643,24 @@
     "chunkIndex": 5,
     "childOrdinal": 5,
     "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 510,
+    "chunkType": "formula-context",
+    "tokenCount": 78,
     "tokenizerVersion": "dashscope-compatible-estimate-v1",
     "overflowReason": null,
-    "content": "<!\n\n-- $$\n\\begin{aligned}\nW'(t)=&\\begin{vmatrix}\nx'{11}(t) & x'{21}(t) & \\cdots & x'{n1}(t)\\\\\nx{12}(t) & x_{22}(t) & \\cdots & x_{n2}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\nx_{1n}(t) & x_{2n}(t) & \\cdots & x_{nn}(t)\n\\end{vmatrix}+\n\\begin{vmatrix}\nx_{11}(t) & x_{21}(t) & \\cdots & x_{n1}(t)\\\\\nx'{12}(t) & x'{22}(t) & \\cdots & x'{n2}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\nx{1n}(t) & x_{2n}(t) & \\cdots & x_{nn}(t)\n\\end{vmatrix}\\\\\n&+\\cdots +\n\\begin{vmatrix}\nx_{11}(t) & x_{21}(t) & \\cdots & x_{n1}(t)\\\\\nx_{12}(t) & x_{22}(t) & \\cdots & x_{n2}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\nx'{1n}(t) & x'{2n}(t) & \\cdots & x'{nn}(t)\n\\end{vmatrix}\\\\\n=&\\begin{vmatrix}\n\\sum\\limits{i=1}^na_{1i}x_{1i}(t) & \\sum\\limits_{i=1}^na_{1i}x_{2i}(t) & \\cdots & \\sum\\limits_{i=1}^na_{1i}x_{ni}(t)\\\\\nx_{12}(t) & x_{22}(t) & \\cdots & x_{n2}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\nx_{1n}(t) &",
-    "retrievalText": "一阶线性微分方程组\n常微分方程\n数学 常微分方程 一阶线性微分方程组\nmath-note\ntext\nparagraph\n<!\n\n-- $$\n\\begin{aligned}\nW'(t)=&\\begin{vmatrix}\nx'{11}(t) & x'{21}(t) & \\cdots & x'{n1}(t)\\\\\nx{12}(t) & x_{22}(t) & \\cdots & x_{n2}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\nx_{1n}(t) & x_{2n}(t) & \\cdots & x_{nn}(t)\n\\end{vmatrix}+\n\\begin{vmatrix}\nx_{11}(t) & x_{21}(t) & \\cdots & x_{n1}(t)\\\\\nx'{12}(t) & x'{22}(t) & \\cdots & x'{n2}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\nx{1n}(t) & x_{2n}(t) & \\cdots & x_{nn}(t)\n\\end{vmatrix}\\\\\n&+\\cdots +\n\\begin{vmatrix}\nx_{11}(t) & x_{21}(t) & \\cdots & x_{n1}(t)\\\\\nx_{12}(t) & x_{22}(t) & \\cdots & x_{n2}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\nx'{1n}(t) & x'{2n}(t) & \\cdots & x'{nn}(t)\n\\end{vmatrix}\\\\\n=&\\begin{vmatrix}\n\\sum\\limits{i=1}^na_{1i}x_{1i}(t) & \\sum\\limits_{i=1}^na_{1i}x_{2i}(t) & \\cdots & \\sum\\limits_{i=1}^na_{1i}x_{ni}(t)\\\\\nx_{12}(t) & x_{22}(t) & \\cdots & x_{n2}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\nx_{1n}(t) &",
+    "content": "求解上述微分方程得\n\nW(t) = ce^{\\int_{t_{0}}^t\\left(a_{11}(t)+a_{22}(t)+\\cdots+a_{nn}(t)\\right)\\mathrm ds}\n\n又 $W(t_0)=c$, 故",
+    "retrievalText": "一阶线性微分方程组\n常微分方程\n数学 常微分方程 一阶线性微分方程组\nmath-note\nformula-context\nparagraph formula\n求解上述微分方程得\n\nW(t) = ce^{\\int_{t_{0}}^t\\left(a_{11}(t)+a_{22}(t)+\\cdots+a_{nn}(t)\\right)\\mathrm ds}\n\n又 $W(t_0)=c$, 故",
     "blockTypes": [
-      "paragraph"
+      "paragraph",
+      "formula"
     ],
     "sourceLines": {
-      "start": 95,
-      "end": 149
+      "start": 151,
+      "end": 160
     },
     "resourceLinks": [],
     "metadataOnly": false,
-    "id": "chunk_5c39e3c444c5bd84d71268dc",
-    "contentHash": "sha256:d936e226051fd7f5284f54bdc019a637e5ac1ec978757c3768c6650ba20faaee"
+    "id": "chunk_6fc83ff2dda1c40ebebcf499",
+    "contentHash": "sha256:790ac02f117820c3ac3d36cdaba3395f46b038c11c1d8cfee165017e3e44691c"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2025/09/03/5-1/",
@@ -5726,105 +5684,23 @@
     "chunkIndex": 6,
     "childOrdinal": 6,
     "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 508,
+    "chunkType": "formula",
+    "tokenCount": 81,
     "tokenizerVersion": "dashscope-compatible-estimate-v1",
     "overflowReason": null,
-    "content": "x_{2n}(t) & \\cdots & x_{nn}(t)\n\\end{vmatrix}+\n\\begin{vmatrix}\nx_{11}(t) & x_{21}(t) & \\cdots & x_{n1}(t)\\\\\n\\sum\\limits_{i=1}^na_{2i}x_{1i}(t) & \\sum\\limits_{i=1}^na_{2i}x_{1i}(t) & \\cdots & \\sum\\limits_{i=1}^na_{2i}x_{1i}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\nx_{1n}(t) & x_{2n}(t) & \\cdots & x_{nn}(t)\n\\end{vmatrix}\\\\\n&+\\cdots +\n\\begin{vmatrix}\nx_{11}(t) & x_{21}(t) & \\cdots & x_{n1}(t)\\\\\nx_{12}(t) & x_{22}(t) & \\cdots & x_{n2}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\n\\sum\\limits_{i=1}^na_{ni}x_{1i}(t) & \\sum\\limits_{i=1}^na_{ni}x_{1i}(t) & \\cdots & \\sum\\limits_{i=1}^na_{ni}x_{1i}(t)\n\\end{vmatrix}\\\\\n=&\\begin{vmatrix}\na_{11}x_{11}(t) & a_{11}x_{21}(t) & \\cdots & a_{11}x_{n1}(t)\\\\\nx_{12}(t) & x_{22}(t) & \\cdots & x_{n2}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\nx_{1n}(t) & x_{2n}(t) & \\cdots & x_{nn}(t)\n\\end{vmatrix}+\\cdots +\n\\begin{vmatrix}\nx_{11}(t) & x_{21}(t) & \\cdots &",
-    "retrievalText": "一阶线性微分方程组\n常微分方程\n数学 常微分方程 一阶线性微分方程组\nmath-note\ntext\nparagraph\nx_{2n}(t) & \\cdots & x_{nn}(t)\n\\end{vmatrix}+\n\\begin{vmatrix}\nx_{11}(t) & x_{21}(t) & \\cdots & x_{n1}(t)\\\\\n\\sum\\limits_{i=1}^na_{2i}x_{1i}(t) & \\sum\\limits_{i=1}^na_{2i}x_{1i}(t) & \\cdots & \\sum\\limits_{i=1}^na_{2i}x_{1i}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\nx_{1n}(t) & x_{2n}(t) & \\cdots & x_{nn}(t)\n\\end{vmatrix}\\\\\n&+\\cdots +\n\\begin{vmatrix}\nx_{11}(t) & x_{21}(t) & \\cdots & x_{n1}(t)\\\\\nx_{12}(t) & x_{22}(t) & \\cdots & x_{n2}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\n\\sum\\limits_{i=1}^na_{ni}x_{1i}(t) & \\sum\\limits_{i=1}^na_{ni}x_{1i}(t) & \\cdots & \\sum\\limits_{i=1}^na_{ni}x_{1i}(t)\n\\end{vmatrix}\\\\\n=&\\begin{vmatrix}\na_{11}x_{11}(t) & a_{11}x_{21}(t) & \\cdots & a_{11}x_{n1}(t)\\\\\nx_{12}(t) & x_{22}(t) & \\cdots & x_{n2}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\nx_{1n}(t) & x_{2n}(t) & \\cdots & x_{nn}(t)\n\\end{vmatrix}+\\cdots +\n\\begin{vmatrix}\nx_{11}(t) & x_{21}(t) & \\cdots &",
+    "content": "W(t)=W(t_0)\\cdot e^{\\int_{t_0}^t\\left[a_{11}(t)+a_{22}(t)+\\cdots+a_{nn}(t)\\right]\\mathrm{~d}s},\\quad t,t_0\\in[a,b].",
+    "retrievalText": "一阶线性微分方程组\n常微分方程\n数学 常微分方程 一阶线性微分方程组\nmath-note\nformula\nformula\nW(t)=W(t_0)\\cdot e^{\\int_{t_0}^t\\left[a_{11}(t)+a_{22}(t)+\\cdots+a_{nn}(t)\\right]\\mathrm{~d}s},\\quad t,t_0\\in[a,b].",
     "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 95,
-      "end": 149
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_f3af88479d81f5dfe17b8b44",
-    "contentHash": "sha256:aacb6af69f69e562c46f2c5f7220747995a5a6c4e8a353d52d4b75349b97f312"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2025/09/03/5-1/",
-    "postId": "一阶线性微分方程组",
-    "postTitle": "一阶线性微分方程组",
-    "tags": [
-      "常微分方程"
-    ],
-    "categories": [
-      "数学",
-      "常微分方程",
-      "一阶线性微分方程组"
-    ],
-    "sourcePath": "source/_posts/ODE/5.1 一阶线性微分方程组.md",
-    "profile": "math-note",
-    "profileSource": "path-rule",
-    "parentId": "parent_39a7a85a0bee90c05ddb126a",
-    "sectionTitle": "",
-    "headingPath": [],
-    "sectionAnchor": "section_5feceb66ffc86f38",
-    "chunkIndex": 7,
-    "childOrdinal": 7,
-    "sectionOccurrence": 0,
-    "chunkType": "formula-context",
-    "tokenCount": 282,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "x_{n1}(t)\\\\\nx_{12}(t) & x_{22}(t) & \\cdots & x_{n2}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\na_{nn}x_{1n}(t) & a_{nn}x_{2n}(t) & \\cdots & a_{nn}x_{nn}(t)\n\\end{vmatrix}\\\\\n=&[a_{11}(t)+a_{22}(t)+\\cdots+a_{nn}(t)]W(t).\n\\end{aligned}\n$$ -->\n\n求解上述微分方程得\n\nW(t) = ce^{\\int_{t_{0}}^t\\left(a_{11}(t)+a_{22}(t)+\\cdots+a_{nn}(t)\\right)\\mathrm ds}\n\n<!-- $$\nW(t)=ce^{\\int_{t_0}^t\\left[a_{11}(t)+a_{22}(t)+\\cdots+a_{nn}(t)\\right]\\mathrm{~d}s}\n$$ -->",
-    "retrievalText": "一阶线性微分方程组\n常微分方程\n数学 常微分方程 一阶线性微分方程组\nmath-note\nformula-context\nparagraph formula\nx_{n1}(t)\\\\\nx_{12}(t) & x_{22}(t) & \\cdots & x_{n2}(t)\\\\\n\\vdots&\\vdots&&\\vdots\\\\\na_{nn}x_{1n}(t) & a_{nn}x_{2n}(t) & \\cdots & a_{nn}x_{nn}(t)\n\\end{vmatrix}\\\\\n=&[a_{11}(t)+a_{22}(t)+\\cdots+a_{nn}(t)]W(t).\n\\end{aligned}\n$$ -->\n\n求解上述微分方程得\n\nW(t) = ce^{\\int_{t_{0}}^t\\left(a_{11}(t)+a_{22}(t)+\\cdots+a_{nn}(t)\\right)\\mathrm ds}\n\n<!-- $$\nW(t)=ce^{\\int_{t_0}^t\\left[a_{11}(t)+a_{22}(t)+\\cdots+a_{nn}(t)\\right]\\mathrm{~d}s}\n$$ -->",
-    "blockTypes": [
-      "paragraph",
       "formula"
     ],
     "sourceLines": {
-      "start": 95,
-      "end": 158
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_4773c224f13944644af175f8",
-    "contentHash": "sha256:35c08cf03c4740627bf3c8a993f6635e00edd9fb21f4499328ec4603ca7f04a9"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2025/09/03/5-1/",
-    "postId": "一阶线性微分方程组",
-    "postTitle": "一阶线性微分方程组",
-    "tags": [
-      "常微分方程"
-    ],
-    "categories": [
-      "数学",
-      "常微分方程",
-      "一阶线性微分方程组"
-    ],
-    "sourcePath": "source/_posts/ODE/5.1 一阶线性微分方程组.md",
-    "profile": "math-note",
-    "profileSource": "path-rule",
-    "parentId": "parent_39a7a85a0bee90c05ddb126a",
-    "sectionTitle": "",
-    "headingPath": [],
-    "sectionAnchor": "section_5feceb66ffc86f38",
-    "chunkIndex": 8,
-    "childOrdinal": 8,
-    "sectionOccurrence": 0,
-    "chunkType": "formula-context",
-    "tokenCount": 93,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "又 $W(t_0)=c$, 故\n\nW(t)=W(t_0)\\cdot e^{\\int_{t_0}^t\\left[a_{11}(t)+a_{22}(t)+\\cdots+a_{nn}(t)\\right]\\mathrm{~d}s},\\quad t,t_0\\in[a,b].",
-    "retrievalText": "一阶线性微分方程组\n常微分方程\n数学 常微分方程 一阶线性微分方程组\nmath-note\nformula-context\nparagraph formula\n又 $W(t_0)=c$, 故\n\nW(t)=W(t_0)\\cdot e^{\\int_{t_0}^t\\left[a_{11}(t)+a_{22}(t)+\\cdots+a_{nn}(t)\\right]\\mathrm{~d}s},\\quad t,t_0\\in[a,b].",
-    "blockTypes": [
-      "paragraph",
-      "formula"
-    ],
-    "sourceLines": {
-      "start": 160,
+      "start": 161,
       "end": 163
     },
     "resourceLinks": [],
     "metadataOnly": false,
-    "id": "chunk_a570071d9f97460ea4942a2e",
-    "contentHash": "sha256:46e2644c45de79ac0f407758a45a1df7cee9c80266c9118d790ee0690bd49fe2"
+    "id": "chunk_31e43c83ba0aef2ba908473e",
+    "contentHash": "sha256:160bbb87de6c4012c10b6f4d2418b4c2e41dfd1fe6a0a75d9172ee2f2b072bff"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2025/09/03/5-2/",
@@ -9426,274 +9302,22 @@
     "childOrdinal": 4,
     "sectionOccurrence": 0,
     "chunkType": "text",
-    "tokenCount": 75,
+    "tokenCount": 28,
     "tokenizerVersion": "dashscope-compatible-estimate-v1",
     "overflowReason": null,
-    "content": "你可以把它理解成:\n页面复杂之后, Vue 能让前端代码没那么乱.\n\n<!-- ## Vue 和原生前端三件套的关系\n\nVue 和原生前端三件套不是对立关系, 而是建立关系.\n\n你仍然需要:",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 为什么要用 Vue\ntext\nparagraph\n你可以把它理解成:\n页面复杂之后, Vue 能让前端代码没那么乱.\n\n<!-- ## Vue 和原生前端三件套的关系\n\nVue 和原生前端三件套不是对立关系, 而是建立关系.\n\n你仍然需要:",
+    "content": "你可以把它理解成:\n页面复杂之后, Vue 能让前端代码没那么乱.",
+    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 为什么要用 Vue\ntext\nparagraph\n你可以把它理解成:\n页面复杂之后, Vue 能让前端代码没那么乱.",
     "blockTypes": [
       "paragraph"
     ],
     "sourceLines": {
       "start": 51,
-      "end": 58
+      "end": 52
     },
     "resourceLinks": [],
     "metadataOnly": false,
-    "id": "chunk_21ce4de1be26be2f1967dc2e",
-    "contentHash": "sha256:49f9a6f3872a0370dc6d291e4ee22e34003e703eda107fd7301e9e6545b1abad"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_c89853fd2d78acf5c7ab7936",
-    "sectionTitle": "为什么要用 Vue",
-    "headingPath": [
-      "Vue 简介",
-      "为什么要用 Vue"
-    ],
-    "sectionAnchor": "section_1ffaf582c69c4bad",
-    "chunkIndex": 8,
-    "childOrdinal": 5,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 38,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "用 HTML 理解页面结构\n用 CSS 控制页面样式\n用 JavaScript 理解变量、函数、事件和逻辑",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 为什么要用 Vue\nlist\nlist\n用 HTML 理解页面结构\n用 CSS 控制页面样式\n用 JavaScript 理解变量、函数、事件和逻辑",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 60,
-      "end": 63
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_7cc64c2340fdc22a4003dc4d",
-    "contentHash": "sha256:a65ed6dcfa03ea39cabb0b322ffe74071134434a634ca5bc4257780b7df8ae07"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_c89853fd2d78acf5c7ab7936",
-    "sectionTitle": "为什么要用 Vue",
-    "headingPath": [
-      "Vue 简介",
-      "为什么要用 Vue"
-    ],
-    "sectionAnchor": "section_1ffaf582c69c4bad",
-    "chunkIndex": 9,
-    "childOrdinal": 6,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 7,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "而 Vue 做的事是:",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 为什么要用 Vue\ntext\nparagraph\n而 Vue 做的事是:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 64,
-      "end": 64
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_b603e89a2efdf61f63c5c295",
-    "contentHash": "sha256:8bcafa2dcb970b381569d7033e8a088fbf421cc264f40b127119c97b90096fe0"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_c89853fd2d78acf5c7ab7936",
-    "sectionTitle": "为什么要用 Vue",
-    "headingPath": [
-      "Vue 简介",
-      "为什么要用 Vue"
-    ],
-    "sectionAnchor": "section_1ffaf582c69c4bad",
-    "chunkIndex": 10,
-    "childOrdinal": 7,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 29,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "用模板更方便地写页面\n用响应式数据驱动界面变化\n用组件组织页面",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 为什么要用 Vue\nlist\nlist\n用模板更方便地写页面\n用响应式数据驱动界面变化\n用组件组织页面",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 66,
-      "end": 69
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_f7517d51c8f6a952b747d69c",
-    "contentHash": "sha256:54c789a8828f0db57246e67c7c8aededeecf96761ae0f68c5090821593562447"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_c89853fd2d78acf5c7ab7936",
-    "sectionTitle": "为什么要用 Vue",
-    "headingPath": [
-      "Vue 简介",
-      "为什么要用 Vue"
-    ],
-    "sectionAnchor": "section_1ffaf582c69c4bad",
-    "chunkIndex": 11,
-    "childOrdinal": 8,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 7,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "可以这样理解:",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 为什么要用 Vue\ntext\nparagraph\n可以这样理解:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 70,
-      "end": 70
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_0150d30e709639c5f3d9651b",
-    "contentHash": "sha256:699b31dc45560a0969bee33c8b39a03b4e15b608c24e5cda4277d268f44e8670"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_c89853fd2d78acf5c7ab7936",
-    "sectionTitle": "为什么要用 Vue",
-    "headingPath": [
-      "Vue 简介",
-      "为什么要用 Vue"
-    ],
-    "sectionAnchor": "section_1ffaf582c69c4bad",
-    "chunkIndex": 12,
-    "childOrdinal": 9,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 27,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "原生前端三件套 = 基础能力\nVue = 更适合做复杂页面的组织方式",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 为什么要用 Vue\nlist\nlist\n原生前端三件套 = 基础能力\nVue = 更适合做复杂页面的组织方式",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 72,
-      "end": 74
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_1d95babf72c7382d942b35f9",
-    "contentHash": "sha256:3edf5f1d606f77a1d9178796176c9fe6f0fd83efbae44ad96a9f4b3f2b2e0fa9"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_c89853fd2d78acf5c7ab7936",
-    "sectionTitle": "为什么要用 Vue",
-    "headingPath": [
-      "Vue 简介",
-      "为什么要用 Vue"
-    ],
-    "sectionAnchor": "section_1ffaf582c69c4bad",
-    "chunkIndex": 13,
-    "childOrdinal": 10,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 45,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "所以学 Vue 的前提不是把原生 JavaScript 学到很深, 而是至少能看懂基础的变量、函数、对象和事件. -->",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 为什么要用 Vue\ntext\nparagraph\n所以学 Vue 的前提不是把原生 JavaScript 学到很深, 而是至少能看懂基础的变量、函数、对象和事件. -->",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 75,
-      "end": 75
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_f508af34e17f050be90c587f",
-    "contentHash": "sha256:10af1135fe990d1eae13a62597a9abbd770c01290cd7a57c7d6e3ab0bbfbe471"
+    "id": "chunk_3f96fdc4f1b52a3d6e401a78",
+    "contentHash": "sha256:f3fc53481717e1d37a9bbfc68aee830a2d7e30ff3b813c342c23d64e5c8ebb2c"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
@@ -9716,7 +9340,7 @@
       "什么是组件"
     ],
     "sectionAnchor": "section_b040cbf73c354180",
-    "chunkIndex": 14,
+    "chunkIndex": 8,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -9758,7 +9382,7 @@
       "什么是组件"
     ],
     "sectionAnchor": "section_b040cbf73c354180",
-    "chunkIndex": 15,
+    "chunkIndex": 9,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -9800,7 +9424,7 @@
       "什么是组件"
     ],
     "sectionAnchor": "section_b040cbf73c354180",
-    "chunkIndex": 16,
+    "chunkIndex": 10,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -9842,7 +9466,7 @@
       "什么是组件"
     ],
     "sectionAnchor": "section_b040cbf73c354180",
-    "chunkIndex": 17,
+    "chunkIndex": 11,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -9884,7 +9508,7 @@
       "什么是组件"
     ],
     "sectionAnchor": "section_b040cbf73c354180",
-    "chunkIndex": 18,
+    "chunkIndex": 12,
     "childOrdinal": 4,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -9926,7 +9550,7 @@
       "什么是数据驱动视图"
     ],
     "sectionAnchor": "section_e3263cc91dd2f73c",
-    "chunkIndex": 19,
+    "chunkIndex": 13,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -9968,7 +9592,7 @@
       "什么是数据驱动视图"
     ],
     "sectionAnchor": "section_e3263cc91dd2f73c",
-    "chunkIndex": 20,
+    "chunkIndex": 14,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -10010,7 +9634,7 @@
       "什么是数据驱动视图"
     ],
     "sectionAnchor": "section_e3263cc91dd2f73c",
-    "chunkIndex": 21,
+    "chunkIndex": 15,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -10052,7 +9676,7 @@
       "什么是数据驱动视图"
     ],
     "sectionAnchor": "section_e3263cc91dd2f73c",
-    "chunkIndex": 22,
+    "chunkIndex": 16,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -10094,7 +9718,7 @@
       "什么是数据驱动视图"
     ],
     "sectionAnchor": "section_e3263cc91dd2f73c",
-    "chunkIndex": 23,
+    "chunkIndex": 17,
     "childOrdinal": 4,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -10136,7 +9760,7 @@
       "什么是数据驱动视图"
     ],
     "sectionAnchor": "section_e3263cc91dd2f73c",
-    "chunkIndex": 24,
+    "chunkIndex": 18,
     "childOrdinal": 5,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -10178,7 +9802,7 @@
       "什么是数据驱动视图"
     ],
     "sectionAnchor": "section_e3263cc91dd2f73c",
-    "chunkIndex": 25,
+    "chunkIndex": 19,
     "childOrdinal": 6,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -10220,68 +9844,26 @@
       "什么是数据驱动视图"
     ],
     "sectionAnchor": "section_e3263cc91dd2f73c",
-    "chunkIndex": 26,
+    "chunkIndex": 20,
     "childOrdinal": 7,
     "sectionOccurrence": 0,
     "chunkType": "list",
-    "tokenCount": 48,
+    "tokenCount": 26,
     "tokenizerVersion": "dashscope-compatible-estimate-v1",
     "overflowReason": null,
-    "content": "message 是数据\n页面显示 message\n按钮点击后修改 message\n页面自动更新\n<!--\n所以你可以把 Vue 的核心思路记成一句话:",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 什么是数据驱动视图\nlist\nlist\nmessage 是数据\n页面显示 message\n按钮点击后修改 message\n页面自动更新\n<!--\n所以你可以把 Vue 的核心思路记成一句话:",
+    "content": "message 是数据\n页面显示 message\n按钮点击后修改 message\n页面自动更新",
+    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 什么是数据驱动视图\nlist\nlist\nmessage 是数据\n页面显示 message\n按钮点击后修改 message\n页面自动更新",
     "blockTypes": [
       "list"
     ],
     "sourceLines": {
       "start": 143,
-      "end": 149
+      "end": 151
     },
     "resourceLinks": [],
     "metadataOnly": false,
-    "id": "chunk_a47cf510d48d2383978f1c21",
-    "contentHash": "sha256:08ee61673dcb16ddafaf52b52dba2c8c199b026b423ae47e63da3f9086bc8126"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_db26529728a9fa3ee36eb9d3",
-    "sectionTitle": "什么是数据驱动视图",
-    "headingPath": [
-      "Vue 简介",
-      "什么是数据驱动视图"
-    ],
-    "sectionAnchor": "section_e3263cc91dd2f73c",
-    "chunkIndex": 27,
-    "childOrdinal": 8,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 12,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "数据变, 界面跟着变 -->",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 什么是数据驱动视图\ntext\nparagraph\n数据变, 界面跟着变 -->",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 150,
-      "end": 150
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_074bc65508f0bc2d14b44b84",
-    "contentHash": "sha256:662ebe174aa5cdd97506cb4f1f362a782c79b0b6eaf3f47659924ddee8b8d768"
+    "id": "chunk_1bc989a5e119fd133a46328d",
+    "contentHash": "sha256:a1fef131d5d512992659a63b3881391d4e9a6e0f9152264ad5027d6c0d08ab08"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
@@ -10304,7 +9886,7 @@
       "常见模板语法"
     ],
     "sectionAnchor": "section_354bf86d19761c7f",
-    "chunkIndex": 28,
+    "chunkIndex": 21,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -10347,7 +9929,7 @@
       "插值表达式"
     ],
     "sectionAnchor": "section_18a45a3ca8ac3d3f",
-    "chunkIndex": 29,
+    "chunkIndex": 22,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -10390,7 +9972,7 @@
       "插值表达式"
     ],
     "sectionAnchor": "section_18a45a3ca8ac3d3f",
-    "chunkIndex": 30,
+    "chunkIndex": 23,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -10433,7 +10015,7 @@
       "插值表达式"
     ],
     "sectionAnchor": "section_18a45a3ca8ac3d3f",
-    "chunkIndex": 31,
+    "chunkIndex": 24,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -10476,7 +10058,7 @@
       "绑定属性"
     ],
     "sectionAnchor": "section_62ae7fc4ce2ae002",
-    "chunkIndex": 32,
+    "chunkIndex": 25,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -10519,7 +10101,7 @@
       "绑定属性"
     ],
     "sectionAnchor": "section_62ae7fc4ce2ae002",
-    "chunkIndex": 33,
+    "chunkIndex": 26,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -10562,7 +10144,7 @@
       "绑定属性"
     ],
     "sectionAnchor": "section_62ae7fc4ce2ae002",
-    "chunkIndex": 34,
+    "chunkIndex": 27,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -10605,7 +10187,7 @@
       "绑定事件"
     ],
     "sectionAnchor": "section_793552de51c7bf53",
-    "chunkIndex": 35,
+    "chunkIndex": 28,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -10648,7 +10230,7 @@
       "绑定事件"
     ],
     "sectionAnchor": "section_793552de51c7bf53",
-    "chunkIndex": 36,
+    "chunkIndex": 29,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -10691,7 +10273,7 @@
       "绑定事件"
     ],
     "sectionAnchor": "section_793552de51c7bf53",
-    "chunkIndex": 37,
+    "chunkIndex": 30,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -10734,7 +10316,7 @@
       "绑定事件"
     ],
     "sectionAnchor": "section_793552de51c7bf53",
-    "chunkIndex": 38,
+    "chunkIndex": 31,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -10776,7 +10358,7 @@
       "常见指令"
     ],
     "sectionAnchor": "section_a7839b05bf42415a",
-    "chunkIndex": 39,
+    "chunkIndex": 32,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -10819,7 +10401,7 @@
       "v-if"
     ],
     "sectionAnchor": "section_1ee5b58fb026d280",
-    "chunkIndex": 40,
+    "chunkIndex": 33,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -10862,7 +10444,7 @@
       "v-if"
     ],
     "sectionAnchor": "section_1ee5b58fb026d280",
-    "chunkIndex": 41,
+    "chunkIndex": 34,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -10905,7 +10487,7 @@
       "v-if"
     ],
     "sectionAnchor": "section_1ee5b58fb026d280",
-    "chunkIndex": 42,
+    "chunkIndex": 35,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -10948,7 +10530,7 @@
       "v-for"
     ],
     "sectionAnchor": "section_eee7dcd6fe059222",
-    "chunkIndex": 43,
+    "chunkIndex": 36,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -10991,7 +10573,7 @@
       "v-for"
     ],
     "sectionAnchor": "section_eee7dcd6fe059222",
-    "chunkIndex": 44,
+    "chunkIndex": 37,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -11034,7 +10616,7 @@
       "v-for"
     ],
     "sectionAnchor": "section_eee7dcd6fe059222",
-    "chunkIndex": 45,
+    "chunkIndex": 38,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -11077,7 +10659,7 @@
       "v-model"
     ],
     "sectionAnchor": "section_f8e7e531f3a0bfdf",
-    "chunkIndex": 46,
+    "chunkIndex": 39,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -11120,7 +10702,7 @@
       "v-model"
     ],
     "sectionAnchor": "section_f8e7e531f3a0bfdf",
-    "chunkIndex": 47,
+    "chunkIndex": 40,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -11163,7 +10745,7 @@
       "v-model"
     ],
     "sectionAnchor": "section_f8e7e531f3a0bfdf",
-    "chunkIndex": 48,
+    "chunkIndex": 41,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -11206,7 +10788,7 @@
       "v-model"
     ],
     "sectionAnchor": "section_f8e7e531f3a0bfdf",
-    "chunkIndex": 49,
+    "chunkIndex": 42,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -11220,485 +10802,12 @@
     ],
     "sourceLines": {
       "start": 242,
-      "end": 244
+      "end": 289
     },
     "resourceLinks": [],
     "metadataOnly": false,
     "id": "chunk_b1a8f9c3114700a7fe07de03",
-    "contentHash": "sha256:c4e1504af7cafb15ff3f474dffa9a46b90276ad3209d3bc2b5919a974b08b280"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_0fe4f567ffd015ec0d36cbd8",
-    "sectionTitle": "v-model",
-    "headingPath": [
-      "Vue 简介",
-      "常见指令",
-      "v-model"
-    ],
-    "sectionAnchor": "section_f8e7e531f3a0bfdf",
-    "chunkIndex": 50,
-    "childOrdinal": 4,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 24,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- 对入门来说, 最值得先记住的三个指令就是:",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 常见指令 > v-model\ntext\nparagraph\n<!-- 对入门来说, 最值得先记住的三个指令就是:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 245,
-      "end": 245
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_d2b7f13ce46ad88a6e396737",
-    "contentHash": "sha256:bc395f1899a9ac5c89c8dfd88ba9ca025d95c76297a8879802e7157f9d7f7c0d"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_0fe4f567ffd015ec0d36cbd8",
-    "sectionTitle": "v-model",
-    "headingPath": [
-      "Vue 简介",
-      "常见指令",
-      "v-model"
-    ],
-    "sectionAnchor": "section_f8e7e531f3a0bfdf",
-    "chunkIndex": 51,
-    "childOrdinal": 5,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 13,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "v-if\nv-for\nv-model -->",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 常见指令 > v-model\nlist\nlist\nv-if\nv-for\nv-model -->",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 247,
-      "end": 250
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_1103edb2d6e511ecf7823256",
-    "contentHash": "sha256:f2fe279639e5bf2808c6e951bca8b18bae5431d7e4704203fe395e393e0730c8"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_0fe4f567ffd015ec0d36cbd8",
-    "sectionTitle": "v-model",
-    "headingPath": [
-      "Vue 简介",
-      "常见指令",
-      "v-model"
-    ],
-    "sectionAnchor": "section_f8e7e531f3a0bfdf",
-    "chunkIndex": 52,
-    "childOrdinal": 6,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 77,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- ## 如何用 Vue 指挥 AI\n\n如果你后续主要是靠 AI 帮你写 Vue, 那你最需要学会的不是所有语法, 而是怎么把需求拆清楚.\n\n描述一个 Vue 需求时, 最好至少说清楚这几件事:",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 常见指令 > v-model\ntext\nparagraph\n<!-- ## 如何用 Vue 指挥 AI\n\n如果你后续主要是靠 AI 帮你写 Vue, 那你最需要学会的不是所有语法, 而是怎么把需求拆清楚.\n\n描述一个 Vue 需求时, 最好至少说清楚这几件事:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 251,
-      "end": 255
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_31e15ff4145fea0f34dc2152",
-    "contentHash": "sha256:223ef71b9f73ba909044b9be3f69560a97990cb966d56fba759548d14b39ccfc"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_0fe4f567ffd015ec0d36cbd8",
-    "sectionTitle": "v-model",
-    "headingPath": [
-      "Vue 简介",
-      "常见指令",
-      "v-model"
-    ],
-    "sectionAnchor": "section_f8e7e531f3a0bfdf",
-    "chunkIndex": 53,
-    "childOrdinal": 7,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 45,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "页面要拆成哪些组件\n每个组件显示什么内容\n组件里有哪些数据\n用户点击后会发生什么\n是否需要请求接口",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 常见指令 > v-model\nlist\nlist\n页面要拆成哪些组件\n每个组件显示什么内容\n组件里有哪些数据\n用户点击后会发生什么\n是否需要请求接口",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 257,
-      "end": 262
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_1a2eb4b7c2603cfe86047c38",
-    "contentHash": "sha256:151e84464a5e864f8736255d63874c7bd6e9e1dd9c262bbfe66ff0c653655b7b"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_0fe4f567ffd015ec0d36cbd8",
-    "sectionTitle": "v-model",
-    "headingPath": [
-      "Vue 简介",
-      "常见指令",
-      "v-model"
-    ],
-    "sectionAnchor": "section_f8e7e531f3a0bfdf",
-    "chunkIndex": 54,
-    "childOrdinal": 8,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 21,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "例如你想让 AI 写一个登录框, 可以这样描述:",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 常见指令 > v-model\ntext\nparagraph\n例如你想让 AI 写一个登录框, 可以这样描述:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 263,
-      "end": 263
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_e08d9bbc3be02250541716fd",
-    "contentHash": "sha256:5c5d007f44e350db11aeceb6bcc764b428dc2b92643587d1360d4c7495ee66b0"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_0fe4f567ffd015ec0d36cbd8",
-    "sectionTitle": "v-model",
-    "headingPath": [
-      "Vue 简介",
-      "常见指令",
-      "v-model"
-    ],
-    "sectionAnchor": "section_f8e7e531f3a0bfdf",
-    "chunkIndex": 55,
-    "childOrdinal": 9,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 90,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "用 Vue 3 写一个登录卡片组件\n页面包含标题、用户名输入框、密码输入框、登录按钮\n使用 v-model 绑定输入内容\n点击按钮后先校验是否为空\n如果不为空, 调用登录接口\n样式保持简洁, 卡片居中, 有圆角和阴影",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 常见指令 > v-model\nlist\nlist\n用 Vue 3 写一个登录卡片组件\n页面包含标题、用户名输入框、密码输入框、登录按钮\n使用 v-model 绑定输入内容\n点击按钮后先校验是否为空\n如果不为空, 调用登录接口\n样式保持简洁, 卡片居中, 有圆角和阴影",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 265,
-      "end": 271
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_6057cc51edad85786f5d1c1b",
-    "contentHash": "sha256:a3b4745e8fb81148f42e0b0d648330d6f372f1a52f358f22c2479ec46933a83f"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_0fe4f567ffd015ec0d36cbd8",
-    "sectionTitle": "v-model",
-    "headingPath": [
-      "Vue 简介",
-      "常见指令",
-      "v-model"
-    ],
-    "sectionAnchor": "section_f8e7e531f3a0bfdf",
-    "chunkIndex": 56,
-    "childOrdinal": 10,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 21,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "再比如你想做一个文章列表页, 可以这样描述:",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 常见指令 > v-model\ntext\nparagraph\n再比如你想做一个文章列表页, 可以这样描述:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 272,
-      "end": 272
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_24830a881726ba0e35bbff0a",
-    "contentHash": "sha256:a2cc85b613e53d26be46d93a49af2b485998bfee2f049a4ddd09fe3e374bdb5b"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_0fe4f567ffd015ec0d36cbd8",
-    "sectionTitle": "v-model",
-    "headingPath": [
-      "Vue 简介",
-      "常见指令",
-      "v-model"
-    ],
-    "sectionAnchor": "section_f8e7e531f3a0bfdf",
-    "chunkIndex": 57,
-    "childOrdinal": 11,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 65,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "用 Vue 写一个文章列表页面\n页面拆成“搜索框组件”和“文章卡片组件”\n文章列表通过 v-for 渲染\n搜索框输入时实时过滤标题\n点击文章卡片跳转详情页",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 常见指令 > v-model\nlist\nlist\n用 Vue 写一个文章列表页面\n页面拆成“搜索框组件”和“文章卡片组件”\n文章列表通过 v-for 渲染\n搜索框输入时实时过滤标题\n点击文章卡片跳转详情页",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 274,
-      "end": 279
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_b6756de67c139c14df5a6987",
-    "contentHash": "sha256:9003687d692679ef278174d3a4a8b2de55b3aafa05025998a5a07391a033ac7a"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_0fe4f567ffd015ec0d36cbd8",
-    "sectionTitle": "v-model",
-    "headingPath": [
-      "Vue 简介",
-      "常见指令",
-      "v-model"
-    ],
-    "sectionAnchor": "section_f8e7e531f3a0bfdf",
-    "chunkIndex": 58,
-    "childOrdinal": 12,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 22,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "你可以把“指挥 AI 写 Vue”总结成一个固定模板:",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 常见指令 > v-model\ntext\nparagraph\n你可以把“指挥 AI 写 Vue”总结成一个固定模板:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 280,
-      "end": 280
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_8a0221dac542312f584e1cce",
-    "contentHash": "sha256:6fc8fca08abed6cf811713320ebeae4f6e448fce6174cc8cfefd39a4307e537f"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_0fe4f567ffd015ec0d36cbd8",
-    "sectionTitle": "v-model",
-    "headingPath": [
-      "Vue 简介",
-      "常见指令",
-      "v-model"
-    ],
-    "sectionAnchor": "section_f8e7e531f3a0bfdf",
-    "chunkIndex": 59,
-    "childOrdinal": 13,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 30,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "组件结构是什么\n数据有哪些\n交互有哪些\n接口有哪些\n样式想要什么效果",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 常见指令 > v-model\nlist\nlist\n组件结构是什么\n数据有哪些\n交互有哪些\n接口有哪些\n样式想要什么效果",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 282,
-      "end": 287
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_4446b4c67a31a3f03909f685",
-    "contentHash": "sha256:06c2df8c498d61d05f49442157541fb2f7de3467f8123081852a0d8dd4282bc9"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_0fe4f567ffd015ec0d36cbd8",
-    "sectionTitle": "v-model",
-    "headingPath": [
-      "Vue 简介",
-      "常见指令",
-      "v-model"
-    ],
-    "sectionAnchor": "section_f8e7e531f3a0bfdf",
-    "chunkIndex": 60,
-    "childOrdinal": 14,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 32,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "只要这 5 点说清楚, AI 写出来的结果通常就会更接近你的预期. -->",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 常见指令 > v-model\ntext\nparagraph\n只要这 5 点说清楚, AI 写出来的结果通常就会更接近你的预期. -->",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 288,
-      "end": 288
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_d70868a992ed56d9fdbc8262",
-    "contentHash": "sha256:970c70a2a7b46e07692e31249230242fd6b18b1a0471093f6417652319c8a3c5"
+    "contentHash": "sha256:5101b63f923d5c9977db6bab93fb8017c641284d47c78c966e0e445332c7e0ca"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
@@ -11721,68 +10830,26 @@
       "小结"
     ],
     "sectionAnchor": "section_32ea703a30a1cb60",
-    "chunkIndex": 61,
+    "chunkIndex": 43,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 47,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- 对入门来说, 学 Vue 不需要一开始就陷进复杂概念里.\n\n你先抓住下面这些最关键的点就够了: -->",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 小结\ntext\nparagraph\n<!-- 对入门来说, 学 Vue 不需要一开始就陷进复杂概念里.\n\n你先抓住下面这些最关键的点就够了: -->",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 292,
-      "end": 294
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_f681759e46913af5984d60d1",
-    "contentHash": "sha256:2590bbbf858f975ca873a7d2d6c3cf0b478bf3f8eff12ffa7f313c48f335973c"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/11/vue/",
-    "postId": "VUE-BASIC",
-    "postTitle": "VUE-BASIC",
-    "tags": [
-      "Vue",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/Vue.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_7559d154bee205c765cd35b3",
-    "sectionTitle": "小结",
-    "headingPath": [
-      "Vue 简介",
-      "小结"
-    ],
-    "sectionAnchor": "section_32ea703a30a1cb60",
-    "chunkIndex": 62,
-    "childOrdinal": 1,
-    "sectionOccurrence": 0,
     "chunkType": "list",
-    "tokenCount": 152,
+    "tokenCount": 97,
     "tokenizerVersion": "dashscope-compatible-estimate-v1",
     "overflowReason": null,
-    "content": "Vue 是一个构建用户界面的 JavaScript 框架\n它建立在 HTML、CSS 和 JavaScript 之上\n它擅长用组件拆页面\n它的核心思路是“数据变, 界面跟着变”\n最常见的模板语法是 {{ }}、: 和 @\n最常见的指令是 v-if、v-for 和 v-model\n<!--\n如果你能先看懂这些内容, 基本就已经能理解简单的 Vue 代码, 也能更准确地让 AI 帮你生成和修改 Vue 页面了. -->",
-    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 小结\nlist\nlist\nVue 是一个构建用户界面的 JavaScript 框架\n它建立在 HTML、CSS 和 JavaScript 之上\n它擅长用组件拆页面\n它的核心思路是“数据变, 界面跟着变”\n最常见的模板语法是 {{ }}、: 和 @\n最常见的指令是 v-if、v-for 和 v-model\n<!--\n如果你能先看懂这些内容, 基本就已经能理解简单的 Vue 代码, 也能更准确地让 AI 帮你生成和修改 Vue 页面了. -->",
+    "content": "Vue 是一个构建用户界面的 JavaScript 框架\n它建立在 HTML、CSS 和 JavaScript 之上\n它擅长用组件拆页面\n它的核心思路是“数据变, 界面跟着变”\n最常见的模板语法是 {{ }}、: 和 @\n最常见的指令是 v-if、v-for 和 v-model",
+    "retrievalText": "VUE-BASIC\nVue JavaScript\n前端\ngeneric-article\nVue 简介 > 小结\nlist\nlist\nVue 是一个构建用户界面的 JavaScript 框架\n它建立在 HTML、CSS 和 JavaScript 之上\n它擅长用组件拆页面\n它的核心思路是“数据变, 界面跟着变”\n最常见的模板语法是 {{ }}、: 和 @\n最常见的指令是 v-if、v-for 和 v-model",
     "blockTypes": [
       "list"
     ],
     "sourceLines": {
       "start": 296,
-      "end": 303
+      "end": 302
     },
     "resourceLinks": [],
     "metadataOnly": false,
-    "id": "chunk_ed05454da383c8b6146c95a7",
-    "contentHash": "sha256:ec00f59642d522e68424865542f012c8dbf1a2d5e16a5472a139ede940ccafbd"
+    "id": "chunk_8d151636b93fb26cbfa0cf5e",
+    "contentHash": "sha256:b890861b05029bce3c74ec208359b088f8627ed0f81b8ca3edcbfd9b1a19d1a4"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
@@ -11936,22 +11003,22 @@
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "list",
-    "tokenCount": 94,
+    "tokenCount": 19,
     "tokenizerVersion": "dashscope-compatible-estimate-v1",
     "overflowReason": null,
-    "content": "HTML = 骨架\nCSS = 外观\nJavaScript = 行为\n<!--\n所以当你和 AI 一起写前端代码时, 最重要的不是立刻去写复杂语法, 而是先把需求拆清楚:\n哪些内容属于页面结构\n哪些内容属于样式表现\n哪些内容属于交互逻辑",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nHTML、CSS 和 JavaScript 的分工\nlist\nlist\nHTML = 骨架\nCSS = 外观\nJavaScript = 行为\n<!--\n所以当你和 AI 一起写前端代码时, 最重要的不是立刻去写复杂语法, 而是先把需求拆清楚:\n哪些内容属于页面结构\n哪些内容属于样式表现\n哪些内容属于交互逻辑",
+    "content": "HTML = 骨架\nCSS = 外观\nJavaScript = 行为",
+    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nHTML、CSS 和 JavaScript 的分工\nlist\nlist\nHTML = 骨架\nCSS = 外观\nJavaScript = 行为",
     "blockTypes": [
       "list"
     ],
     "sourceLines": {
       "start": 31,
-      "end": 40
+      "end": 46
     },
     "resourceLinks": [],
     "metadataOnly": false,
-    "id": "chunk_c77c477b412b8a593297bf12",
-    "contentHash": "sha256:c4aa32d7b148b990f8540927954017eea130aceb49a0134cbe8df41b3e7ced07"
+    "id": "chunk_47fc3449ada814a56d4be990",
+    "contentHash": "sha256:84a579dcc408460367383de2d253a7d36c5b19f0d5fe6adee1dc5419ca8b732f"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
@@ -11976,90 +11043,6 @@
     "sectionAnchor": "section_5aebd26ec690702f",
     "chunkIndex": 4,
     "childOrdinal": 4,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 15,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "比如你可以这样给 AI 描述需求:",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nHTML、CSS 和 JavaScript 的分工\ntext\nparagraph\n比如你可以这样给 AI 描述需求:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 41,
-      "end": 41
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_d22b884663c396bfa2e3d25a",
-    "contentHash": "sha256:5e1558339b5d39d1e21c2961e1830f2084d44d1d6523f9b18f6497c58c976449"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_76ba2bf13276bda3532c0572",
-    "sectionTitle": "HTML、CSS 和 JavaScript 的分工",
-    "headingPath": [
-      "HTML、CSS 和 JavaScript 的分工"
-    ],
-    "sectionAnchor": "section_5aebd26ec690702f",
-    "chunkIndex": 5,
-    "childOrdinal": 5,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 72,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "HTML: 我要一个标题、一个输入框和一个提交按钮\nCSS: 整体居中, 按钮是蓝色, 卡片有圆角和阴影\nJavaScript: 点击按钮后校验输入内容, 然后弹出提示 -->",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nHTML、CSS 和 JavaScript 的分工\nlist\nlist\nHTML: 我要一个标题、一个输入框和一个提交按钮\nCSS: 整体居中, 按钮是蓝色, 卡片有圆角和阴影\nJavaScript: 点击按钮后校验输入内容, 然后弹出提示 -->",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 43,
-      "end": 46
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_605c83ca02414c7f2cc0fcb9",
-    "contentHash": "sha256:80b0245056cc88d28f6e8d9ecffcfab5b1b0bd69cb76b0ea9d7e4624d96fb92f"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_76ba2bf13276bda3532c0572",
-    "sectionTitle": "HTML、CSS 和 JavaScript 的分工",
-    "headingPath": [
-      "HTML、CSS 和 JavaScript 的分工"
-    ],
-    "sectionAnchor": "section_5aebd26ec690702f",
-    "chunkIndex": 6,
-    "childOrdinal": 6,
     "sectionOccurrence": 0,
     "chunkType": "text",
     "tokenCount": 18,
@@ -12101,7 +11084,7 @@
       "HTML 是什么"
     ],
     "sectionAnchor": "section_3769c4155ab35a40",
-    "chunkIndex": 7,
+    "chunkIndex": 5,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "quote",
@@ -12144,7 +11127,7 @@
       "HTML 页面基本结构"
     ],
     "sectionAnchor": "section_03d45f6c2263dc7e",
-    "chunkIndex": 8,
+    "chunkIndex": 6,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -12187,7 +11170,7 @@
       "HTML 页面基本结构"
     ],
     "sectionAnchor": "section_03d45f6c2263dc7e",
-    "chunkIndex": 9,
+    "chunkIndex": 7,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -12230,7 +11213,7 @@
       "HTML 页面基本结构"
     ],
     "sectionAnchor": "section_03d45f6c2263dc7e",
-    "chunkIndex": 10,
+    "chunkIndex": 8,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -12273,7 +11256,7 @@
       "HTML 页面基本结构"
     ],
     "sectionAnchor": "section_03d45f6c2263dc7e",
-    "chunkIndex": 11,
+    "chunkIndex": 9,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "quote",
@@ -12317,7 +11300,7 @@
       "常见的 HTML 标签:"
     ],
     "sectionAnchor": "section_5debd9ab41cf569c",
-    "chunkIndex": 12,
+    "chunkIndex": 10,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -12361,7 +11344,7 @@
       "常见的 HTML 标签:"
     ],
     "sectionAnchor": "section_5debd9ab41cf569c",
-    "chunkIndex": 13,
+    "chunkIndex": 11,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -12405,7 +11388,7 @@
       "常见的 HTML 标签:"
     ],
     "sectionAnchor": "section_5debd9ab41cf569c",
-    "chunkIndex": 14,
+    "chunkIndex": 12,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -12448,7 +11431,7 @@
       "HTML 标签的常见属性"
     ],
     "sectionAnchor": "section_eceeb74c34798b89",
-    "chunkIndex": 15,
+    "chunkIndex": 13,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -12492,7 +11475,7 @@
       "HTML 标签的常见属性"
     ],
     "sectionAnchor": "section_eceeb74c34798b89",
-    "chunkIndex": 16,
+    "chunkIndex": 14,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -12536,7 +11519,7 @@
       "常见的 HTML 标签属性"
     ],
     "sectionAnchor": "section_64bb117e30594584",
-    "chunkIndex": 17,
+    "chunkIndex": 15,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -12579,7 +11562,7 @@
       "语义化标签"
     ],
     "sectionAnchor": "section_aaebd79568a62613",
-    "chunkIndex": 18,
+    "chunkIndex": 16,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -12622,7 +11605,7 @@
       "语义化标签"
     ],
     "sectionAnchor": "section_aaebd79568a62613",
-    "chunkIndex": 19,
+    "chunkIndex": 17,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -12665,7 +11648,7 @@
       "语义化标签"
     ],
     "sectionAnchor": "section_aaebd79568a62613",
-    "chunkIndex": 20,
+    "chunkIndex": 18,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -12708,7 +11691,7 @@
       "语义化标签"
     ],
     "sectionAnchor": "section_aaebd79568a62613",
-    "chunkIndex": 21,
+    "chunkIndex": 19,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -12751,7 +11734,7 @@
       "语义化标签"
     ],
     "sectionAnchor": "section_aaebd79568a62613",
-    "chunkIndex": 22,
+    "chunkIndex": 20,
     "childOrdinal": 4,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -12794,7 +11777,7 @@
       "语义化标签"
     ],
     "sectionAnchor": "section_aaebd79568a62613",
-    "chunkIndex": 23,
+    "chunkIndex": 21,
     "childOrdinal": 5,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -12838,7 +11821,7 @@
       "为什么要用语义化标签"
     ],
     "sectionAnchor": "section_fc404f3dc839e9f3",
-    "chunkIndex": 24,
+    "chunkIndex": 22,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -12882,7 +11865,7 @@
       "为什么要用语义化标签"
     ],
     "sectionAnchor": "section_fc404f3dc839e9f3",
-    "chunkIndex": 25,
+    "chunkIndex": 23,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -12925,7 +11908,7 @@
       "表单基础"
     ],
     "sectionAnchor": "section_870a477bcba22d99",
-    "chunkIndex": 26,
+    "chunkIndex": 24,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -12968,7 +11951,7 @@
       "表单基础"
     ],
     "sectionAnchor": "section_870a477bcba22d99",
-    "chunkIndex": 27,
+    "chunkIndex": 25,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -13011,7 +11994,7 @@
       "表单基础"
     ],
     "sectionAnchor": "section_870a477bcba22d99",
-    "chunkIndex": 28,
+    "chunkIndex": 26,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -13054,7 +12037,7 @@
       "表单基础"
     ],
     "sectionAnchor": "section_870a477bcba22d99",
-    "chunkIndex": 29,
+    "chunkIndex": 27,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -13098,7 +12081,7 @@
       "常见表单标签"
     ],
     "sectionAnchor": "section_0231837dee80face",
-    "chunkIndex": 30,
+    "chunkIndex": 28,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -13142,7 +12125,7 @@
       "常见表单标签"
     ],
     "sectionAnchor": "section_0231837dee80face",
-    "chunkIndex": 31,
+    "chunkIndex": 29,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -13186,7 +12169,7 @@
       "常见表单标签"
     ],
     "sectionAnchor": "section_0231837dee80face",
-    "chunkIndex": 32,
+    "chunkIndex": 30,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -13229,7 +12212,7 @@
       "CSS 是什么"
     ],
     "sectionAnchor": "section_9e2cf576423b94bb",
-    "chunkIndex": 33,
+    "chunkIndex": 31,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -13273,7 +12256,7 @@
       "CSS 是什么"
     ],
     "sectionAnchor": "section_9e2cf576423b94bb",
-    "chunkIndex": 34,
+    "chunkIndex": 32,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -13316,7 +12299,7 @@
       "CSS 是什么"
     ],
     "sectionAnchor": "section_9e2cf576423b94bb",
-    "chunkIndex": 35,
+    "chunkIndex": 33,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -13359,7 +12342,7 @@
       "CSS 是什么"
     ],
     "sectionAnchor": "section_9e2cf576423b94bb",
-    "chunkIndex": 36,
+    "chunkIndex": 34,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -13402,7 +12385,7 @@
       "CSS 怎么写到页面里"
     ],
     "sectionAnchor": "section_390f16968b052d2a",
-    "chunkIndex": 37,
+    "chunkIndex": 35,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -13446,7 +12429,7 @@
       "行内样式"
     ],
     "sectionAnchor": "section_386b85a1109770bd",
-    "chunkIndex": 38,
+    "chunkIndex": 36,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -13490,7 +12473,7 @@
       "行内样式"
     ],
     "sectionAnchor": "section_386b85a1109770bd",
-    "chunkIndex": 39,
+    "chunkIndex": 37,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -13534,7 +12517,7 @@
       "行内样式"
     ],
     "sectionAnchor": "section_386b85a1109770bd",
-    "chunkIndex": 40,
+    "chunkIndex": 38,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -13578,7 +12561,7 @@
       "内部样式"
     ],
     "sectionAnchor": "section_5d996de7877a6107",
-    "chunkIndex": 41,
+    "chunkIndex": 39,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -13622,7 +12605,7 @@
       "内部样式"
     ],
     "sectionAnchor": "section_5d996de7877a6107",
-    "chunkIndex": 42,
+    "chunkIndex": 40,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -13658,50 +12641,6 @@
     "sourcePath": "source/_posts/frontend/frontend-basic.md",
     "profile": "generic-article",
     "profileSource": "migration-fallback",
-    "parentId": "parent_17b65e3a475ea61ba73f9083",
-    "sectionTitle": "内部样式",
-    "headingPath": [
-      "CSS 简介",
-      "CSS 怎么写到页面里",
-      "内部样式"
-    ],
-    "sectionAnchor": "section_5d996de7877a6107",
-    "chunkIndex": 43,
-    "childOrdinal": 2,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 24,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- 这种方式适合小型页面或练习时使用. -->",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nCSS 简介 > CSS 怎么写到页面里 > 内部样式\ntext\nparagraph\n<!-- 这种方式适合小型页面或练习时使用. -->",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 280,
-      "end": 280
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_02111af5ead4d6253237076a",
-    "contentHash": "sha256:e58c651f5c2e6ea1e63f3f3e6e0e2c9447dea7b4ba8220ff3dc2f837eb6be33a"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
     "parentId": "parent_aa8a6dd5ef6b97e5a97baeb2",
     "sectionTitle": "外部样式表",
     "headingPath": [
@@ -13710,7 +12649,7 @@
       "外部样式表"
     ],
     "sectionAnchor": "section_7b52208dc1dc72d7",
-    "chunkIndex": 44,
+    "chunkIndex": 41,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -13754,7 +12693,7 @@
       "外部样式表"
     ],
     "sectionAnchor": "section_7b52208dc1dc72d7",
-    "chunkIndex": 45,
+    "chunkIndex": 42,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -13798,7 +12737,7 @@
       "外部样式表"
     ],
     "sectionAnchor": "section_7b52208dc1dc72d7",
-    "chunkIndex": 46,
+    "chunkIndex": 43,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -13841,7 +12780,7 @@
       "常见选择器"
     ],
     "sectionAnchor": "section_36afa433ebc2dc22",
-    "chunkIndex": 47,
+    "chunkIndex": 44,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -13885,7 +12824,7 @@
       "标签选择器"
     ],
     "sectionAnchor": "section_4bcd3d0c45d0618b",
-    "chunkIndex": 48,
+    "chunkIndex": 45,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -13929,7 +12868,7 @@
       "标签选择器"
     ],
     "sectionAnchor": "section_4bcd3d0c45d0618b",
-    "chunkIndex": 49,
+    "chunkIndex": 46,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -13973,7 +12912,7 @@
       "标签选择器"
     ],
     "sectionAnchor": "section_4bcd3d0c45d0618b",
-    "chunkIndex": 50,
+    "chunkIndex": 47,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -14017,7 +12956,7 @@
       "类选择器"
     ],
     "sectionAnchor": "section_2b74ca275b8b89ff",
-    "chunkIndex": 51,
+    "chunkIndex": 48,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -14061,7 +13000,7 @@
       "类选择器"
     ],
     "sectionAnchor": "section_2b74ca275b8b89ff",
-    "chunkIndex": 52,
+    "chunkIndex": 49,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -14105,7 +13044,7 @@
       "类选择器"
     ],
     "sectionAnchor": "section_2b74ca275b8b89ff",
-    "chunkIndex": 53,
+    "chunkIndex": 50,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -14149,7 +13088,7 @@
       "id 选择器"
     ],
     "sectionAnchor": "section_bf62c13c07dc119c",
-    "chunkIndex": 54,
+    "chunkIndex": 51,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -14193,7 +13132,7 @@
       "id 选择器"
     ],
     "sectionAnchor": "section_bf62c13c07dc119c",
-    "chunkIndex": 55,
+    "chunkIndex": 52,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -14237,7 +13176,7 @@
       "id 选择器"
     ],
     "sectionAnchor": "section_bf62c13c07dc119c",
-    "chunkIndex": 56,
+    "chunkIndex": 53,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -14273,50 +13212,6 @@
     "sourcePath": "source/_posts/frontend/frontend-basic.md",
     "profile": "generic-article",
     "profileSource": "migration-fallback",
-    "parentId": "parent_3aa23ce5fbba570a29549728",
-    "sectionTitle": "id 选择器",
-    "headingPath": [
-      "CSS 简介",
-      "常见选择器",
-      "id 选择器"
-    ],
-    "sectionAnchor": "section_bf62c13c07dc119c",
-    "chunkIndex": 57,
-    "childOrdinal": 3,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 29,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- 对于初学者来说, 先掌握这三种选择器就够用了. -->",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nCSS 简介 > 常见选择器 > id 选择器\ntext\nparagraph\n<!-- 对于初学者来说, 先掌握这三种选择器就够用了. -->",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 338,
-      "end": 338
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_045f24a4aca924bf1d3fa0be",
-    "contentHash": "sha256:f780382a43fe529d5c383aae292d65fdc795712e926dd9b5b150e6b8932b2d23"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
     "parentId": "parent_febe44591f09966c5e531ff7",
     "sectionTitle": "常见样式属性",
     "headingPath": [
@@ -14324,7 +13219,7 @@
       "常见样式属性"
     ],
     "sectionAnchor": "section_57589aeac9692978",
-    "chunkIndex": 58,
+    "chunkIndex": 54,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -14367,7 +13262,7 @@
       "常见样式属性"
     ],
     "sectionAnchor": "section_57589aeac9692978",
-    "chunkIndex": 59,
+    "chunkIndex": 55,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -14410,7 +13305,7 @@
       "常见样式属性"
     ],
     "sectionAnchor": "section_57589aeac9692978",
-    "chunkIndex": 60,
+    "chunkIndex": 56,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -14453,7 +13348,7 @@
       "常见样式属性"
     ],
     "sectionAnchor": "section_57589aeac9692978",
-    "chunkIndex": 61,
+    "chunkIndex": 57,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -14496,7 +13391,7 @@
       "常见样式属性"
     ],
     "sectionAnchor": "section_57589aeac9692978",
-    "chunkIndex": 62,
+    "chunkIndex": 58,
     "childOrdinal": 4,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -14539,26 +13434,26 @@
       "布局基础: flex"
     ],
     "sectionAnchor": "section_bc2b4e811c7fb5b1",
-    "chunkIndex": 63,
+    "chunkIndex": 59,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
-    "tokenCount": 28,
+    "tokenCount": 7,
     "tokenizerVersion": "dashscope-compatible-estimate-v1",
     "overflowReason": null,
-    "content": "<!-- 前端布局里最值得先学的是 flex. -->\n\n它适合用来做:",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nCSS 简介 > 布局基础: flex\ntext\nparagraph\n<!-- 前端布局里最值得先学的是 flex. -->\n\n它适合用来做:",
+    "content": "它适合用来做:",
+    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nCSS 简介 > 布局基础: flex\ntext\nparagraph\n它适合用来做:",
     "blockTypes": [
       "paragraph"
     ],
     "sourceLines": {
-      "start": 372,
+      "start": 374,
       "end": 374
     },
     "resourceLinks": [],
     "metadataOnly": false,
-    "id": "chunk_de3e6f75bbf3d86d21a9fee5",
-    "contentHash": "sha256:93ab6f683316b5023e78b8fa2a07a068edf0439b49dde90747f1830ccbf80c68"
+    "id": "chunk_697d50ed874ed2d6ccf16a38",
+    "contentHash": "sha256:351c2f46cfdfa7f0b5b16858e661fba808ec8f7eefa1caebf131a6598c03d39e"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
@@ -14582,7 +13477,7 @@
       "布局基础: flex"
     ],
     "sectionAnchor": "section_bc2b4e811c7fb5b1",
-    "chunkIndex": 64,
+    "chunkIndex": 60,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -14625,7 +13520,7 @@
       "布局基础: flex"
     ],
     "sectionAnchor": "section_bc2b4e811c7fb5b1",
-    "chunkIndex": 65,
+    "chunkIndex": 61,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -14668,7 +13563,7 @@
       "布局基础: flex"
     ],
     "sectionAnchor": "section_bc2b4e811c7fb5b1",
-    "chunkIndex": 66,
+    "chunkIndex": 62,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -14711,7 +13606,7 @@
       "布局基础: flex"
     ],
     "sectionAnchor": "section_bc2b4e811c7fb5b1",
-    "chunkIndex": 67,
+    "chunkIndex": 63,
     "childOrdinal": 4,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -14754,7 +13649,7 @@
       "布局基础: flex"
     ],
     "sectionAnchor": "section_bc2b4e811c7fb5b1",
-    "chunkIndex": 68,
+    "chunkIndex": 64,
     "childOrdinal": 5,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -14768,55 +13663,12 @@
     ],
     "sourceLines": {
       "start": 392,
-      "end": 395
+      "end": 397
     },
     "resourceLinks": [],
     "metadataOnly": false,
     "id": "chunk_27e657a743879665957ac51e",
-    "contentHash": "sha256:6fd31d379657530b5bd0c89b26e75d8c7d368d7550f3f05f686e66fff6d0b4a0"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_338ed497483bafe418ac6591",
-    "sectionTitle": "布局基础: flex",
-    "headingPath": [
-      "CSS 简介",
-      "布局基础: flex"
-    ],
-    "sectionAnchor": "section_bc2b4e811c7fb5b1",
-    "chunkIndex": 69,
-    "childOrdinal": 6,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 36,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- 如果你只是想先看懂大多数简单页面, 那掌握 flex 就已经很够用了. -->",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nCSS 简介 > 布局基础: flex\ntext\nparagraph\n<!-- 如果你只是想先看懂大多数简单页面, 那掌握 flex 就已经很够用了. -->",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 396,
-      "end": 396
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_e2c238c66388c2519bc6d159",
-    "contentHash": "sha256:292ae5accfc3b5fb449a04200840388635bbac86695d9c987682644be6713c57"
+    "contentHash": "sha256:d697cfc61252131817a32e02febf9e6222608de7c38fa76500837bff568677c7"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
@@ -14840,7 +13692,7 @@
       "CSS 负责什么, 不负责什么"
     ],
     "sectionAnchor": "section_76e9f494dfe884f5",
-    "chunkIndex": 70,
+    "chunkIndex": 65,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -14883,7 +13735,7 @@
       "CSS 负责什么, 不负责什么"
     ],
     "sectionAnchor": "section_76e9f494dfe884f5",
-    "chunkIndex": 71,
+    "chunkIndex": 66,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -14926,7 +13778,7 @@
       "CSS 负责什么, 不负责什么"
     ],
     "sectionAnchor": "section_76e9f494dfe884f5",
-    "chunkIndex": 72,
+    "chunkIndex": 67,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -14969,7 +13821,7 @@
       "CSS 负责什么, 不负责什么"
     ],
     "sectionAnchor": "section_76e9f494dfe884f5",
-    "chunkIndex": 73,
+    "chunkIndex": 68,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -15012,7 +13864,7 @@
       "CSS 负责什么, 不负责什么"
     ],
     "sectionAnchor": "section_76e9f494dfe884f5",
-    "chunkIndex": 74,
+    "chunkIndex": 69,
     "childOrdinal": 4,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -15055,7 +13907,7 @@
       "CSS 负责什么, 不负责什么"
     ],
     "sectionAnchor": "section_76e9f494dfe884f5",
-    "chunkIndex": 75,
+    "chunkIndex": 70,
     "childOrdinal": 5,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -15098,7 +13950,7 @@
       "JavaScript 是什么"
     ],
     "sectionAnchor": "section_ce33eba28194466f",
-    "chunkIndex": 76,
+    "chunkIndex": 71,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -15141,7 +13993,7 @@
       "JavaScript 是什么"
     ],
     "sectionAnchor": "section_ce33eba28194466f",
-    "chunkIndex": 77,
+    "chunkIndex": 72,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -15184,7 +14036,7 @@
       "JavaScript 是什么"
     ],
     "sectionAnchor": "section_ce33eba28194466f",
-    "chunkIndex": 78,
+    "chunkIndex": 73,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -15227,7 +14079,7 @@
       "JavaScript 是什么"
     ],
     "sectionAnchor": "section_ce33eba28194466f",
-    "chunkIndex": 79,
+    "chunkIndex": 74,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -15270,7 +14122,7 @@
       "JavaScript 是什么"
     ],
     "sectionAnchor": "section_ce33eba28194466f",
-    "chunkIndex": 80,
+    "chunkIndex": 75,
     "childOrdinal": 4,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -15313,7 +14165,7 @@
       "JavaScript 能做什么"
     ],
     "sectionAnchor": "section_fe3faaa26e7c34f1",
-    "chunkIndex": 81,
+    "chunkIndex": 76,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -15356,7 +14208,7 @@
       "JavaScript 能做什么"
     ],
     "sectionAnchor": "section_fe3faaa26e7c34f1",
-    "chunkIndex": 82,
+    "chunkIndex": 77,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -15399,7 +14251,7 @@
       "JavaScript 能做什么"
     ],
     "sectionAnchor": "section_fe3faaa26e7c34f1",
-    "chunkIndex": 83,
+    "chunkIndex": 78,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -15442,7 +14294,7 @@
       "JavaScript 能做什么"
     ],
     "sectionAnchor": "section_fe3faaa26e7c34f1",
-    "chunkIndex": 84,
+    "chunkIndex": 79,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -15485,7 +14337,7 @@
       "JavaScript 能做什么"
     ],
     "sectionAnchor": "section_fe3faaa26e7c34f1",
-    "chunkIndex": 85,
+    "chunkIndex": 80,
     "childOrdinal": 4,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -15529,7 +14381,7 @@
       "变量"
     ],
     "sectionAnchor": "section_012a04b58d49daae",
-    "chunkIndex": 86,
+    "chunkIndex": 81,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -15573,7 +14425,7 @@
       "变量"
     ],
     "sectionAnchor": "section_012a04b58d49daae",
-    "chunkIndex": 87,
+    "chunkIndex": 82,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -15617,7 +14469,7 @@
       "变量"
     ],
     "sectionAnchor": "section_012a04b58d49daae",
-    "chunkIndex": 88,
+    "chunkIndex": 83,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -15661,7 +14513,7 @@
       "条件判断"
     ],
     "sectionAnchor": "section_67e432211fe5a8de",
-    "chunkIndex": 89,
+    "chunkIndex": 84,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -15705,7 +14557,7 @@
       "函数"
     ],
     "sectionAnchor": "section_b7834a4b818726d4",
-    "chunkIndex": 90,
+    "chunkIndex": 85,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -15748,7 +14600,7 @@
       "DOM 操作: 选元素、改内容、绑事件"
     ],
     "sectionAnchor": "section_626b9741d86138da",
-    "chunkIndex": 91,
+    "chunkIndex": 86,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -15791,7 +14643,7 @@
       "DOM 操作: 选元素、改内容、绑事件"
     ],
     "sectionAnchor": "section_626b9741d86138da",
-    "chunkIndex": 92,
+    "chunkIndex": 87,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -15834,7 +14686,7 @@
       "DOM 操作: 选元素、改内容、绑事件"
     ],
     "sectionAnchor": "section_626b9741d86138da",
-    "chunkIndex": 93,
+    "chunkIndex": 88,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -15877,7 +14729,7 @@
       "DOM 操作: 选元素、改内容、绑事件"
     ],
     "sectionAnchor": "section_626b9741d86138da",
-    "chunkIndex": 94,
+    "chunkIndex": 89,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -15920,7 +14772,7 @@
       "DOM 操作: 选元素、改内容、绑事件"
     ],
     "sectionAnchor": "section_626b9741d86138da",
-    "chunkIndex": 95,
+    "chunkIndex": 90,
     "childOrdinal": 4,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -15963,7 +14815,7 @@
       "DOM 操作: 选元素、改内容、绑事件"
     ],
     "sectionAnchor": "section_626b9741d86138da",
-    "chunkIndex": 96,
+    "chunkIndex": 91,
     "childOrdinal": 5,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -16006,7 +14858,7 @@
       "DOM 操作: 选元素、改内容、绑事件"
     ],
     "sectionAnchor": "section_626b9741d86138da",
-    "chunkIndex": 97,
+    "chunkIndex": 92,
     "childOrdinal": 6,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -16049,7 +14901,7 @@
       "与后端通信: fetch"
     ],
     "sectionAnchor": "section_4f5210f3ee64a1ca",
-    "chunkIndex": 98,
+    "chunkIndex": 93,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -16092,7 +14944,7 @@
       "与后端通信: fetch"
     ],
     "sectionAnchor": "section_4f5210f3ee64a1ca",
-    "chunkIndex": 99,
+    "chunkIndex": 94,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -16135,7 +14987,7 @@
       "与后端通信: fetch"
     ],
     "sectionAnchor": "section_4f5210f3ee64a1ca",
-    "chunkIndex": 100,
+    "chunkIndex": 95,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -16178,7 +15030,7 @@
       "与后端通信: fetch"
     ],
     "sectionAnchor": "section_4f5210f3ee64a1ca",
-    "chunkIndex": 101,
+    "chunkIndex": 96,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -16192,485 +15044,12 @@
     ],
     "sourceLines": {
       "start": 555,
-      "end": 558
+      "end": 599
     },
     "resourceLinks": [],
     "metadataOnly": false,
     "id": "chunk_001570bf0a07254b19919956",
-    "contentHash": "sha256:f7363c5bf44f6d0269a2b85e84a97a7b7c1ffd098e89c77f3a192bcf39367b64"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_7e06c6ef64c3893f484edc47",
-    "sectionTitle": "与后端通信: fetch",
-    "headingPath": [
-      "JavaScript 简介",
-      "与后端通信: fetch"
-    ],
-    "sectionAnchor": "section_4f5210f3ee64a1ca",
-    "chunkIndex": 102,
-    "childOrdinal": 4,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 71,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- 你现阶段不需要把异步原理学得很深, 只要知道前端可以通过 fetch 获取数据就够了. -->\n\n<!-- ## JavaScript 负责什么, 不负责什么\n\nJavaScript 主要负责:",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nJavaScript 简介 > 与后端通信: fetch\ntext\nparagraph\n<!-- 你现阶段不需要把异步原理学得很深, 只要知道前端可以通过 fetch 获取数据就够了. -->\n\n<!-- ## JavaScript 负责什么, 不负责什么\n\nJavaScript 主要负责:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 559,
-      "end": 563
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_719f455a1b1417913f6176cf",
-    "contentHash": "sha256:b8314faa1a48f852dadc10e8f823caeb0602c2ba60e40859c894e9ebf93f0dd6"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_7e06c6ef64c3893f484edc47",
-    "sectionTitle": "与后端通信: fetch",
-    "headingPath": [
-      "JavaScript 简介",
-      "与后端通信: fetch"
-    ],
-    "sectionAnchor": "section_4f5210f3ee64a1ca",
-    "chunkIndex": 103,
-    "childOrdinal": 5,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 22,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "事件响应\n页面内容更新\n表单校验\n网络请求\n交互逻辑",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nJavaScript 简介 > 与后端通信: fetch\nlist\nlist\n事件响应\n页面内容更新\n表单校验\n网络请求\n交互逻辑",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 565,
-      "end": 570
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_ae757e623f05e7839ca542bc",
-    "contentHash": "sha256:49a2e245b6d1ca9d16ad575d8c791d276cd705fcd76e7e897839b069d8a9b93c"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_7e06c6ef64c3893f484edc47",
-    "sectionTitle": "与后端通信: fetch",
-    "headingPath": [
-      "JavaScript 简介",
-      "与后端通信: fetch"
-    ],
-    "sectionAnchor": "section_4f5210f3ee64a1ca",
-    "chunkIndex": 104,
-    "childOrdinal": 6,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 7,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "JavaScript 不负责:",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nJavaScript 简介 > 与后端通信: fetch\ntext\nparagraph\nJavaScript 不负责:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 571,
-      "end": 571
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_75ebb0775a6d12d15e298bf3",
-    "contentHash": "sha256:406c3b1a0315e03d22c390f8ede8371829f846829c52ca3117f632a98166adb0"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_7e06c6ef64c3893f484edc47",
-    "sectionTitle": "与后端通信: fetch",
-    "headingPath": [
-      "JavaScript 简介",
-      "与后端通信: fetch"
-    ],
-    "sectionAnchor": "section_4f5210f3ee64a1ca",
-    "chunkIndex": 105,
-    "childOrdinal": 7,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 12,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "页面基础结构\n主要视觉样式",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nJavaScript 简介 > 与后端通信: fetch\nlist\nlist\n页面基础结构\n主要视觉样式",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 573,
-      "end": 575
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_5f9bb42a4aa7c06df2b09a7e",
-    "contentHash": "sha256:683f2e9fd750a6d8566c96379033ef400217bbb0da7185c574a807208c8baa9e"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_7e06c6ef64c3893f484edc47",
-    "sectionTitle": "与后端通信: fetch",
-    "headingPath": [
-      "JavaScript 简介",
-      "与后端通信: fetch"
-    ],
-    "sectionAnchor": "section_4f5210f3ee64a1ca",
-    "chunkIndex": 106,
-    "childOrdinal": 8,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 3,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "所以:",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nJavaScript 简介 > 与后端通信: fetch\ntext\nparagraph\n所以:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 576,
-      "end": 576
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_af3439d26b841158561a2b6b",
-    "contentHash": "sha256:eabaf2d53982af0724107a08031a2e46bd064d9d1235fb677ab79aafae96fecb"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_7e06c6ef64c3893f484edc47",
-    "sectionTitle": "与后端通信: fetch",
-    "headingPath": [
-      "JavaScript 简介",
-      "与后端通信: fetch"
-    ],
-    "sectionAnchor": "section_4f5210f3ee64a1ca",
-    "chunkIndex": 107,
-    "childOrdinal": 9,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 28,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "结构问题看 HTML\n样式问题看 CSS\n交互问题看 JavaScript -->",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nJavaScript 简介 > 与后端通信: fetch\nlist\nlist\n结构问题看 HTML\n样式问题看 CSS\n交互问题看 JavaScript -->",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 578,
-      "end": 581
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_7b85e5e5b1250e373aa5389c",
-    "contentHash": "sha256:6247181c20896b083aec52965173646dfdfeac4fd9c5ebda7bb3912748874eef"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_7e06c6ef64c3893f484edc47",
-    "sectionTitle": "与后端通信: fetch",
-    "headingPath": [
-      "JavaScript 简介",
-      "与后端通信: fetch"
-    ],
-    "sectionAnchor": "section_4f5210f3ee64a1ca",
-    "chunkIndex": 108,
-    "childOrdinal": 10,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 83,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- ## 如何用 HTML、CSS 和 JavaScript 指挥 AI\n\n如果你打算让 AI 帮你写前端代码, 最重要的不是把三种语言学得很深, 而是先学会拆需求.\n\n你可以按下面这套思路给 AI 提要求:",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nJavaScript 简介 > 与后端通信: fetch\ntext\nparagraph\n<!-- ## 如何用 HTML、CSS 和 JavaScript 指挥 AI\n\n如果你打算让 AI 帮你写前端代码, 最重要的不是把三种语言学得很深, 而是先学会拆需求.\n\n你可以按下面这套思路给 AI 提要求:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 582,
-      "end": 586
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_72abecad683f7264d492b2e2",
-    "contentHash": "sha256:d05b4e92ef02eb15d9e709d2f5f46d7a4b739b9c2c169dd22960a56618fd0e34"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_7e06c6ef64c3893f484edc47",
-    "sectionTitle": "与后端通信: fetch",
-    "headingPath": [
-      "JavaScript 简介",
-      "与后端通信: fetch"
-    ],
-    "sectionAnchor": "section_4f5210f3ee64a1ca",
-    "chunkIndex": 109,
-    "childOrdinal": 11,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 34,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "HTML: 页面里要有什么\nCSS: 页面要长什么样\nJavaScript: 页面要怎么交互",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nJavaScript 简介 > 与后端通信: fetch\nlist\nlist\nHTML: 页面里要有什么\nCSS: 页面要长什么样\nJavaScript: 页面要怎么交互",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 588,
-      "end": 591
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_6d1c009e920bc33dadb7b5c2",
-    "contentHash": "sha256:3a7574740a7411287bf3844d73be9d7ec94bca8556c9e33261bcbd10e854cda7"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_7e06c6ef64c3893f484edc47",
-    "sectionTitle": "与后端通信: fetch",
-    "headingPath": [
-      "JavaScript 简介",
-      "与后端通信: fetch"
-    ],
-    "sectionAnchor": "section_4f5210f3ee64a1ca",
-    "chunkIndex": 110,
-    "childOrdinal": 12,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 18,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "例如你想做一个登录框, 可以这样描述:",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nJavaScript 简介 > 与后端通信: fetch\ntext\nparagraph\n例如你想做一个登录框, 可以这样描述:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 592,
-      "end": 592
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_22a5d3f28defbe6f2c4d44b9",
-    "contentHash": "sha256:3f0f0d900265fca2d767d34abee4ca9fe376a8fe8c411882842211c394ae69ea"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_7e06c6ef64c3893f484edc47",
-    "sectionTitle": "与后端通信: fetch",
-    "headingPath": [
-      "JavaScript 简介",
-      "与后端通信: fetch"
-    ],
-    "sectionAnchor": "section_4f5210f3ee64a1ca",
-    "chunkIndex": 111,
-    "childOrdinal": 13,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 81,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "HTML: 一个标题、两个输入框、一个登录按钮\nCSS: 整个卡片居中, 白底, 圆角, 阴影, 按钮蓝色\nJavaScript: 点击登录按钮时检查输入是否为空, 如果为空就提示, 不为空就发请求",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nJavaScript 简介 > 与后端通信: fetch\nlist\nlist\nHTML: 一个标题、两个输入框、一个登录按钮\nCSS: 整个卡片居中, 白底, 圆角, 阴影, 按钮蓝色\nJavaScript: 点击登录按钮时检查输入是否为空, 如果为空就提示, 不为空就发请求",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 594,
-      "end": 597
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_57253aef93e53ffae15fb331",
-    "contentHash": "sha256:25754347966a01fd97f8946e83b900431f81c7ac9deeacb5427dbf5b93bea423"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
-    "postId": "FRONTEND-BASIC",
-    "postTitle": "FRONTEND-BASIC",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "categories": [
-      "前端"
-    ],
-    "sourcePath": "source/_posts/frontend/frontend-basic.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_7e06c6ef64c3893f484edc47",
-    "sectionTitle": "与后端通信: fetch",
-    "headingPath": [
-      "JavaScript 简介",
-      "与后端通信: fetch"
-    ],
-    "sectionAnchor": "section_4f5210f3ee64a1ca",
-    "chunkIndex": 112,
-    "childOrdinal": 14,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 30,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "这种表达方式会让 AI 写出来的代码更清楚, 也更容易修改. -->",
-    "retrievalText": "FRONTEND-BASIC\nHTML CSS JavaScript\n前端\ngeneric-article\nJavaScript 简介 > 与后端通信: fetch\ntext\nparagraph\n这种表达方式会让 AI 写出来的代码更清楚, 也更容易修改. -->",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 598,
-      "end": 598
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_b17a1c941d0fa20e950c815f",
-    "contentHash": "sha256:5f0a55b9f65d0ffaec13b6ee90f7c8383a02480cc33571df1e4fe3ef27389dfd"
+    "contentHash": "sha256:6a704f118e6da9586fbbcb17e2613617d2a223caeec1e708602cbe3e15452364"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/05/09/frontend-basic/",
@@ -16694,7 +15073,7 @@
       "小结"
     ],
     "sectionAnchor": "section_c2e46f8443fdabc9",
-    "chunkIndex": 113,
+    "chunkIndex": 97,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -16737,7 +15116,7 @@
       "小结"
     ],
     "sectionAnchor": "section_c2e46f8443fdabc9",
-    "chunkIndex": 114,
+    "chunkIndex": 98,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -16780,7 +15159,7 @@
       "小结"
     ],
     "sectionAnchor": "section_c2e46f8443fdabc9",
-    "chunkIndex": 115,
+    "chunkIndex": 99,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -31236,148 +29615,22 @@
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
-    "tokenCount": 36,
+    "tokenCount": 32,
     "tokenizerVersion": "dashscope-compatible-estimate-v1",
     "overflowReason": null,
-    "content": "由于每一步都变成一个标准最小二乘问题, 因此称为“交替最小二乘”.\n<!--",
-    "retrievalText": "ALS 排序算法\n召回 排序\n推荐算法\ngeneric-article\n则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item}) > 为什么叫 Alternating Least Squares\ntext\nparagraph\n由于每一步都变成一个标准最小二乘问题, 因此称为“交替最小二乘”.\n<!--",
+    "content": "由于每一步都变成一个标准最小二乘问题, 因此称为“交替最小二乘”.",
+    "retrievalText": "ALS 排序算法\n召回 排序\n推荐算法\ngeneric-article\n则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item}) > 为什么叫 Alternating Least Squares\ntext\nparagraph\n由于每一步都变成一个标准最小二乘问题, 因此称为“交替最小二乘”.",
     "blockTypes": [
       "paragraph"
     ],
     "sourceLines": {
       "start": 132,
-      "end": 133
+      "end": 132
     },
     "resourceLinks": [],
     "metadataOnly": false,
-    "id": "chunk_424019f07ac92fe7b3ef6417",
-    "contentHash": "sha256:1b9b2b1463682e75c041b5e6c55e7fabb52e21f87d2321f0d095d8ccabc16686"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/als/",
-    "postId": "ALS 排序算法",
-    "postTitle": "ALS 排序算法",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/ALS.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_8da35883d1008759ba5a316e",
-    "sectionTitle": "ALS 排序的完整流程",
-    "headingPath": [
-      "则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item})",
-      "ALS 排序的完整流程"
-    ],
-    "sectionAnchor": "section_8093e3f90855d2c8",
-    "chunkIndex": 28,
-    "childOrdinal": 0,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 219,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "事先做离线训练\n\n建立“用户 $\\to$ 隐向量”索引, 即 $\\lbrace\\text{用户 ID}: \\mathbf p_u\\rbrace$.\n\n对每个用户学习一个长度为 $k$ 的隐向量.\n\n给定任意用户 ID, 可快速得到该用户的潜在兴趣表示.\n\n建立“物品 $\\to$ 隐向量”索引, 即 $\\lbrace\\text{物品 ID}: \\mathbf q_i\\rbrace$.\n\n对每个物品学习一个长度为 $k$ 的隐向量.\n\n给定任意物品 ID, 可快速得到该物品的潜在属性表示.\n\n线上做推荐\n\n给定用户 ID, 取出该用户的隐向量 $\\mathbf p_u$.\n\n对每个候选物品 $i$, 计算",
-    "retrievalText": "ALS 排序算法\n召回 排序\n推荐算法\ngeneric-article\n则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item}) > ALS 排序的完整流程\nlist\nlist\n事先做离线训练\n\n建立“用户 $\\to$ 隐向量”索引, 即 $\\lbrace\\text{用户 ID}: \\mathbf p_u\\rbrace$.\n\n对每个用户学习一个长度为 $k$ 的隐向量.\n\n给定任意用户 ID, 可快速得到该用户的潜在兴趣表示.\n\n建立“物品 $\\to$ 隐向量”索引, 即 $\\lbrace\\text{物品 ID}: \\mathbf q_i\\rbrace$.\n\n对每个物品学习一个长度为 $k$ 的隐向量.\n\n给定任意物品 ID, 可快速得到该物品的潜在属性表示.\n\n线上做推荐\n\n给定用户 ID, 取出该用户的隐向量 $\\mathbf p_u$.\n\n对每个候选物品 $i$, 计算",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 136,
-      "end": 149
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_6d93b19b905501937a8bf7a7",
-    "contentHash": "sha256:97692caa45d107d5a21103d77956b11ac63f8152b9c0d6be3f4977c959c8bf79"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/als/",
-    "postId": "ALS 排序算法",
-    "postTitle": "ALS 排序算法",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/ALS.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_8da35883d1008759ba5a316e",
-    "sectionTitle": "ALS 排序的完整流程",
-    "headingPath": [
-      "则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item})",
-      "ALS 排序的完整流程"
-    ],
-    "sectionAnchor": "section_8093e3f90855d2c8",
-    "chunkIndex": 29,
-    "childOrdinal": 1,
-    "sectionOccurrence": 0,
-    "chunkType": "formula",
-    "tokenCount": 26,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "\\text{score}(u, i)=\\mathbf p_u^\\top \\mathbf q_i.",
-    "retrievalText": "ALS 排序算法\n召回 排序\n推荐算法\ngeneric-article\n则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item}) > ALS 排序的完整流程\nformula\nformula\n\\text{score}(u, i)=\\mathbf p_u^\\top \\mathbf q_i.",
-    "blockTypes": [
-      "formula"
-    ],
-    "sourceLines": {
-      "start": 150,
-      "end": 152
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_c2d89b7376c3055952b67714",
-    "contentHash": "sha256:8ee9320410baed7b5ef83750e1f7f130d1b3880b349889ed485fd973b965905b"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/als/",
-    "postId": "ALS 排序算法",
-    "postTitle": "ALS 排序算法",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/ALS.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_8da35883d1008759ba5a316e",
-    "sectionTitle": "ALS 排序的完整流程",
-    "headingPath": [
-      "则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item})",
-      "ALS 排序的完整流程"
-    ],
-    "sectionAnchor": "section_8093e3f90855d2c8",
-    "chunkIndex": 30,
-    "childOrdinal": 2,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 37,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "过滤掉用户已经交互过的物品.\n\n返回分数最高的 $m$ 个物品作为推荐结果. -->",
-    "retrievalText": "ALS 排序算法\n召回 排序\n推荐算法\ngeneric-article\n则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item}) > ALS 排序的完整流程\nlist\nlist\n过滤掉用户已经交互过的物品.\n\n返回分数最高的 $m$ 个物品作为推荐结果. -->",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 153,
-      "end": 155
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_da596c4d2b8549cde4a53fb1",
-    "contentHash": "sha256:e090d56c64436a6b628e2c50fa9c0f3ceada8626c1ee10faf8c4c8d351362b9a"
+    "id": "chunk_3e10558977e190c0cb3d9c62",
+    "contentHash": "sha256:542669d21ea3c7156ca9e7b8d1cd1517137fe6c88d8d398bc320f66dfcf75d4d"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/03/30/als/",
@@ -31400,7 +29653,7 @@
       "ALS 与 SVD 的区别"
     ],
     "sectionAnchor": "section_47955b17aec14188",
-    "chunkIndex": 31,
+    "chunkIndex": 28,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -31442,7 +29695,7 @@
       "ALS 与 SVD 的区别"
     ],
     "sectionAnchor": "section_47955b17aec14188",
-    "chunkIndex": 32,
+    "chunkIndex": 29,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -31484,7 +29737,7 @@
       "ALS 与 SVD 的区别"
     ],
     "sectionAnchor": "section_47955b17aec14188",
-    "chunkIndex": 33,
+    "chunkIndex": 30,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -31526,7 +29779,7 @@
       "ALS 的优缺点"
     ],
     "sectionAnchor": "section_7e6771526264e741",
-    "chunkIndex": 34,
+    "chunkIndex": 31,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -31568,7 +29821,7 @@
       "ALS 的优缺点"
     ],
     "sectionAnchor": "section_7e6771526264e741",
-    "chunkIndex": 35,
+    "chunkIndex": 32,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -31610,7 +29863,7 @@
       "ALS 的优缺点"
     ],
     "sectionAnchor": "section_7e6771526264e741",
-    "chunkIndex": 36,
+    "chunkIndex": 33,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -31652,7 +29905,7 @@
       "ALS 的优缺点"
     ],
     "sectionAnchor": "section_7e6771526264e741",
-    "chunkIndex": 37,
+    "chunkIndex": 34,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -31694,7 +29947,7 @@
       "ALS 在推荐系统中的位置"
     ],
     "sectionAnchor": "section_811e0265f79ffda2",
-    "chunkIndex": 38,
+    "chunkIndex": 35,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -31737,7 +29990,7 @@
       "ALS 在推荐系统中的位置"
     ],
     "sectionAnchor": "section_811e0265f79ffda2",
-    "chunkIndex": 39,
+    "chunkIndex": 36,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -31779,7 +30032,7 @@
       "ALS 与 ItemCF 的区别"
     ],
     "sectionAnchor": "section_2138f87f0fe6c80d",
-    "chunkIndex": 40,
+    "chunkIndex": 37,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -31821,7 +30074,7 @@
       "ALS 与 ItemCF 的区别"
     ],
     "sectionAnchor": "section_2138f87f0fe6c80d",
-    "chunkIndex": 41,
+    "chunkIndex": 38,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -31863,7 +30116,7 @@
       "ALS 与 ItemCF 的区别"
     ],
     "sectionAnchor": "section_2138f87f0fe6c80d",
-    "chunkIndex": 42,
+    "chunkIndex": 39,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -31905,7 +30158,7 @@
       "ALS 与 ItemCF 的区别"
     ],
     "sectionAnchor": "section_2138f87f0fe6c80d",
-    "chunkIndex": 43,
+    "chunkIndex": 40,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "quote",
@@ -34257,612 +32510,23 @@
     "chunkIndex": 54,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 27,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- ## 12. BPR 在推荐系统中的位置\n\nBPR 常用于:",
-    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 11. BPR 的缺点\ntext\nparagraph\n<!-- ## 12. BPR 在推荐系统中的位置\n\nBPR 常用于:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 293,
-      "end": 295
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_4948d8c4059d64e7a7b6298b",
-    "contentHash": "sha256:99f6996b97c21a0c6a1ba05c8473fe26612be41d08e8b3a8a584f7859f0153f6"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/bpr/",
-    "postId": "BPR",
-    "postTitle": "BPR",
-    "tags": [
-      "排序",
-      "协同过滤"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/BPR.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_e6618b5b7db309201a8de54d",
-    "sectionTitle": "11. BPR 的缺点",
-    "headingPath": [
-      "BPR",
-      "11. BPR 的缺点"
-    ],
-    "sectionAnchor": "section_0b4b08b33bce9713",
-    "chunkIndex": 55,
-    "childOrdinal": 2,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 19,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "隐式反馈推荐\nTop-K 排序\n协同过滤排序模型",
-    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 11. BPR 的缺点\nlist\nlist\n隐式反馈推荐\nTop-K 排序\n协同过滤排序模型",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 297,
-      "end": 300
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_7051ab89efc22124f61102fc",
-    "contentHash": "sha256:313982429fa06c1071760469b66feed1b8a1607ca5f9579a012b5dcf4c0178dd"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/bpr/",
-    "postId": "BPR",
-    "postTitle": "BPR",
-    "tags": [
-      "排序",
-      "协同过滤"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/BPR.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_e6618b5b7db309201a8de54d",
-    "sectionTitle": "11. BPR 的缺点",
-    "headingPath": [
-      "BPR",
-      "11. BPR 的缺点"
-    ],
-    "sectionAnchor": "section_0b4b08b33bce9713",
-    "chunkIndex": 56,
-    "childOrdinal": 3,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 5,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "它既可以:",
-    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 11. BPR 的缺点\ntext\nparagraph\n它既可以:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 301,
-      "end": 301
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_bbfd98ed84a563d26c53c531",
-    "contentHash": "sha256:bd3273ae1d2ad9e1d524f7d10de30039df9ab142acd4a45241dc62753297d1d6"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/bpr/",
-    "postId": "BPR",
-    "postTitle": "BPR",
-    "tags": [
-      "排序",
-      "协同过滤"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/BPR.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_e6618b5b7db309201a8de54d",
-    "sectionTitle": "11. BPR 的缺点",
-    "headingPath": [
-      "BPR",
-      "11. BPR 的缺点"
-    ],
-    "sectionAnchor": "section_0b4b08b33bce9713",
-    "chunkIndex": 57,
-    "childOrdinal": 4,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 27,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "单独作为推荐模型使用\n也可以作为召回或重排阶段的候选模型",
-    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 11. BPR 的缺点\nlist\nlist\n单独作为推荐模型使用\n也可以作为召回或重排阶段的候选模型",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 302,
-      "end": 304
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_31cde0bf8640fd0a129ec91e",
-    "contentHash": "sha256:07d7b4ce277d52d898db89e945233dd2ef88645fe70e83951da5e72d111b3fca"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/bpr/",
-    "postId": "BPR",
-    "postTitle": "BPR",
-    "tags": [
-      "排序",
-      "协同过滤"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/BPR.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_e6618b5b7db309201a8de54d",
-    "sectionTitle": "11. BPR 的缺点",
-    "headingPath": [
-      "BPR",
-      "11. BPR 的缺点"
-    ],
-    "sectionAnchor": "section_0b4b08b33bce9713",
-    "chunkIndex": 58,
-    "childOrdinal": 5,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 38,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "不过在实际系统里, 如果希望进一步利用内容特征或复杂特征交互, 常会继续升级到:",
-    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 11. BPR 的缺点\ntext\nparagraph\n不过在实际系统里, 如果希望进一步利用内容特征或复杂特征交互, 常会继续升级到:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 305,
-      "end": 305
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_321d661af24ff1bafb79813f",
-    "contentHash": "sha256:884dc75d442b20632becb5338cf4239e0bbaa8276f514270015c1a5aca655876"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/bpr/",
-    "postId": "BPR",
-    "postTitle": "BPR",
-    "tags": [
-      "排序",
-      "协同过滤"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/BPR.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_e6618b5b7db309201a8de54d",
-    "sectionTitle": "11. BPR 的缺点",
-    "headingPath": [
-      "BPR",
-      "11. BPR 的缺点"
-    ],
-    "sectionAnchor": "section_0b4b08b33bce9713",
-    "chunkIndex": 59,
-    "childOrdinal": 6,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 20,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "LightFM\nDeepFM\n双塔模型\n学习排序模型 -->",
-    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 11. BPR 的缺点\nlist\nlist\nLightFM\nDeepFM\n双塔模型\n学习排序模型 -->",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 306,
-      "end": 310
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_f93432969511550015a0fde3",
-    "contentHash": "sha256:19d8763df3c8d844adf25f43978cefffb88bf00807a8b01727ca87f95792e6b5"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/bpr/",
-    "postId": "BPR",
-    "postTitle": "BPR",
-    "tags": [
-      "排序",
-      "协同过滤"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/BPR.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_e6618b5b7db309201a8de54d",
-    "sectionTitle": "11. BPR 的缺点",
-    "headingPath": [
-      "BPR",
-      "11. BPR 的缺点"
-    ],
-    "sectionAnchor": "section_0b4b08b33bce9713",
-    "chunkIndex": 60,
-    "childOrdinal": 7,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 7,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- ---",
-    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 11. BPR 的缺点\ntext\nparagraph\n<!-- ---",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 311,
-      "end": 311
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_bb911b0ccdf6dbe6cfc46dfd",
-    "contentHash": "sha256:8656f4a13fe29394d474e432455470d6cb06b82156cedace90c7c9b0d251b4bd"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/bpr/",
-    "postId": "BPR",
-    "postTitle": "BPR",
-    "tags": [
-      "排序",
-      "协同过滤"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/BPR.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_4bf69c51adcf1d8e87eb8e9f",
-    "sectionTitle": "13. 在我的项目中如何理解 BPR",
-    "headingPath": [
-      "BPR",
-      "13. 在我的项目中如何理解 BPR"
-    ],
-    "sectionAnchor": "section_e5c383887981b5aa",
-    "chunkIndex": 61,
-    "childOrdinal": 0,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 13,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "在我的项目里, BPR 属于:",
-    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 13. 在我的项目中如何理解 BPR\ntext\nparagraph\n在我的项目里, BPR 属于:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 315,
-      "end": 315
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_58753b1ed6edf7223c522ae8",
-    "contentHash": "sha256:ce5a0b996fe8cc5f8b93c6bc163217c7342b4264332bdc6388562eaa23e3b3fe"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/bpr/",
-    "postId": "BPR",
-    "postTitle": "BPR",
-    "tags": [
-      "排序",
-      "协同过滤"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/BPR.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_4bf69c51adcf1d8e87eb8e9f",
-    "sectionTitle": "13. 在我的项目中如何理解 BPR",
-    "headingPath": [
-      "BPR",
-      "13. 在我的项目中如何理解 BPR"
-    ],
-    "sectionAnchor": "section_e5c383887981b5aa",
-    "chunkIndex": 62,
-    "childOrdinal": 1,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
+    "chunkType": "quote",
     "tokenCount": 31,
     "tokenizerVersion": "dashscope-compatible-estimate-v1",
     "overflowReason": null,
-    "content": "纯协同过滤模型\n只使用用户-物品交互信息\n不直接使用电影的内容特征",
-    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 13. 在我的项目中如何理解 BPR\nlist\nlist\n纯协同过滤模型\n只使用用户-物品交互信息\n不直接使用电影的内容特征",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 317,
-      "end": 320
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_18a0350370a4c4f4c28f972e",
-    "contentHash": "sha256:dfd603fcddf8fe8e5fe3ec8e321d392f6668c5675828e1d01bcf20355d4e3fc8"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/bpr/",
-    "postId": "BPR",
-    "postTitle": "BPR",
-    "tags": [
-      "排序",
-      "协同过滤"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/BPR.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_4bf69c51adcf1d8e87eb8e9f",
-    "sectionTitle": "13. 在我的项目中如何理解 BPR",
-    "headingPath": [
-      "BPR",
-      "13. 在我的项目中如何理解 BPR"
-    ],
-    "sectionAnchor": "section_e5c383887981b5aa",
-    "chunkIndex": 63,
-    "childOrdinal": 2,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 12,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "它和 SVD / ALS 一样:",
-    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 13. 在我的项目中如何理解 BPR\ntext\nparagraph\n它和 SVD / ALS 一样:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 321,
-      "end": 321
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_00e19b1a86dffb2c516618f1",
-    "contentHash": "sha256:9dcb42d9b54501546c16b112829b1736a6adf4ce26ffaf8edc46efd5ae767c22"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/bpr/",
-    "postId": "BPR",
-    "postTitle": "BPR",
-    "tags": [
-      "排序",
-      "协同过滤"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/BPR.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_4bf69c51adcf1d8e87eb8e9f",
-    "sectionTitle": "13. 在我的项目中如何理解 BPR",
-    "headingPath": [
-      "BPR",
-      "13. 在我的项目中如何理解 BPR"
-    ],
-    "sectionAnchor": "section_e5c383887981b5aa",
-    "chunkIndex": 64,
-    "childOrdinal": 3,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 18,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "学用户向量\n学物品向量\n最后通过点积打分",
-    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 13. 在我的项目中如何理解 BPR\nlist\nlist\n学用户向量\n学物品向量\n最后通过点积打分",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 322,
-      "end": 325
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_216cba8e6ae279731ede556e",
-    "contentHash": "sha256:ae7a560f6417a629489f1097ef11915f3beb2bf66900e405e77319914bdc0ced"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/bpr/",
-    "postId": "BPR",
-    "postTitle": "BPR",
-    "tags": [
-      "排序",
-      "协同过滤"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/BPR.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_4bf69c51adcf1d8e87eb8e9f",
-    "sectionTitle": "13. 在我的项目中如何理解 BPR",
-    "headingPath": [
-      "BPR",
-      "13. 在我的项目中如何理解 BPR"
-    ],
-    "sectionAnchor": "section_e5c383887981b5aa",
-    "chunkIndex": 65,
-    "childOrdinal": 4,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 8,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "但训练目标不同:",
-    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 13. 在我的项目中如何理解 BPR\ntext\nparagraph\n但训练目标不同:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 326,
-      "end": 326
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_c4abe1c0fb1189e93476c281",
-    "contentHash": "sha256:8b2390b87cde3e12ca584449e5b6f43c6977b572e9ae71b6a6b9fa262e434f32"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/bpr/",
-    "postId": "BPR",
-    "postTitle": "BPR",
-    "tags": [
-      "排序",
-      "协同过滤"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/BPR.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_4bf69c51adcf1d8e87eb8e9f",
-    "sectionTitle": "13. 在我的项目中如何理解 BPR",
-    "headingPath": [
-      "BPR",
-      "13. 在我的项目中如何理解 BPR"
-    ],
-    "sectionAnchor": "section_e5c383887981b5aa",
-    "chunkIndex": 66,
-    "childOrdinal": 5,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 22,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "SVD / ALS 更偏矩阵分解\nBPR 更偏 pairwise ranking",
-    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 13. 在我的项目中如何理解 BPR\nlist\nlist\nSVD / ALS 更偏矩阵分解\nBPR 更偏 pairwise ranking",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 327,
-      "end": 329
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_df9c4d73aaaa0b3eeacecac7",
-    "contentHash": "sha256:b0e9b921ce49bd168f53e649558a4561cc71a6362b473cc16492d5493f95450a"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/bpr/",
-    "postId": "BPR",
-    "postTitle": "BPR",
-    "tags": [
-      "排序",
-      "协同过滤"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/BPR.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_4bf69c51adcf1d8e87eb8e9f",
-    "sectionTitle": "13. 在我的项目中如何理解 BPR",
-    "headingPath": [
-      "BPR",
-      "13. 在我的项目中如何理解 BPR"
-    ],
-    "sectionAnchor": "section_e5c383887981b5aa",
-    "chunkIndex": 67,
-    "childOrdinal": 6,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 28,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "因此可以把它看成:\n\n一个更贴近推荐排序目标的矩阵分解模型.",
-    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 13. 在我的项目中如何理解 BPR\ntext\nparagraph quote\n因此可以把它看成:\n\n一个更贴近推荐排序目标的矩阵分解模型.",
-    "blockTypes": [
-      "paragraph",
-      "quote"
-    ],
-    "sourceLines": {
-      "start": 330,
-      "end": 332
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_f60cdac6d2df19ff02866ddf",
-    "contentHash": "sha256:8de601665169abe332710510af05a61aed547a36ca66686706e72da49b6baaeb"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/bpr/",
-    "postId": "BPR",
-    "postTitle": "BPR",
-    "tags": [
-      "排序",
-      "协同过滤"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/BPR.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_7f57c1b83e1c64159d6e7662",
-    "sectionTitle": "14. 一句话总结",
-    "headingPath": [
-      "BPR",
-      "14. 一句话总结"
-    ],
-    "sectionAnchor": "section_e23f588a205ff293",
-    "chunkIndex": 68,
-    "childOrdinal": 0,
-    "sectionOccurrence": 0,
-    "chunkType": "quote",
-    "tokenCount": 95,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "BPR 的核心不是预测“用户会打几分”, 而是学习“用户更喜欢哪个物品”, 并通过正负样本成对比较, 直接优化推荐列表的排序质量. -->\n\n参考: Rendle et al., BPR: Bayesian Personalized Ranking from Implicit Feedback, UAI 2009.",
-    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 14. 一句话总结\nquote\nquote\nBPR 的核心不是预测“用户会打几分”, 而是学习“用户更喜欢哪个物品”, 并通过正负样本成对比较, 直接优化推荐列表的排序质量. -->\n\n参考: Rendle et al., BPR: Bayesian Personalized Ranking from Implicit Feedback, UAI 2009.",
+    "content": "参考: Rendle et al., BPR: Bayesian Personalized Ranking from Implicit Feedback, UAI 2009.",
+    "retrievalText": "BPR\n排序 协同过滤\n推荐算法\ngeneric-article\nBPR > 11. BPR 的缺点\nquote\nquote\n参考: Rendle et al., BPR: Bayesian Personalized Ranking from Implicit Feedback, UAI 2009.",
     "blockTypes": [
       "quote"
     ],
     "sourceLines": {
-      "start": 338,
+      "start": 340,
       "end": 340
     },
     "resourceLinks": [],
     "metadataOnly": false,
-    "id": "chunk_0adc346178b9f01a723162f1",
-    "contentHash": "sha256:5bfae2e647cd40fed1dfd949ae2d85e042cdfc7b0b538664b858cf1c92884f1e"
+    "id": "chunk_b8d6b66365abf2d481ffbf45",
+    "contentHash": "sha256:81431e61b6df37e74d675bcd788cbab6c76d90ea15e1195283abc9df47dd8aa7"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/03/29/itemcf/",
@@ -36533,180 +34197,12 @@
     ],
     "sourceLines": {
       "start": 110,
-      "end": 112
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_3bb383f7ad60ce925c17ca77",
-    "contentHash": "sha256:16151414815f0482313c724f066325a61eae8269fae35d0b511cdbc3e7c96f44"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/lightfm/",
-    "postId": "LightFM",
-    "postTitle": "LightFM",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/LightFM.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_364c0a438bd543558cf69452",
-    "sectionTitle": "LightFM 的训练目标",
-    "headingPath": [
-      "LightFM",
-      "LightFM 的训练目标"
-    ],
-    "sectionAnchor": "section_0e1c2b05a9506c8d",
-    "chunkIndex": 24,
-    "childOrdinal": 4,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 17,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- ## LightFM 排序的完整流程",
-    "retrievalText": "LightFM\n召回 排序\n推荐算法\ngeneric-article\nLightFM > LightFM 的训练目标\ntext\nparagraph\n<!-- ## LightFM 排序的完整流程",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 113,
-      "end": 113
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_b9a5fe2fe5102f7cdfb3fe2f",
-    "contentHash": "sha256:474fa849b684dff2538242486585094d175d7723f8fafbe2a7a3226d820de084"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/lightfm/",
-    "postId": "LightFM",
-    "postTitle": "LightFM",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/LightFM.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_364c0a438bd543558cf69452",
-    "sectionTitle": "LightFM 的训练目标",
-    "headingPath": [
-      "LightFM",
-      "LightFM 的训练目标"
-    ],
-    "sectionAnchor": "section_0e1c2b05a9506c8d",
-    "chunkIndex": 25,
-    "childOrdinal": 5,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 267,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "事先做离线训练\n\n建立“用户 $\\to$ 隐向量”索引, 即 $\\lbrace\\text{用户 ID}: \\mathbf p_u\\rbrace$.\n\n对每个用户学习一个长度为 $k$ 的隐向量.\n\n给定任意用户 ID, 可快速得到该用户的潜在兴趣表示.\n\n建立“特征 $\\to$ embedding”索引.\n\n对每个物品内容特征学习一个 embedding 向量.\n\n物品向量由其特征 embedding 聚合而成.\n\n建立“物品 $\\to$ 隐向量”表示.\n\n给定任意物品 ID, 根据其内容特征可构造该物品向量.\n\n也可结合交互行为共同优化该物品表示.\n\n线上做推荐\n\n给定用户 ID, 取出该用户的隐向量 $\\mathbf p_u$.\n\n给定候选物品 $i$, 根据其内容特征构造或读取物品向量 $\\mathbf q_i$.\n\n计算",
-    "retrievalText": "LightFM\n召回 排序\n推荐算法\ngeneric-article\nLightFM > LightFM 的训练目标\nlist\nlist\n事先做离线训练\n\n建立“用户 $\\to$ 隐向量”索引, 即 $\\lbrace\\text{用户 ID}: \\mathbf p_u\\rbrace$.\n\n对每个用户学习一个长度为 $k$ 的隐向量.\n\n给定任意用户 ID, 可快速得到该用户的潜在兴趣表示.\n\n建立“特征 $\\to$ embedding”索引.\n\n对每个物品内容特征学习一个 embedding 向量.\n\n物品向量由其特征 embedding 聚合而成.\n\n建立“物品 $\\to$ 隐向量”表示.\n\n给定任意物品 ID, 根据其内容特征可构造该物品向量.\n\n也可结合交互行为共同优化该物品表示.\n\n线上做推荐\n\n给定用户 ID, 取出该用户的隐向量 $\\mathbf p_u$.\n\n给定候选物品 $i$, 根据其内容特征构造或读取物品向量 $\\mathbf q_i$.\n\n计算",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 115,
-      "end": 133
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_401bbbbc8f57250ec6eb71e7",
-    "contentHash": "sha256:1452fa7bc6411fa19446691a2acab51a091762d37f2adc7c1d50071a3769ef6c"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/lightfm/",
-    "postId": "LightFM",
-    "postTitle": "LightFM",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/LightFM.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_364c0a438bd543558cf69452",
-    "sectionTitle": "LightFM 的训练目标",
-    "headingPath": [
-      "LightFM",
-      "LightFM 的训练目标"
-    ],
-    "sectionAnchor": "section_0e1c2b05a9506c8d",
-    "chunkIndex": 26,
-    "childOrdinal": 6,
-    "sectionOccurrence": 0,
-    "chunkType": "formula",
-    "tokenCount": 26,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "\\text{score}(u, i)=\\mathbf p_u^\\top \\mathbf q_i.",
-    "retrievalText": "LightFM\n召回 排序\n推荐算法\ngeneric-article\nLightFM > LightFM 的训练目标\nformula\nformula\n\\text{score}(u, i)=\\mathbf p_u^\\top \\mathbf q_i.",
-    "blockTypes": [
-      "formula"
-    ],
-    "sourceLines": {
-      "start": 134,
-      "end": 136
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_8028caf514406c350db31236",
-    "contentHash": "sha256:c7db1472abca451939fc553b8707faef05e1a2559667d70e540b2305a5e22301"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/lightfm/",
-    "postId": "LightFM",
-    "postTitle": "LightFM",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/LightFM.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_364c0a438bd543558cf69452",
-    "sectionTitle": "LightFM 的训练目标",
-    "headingPath": [
-      "LightFM",
-      "LightFM 的训练目标"
-    ],
-    "sectionAnchor": "section_0e1c2b05a9506c8d",
-    "chunkIndex": 27,
-    "childOrdinal": 7,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 34,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "过滤掉用户已交互物品.\n\n返回分数最高的 $m$ 个物品作为推荐结果. -->",
-    "retrievalText": "LightFM\n召回 排序\n推荐算法\ngeneric-article\nLightFM > LightFM 的训练目标\nlist\nlist\n过滤掉用户已交互物品.\n\n返回分数最高的 $m$ 个物品作为推荐结果. -->",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 137,
       "end": 139
     },
     "resourceLinks": [],
     "metadataOnly": false,
-    "id": "chunk_43094bc4629b9d14d47b50b9",
-    "contentHash": "sha256:a8dce3f0dc883b96b28d4edaffd4e43d6d142b3beba32ea23dce9b75aca946a1"
+    "id": "chunk_3bb383f7ad60ce925c17ca77",
+    "contentHash": "sha256:ed313b79f527d459bebd3356e6a6144c7bd7da4db906f2a4b3d9e59693885bb8"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/03/30/lightfm/",
@@ -36729,7 +34225,7 @@
       "LightFM 的优点"
     ],
     "sectionAnchor": "section_5294c30acd4dbb08",
-    "chunkIndex": 28,
+    "chunkIndex": 24,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -36771,7 +34267,7 @@
       "LightFM 的优点"
     ],
     "sectionAnchor": "section_5294c30acd4dbb08",
-    "chunkIndex": 29,
+    "chunkIndex": 25,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -36813,7 +34309,7 @@
       "LightFM 的缺点"
     ],
     "sectionAnchor": "section_b630cc5bfaa9f80a",
-    "chunkIndex": 30,
+    "chunkIndex": 26,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -36855,7 +34351,7 @@
       "LightFM 的缺点"
     ],
     "sectionAnchor": "section_b630cc5bfaa9f80a",
-    "chunkIndex": 31,
+    "chunkIndex": 27,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -36897,7 +34393,7 @@
       "LightFM 与 Content 的区别"
     ],
     "sectionAnchor": "section_839248ba96a6ab18",
-    "chunkIndex": 32,
+    "chunkIndex": 28,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -36939,7 +34435,7 @@
       "LightFM 与 Content 的区别"
     ],
     "sectionAnchor": "section_839248ba96a6ab18",
-    "chunkIndex": 33,
+    "chunkIndex": 29,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -36981,7 +34477,7 @@
       "LightFM 与 Content 的区别"
     ],
     "sectionAnchor": "section_839248ba96a6ab18",
-    "chunkIndex": 34,
+    "chunkIndex": 30,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -37023,7 +34519,7 @@
       "LightFM 与 SVD / ALS 的区别"
     ],
     "sectionAnchor": "section_31b238e3d7b0a258",
-    "chunkIndex": 35,
+    "chunkIndex": 31,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -37065,7 +34561,7 @@
       "LightFM 与 SVD / ALS 的区别"
     ],
     "sectionAnchor": "section_31b238e3d7b0a258",
-    "chunkIndex": 36,
+    "chunkIndex": 32,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -37107,7 +34603,7 @@
       "LightFM 与 SVD / ALS 的区别"
     ],
     "sectionAnchor": "section_31b238e3d7b0a258",
-    "chunkIndex": 37,
+    "chunkIndex": 33,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -37149,7 +34645,7 @@
       "LightFM 在推荐系统中的位置"
     ],
     "sectionAnchor": "section_04f7ae5dcad7eded",
-    "chunkIndex": 38,
+    "chunkIndex": 34,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -37192,7 +34688,7 @@
       "LightFM 在推荐系统中的位置"
     ],
     "sectionAnchor": "section_04f7ae5dcad7eded",
-    "chunkIndex": 39,
+    "chunkIndex": 35,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -37206,181 +34702,12 @@
     ],
     "sourceLines": {
       "start": 191,
-      "end": 194
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_6c599413896b0cc05c7168c9",
-    "contentHash": "sha256:5c3b94a33e166061dd39d278c1e0d29469730d4268515873d21857110567b0dc"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/lightfm/",
-    "postId": "LightFM",
-    "postTitle": "LightFM",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/LightFM.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_e36bae0a1f1f5864bfe9e7ec",
-    "sectionTitle": "LightFM 在推荐系统中的位置",
-    "headingPath": [
-      "LightFM",
-      "LightFM 在推荐系统中的位置"
-    ],
-    "sectionAnchor": "section_04f7ae5dcad7eded",
-    "chunkIndex": 40,
-    "childOrdinal": 2,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 71,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- ## LightFM 的一个重要价值\n\nQ: 为什么 LightFM 在很多实验中效果较好?\n因为它兼顾了“协同过滤的准确性”和“内容特征的泛化能力”.\n\n也就是说:",
-    "retrievalText": "LightFM\n召回 排序\n推荐算法\ngeneric-article\nLightFM > LightFM 在推荐系统中的位置\ntext\nparagraph quote\n<!-- ## LightFM 的一个重要价值\n\nQ: 为什么 LightFM 在很多实验中效果较好?\n因为它兼顾了“协同过滤的准确性”和“内容特征的泛化能力”.\n\n也就是说:",
-    "blockTypes": [
-      "paragraph",
-      "quote"
-    ],
-    "sourceLines": {
-      "start": 195,
-      "end": 200
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_689e71784ef77b87af9fe323",
-    "contentHash": "sha256:f709be342f511ca02240ae0dcbd6e21857beee85b7da8b53b6f9a302a894f1cc"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/lightfm/",
-    "postId": "LightFM",
-    "postTitle": "LightFM",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/LightFM.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_e36bae0a1f1f5864bfe9e7ec",
-    "sectionTitle": "LightFM 在推荐系统中的位置",
-    "headingPath": [
-      "LightFM",
-      "LightFM 在推荐系统中的位置"
-    ],
-    "sectionAnchor": "section_04f7ae5dcad7eded",
-    "chunkIndex": 41,
-    "childOrdinal": 3,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 47,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "当交互数据充足时, 它能利用协同信号提升效果;\n当交互数据不足时, 它又能依靠内容特征弥补信息缺失.",
-    "retrievalText": "LightFM\n召回 排序\n推荐算法\ngeneric-article\nLightFM > LightFM 在推荐系统中的位置\nlist\nlist\n当交互数据充足时, 它能利用协同信号提升效果;\n当交互数据不足时, 它又能依靠内容特征弥补信息缺失.",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 201,
-      "end": 203
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_bc50207e1ecdcf34cba62adb",
-    "contentHash": "sha256:654844a7f474c992b93a6bc2880e71650b3c25e61ffe09f94e1e849da15322f3"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/lightfm/",
-    "postId": "LightFM",
-    "postTitle": "LightFM",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/LightFM.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_e36bae0a1f1f5864bfe9e7ec",
-    "sectionTitle": "LightFM 在推荐系统中的位置",
-    "headingPath": [
-      "LightFM",
-      "LightFM 在推荐系统中的位置"
-    ],
-    "sectionAnchor": "section_04f7ae5dcad7eded",
-    "chunkIndex": 42,
-    "childOrdinal": 4,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 9,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "因此它常常表现为:",
-    "retrievalText": "LightFM\n召回 排序\n推荐算法\ngeneric-article\nLightFM > LightFM 在推荐系统中的位置\ntext\nparagraph\n因此它常常表现为:",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 204,
-      "end": 204
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_1a8740659c65b44bda649785",
-    "contentHash": "sha256:02894de206946ac0f93846621046c97aac5cb4d6b9318a2bb7953a7a7053e8a5"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/lightfm/",
-    "postId": "LightFM",
-    "postTitle": "LightFM",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/LightFM.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_e36bae0a1f1f5864bfe9e7ec",
-    "sectionTitle": "LightFM 在推荐系统中的位置",
-    "headingPath": [
-      "LightFM",
-      "LightFM 在推荐系统中的位置"
-    ],
-    "sectionAnchor": "section_04f7ae5dcad7eded",
-    "chunkIndex": 43,
-    "childOrdinal": 5,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 45,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "比纯 Content 更准确;\n比纯 SVD / ALS 更适合冷启动;\n是推荐系统中非常实用的一类混合模型. -->",
-    "retrievalText": "LightFM\n召回 排序\n推荐算法\ngeneric-article\nLightFM > LightFM 在推荐系统中的位置\nlist\nlist\n比纯 Content 更准确;\n比纯 SVD / ALS 更适合冷启动;\n是推荐系统中非常实用的一类混合模型. -->",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 205,
       "end": 208
     },
     "resourceLinks": [],
     "metadataOnly": false,
-    "id": "chunk_047a24a12897ed7cd072e2da",
-    "contentHash": "sha256:8beb38c002d5a184f3bc74cd767a993761e257570baba47ad646e82a388dd06f"
+    "id": "chunk_6c599413896b0cc05c7168c9",
+    "contentHash": "sha256:62f09ef10273ecd6976c3cf89de7170e2db319a51279cdeeb08f558fbcb49786"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/03/30/lightfm/",
@@ -37403,8 +34730,8 @@
       "LightFM 在推荐系统中的位置"
     ],
     "sectionAnchor": "section_04f7ae5dcad7eded",
-    "chunkIndex": 44,
-    "childOrdinal": 6,
+    "chunkIndex": 36,
+    "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "quote",
     "tokenCount": 27,
@@ -38300,180 +35627,12 @@
     ],
     "sourceLines": {
       "start": 91,
-      "end": 94
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_219933555928806c285b7c87",
-    "contentHash": "sha256:8b40e984d6de87db0e3682cba74ee97fb78db5361688aa77ae91f416876044e6"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/svd/",
-    "postId": "SVD 排序算法",
-    "postTitle": "SVD 排序算法",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/SVD.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_82dc98c0d579c8568a44532a",
-    "sectionTitle": "为什么矩阵分解有效?",
-    "headingPath": [
-      "则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item})",
-      "为什么矩阵分解有效?"
-    ],
-    "sectionAnchor": "section_4abb260e3d33ffd3",
-    "chunkIndex": 21,
-    "childOrdinal": 8,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 16,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- ## SVD 排序的完整流程",
-    "retrievalText": "SVD 排序算法\n召回 排序\n推荐算法\ngeneric-article\n则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item}) > 为什么矩阵分解有效?\ntext\nparagraph\n<!-- ## SVD 排序的完整流程",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 95,
-      "end": 95
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_0439e3e9ad9897b9850506ce",
-    "contentHash": "sha256:7c8947ad0e42da417d64dffe9a37a14cd4953c8ecf7fead6fff6fdaa819e759d"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/svd/",
-    "postId": "SVD 排序算法",
-    "postTitle": "SVD 排序算法",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/SVD.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_82dc98c0d579c8568a44532a",
-    "sectionTitle": "为什么矩阵分解有效?",
-    "headingPath": [
-      "则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item})",
-      "为什么矩阵分解有效?"
-    ],
-    "sectionAnchor": "section_4abb260e3d33ffd3",
-    "chunkIndex": 22,
-    "childOrdinal": 9,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 219,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "事先做离线训练\n\n建立“用户 $\\to$ 隐向量”索引, 即 $\\lbrace\\text{用户 ID}: \\mathbf p_u\\rbrace$.\n\n对每个用户学习一个长度为 $k$ 的隐向量.\n\n给定任意用户 ID, 可快速得到该用户的潜在兴趣表示.\n\n建立“物品 $\\to$ 隐向量”索引, 即 $\\lbrace\\text{物品 ID}: \\mathbf q_i\\rbrace$.\n\n对每个物品学习一个长度为 $k$ 的隐向量.\n\n给定任意物品 ID, 可快速得到该物品的潜在属性表示.\n\n线上做推荐\n\n给定用户 ID, 取出该用户的隐向量 $\\mathbf p_u$.\n\n对每个候选物品 $i$, 计算",
-    "retrievalText": "SVD 排序算法\n召回 排序\n推荐算法\ngeneric-article\n则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item}) > 为什么矩阵分解有效?\nlist\nlist\n事先做离线训练\n\n建立“用户 $\\to$ 隐向量”索引, 即 $\\lbrace\\text{用户 ID}: \\mathbf p_u\\rbrace$.\n\n对每个用户学习一个长度为 $k$ 的隐向量.\n\n给定任意用户 ID, 可快速得到该用户的潜在兴趣表示.\n\n建立“物品 $\\to$ 隐向量”索引, 即 $\\lbrace\\text{物品 ID}: \\mathbf q_i\\rbrace$.\n\n对每个物品学习一个长度为 $k$ 的隐向量.\n\n给定任意物品 ID, 可快速得到该物品的潜在属性表示.\n\n线上做推荐\n\n给定用户 ID, 取出该用户的隐向量 $\\mathbf p_u$.\n\n对每个候选物品 $i$, 计算",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 97,
-      "end": 110
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_e801c3cc5dcf154a2591ab26",
-    "contentHash": "sha256:26461055ecf429347ed6227e2a8b748ce5c3e8f02af31a2a4da09eab2c89f567"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/svd/",
-    "postId": "SVD 排序算法",
-    "postTitle": "SVD 排序算法",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/SVD.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_82dc98c0d579c8568a44532a",
-    "sectionTitle": "为什么矩阵分解有效?",
-    "headingPath": [
-      "则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item})",
-      "为什么矩阵分解有效?"
-    ],
-    "sectionAnchor": "section_4abb260e3d33ffd3",
-    "chunkIndex": 23,
-    "childOrdinal": 10,
-    "sectionOccurrence": 0,
-    "chunkType": "formula",
-    "tokenCount": 26,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "\\text{score}(u, i)=\\mathbf p_u^\\top \\mathbf q_i.",
-    "retrievalText": "SVD 排序算法\n召回 排序\n推荐算法\ngeneric-article\n则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item}) > 为什么矩阵分解有效?\nformula\nformula\n\\text{score}(u, i)=\\mathbf p_u^\\top \\mathbf q_i.",
-    "blockTypes": [
-      "formula"
-    ],
-    "sourceLines": {
-      "start": 111,
-      "end": 113
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_357f3795513850688371cb2d",
-    "contentHash": "sha256:f2f4abc0916e7c3610379654d81b4820b658684be26bf4bb91d23ea549f93930"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/svd/",
-    "postId": "SVD 排序算法",
-    "postTitle": "SVD 排序算法",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/SVD.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_82dc98c0d579c8568a44532a",
-    "sectionTitle": "为什么矩阵分解有效?",
-    "headingPath": [
-      "则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item})",
-      "为什么矩阵分解有效?"
-    ],
-    "sectionAnchor": "section_4abb260e3d33ffd3",
-    "chunkIndex": 24,
-    "childOrdinal": 11,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 37,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "过滤掉用户已经交互过的物品.\n\n返回分数最高的 $m$ 个物品作为推荐结果. -->",
-    "retrievalText": "SVD 排序算法\n召回 排序\n推荐算法\ngeneric-article\n则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item}) > 为什么矩阵分解有效?\nlist\nlist\n过滤掉用户已经交互过的物品.\n\n返回分数最高的 $m$ 个物品作为推荐结果. -->",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 114,
       "end": 116
     },
     "resourceLinks": [],
     "metadataOnly": false,
-    "id": "chunk_7a095c6c0c76769e532dfb6b",
-    "contentHash": "sha256:cc052e736b9c3e1795c9a45ebb95527cb89c14ca151ddb36ee517e663e9c1935"
+    "id": "chunk_219933555928806c285b7c87",
+    "contentHash": "sha256:0a347a58e340d51f94d9027514af559018fbf08bd3fad6286b2db571b4f9aa61"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/03/30/svd/",
@@ -38496,7 +35655,7 @@
       "SVD 与显式评分"
     ],
     "sectionAnchor": "section_9b22330ad2a4c8d2",
-    "chunkIndex": 25,
+    "chunkIndex": 21,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "formula-context",
@@ -38540,7 +35699,7 @@
       "SVD 与显式评分"
     ],
     "sectionAnchor": "section_9b22330ad2a4c8d2",
-    "chunkIndex": 26,
+    "chunkIndex": 22,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "formula-context",
@@ -38583,7 +35742,7 @@
       "SVD 与显式评分"
     ],
     "sectionAnchor": "section_9b22330ad2a4c8d2",
-    "chunkIndex": 27,
+    "chunkIndex": 23,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -38597,54 +35756,12 @@
     ],
     "sourceLines": {
       "start": 136,
-      "end": 138
+      "end": 140
     },
     "resourceLinks": [],
     "metadataOnly": false,
     "id": "chunk_7e4f4b67694266d266116a27",
-    "contentHash": "sha256:cc3f49d867394380d67ae7a2861ebda99b79bcd06cdbfd2d0b2ea6647b308f7e"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/03/30/svd/",
-    "postId": "SVD 排序算法",
-    "postTitle": "SVD 排序算法",
-    "tags": [
-      "召回",
-      "排序"
-    ],
-    "categories": [
-      "推荐算法"
-    ],
-    "sourcePath": "source/_posts/推荐算法/SVD.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_88f75d6c0d0068a97bef9cb4",
-    "sectionTitle": "SVD 与显式评分",
-    "headingPath": [
-      "则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item})",
-      "SVD 与显式评分"
-    ],
-    "sectionAnchor": "section_9b22330ad2a4c8d2",
-    "chunkIndex": 28,
-    "childOrdinal": 3,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 54,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- > RK: 在很多推荐场景中, 用户行为比显式评分更常见, 因此工业界也常将矩阵分解用于隐式反馈场景. -->",
-    "retrievalText": "SVD 排序算法\n召回 排序\n推荐算法\ngeneric-article\n则用户 $\\text{user}$ 对物品 $\\text{item}$ 的兴趣为 $$ \\text{score}(\\text{user}, \\text{item}) > SVD 与显式评分\ntext\nparagraph\n<!-- > RK: 在很多推荐场景中, 用户行为比显式评分更常见, 因此工业界也常将矩阵分解用于隐式反馈场景. -->",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 139,
-      "end": 139
-    },
-    "resourceLinks": [],
-    "metadataOnly": false,
-    "id": "chunk_e9c9adac2a7d403c71afff26",
-    "contentHash": "sha256:28b81dc61d578892fe5fd49ddd10efacdc2b94eb8b64a7d20a47183499c58ef4"
+    "contentHash": "sha256:e0fb07a662c0d324f75185774a3a36d52e737c2cf6ba1a340cbd06a971ad5332"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/03/30/svd/",
@@ -38667,7 +35784,7 @@
       "SVD 的优缺点"
     ],
     "sectionAnchor": "section_dac120f2227ffe27",
-    "chunkIndex": 29,
+    "chunkIndex": 24,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -38709,7 +35826,7 @@
       "SVD 的优缺点"
     ],
     "sectionAnchor": "section_dac120f2227ffe27",
-    "chunkIndex": 30,
+    "chunkIndex": 25,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -38751,7 +35868,7 @@
       "SVD 的优缺点"
     ],
     "sectionAnchor": "section_dac120f2227ffe27",
-    "chunkIndex": 31,
+    "chunkIndex": 26,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -38793,7 +35910,7 @@
       "SVD 的优缺点"
     ],
     "sectionAnchor": "section_dac120f2227ffe27",
-    "chunkIndex": 32,
+    "chunkIndex": 27,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -38835,7 +35952,7 @@
       "SVD 与 ItemCF 的区别"
     ],
     "sectionAnchor": "section_813c194646202976",
-    "chunkIndex": 33,
+    "chunkIndex": 28,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -38877,7 +35994,7 @@
       "SVD 与 ItemCF 的区别"
     ],
     "sectionAnchor": "section_813c194646202976",
-    "chunkIndex": 34,
+    "chunkIndex": 29,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -38919,7 +36036,7 @@
       "SVD 与 ItemCF 的区别"
     ],
     "sectionAnchor": "section_813c194646202976",
-    "chunkIndex": 35,
+    "chunkIndex": 30,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -38961,7 +36078,7 @@
       "在推荐系统中的位置"
     ],
     "sectionAnchor": "section_3a3d5ffe08bf50dc",
-    "chunkIndex": 36,
+    "chunkIndex": 31,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -39004,7 +36121,7 @@
       "在推荐系统中的位置"
     ],
     "sectionAnchor": "section_3a3d5ffe08bf50dc",
-    "chunkIndex": 37,
+    "chunkIndex": 32,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -57254,11 +54371,11 @@
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "formula-context",
-    "tokenCount": 279,
+    "tokenCount": 144,
     "tokenizerVersion": "dashscope-compatible-estimate-v1",
     "overflowReason": null,
-    "content": "y = \\text{relu}(\\boldsymbol{W_s}x + F(x)) = \\text{relu}(\\boldsymbol{W_s}x + \\boldsymbol{W_2}\\text{relu}(\\boldsymbol{W_1}x)).\n\n残差网络可以展开成多个神经网络的集成\n图片：残差网络集成\n假设有一个由 $3$ 个残差单元组成的残差神经网络, 输入是 $x_0$, 输出是 $x_3$. 则这个网络可以展开写作\n<script type=\"math/tex; mode=display\">\n\\begin{aligned}\nx_3 &= x_2+F_3(x_2)= (x_1+F_2(x_1))+F_3(x_1+F_2(x_1))\\\\\n&= ((x_0+F_1(x_0))+F_2(x_0+F_1(x_0))) + F_3((x_0+F_1(x_0))+F_2(x_0+F_1(x_0))).\n\\end{aligned}\n</script>",
-    "retrievalText": "ResNet\n卷积神经网络\n机器学习与深度学习 卷积神经网络\ngeneric-article\nResNet > 模型架构 > 基于前馈神经网络的残差网络\nformula-context\nformula quote\ny = \\text{relu}(\\boldsymbol{W_s}x + F(x)) = \\text{relu}(\\boldsymbol{W_s}x + \\boldsymbol{W_2}\\text{relu}(\\boldsymbol{W_1}x)).\n\n残差网络可以展开成多个神经网络的集成\n图片：残差网络集成\n假设有一个由 $3$ 个残差单元组成的残差神经网络, 输入是 $x_0$, 输出是 $x_3$. 则这个网络可以展开写作\n<script type=\"math/tex; mode=display\">\n\\begin{aligned}\nx_3 &= x_2+F_3(x_2)= (x_1+F_2(x_1))+F_3(x_1+F_2(x_1))\\\\\n&= ((x_0+F_1(x_0))+F_2(x_0+F_1(x_0))) + F_3((x_0+F_1(x_0))+F_2(x_0+F_1(x_0))).\n\\end{aligned}\n</script>",
+    "content": "y = \\text{relu}(\\boldsymbol{W_s}x + F(x)) = \\text{relu}(\\boldsymbol{W_s}x + \\boldsymbol{W_2}\\text{relu}(\\boldsymbol{W_1}x)).\n\n残差网络可以展开成多个神经网络的集成\n图片：残差网络集成\n假设有一个由 $3$ 个残差单元组成的残差神经网络, 输入是 $x_0$, 输出是 $x_3$. 则这个网络可以展开写作",
+    "retrievalText": "ResNet\n卷积神经网络\n机器学习与深度学习 卷积神经网络\ngeneric-article\nResNet > 模型架构 > 基于前馈神经网络的残差网络\nformula-context\nformula quote\ny = \\text{relu}(\\boldsymbol{W_s}x + F(x)) = \\text{relu}(\\boldsymbol{W_s}x + \\boldsymbol{W_2}\\text{relu}(\\boldsymbol{W_1}x)).\n\n残差网络可以展开成多个神经网络的集成\n图片：残差网络集成\n假设有一个由 $3$ 个残差单元组成的残差神经网络, 输入是 $x_0$, 输出是 $x_3$. 则这个网络可以展开写作",
     "blockTypes": [
       "formula",
       "quote"
@@ -57274,8 +54391,8 @@
       "ResNet/ResNet.png"
     ],
     "metadataOnly": false,
-    "id": "chunk_d34b6c5873dbb132d1e261ef",
-    "contentHash": "sha256:c14f37d505e11fb522ad0e1e78dec973ab8287ed38c514774b3d819ef0dd5d12"
+    "id": "chunk_47192d15d0ed513a69967f60",
+    "contentHash": "sha256:21631857a52faf6e85338b94b067f0e81a5e96aef7ee26bdc265447a142f924a"
   },
   {
     "postUrl": "https://wangsenjie.github.io/2026/04/29/resnet/",
@@ -73741,178 +70858,6 @@
     "sourcePath": "source/_posts/算法题/动态规划.md",
     "profile": "generic-article",
     "profileSource": "migration-fallback",
-    "parentId": "parent_bb4dff6fe31e7b5362314d1e",
-    "sectionTitle": "118. 杨辉三角",
-    "headingPath": [
-      "动态规划",
-      "118. 杨辉三角"
-    ],
-    "sectionAnchor": "section_88307d843b02dcea",
-    "chunkIndex": 21,
-    "childOrdinal": 3,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 155,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "<!-- ## 使用最小花费爬楼梯\n给你一个整数数组 cost ，其中 cost[i] 是从楼梯第 i 个台阶向上爬需要支付的费用。一旦你支付此费用，即可选择向上爬一个或者两个台阶。\n\n你可以选择从下标为 0 或下标为 1 的台阶开始爬楼梯。\n\n请你计算并返回达到楼梯顶部的最低花费。\n\n示例 1：\n\n输入：cost = [10,15,20]\n输出：15\n解释：你将从下标为 1 的台阶开始。",
-    "retrievalText": "LeetCode Hot100 —— 动态规划\n动态规划\n算法题\ngeneric-article\n动态规划 > 118. 杨辉三角\ntext\nparagraph\n<!-- ## 使用最小花费爬楼梯\n给你一个整数数组 cost ，其中 cost[i] 是从楼梯第 i 个台阶向上爬需要支付的费用。一旦你支付此费用，即可选择向上爬一个或者两个台阶。\n\n你可以选择从下标为 0 或下标为 1 的台阶开始爬楼梯。\n\n请你计算并返回达到楼梯顶部的最低花费。\n\n示例 1：\n\n输入：cost = [10,15,20]\n输出：15\n解释：你将从下标为 1 的台阶开始。",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 208,
-      "end": 219
-    },
-    "resourceLinks": [
-      "https://pic.leetcode.cn/1626927345-DZmfxB-PascalTriangleAnimated2.gif"
-    ],
-    "metadataOnly": false,
-    "id": "chunk_04f95e82be4142b87ea0afb3",
-    "contentHash": "sha256:8bb8090e02852eae317c7f7d71134ee14f8d492bc3b16e48c05ce50368c2074e"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/04/22/post-20260422-47fa06/",
-    "postId": "LeetCode Hot100 —— 动态规划",
-    "postTitle": "LeetCode Hot100 —— 动态规划",
-    "tags": [
-      "动态规划"
-    ],
-    "categories": [
-      "算法题"
-    ],
-    "sourcePath": "source/_posts/算法题/动态规划.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_bb4dff6fe31e7b5362314d1e",
-    "sectionTitle": "118. 杨辉三角",
-    "headingPath": [
-      "动态规划",
-      "118. 杨辉三角"
-    ],
-    "sectionAnchor": "section_88307d843b02dcea",
-    "chunkIndex": 22,
-    "childOrdinal": 4,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 25,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "支付 15 ，向上爬两个台阶，到达楼梯顶部。\n总花费为 15 。",
-    "retrievalText": "LeetCode Hot100 —— 动态规划\n动态规划\n算法题\ngeneric-article\n动态规划 > 118. 杨辉三角\nlist\nlist\n支付 15 ，向上爬两个台阶，到达楼梯顶部。\n总花费为 15 。",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 220,
-      "end": 222
-    },
-    "resourceLinks": [
-      "https://pic.leetcode.cn/1626927345-DZmfxB-PascalTriangleAnimated2.gif"
-    ],
-    "metadataOnly": false,
-    "id": "chunk_24cf1833cfb5c33811063bd8",
-    "contentHash": "sha256:71feabf9f60fa79a93e1cb5040a45d397dd5eca5c4af2278d518aaa470958c89"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/04/22/post-20260422-47fa06/",
-    "postId": "LeetCode Hot100 —— 动态规划",
-    "postTitle": "LeetCode Hot100 —— 动态规划",
-    "tags": [
-      "动态规划"
-    ],
-    "categories": [
-      "算法题"
-    ],
-    "sourcePath": "source/_posts/算法题/动态规划.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_bb4dff6fe31e7b5362314d1e",
-    "sectionTitle": "118. 杨辉三角",
-    "headingPath": [
-      "动态规划",
-      "118. 杨辉三角"
-    ],
-    "sectionAnchor": "section_88307d843b02dcea",
-    "chunkIndex": 23,
-    "childOrdinal": 5,
-    "sectionOccurrence": 0,
-    "chunkType": "text",
-    "tokenCount": 50,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "示例 2：\n\n输入：cost = [1,100,1,1,1,100,1,1,100,1]\n输出：6\n解释：你将从下标为 0 的台阶开始。",
-    "retrievalText": "LeetCode Hot100 —— 动态规划\n动态规划\n算法题\ngeneric-article\n动态规划 > 118. 杨辉三角\ntext\nparagraph\n示例 2：\n\n输入：cost = [1,100,1,1,1,100,1,1,100,1]\n输出：6\n解释：你将从下标为 0 的台阶开始。",
-    "blockTypes": [
-      "paragraph"
-    ],
-    "sourceLines": {
-      "start": 223,
-      "end": 227
-    },
-    "resourceLinks": [
-      "https://pic.leetcode.cn/1626927345-DZmfxB-PascalTriangleAnimated2.gif"
-    ],
-    "metadataOnly": false,
-    "id": "chunk_67132399b3152b75621ab482",
-    "contentHash": "sha256:177fafd8af563df8f5a70f39fd44a71ed3ad420609a62296835fa8e18e607f8e"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/04/22/post-20260422-47fa06/",
-    "postId": "LeetCode Hot100 —— 动态规划",
-    "postTitle": "LeetCode Hot100 —— 动态规划",
-    "tags": [
-      "动态规划"
-    ],
-    "categories": [
-      "算法题"
-    ],
-    "sourcePath": "source/_posts/算法题/动态规划.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
-    "parentId": "parent_bb4dff6fe31e7b5362314d1e",
-    "sectionTitle": "118. 杨辉三角",
-    "headingPath": [
-      "动态规划",
-      "118. 杨辉三角"
-    ],
-    "sectionAnchor": "section_88307d843b02dcea",
-    "chunkIndex": 24,
-    "childOrdinal": 6,
-    "sectionOccurrence": 0,
-    "chunkType": "list",
-    "tokenCount": 135,
-    "tokenizerVersion": "dashscope-compatible-estimate-v1",
-    "overflowReason": null,
-    "content": "支付 1 ，向上爬两个台阶，到达下标为 2 的台阶。\n支付 1 ，向上爬两个台阶，到达下标为 4 的台阶。\n支付 1 ，向上爬两个台阶，到达下标为 6 的台阶。\n支付 1 ，向上爬一个台阶，到达下标为 7 的台阶。\n支付 1 ，向上爬两个台阶，到达下标为 9 的台阶。\n支付 1 ，向上爬一个台阶，到达楼梯顶部。\n总花费为 6 。",
-    "retrievalText": "LeetCode Hot100 —— 动态规划\n动态规划\n算法题\ngeneric-article\n动态规划 > 118. 杨辉三角\nlist\nlist\n支付 1 ，向上爬两个台阶，到达下标为 2 的台阶。\n支付 1 ，向上爬两个台阶，到达下标为 4 的台阶。\n支付 1 ，向上爬两个台阶，到达下标为 6 的台阶。\n支付 1 ，向上爬一个台阶，到达下标为 7 的台阶。\n支付 1 ，向上爬两个台阶，到达下标为 9 的台阶。\n支付 1 ，向上爬一个台阶，到达楼梯顶部。\n总花费为 6 。",
-    "blockTypes": [
-      "list"
-    ],
-    "sourceLines": {
-      "start": 228,
-      "end": 235
-    },
-    "resourceLinks": [
-      "https://pic.leetcode.cn/1626927345-DZmfxB-PascalTriangleAnimated2.gif"
-    ],
-    "metadataOnly": false,
-    "id": "chunk_0e0ca3fcaf6b8f6c376bcbe8",
-    "contentHash": "sha256:29a52843a3edd5e6d8a791f2264dbd68fee42d678afbc406a276d57b089dd2c2"
-  },
-  {
-    "postUrl": "https://wangsenjie.github.io/2026/04/22/post-20260422-47fa06/",
-    "postId": "LeetCode Hot100 —— 动态规划",
-    "postTitle": "LeetCode Hot100 —— 动态规划",
-    "tags": [
-      "动态规划"
-    ],
-    "categories": [
-      "算法题"
-    ],
-    "sourcePath": "source/_posts/算法题/动态规划.md",
-    "profile": "generic-article",
-    "profileSource": "migration-fallback",
     "parentId": "parent_b05789fb3590a445ef097528",
     "sectionTitle": "198. 打家劫舍",
     "headingPath": [
@@ -73920,7 +70865,7 @@
       "198. 打家劫舍"
     ],
     "sectionAnchor": "section_64936d730ad0a334",
-    "chunkIndex": 25,
+    "chunkIndex": 21,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -73963,7 +70908,7 @@
       "198. 打家劫舍"
     ],
     "sectionAnchor": "section_64936d730ad0a334",
-    "chunkIndex": 26,
+    "chunkIndex": 22,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -74006,7 +70951,7 @@
       "198. 打家劫舍"
     ],
     "sectionAnchor": "section_64936d730ad0a334",
-    "chunkIndex": 27,
+    "chunkIndex": 23,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "quote",
@@ -74049,7 +70994,7 @@
       "198. 打家劫舍"
     ],
     "sectionAnchor": "section_64936d730ad0a334",
-    "chunkIndex": 28,
+    "chunkIndex": 24,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -74092,7 +71037,7 @@
       "213. 打家劫舍II"
     ],
     "sectionAnchor": "section_0f4be06b157e397b",
-    "chunkIndex": 29,
+    "chunkIndex": 25,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -74135,7 +71080,7 @@
       "213. 打家劫舍II"
     ],
     "sectionAnchor": "section_0f4be06b157e397b",
-    "chunkIndex": 30,
+    "chunkIndex": 26,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -74178,7 +71123,7 @@
       "213. 打家劫舍II"
     ],
     "sectionAnchor": "section_0f4be06b157e397b",
-    "chunkIndex": 31,
+    "chunkIndex": 27,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "quote",
@@ -74221,7 +71166,7 @@
       "213. 打家劫舍II"
     ],
     "sectionAnchor": "section_0f4be06b157e397b",
-    "chunkIndex": 32,
+    "chunkIndex": 28,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -74264,7 +71209,7 @@
       "121. 买卖股票的最佳时机"
     ],
     "sectionAnchor": "section_7c8fde790e956471",
-    "chunkIndex": 33,
+    "chunkIndex": 29,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -74307,7 +71252,7 @@
       "121. 买卖股票的最佳时机"
     ],
     "sectionAnchor": "section_7c8fde790e956471",
-    "chunkIndex": 34,
+    "chunkIndex": 30,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -74350,7 +71295,7 @@
       "121. 买卖股票的最佳时机"
     ],
     "sectionAnchor": "section_7c8fde790e956471",
-    "chunkIndex": 35,
+    "chunkIndex": 31,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "quote",
@@ -74393,7 +71338,7 @@
       "121. 买卖股票的最佳时机"
     ],
     "sectionAnchor": "section_7c8fde790e956471",
-    "chunkIndex": 36,
+    "chunkIndex": 32,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -74436,7 +71381,7 @@
       "122. 买卖股票的最佳时机 II"
     ],
     "sectionAnchor": "section_87d7389ecb864733",
-    "chunkIndex": 37,
+    "chunkIndex": 33,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -74479,7 +71424,7 @@
       "122. 买卖股票的最佳时机 II"
     ],
     "sectionAnchor": "section_87d7389ecb864733",
-    "chunkIndex": 38,
+    "chunkIndex": 34,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -74522,7 +71467,7 @@
       "122. 买卖股票的最佳时机 II"
     ],
     "sectionAnchor": "section_87d7389ecb864733",
-    "chunkIndex": 39,
+    "chunkIndex": 35,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "quote",
@@ -74565,7 +71510,7 @@
       "122. 买卖股票的最佳时机 II"
     ],
     "sectionAnchor": "section_87d7389ecb864733",
-    "chunkIndex": 40,
+    "chunkIndex": 36,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -74608,7 +71553,7 @@
       "123. 买卖股票的最佳时机 III"
     ],
     "sectionAnchor": "section_46fd79191b460418",
-    "chunkIndex": 41,
+    "chunkIndex": 37,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -74651,7 +71596,7 @@
       "123. 买卖股票的最佳时机 III"
     ],
     "sectionAnchor": "section_46fd79191b460418",
-    "chunkIndex": 42,
+    "chunkIndex": 38,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -74694,7 +71639,7 @@
       "123. 买卖股票的最佳时机 III"
     ],
     "sectionAnchor": "section_46fd79191b460418",
-    "chunkIndex": 43,
+    "chunkIndex": 39,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "quote",
@@ -74737,7 +71682,7 @@
       "123. 买卖股票的最佳时机 III"
     ],
     "sectionAnchor": "section_46fd79191b460418",
-    "chunkIndex": 44,
+    "chunkIndex": 40,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -74780,7 +71725,7 @@
       "322. 零钱兑换"
     ],
     "sectionAnchor": "section_de34d66ade5b6781",
-    "chunkIndex": 45,
+    "chunkIndex": 41,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -74823,7 +71768,7 @@
       "322. 零钱兑换"
     ],
     "sectionAnchor": "section_de34d66ade5b6781",
-    "chunkIndex": 46,
+    "chunkIndex": 42,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -74866,7 +71811,7 @@
       "322. 零钱兑换"
     ],
     "sectionAnchor": "section_de34d66ade5b6781",
-    "chunkIndex": 47,
+    "chunkIndex": 43,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "quote",
@@ -74909,7 +71854,7 @@
       "322. 零钱兑换"
     ],
     "sectionAnchor": "section_de34d66ade5b6781",
-    "chunkIndex": 48,
+    "chunkIndex": 44,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -74952,7 +71897,7 @@
       "139. 单词拆分"
     ],
     "sectionAnchor": "section_a2f4c01d7d0e1e59",
-    "chunkIndex": 49,
+    "chunkIndex": 45,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -74995,7 +71940,7 @@
       "139. 单词拆分"
     ],
     "sectionAnchor": "section_a2f4c01d7d0e1e59",
-    "chunkIndex": 50,
+    "chunkIndex": 46,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -75038,7 +71983,7 @@
       "139. 单词拆分"
     ],
     "sectionAnchor": "section_a2f4c01d7d0e1e59",
-    "chunkIndex": 51,
+    "chunkIndex": 47,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "quote",
@@ -75081,7 +72026,7 @@
       "139. 单词拆分"
     ],
     "sectionAnchor": "section_a2f4c01d7d0e1e59",
-    "chunkIndex": 52,
+    "chunkIndex": 48,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -75124,7 +72069,7 @@
       "300. 最长递增子序列"
     ],
     "sectionAnchor": "section_1e01e52d6fb0c90b",
-    "chunkIndex": 53,
+    "chunkIndex": 49,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -75167,7 +72112,7 @@
       "300. 最长递增子序列"
     ],
     "sectionAnchor": "section_1e01e52d6fb0c90b",
-    "chunkIndex": 54,
+    "chunkIndex": 50,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -75210,7 +72155,7 @@
       "300. 最长递增子序列"
     ],
     "sectionAnchor": "section_1e01e52d6fb0c90b",
-    "chunkIndex": 55,
+    "chunkIndex": 51,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "quote",
@@ -75253,7 +72198,7 @@
       "300. 最长递增子序列"
     ],
     "sectionAnchor": "section_1e01e52d6fb0c90b",
-    "chunkIndex": 56,
+    "chunkIndex": 52,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -75296,7 +72241,7 @@
       "5. 最长回文子串"
     ],
     "sectionAnchor": "section_5964f970bba046e9",
-    "chunkIndex": 57,
+    "chunkIndex": 53,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -75339,7 +72284,7 @@
       "5. 最长回文子串"
     ],
     "sectionAnchor": "section_5964f970bba046e9",
-    "chunkIndex": 58,
+    "chunkIndex": 54,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -75382,7 +72327,7 @@
       "5. 最长回文子串"
     ],
     "sectionAnchor": "section_5964f970bba046e9",
-    "chunkIndex": 59,
+    "chunkIndex": 55,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "quote",
@@ -75425,7 +72370,7 @@
       "5. 最长回文子串"
     ],
     "sectionAnchor": "section_5964f970bba046e9",
-    "chunkIndex": 60,
+    "chunkIndex": 56,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -75468,7 +72413,7 @@
       "1143. 最长公共子序列"
     ],
     "sectionAnchor": "section_fc1082dd9413ac08",
-    "chunkIndex": 61,
+    "chunkIndex": 57,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -75511,7 +72456,7 @@
       "1143. 最长公共子序列"
     ],
     "sectionAnchor": "section_fc1082dd9413ac08",
-    "chunkIndex": 62,
+    "chunkIndex": 58,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -75554,7 +72499,7 @@
       "1143. 最长公共子序列"
     ],
     "sectionAnchor": "section_fc1082dd9413ac08",
-    "chunkIndex": 63,
+    "chunkIndex": 59,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "quote",
@@ -75597,7 +72542,7 @@
       "1143. 最长公共子序列"
     ],
     "sectionAnchor": "section_fc1082dd9413ac08",
-    "chunkIndex": 64,
+    "chunkIndex": 60,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -75640,7 +72585,7 @@
       "72. 编辑距离"
     ],
     "sectionAnchor": "section_80ee507e1ac315bf",
-    "chunkIndex": 65,
+    "chunkIndex": 61,
     "childOrdinal": 0,
     "sectionOccurrence": 0,
     "chunkType": "text",
@@ -75683,7 +72628,7 @@
       "72. 编辑距离"
     ],
     "sectionAnchor": "section_80ee507e1ac315bf",
-    "chunkIndex": 66,
+    "chunkIndex": 62,
     "childOrdinal": 1,
     "sectionOccurrence": 0,
     "chunkType": "list",
@@ -75726,7 +72671,7 @@
       "72. 编辑距离"
     ],
     "sectionAnchor": "section_80ee507e1ac315bf",
-    "chunkIndex": 67,
+    "chunkIndex": 63,
     "childOrdinal": 2,
     "sectionOccurrence": 0,
     "chunkType": "code",
@@ -75769,7 +72714,7 @@
       "72. 编辑距离"
     ],
     "sectionAnchor": "section_80ee507e1ac315bf",
-    "chunkIndex": 68,
+    "chunkIndex": 64,
     "childOrdinal": 3,
     "sectionOccurrence": 0,
     "chunkType": "quote",
@@ -75812,7 +72757,7 @@
       "72. 编辑距离"
     ],
     "sectionAnchor": "section_80ee507e1ac315bf",
-    "chunkIndex": 69,
+    "chunkIndex": 65,
     "childOrdinal": 4,
     "sectionOccurrence": 0,
     "chunkType": "code",

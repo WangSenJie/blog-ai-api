@@ -162,6 +162,8 @@ apiBaseUrl: 'https://your-blog-ai-api.vercel.app'
   - Optional phase 8 feature flag. Keep it unset or `false` for a dark deployment; set it to `true` only after the managed Redis variables below are configured.
 - `REDIS_URL`
   - Server-only standard Redis connection string injected by the Vercel Marketplace Redis integration. It contains credentials and must be stored as a secret. Provision separate databases for Development, Preview, and Production instead of sharing key space.
+- `MEMORY_ENVIRONMENT_SCOPE`
+  - Fail-closed activation guard for Vercel Preview and Development. Set it to the matching `preview` or `development` value only in that environment, after configuring a dedicated `REDIS_URL` and dedicated memory secrets there. Production does not require this guard and continues to use `VERCEL_ENV=production` plus the explicit feature flag.
 - `MEMORY_TOKEN_SECRET` and `MEMORY_KEY_SECRET`
   - Independent server-only secrets, each containing at least 32 bytes of high-entropy material. The first signs browser bearer tokens; the second derives opaque Redis key digests. Do not reuse either secret for another feature.
 - `MEMORY_TOKEN_SECRET_PREVIOUS` and `MEMORY_KEY_SECRET_PREVIOUS`
@@ -177,7 +179,7 @@ If `LLM_API_*` variables are not set, `/api/ask` will still work in retrieval-on
 
 Feedback is disabled unless `FEEDBACK_RECEIPT_SECRET`, `FEEDBACK_WEBHOOK_URL`, and `FEEDBACK_WEBHOOK_SECRET` are all valid. It is independent of whether an external generation model is configured. The review-context switch does not enable feedback by itself and remains disabled unless both of its settings are valid.
 
-Memory is disabled unless `MEMORY_V1_ENABLED=true`, `REDIS_URL`, and both memory secrets are valid. A disabled or unavailable MemoryStore does not fall back to process memory. `/api/ask` continues without persistent memory and reports `memory.status` as `disabled` or `degraded`.
+Memory is disabled unless `MEMORY_V1_ENABLED=true`, `REDIS_URL`, and both memory secrets are valid. Vercel Preview and Development additionally require a matching `MEMORY_ENVIRONMENT_SCOPE`; this keeps globally scoped variables from silently activating the production Redis resource outside Production. A disabled or unavailable MemoryStore does not fall back to process memory. `/api/ask` continues without persistent memory and reports `memory.status` as `disabled` or `degraded`.
 
 Use the Vercel Marketplace Redis integration to inject `REDIS_URL` into the API project. Treat the connection string and both memory secrets as secrets. Configure provider quota/cost alerts, choose a region close to the Vercel functions, and document the database retention/backup policy before enabling Production.
 

@@ -48,6 +48,21 @@ function positiveInteger(value, fallback, limits) {
   return parsed;
 }
 
+function memoryEnvironmentIsolation(environment) {
+  const source = environment || process.env;
+  const runtime = String(source.VERCEL_ENV || '').trim().toLowerCase();
+  const declaredScope = String(
+    source.MEMORY_ENVIRONMENT_SCOPE || ''
+  ).trim().toLowerCase();
+  const required = runtime === 'preview' || runtime === 'development';
+  return {
+    runtime: runtime || 'local',
+    declaredScope,
+    required,
+    allowed: !required || declaredScope === runtime
+  };
+}
+
 function unavailableError() {
   return new MemoryServiceError(
     'Memory service is temporarily unavailable',
@@ -547,6 +562,15 @@ function createMemoryServiceFromEnvironment(environment) {
     });
   }
 
+  const isolation = memoryEnvironmentIsolation(source);
+  if (!isolation.allowed) {
+    return new MemoryService({
+      enabled: false,
+      store: new DisabledMemoryStore('environment_isolation_required'),
+      unavailableReason: 'environment_isolation_required'
+    });
+  }
+
   try {
     issueMemoryToken({
       tokenSecret: source.MEMORY_TOKEN_SECRET,
@@ -619,5 +643,6 @@ module.exports = {
   createMemoryService,
   createMemoryServiceFromEnvironment,
   getMemoryService,
+  memoryEnvironmentIsolation,
   resetMemoryServiceForTests
 };

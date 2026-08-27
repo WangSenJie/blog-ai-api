@@ -9,6 +9,7 @@ const { promisify } = require('node:util');
 const execFileAsync = promisify(execFile);
 const DEFAULT_ENDPOINT = 'https://blog-ai-api.vercel.app/api/ask';
 const DEFAULT_OUTPUT_PATH = path.join(__dirname, 'reports', 'phase11-production.json');
+const MANIFEST_PATH = path.join(__dirname, '..', 'data', 'manifest.json');
 
 function parseArgs(argv) {
   const values = new Map();
@@ -133,6 +134,7 @@ function askRecord(id, response) {
     id,
     status: response.status,
     traceId: String(meta.traceId || ''),
+    indexVersion: String(meta.indexVersion || ''),
     releaseFlags: flags,
     retrievalStrategy: String(meta.retrieval && meta.retrieval.strategy || ''),
     stageMetrics: stageMetrics(body),
@@ -186,6 +188,9 @@ function allFlagsPresent(flags) {
 }
 
 async function runProductionAudit(options) {
+  const expectedIndexVersion = String(
+    JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8')).corpusVersion || ''
+  );
   const baseUrl = new URL(options.endpoint);
   const memoryUrl = `${baseUrl.origin}/api/memory/session`;
   const session = await requestJson(memoryUrl, 'POST', {}, options);
@@ -242,6 +247,8 @@ async function runProductionAudit(options) {
   const replay = results.find(item => item.id === 'memory_replay');
   const checks = {
     httpSuccess: results.every(item => item.status === 200),
+    indexVersionCurrent: Boolean(expectedIndexVersion) &&
+      results.every(item => item.indexVersion === expectedIndexVersion),
     featureFlagContract: results.every(item => allFlagsPresent(item.releaseFlags)),
     productionFlagsEnabled: [
       'ragChunkV2', 'remoteEmbedding', 'semanticReranker', 'memoryV1',
@@ -270,6 +277,7 @@ async function runProductionAudit(options) {
     kind: 'production-release-audit',
     generatedAt: new Date().toISOString(),
     endpointHost: baseUrl.host,
+    expectedIndexVersion,
     memorySession: {
       createStatus: session.status,
       ttlPresent: Boolean(memory.expiresAt),

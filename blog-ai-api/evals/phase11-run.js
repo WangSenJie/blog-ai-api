@@ -261,7 +261,7 @@ function onlineMetricsAudit() {
   };
 }
 
-function productionAuditEvidence() {
+function productionAuditEvidence(expectedIndexVersion) {
   const reportPath = path.join(__dirname, 'reports', 'phase11-production.json');
   if (!fs.existsSync(reportPath)) {
     return {
@@ -271,13 +271,20 @@ function productionAuditEvidence() {
     };
   }
   const report = readJson(reportPath);
+  const indexVersionCurrent = Boolean(expectedIndexVersion) &&
+    report.expectedIndexVersion === expectedIndexVersion &&
+    Array.isArray(report.results) &&
+    report.results.every(item => item.indexVersion === expectedIndexVersion);
   return {
     available: true,
     generatedAt: report.generatedAt,
     endpointHost: report.endpointHost,
     metrics: report.metrics,
     checks: report.acceptance && report.acceptance.checks,
-    passed: Boolean(report.acceptance && report.acceptance.passed),
+    indexVersionCurrent,
+    passed: Boolean(
+      report.acceptance && report.acceptance.passed && indexVersionCurrent
+    ),
     report: 'evals/reports/phase11-production.json'
   };
 }
@@ -480,7 +487,9 @@ async function buildPhase11Report(corpus) {
   const privacy = privacyAudit();
   const rollback = await rollbackAudit();
   const regressions = regressionEvidence();
-  const production = productionAuditEvidence();
+  const production = productionAuditEvidence(
+    activeCorpus.manifest && activeCorpus.manifest.corpusVersion
+  );
   const featureFlags = getReleaseFlags({
     RAG_CHUNK_V2_ENABLED: 'true',
     REMOTE_EMBEDDING_ENABLED: 'true',
@@ -509,6 +518,18 @@ async function buildPhase11Report(corpus) {
       policy.redisProviderAudit &&
       policy.redisProviderAudit.externalEvidenceOwner &&
       Object.keys(policy.alerts || {}).length >= 9
+    ),
+    environmentIsolationGuard: Boolean(
+      policy.environmentIsolation &&
+      policy.environmentIsolation.preview &&
+      policy.environmentIsolation.preview.activationGuard ===
+        'MEMORY_ENVIRONMENT_SCOPE=preview' &&
+      policy.environmentIsolation.development &&
+      policy.environmentIsolation.development.activationGuard ===
+        'MEMORY_ENVIRONMENT_SCOPE=development' &&
+      policy.environmentIsolation.production &&
+      policy.environmentIsolation.production.activationGuard ===
+        'VERCEL_ENV=production'
     ),
     secretRotationContract: Boolean(
       policy.secretRotation &&

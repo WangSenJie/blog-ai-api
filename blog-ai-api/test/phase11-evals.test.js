@@ -14,7 +14,7 @@ test('phase 11 report covers ingestion, metrics, privacy, flags, and rollback', 
   const report = await buildPhase11Report(loadCorpus());
 
   assert.equal(report.phase, 11);
-  assert.equal(report.ingestion.tokenCount.p95, 433);
+  assert.equal(report.ingestion.tokenCount.p95, 434);
   assert.equal(report.ingestion.vectors.coverage, 1);
   assert.equal(
     report.ingestion.chunkIdChurn.deployment.chunkIdChurnRatio,

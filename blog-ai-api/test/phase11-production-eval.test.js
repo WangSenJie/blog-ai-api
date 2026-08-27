@@ -39,6 +39,7 @@ test('phase 11 production record keeps operational metrics and drops content', (
     },
     meta: {
       traceId: 'trace_phase11_prod',
+      indexVersion: 'index_phase11_fixture',
       releaseFlags: {
         ragChunkV2: true,
         remoteEmbedding: true,
@@ -71,6 +72,7 @@ test('phase 11 production record keeps operational metrics and drops content', (
   });
 
   assert.equal(allFlagsPresent(record.releaseFlags), true);
+  assert.equal(record.indexVersion, 'index_phase11_fixture');
   assert.equal(record.stageMetrics.contractPresent, true);
   assert.equal(record.stageMetrics.denseCandidates, 20);
   assert.equal(record.memory.ttlPresent, true);

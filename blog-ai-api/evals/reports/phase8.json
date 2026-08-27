@@ -1,6 +1,6 @@
 {
   "phase": 8,
-  "generatedAt": "2026-08-26T02:32:24.973Z",
+  "generatedAt": "2026-08-27T03:14:10.374Z",
   "strategy": "managed-redis-memory-store-signed-token-v1",
   "implementation": {
     "checks": {
@@ -17,6 +17,12 @@
   "managedRedis": {
     "featureEnabled": false,
     "credentialsPresent": false,
+    "environmentIsolation": {
+      "runtime": "local",
+      "declaredScope": "",
+      "required": false,
+      "allowed": true
+    },
     "liveValidated": false
   },
   "acceptance": {

@@ -22,6 +22,16 @@ function readJson(name) {
   return JSON.parse(fs.readFileSync(path.join(dataDir, name), 'utf8'));
 }
 
+function loadSeedVectors(seedPath, fallbackVectors) {
+  const requestedPath = String(seedPath || '').trim();
+  if (!requestedPath) return fallbackVectors;
+  const parsed = JSON.parse(fs.readFileSync(path.resolve(requestedPath), 'utf8'));
+  if (!Array.isArray(parsed)) {
+    throw new Error('EMBEDDING_SEED_VECTORS_PATH must contain a JSON array');
+  }
+  return parsed;
+}
+
 function writeReport(report) {
   fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
 }
@@ -41,6 +51,10 @@ async function main() {
   const codeBlocks = readJson('code-blocks.json');
   const learningGraph = readJson('learning-graph.json');
   const currentManifest = readJson('manifest.json');
+  const previousVectors = loadSeedVectors(
+    process.env.EMBEDDING_SEED_VECTORS_PATH,
+    vectors
+  );
 
   verifyManifestFiles(currentManifest, {
     postsPath: path.join(dataDir, 'posts.json'),
@@ -57,7 +71,7 @@ async function main() {
   const metadata = providerMetadata(provider);
   console.log(`Building ${chunks.length} embeddings with ${metadata.provider}/${metadata.model} (${metadata.dimensions}d)`);
 
-  const result = await buildVectorIndexAsync(chunks, vectors, provider, {
+  const result = await buildVectorIndexAsync(chunks, previousVectors, provider, {
     batchSize: Number(process.env.EMBEDDING_BATCH_SIZE) || provider.maxBatchSize || 10,
     concurrency: Number(process.env.EMBEDDING_CONCURRENCY) || 2
   });
@@ -70,6 +84,10 @@ async function main() {
     chunks: chunks.length,
     vectors: result.vectors.length,
     coverage: chunks.length ? result.vectors.length / chunks.length : 1,
+    seed: {
+      source: previousVectors === vectors ? 'current-index' : 'external-index',
+      vectors: previousVectors.length
+    },
     build: result.build,
     usage: result.usage,
     durationMs: Date.now() - startedAt,
@@ -116,6 +134,7 @@ if (require.main === module) {
 
 module.exports = {
   atomicWrite,
+  loadSeedVectors,
   main,
   writeReport
 };

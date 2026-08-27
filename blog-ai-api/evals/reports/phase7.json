@@ -1,12 +1,12 @@
 {
   "phase": 7,
-  "generatedAt": "2026-08-25T06:09:37.388Z",
+  "generatedAt": "2026-08-27T03:14:13.474Z",
   "strategy": "chunk-v2-managed-embedding-hybrid-rrf",
   "corpus": {
-    "version": "5255a48fc93de09cd70f16957f35b4e74abc713903a9389acb617244424c60ad",
+    "version": "130c532f3dd45f5e5f27ddfda60384764826b14bfb0093dd6549f04a7f544504",
     "posts": 71,
-    "chunks": 1904,
-    "vectors": 1904,
+    "chunks": 1832,
+    "vectors": 1832,
     "vectorCoverage": 1,
     "activeEmbedding": {
       "model": "qwen3.7-text-embedding",
@@ -19,28 +19,28 @@
       "queryTemplateVersion": "technical-blog-query-v1",
       "tokenizerVersion": "dashscope-compatible-estimate-v1",
       "build": {
-        "added": 0,
-        "updated": 1904,
-        "reused": 0,
-        "deleted": 0,
+        "added": 3,
+        "updated": 11,
+        "reused": 1818,
+        "deleted": 6,
         "failed": 0
       }
     }
   },
   "chunkAudit": {
-    "parents": 451,
-    "children": 1904,
+    "parents": 448,
+    "children": 1832,
     "chunkTypes": {
       "code": 397,
-      "formula": 92,
-      "formula-context": 356,
+      "formula": 90,
+      "formula-context": 355,
       "image": 10,
-      "list": 404,
+      "list": 374,
       "metadata": 4,
       "proof": 15,
       "quote": 99,
       "table": 1,
-      "text": 521,
+      "text": 482,
       "theorem": 5
     },
     "overflowChunks": 3,
@@ -81,11 +81,11 @@
       "recallAt5": 0.9,
       "recallAt20": 0.9,
       "hitRateAt5": 0.9,
-      "mrrAt20": 0.8167,
-      "ndcgAt20": 0.8381,
+      "mrrAt20": 0.8267,
+      "ndcgAt20": 0.8443,
       "noAnswerCases": 0,
       "noAnswerAccuracy": 0,
-      "averageWarmRetrievalMs": 33.273,
+      "averageWarmRetrievalMs": 35.331,
       "failedCases": 2
     },
     "comparison": {
@@ -94,16 +94,16 @@
           "recallAt5": 0.8,
           "recallAt20": 0.9,
           "hitRateAt5": 0.8,
-          "mrrAt20": 0.545,
-          "ndcgAt20": 0.6288,
+          "mrrAt20": 0.475,
+          "ndcgAt20": 0.5762,
           "cases": 10
         },
         "hybrid": {
           "recallAt5": 0.8,
           "recallAt20": 0.8,
           "hitRateAt5": 0.8,
-          "mrrAt20": 0.6333,
-          "ndcgAt20": 0.6762,
+          "mrrAt20": 0.6533,
+          "ndcgAt20": 0.6887,
           "cases": 10
         }
       },

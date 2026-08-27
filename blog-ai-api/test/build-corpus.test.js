@@ -271,7 +271,20 @@ After the formula.
 
 {% note info %}
 Callout content remains visible.
-{% endnote %}`);
+{% endnote %}
+
+<!-- Hidden duplicate formula must not enter retrieval. -->
+
+<!--
+$$
+hiddenFormula = shouldNotLeak
+$$
+-->
+
+\`\`\`html
+<!-- A comment inside source code must remain exact. -->
+<button>Submit</button>
+\`\`\``);
 
   assert.deepEqual(
     [...new Set(document.blocks.map(block => block.type))].sort(),
@@ -284,6 +297,15 @@ Callout content remains visible.
   assert.match(document.contentText, /Figure 1 explains the architecture diagram/);
   assert.match(document.contentText, /E\[X\] =/);
   assert.doesNotMatch(document.contentText, /shouldNotEnterProse/);
+  assert.doesNotMatch(document.contentText, /Hidden duplicate formula/);
+  assert.doesNotMatch(document.contentText, /hiddenFormula|-->/);
+  assert.equal(
+    document.blocks.some(block => (
+      block.type === 'code' &&
+      block.content.includes('A comment inside source code must remain exact.')
+    )),
+    true
+  );
   assert.match(document.blocks.find(block => block.type === 'list').content, /Second complete item/);
   assert.deepEqual(document.sections[0].headingPath, ['Structured section']);
   assert.match(document.sections[0].sectionAnchor, /^section_[a-f0-9]{16}$/);
