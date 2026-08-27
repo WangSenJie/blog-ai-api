@@ -49,6 +49,8 @@ async function requestJson(url, method, payload, options) {
   const args = [
     '--silent',
     '--show-error',
+    '--ipv4',
+    '--http1.1',
     '--connect-timeout',
     String(Math.max(1, Math.ceil(options.timeoutMs / 1000))),
     '--max-time',

@@ -1,6 +1,6 @@
 {
   "phase": 11,
-  "generatedAt": "2026-08-27T03:20:06.978Z",
+  "generatedAt": "2026-08-27T03:27:56.646Z",
   "strategy": "release-governance-observability-rollback-v1",
   "corpusVersion": "130c532f3dd45f5e5f27ddfda60384764826b14bfb0093dd6549f04a7f544504",
   "ingestion": {
@@ -812,17 +812,18 @@
   },
   "production": {
     "available": true,
-    "generatedAt": "2026-08-26T09:05:10.355Z",
+    "generatedAt": "2026-08-27T03:27:48.447Z",
     "endpointHost": "blog-ai-api.vercel.app",
     "metrics": {
       "requests": 4,
-      "serverP95Ms": 5069.036,
-      "clientP95Ms": 5820,
+      "serverP95Ms": 4039.828,
+      "clientP95Ms": 5187,
       "embeddingRequests": 5,
       "embeddingFailures": 0
     },
     "checks": {
       "httpSuccess": true,
+      "indexVersionCurrent": true,
       "featureFlagContract": true,
       "productionFlagsEnabled": true,
       "candidateMetricContract": true,
@@ -834,8 +835,8 @@
       "explicitClear": true,
       "latencyP95": true
     },
-    "indexVersionCurrent": false,
-    "passed": false,
+    "indexVersionCurrent": true,
+    "passed": true,
     "report": "evals/reports/phase11-production.json"
   },
   "knownFindings": [],
@@ -855,9 +856,9 @@
       "phase10ProductionBaseline": true
     },
     "implementationPassed": true,
-    "productionValidationRequired": true,
-    "releaseReady": false,
-    "status": "local_passed_production_pending",
+    "productionValidationRequired": false,
+    "releaseReady": true,
+    "status": "passed",
     "passed": true
   }
 }

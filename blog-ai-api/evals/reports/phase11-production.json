@@ -1,8 +1,9 @@
 {
   "phase": 11,
   "kind": "production-release-audit",
-  "generatedAt": "2026-08-26T09:05:10.355Z",
+  "generatedAt": "2026-08-27T03:27:48.447Z",
   "endpointHost": "blog-ai-api.vercel.app",
+  "expectedIndexVersion": "130c532f3dd45f5e5f27ddfda60384764826b14bfb0093dd6549f04a7f544504",
   "memorySession": {
     "createStatus": 201,
     "ttlPresent": true,
@@ -12,7 +13,8 @@
     {
       "id": "answer",
       "status": 200,
-      "traceId": "trace_4e41409b-3465-420b-9e2c-682e9dc344a9",
+      "traceId": "trace_8f6e0f0b-dac9-47fd-89fd-6d6a72ff9644",
+      "indexVersion": "130c532f3dd45f5e5f27ddfda60384764826b14bfb0093dd6549f04a7f544504",
       "releaseFlags": {
         "ragChunkV2": true,
         "remoteEmbedding": true,
@@ -23,7 +25,7 @@
       },
       "retrievalStrategy": "hybrid_rrf_rerank",
       "stageMetrics": {
-        "bm25Candidates": 298,
+        "bm25Candidates": 286,
         "denseCandidates": 20,
         "rrfCandidates": 25,
         "rerankerCandidates": 3,
@@ -44,17 +46,18 @@
         "ttlPresent": false
       },
       "latencyMs": {
-        "retrieval": 1282.801,
-        "generation": 1477.83,
-        "verification": 1301.616,
-        "total": 5069.036,
-        "client": 5820
+        "retrieval": 1063.138,
+        "generation": 1059.698,
+        "verification": 1256.664,
+        "total": 3416.724,
+        "client": 4347
       }
     },
     {
       "id": "refusal",
       "status": 200,
-      "traceId": "trace_840ac79d-375c-4340-aadf-02d4393b3eef",
+      "traceId": "trace_21161e11-99d3-451e-9d97-8fc77284b48e",
+      "indexVersion": "130c532f3dd45f5e5f27ddfda60384764826b14bfb0093dd6549f04a7f544504",
       "releaseFlags": {
         "ragChunkV2": true,
         "remoteEmbedding": true,
@@ -65,7 +68,7 @@
       },
       "retrievalStrategy": "hybrid_rrf_rerank",
       "stageMetrics": {
-        "bm25Candidates": 449,
+        "bm25Candidates": 438,
         "denseCandidates": 40,
         "rrfCandidates": 77,
         "rerankerCandidates": 40,
@@ -86,17 +89,18 @@
         "ttlPresent": false
       },
       "latencyMs": {
-        "retrieval": 997.156,
+        "retrieval": 1257.627,
         "generation": null,
-        "verification": 0.139,
-        "total": 1011.934,
-        "client": 1712
+        "verification": 0.03,
+        "total": 1272.484,
+        "client": 2207
       }
     },
     {
       "id": "memory_write",
       "status": 200,
-      "traceId": "trace_b6212557-feab-4592-a90c-4b29619d5aaf",
+      "traceId": "trace_7f4a4a69-c8fd-48a2-bd5e-4875f166858d",
+      "indexVersion": "130c532f3dd45f5e5f27ddfda60384764826b14bfb0093dd6549f04a7f544504",
       "releaseFlags": {
         "ragChunkV2": true,
         "remoteEmbedding": true,
@@ -107,7 +111,7 @@
       },
       "retrievalStrategy": "hybrid_rrf_rerank",
       "stageMetrics": {
-        "bm25Candidates": 257,
+        "bm25Candidates": 251,
         "denseCandidates": 20,
         "rrfCandidates": 24,
         "rerankerCandidates": 3,
@@ -128,17 +132,18 @@
         "ttlPresent": true
       },
       "latencyMs": {
-        "retrieval": 421.969,
-        "generation": 2379.268,
-        "verification": 1.045,
-        "total": 3542.669,
-        "client": 4778
+        "retrieval": 656.845,
+        "generation": 2621.778,
+        "verification": 1.05,
+        "total": 4039.828,
+        "client": 5187
       }
     },
     {
       "id": "memory_replay",
       "status": 200,
-      "traceId": "trace_0e7d9f6c-36d9-419c-8d2e-fb9b86539812",
+      "traceId": "trace_592e4a5d-bea6-4a5e-8dfa-50fe1020f0f1",
+      "indexVersion": "130c532f3dd45f5e5f27ddfda60384764826b14bfb0093dd6549f04a7f544504",
       "releaseFlags": {
         "ragChunkV2": true,
         "remoteEmbedding": true,
@@ -149,7 +154,7 @@
       },
       "retrievalStrategy": "hybrid_rrf_rerank",
       "stageMetrics": {
-        "bm25Candidates": 257,
+        "bm25Candidates": 251,
         "denseCandidates": 20,
         "rrfCandidates": 24,
         "rerankerCandidates": 3,
@@ -173,21 +178,22 @@
         "retrieval": null,
         "generation": null,
         "verification": null,
-        "total": 288.992,
-        "client": 950
+        "total": 292.704,
+        "client": 1091
       }
     }
   ],
   "metrics": {
     "requests": 4,
-    "serverP95Ms": 5069.036,
-    "clientP95Ms": 5820,
+    "serverP95Ms": 4039.828,
+    "clientP95Ms": 5187,
     "embeddingRequests": 5,
     "embeddingFailures": 0
   },
   "acceptance": {
     "checks": {
       "httpSuccess": true,
+      "indexVersionCurrent": true,
       "featureFlagContract": true,
       "productionFlagsEnabled": true,
       "candidateMetricContract": true,
