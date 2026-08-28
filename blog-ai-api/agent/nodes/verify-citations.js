@@ -255,9 +255,14 @@ function formatGroundedAnswer(claims, subquestions, citationNumbers) {
   );
   if (subquestions.length <= 1) {
     const values = claimsBySubquestion.get(subquestions[0] && subquestions[0].id) || [];
-    return values.length
-      ? `站内资料可以确认：${values.map(sentence).join(' ')}`
-      : '站内资料暂时不能直接回答这个问题。你可以补充文章标题或更具体的关键词。';
+    if (!values.length) {
+      return '站内资料暂时不能直接回答这个问题。你可以补充文章标题或更具体的关键词。';
+    }
+    const question = String(subquestions[0] && subquestions[0].question || '');
+    const listAnswer = values.length > 1 && /哪些|列举|包括|算法|步骤|优点|缺点|特点|区别/.test(question);
+    return listAnswer
+      ? values.map(claim => `- ${sentence(claim)}`).join('\n')
+      : values.map(sentence).join(' ');
   }
   return subquestions.map(subquestion => {
     const values = claimsBySubquestion.get(subquestion.id) || [];

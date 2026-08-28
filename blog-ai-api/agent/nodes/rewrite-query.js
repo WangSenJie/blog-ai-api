@@ -99,6 +99,63 @@ function hasExplicitRelatedTopic(question) {
   return remaining.length >= 2;
 }
 
+function inferTopicFromQuery(value) {
+  let text = String(value || '')
+    .replace(/[《》]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/[，。；：！？?、,.!]+$/g, '')
+    .trim();
+  if (!text) return '';
+
+  text = text.replace(
+    /^(?:请|麻烦|帮我|给我)?\s*(?:介绍|解释|说明|讲讲|说说)(?:一下)?\s*/,
+    ''
+  ).trim();
+
+  const definition = text.match(/^(?:什么是|何为)\s*(.{2,160})$/);
+  if (definition) return definition[1].replace(/的$/g, '').trim();
+
+  const subject = text.match(
+    /^(.{2,160}?)(?:的)?(?:是什么|有哪些|有什么|有何|如何|怎么|怎样|为什么|为何|是否|能否|包含什么|包括什么)/
+  );
+  if (subject) return subject[1].replace(/的$/g, '').trim();
+
+  return text.length <= 160 ? text : '';
+}
+
+function conversationTopic(state) {
+  if (state.history.latestAssistantGrounded) {
+    const recent = inferTopicFromQuery(
+      state.history.previousStandaloneQuery ||
+      state.history.previousUserQuestion
+    );
+    if (recent) return recent;
+  }
+  const remembered = inferTopicFromQuery(
+    state.trustedMemory && state.trustedMemory.activeTopic
+  );
+  if (remembered) return remembered;
+  return '';
+}
+
+const CONCEPT_PRONOUN = /(?:它|他|她|其)(?=的|有|是|能|会|可|应|如何|怎么|怎样|为什么|为何|哪些|什么|呢|和|与|跟|相比|[，。！？?]|$)/g;
+const BARE_CONCEPT_REFERENCE = /(?:这个|那个|上述|前面(?:提到|说到)?的?)(?=有|是|能|会|可|应|如何|怎么|怎样|为什么|为何|哪些|什么|呢|[，。！？?]|$)/g;
+const TYPED_CONCEPT_REFERENCE = /(?:这个|那个|上述|前面(?:提到|说到)?的?)(?:模型|方法|算法|框架|概念|技术|主题|问题|机制|系统|过程)/g;
+
+function replaceConceptReferences(question, topic) {
+  let matched = false;
+  const replace = () => {
+    matched = true;
+    return topic;
+  };
+  const rewritten = String(question || '')
+    .replace(TYPED_CONCEPT_REFERENCE, replace)
+    .replace(CONCEPT_PRONOUN, replace)
+    .replace(BARE_CONCEPT_REFERENCE, replace);
+  return { rewritten, matched };
+}
+
 function rewriteStandaloneQuery(state) {
   const pageReference = state.history.pageRef;
   const articleReferences = state.history.articleRefs || [];
@@ -153,6 +210,7 @@ function rewriteStandaloneQuery(state) {
     articleReferences[0] ||
     pageReference ||
     null;
+  const inferredConversationTopic = conversationTopic(state);
   const ordinalResult = replaceReferenceExpressions(
     state.question,
     expressionReferences
@@ -222,42 +280,54 @@ function rewriteStandaloneQuery(state) {
     }
   }
 
-  if (/(?<!其)它/.test(standaloneQuery)) {
-    if (conversationalAnchor) {
-      resolveReference(conversationalAnchor);
-      standaloneQuery = standaloneQuery.replace(
-        /(?<!其)它/g,
-        `《${conversationalAnchor.title}》`
-      );
-    } else {
-      unresolved = true;
-    }
-  }
-
-  if (/这个(?=模型|方法|算法|框架|概念)/.test(standaloneQuery)) {
-    if (conversationalAnchor) {
-      resolveReference(conversationalAnchor);
-      standaloneQuery = standaloneQuery.replace(
-        /这个(?=模型|方法|算法|框架|概念)/g,
-        `《${conversationalAnchor.title}》`
-      );
+  const conceptTopic = inferredConversationTopic ||
+    conversationalAnchor && conversationalAnchor.title ||
+    '';
+  const articleConceptAnchor = currentAntecedent || (
+    conversationalAnchor &&
+    normalizeText(conceptTopic) === normalizeText(conversationalAnchor.title) &&
+    [
+      ROUTES.PAGE_SUMMARY,
+      ROUTES.PAGE_QA,
+      ROUTES.RELATED_ARTICLES,
+      ROUTES.ARTICLE_COMPARE
+    ].includes(state.route)
+      ? conversationalAnchor
+      : null
+  );
+  const conceptReplacement = articleConceptAnchor
+    ? `《${articleConceptAnchor.title}》`
+    : conceptTopic;
+  const conceptReference = replaceConceptReferences(
+    standaloneQuery,
+    conceptReplacement
+  );
+  if (conceptReference.matched) {
+    if (conceptTopic) {
+      standaloneQuery = conceptReference.rewritten;
+      if (articleConceptAnchor) resolveReference(articleConceptAnchor);
     } else {
       unresolved = true;
     }
   }
 
   if (/继续|接着|展开|再讲|再说|再解释|进一步|详细说说/.test(state.question)) {
-    const previousTopic = state.history.previousStandaloneQuery ||
+    const previousTopic = inferredConversationTopic ||
+      state.history.previousStandaloneQuery ||
       conversationalAnchor && conversationalAnchor.title ||
       '';
     if (previousTopic) {
-      resolveReference(conversationalAnchor);
       const remainingDetail = state.question
         .replace(/继续|接着|展开|再讲|再说|再解释|进一步|详细说说|解释|讲讲|说说|一下/g, '')
-        .replace(/它|这个|那个|上述|前面(?:的)?/g, '')
+        .replace(/它|他|她|其|这个|那个|上述|前面(?:的)?/g, '')
         .replace(/[\s，。；：！？?、,.!呢吧呀啊]/g, '');
+      const alreadyAnchored = normalizeText(standaloneQuery).includes(
+        normalizeText(previousTopic)
+      );
       standaloneQuery = remainingDetail
-        ? `${previousTopic} ${standaloneQuery}`
+        ? alreadyAnchored
+          ? standaloneQuery
+          : `${previousTopic} ${standaloneQuery}`
         : previousTopic;
     } else {
       unresolved = true;
@@ -289,6 +359,7 @@ function rewriteStandaloneQuery(state) {
 
   return {
     standaloneQuery: standaloneQuery || state.question,
+    conversationTopic: inferredConversationTopic,
     resolvedArticleRefs,
     needsClarification: unresolved,
     clarificationReason: unresolved
@@ -439,7 +510,7 @@ function buildSubquestionPlan(subqueries) {
 function rewriteForRetry(state) {
   const anchors = []
     .concat(state.history.pageRef || [])
-    .concat(state.history.articleRefs || [])
+    .concat(state.conversationTopic ? [] : state.history.articleRefs || [])
     .map(reference => reference.title)
     .filter(Boolean);
   const anchorSuffix = anchors.find(title => (
@@ -457,8 +528,11 @@ function rewriteForRetry(state) {
 
 module.exports = {
   buildSubquestionPlan,
+  conversationTopic,
   hasExplicitRelatedTopic,
+  inferTopicFromQuery,
   parseOrdinal,
+  replaceConceptReferences,
   replaceReferenceExpressions,
   rewriteForRetry,
   rewriteStandaloneQuery,

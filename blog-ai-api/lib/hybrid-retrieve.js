@@ -240,26 +240,27 @@ function bm25Fallback(
     embedding5xx: 0,
     embeddingEstimatedCostUsd: null
   }, telemetry || {});
+  const diversified = dedupeAndDiversify(bm25.map((item, index) => ({
+    chunk: item.chunk,
+    position: item.position,
+    bm25Rank: index + 1,
+    bm25Score: item.score,
+    vectorRank: null,
+    vectorScore: 0,
+    rrfScore: 1 / (settings.rrfK + index + 1),
+    lexicalCoverage: lexicalCoverage(item.chunk, question),
+    passageCoverage: passageCoverage(item.chunk, question),
+    rerankScore: item.score,
+    score: item.score
+  })), null, settings);
   return {
     strategy: 'bm25',
-    ranked: bm25.slice(0, settings.rerankTopK).map((item, index) => ({
-      chunk: item.chunk,
-      position: item.position,
-      bm25Rank: index + 1,
-      bm25Score: item.score,
-      vectorRank: null,
-      vectorScore: 0,
-      rrfScore: 1 / (settings.rrfK + index + 1),
-      lexicalCoverage: lexicalCoverage(item.chunk, question),
-      rerankScore: item.score,
-      score: item.score,
-      rank: index + 1
-    })),
+    ranked: diversified,
     stats: {
       bm25Candidates: bm25.length,
       vectorCandidates: 0,
       fusedCandidates: bm25.length,
-      rerankedCandidates: Math.min(bm25.length, settings.rerankTopK),
+      rerankedCandidates: diversified.length,
       parentExpandedCandidates: 0,
       fallback: reason,
       fallbackCode: errorCode || null,

@@ -116,6 +116,7 @@ function finishPayload(state) {
       mode: responseMode(state.route),
       route: state.route,
       standaloneQuery: state.standaloneQuery,
+      conversationTopic: state.conversationTopic,
       subqueries: state.subqueries.slice(),
       sessionId: state.sessionId,
       retrievalAttempts: state.retrievalAttempts,

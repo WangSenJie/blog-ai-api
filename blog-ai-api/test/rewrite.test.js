@@ -56,6 +56,51 @@ test('pronoun follow-up is rewritten with a corpus-verified article title', () =
   assert.match(state.standaloneQuery, /线上召回/);
 });
 
+test('concept follow-up keeps the previous topic instead of narrowing to a cited article', () => {
+  const corpus = makeAgentCorpus();
+  const previousAnswer = assistantReference(corpus, ['usercf#0'], {
+    standaloneQuery: '什么是集成学习？'
+  });
+  const state = stateFor(makeInput({
+    question: '他有哪些经典算法？',
+    messages: [
+      { role: 'user', content: '什么是集成学习？' },
+      previousAnswer,
+      { role: 'user', content: '他有哪些经典算法？' }
+    ]
+  }), corpus);
+
+  assert.equal(state.needsClarification, false);
+  assert.equal(state.conversationTopic, '集成学习');
+  assert.match(state.standaloneQuery, /集成学习有哪些经典算法/);
+  assert.doesNotMatch(state.standaloneQuery, /UserCF/);
+  assert.deepEqual(state.resolvedArticleRefs, []);
+});
+
+test('trusted active topic resolves a cross-session concept follow-up', () => {
+  const corpus = makeAgentCorpus();
+  const state = stateFor(makeInput({
+    question: '它有什么特点？',
+    messages: [{ role: 'user', content: '它有什么特点？' }],
+    trustedMemory: { activeTopic: '双塔模型' }
+  }), corpus);
+
+  assert.equal(state.needsClarification, false);
+  assert.equal(state.conversationTopic, '双塔模型');
+  assert.match(state.standaloneQuery, /双塔模型有什么特点/);
+});
+
+test('human-form pronoun without a conversation topic requests clarification', () => {
+  const corpus = makeAgentCorpus();
+  const state = stateFor(makeInput({
+    question: '他有哪些经典算法？',
+    messages: [{ role: 'user', content: '他有哪些经典算法？' }]
+  }), corpus);
+
+  assert.equal(state.needsClarification, true);
+  assert.equal(state.clarificationReason, 'unresolved_reference');
+});
+
 test('pronouns are resolved at sentence end and after an introductory verb', () => {
   const corpus = makeAgentCorpus();
   const previousAnswer = assistantReference(corpus, ['tower#0'], {

@@ -120,12 +120,16 @@ function phase10Features(environment, rolloutKey, overrides) {
   const verificationConfigured = settings.semanticVerificationEnabled === undefined
     ? releaseFlags.semanticVerifierEnabled
     : Boolean(settings.semanticVerificationEnabled);
-  const percent = rolloutPercent(
-    settings.groundedSynthesisRolloutPercent === undefined
-      ? source.GROUNDED_SYNTHESIS_ROLLOUT_PERCENT
-      : settings.groundedSynthesisRolloutPercent,
-    100
+  const canonicalReleaseConfigured = (
+    Object.prototype.hasOwnProperty.call(source, 'NATURAL_ANSWER_V2_ENABLED') ||
+    Object.prototype.hasOwnProperty.call(source, 'SEMANTIC_VERIFIER_ENABLED')
   );
+  const configuredRollout = settings.groundedSynthesisRolloutPercent === undefined
+    ? canonicalReleaseConfigured
+      ? source.NATURAL_ANSWER_V2_ROLLOUT_PERCENT
+      : source.GROUNDED_SYNTHESIS_ROLLOUT_PERCENT
+    : settings.groundedSynthesisRolloutPercent;
+  const percent = rolloutPercent(configuredRollout, 100);
   const selected = stableRollout(rolloutKey, percent);
 
   return {

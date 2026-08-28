@@ -78,6 +78,25 @@ test('phase 10 rollout requires both flags and uses a stable bucket', () => {
   assert.equal(first.groundedSynthesisEnabled, second.groundedSynthesisEnabled);
 });
 
+test('canonical natural-answer release is not limited by a stale legacy rollout', () => {
+  const features = phase10Features({
+    NATURAL_ANSWER_V2_ENABLED: 'true',
+    SEMANTIC_VERIFIER_ENABLED: 'true',
+    GROUNDED_SYNTHESIS_ROLLOUT_PERCENT: '5'
+  }, 'previously-unselected-user');
+
+  assert.equal(features.rolloutPercent, 100);
+  assert.equal(features.rolloutSelected, true);
+  assert.equal(features.groundedSynthesisEnabled, true);
+
+  const canary = phase10Features({
+    NATURAL_ANSWER_V2_ENABLED: 'true',
+    SEMANTIC_VERIFIER_ENABLED: 'true',
+    NATURAL_ANSWER_V2_ROLLOUT_PERCENT: '5'
+  }, 'previously-unselected-user');
+  assert.equal(canary.rolloutPercent, 5);
+});
+
 test('agent timeout budgets use bounded production environment values', () => {
   const defaults = getAgentLimits({});
   assert.equal(defaults.retrievalRoundTimeoutMs, 1500);
@@ -324,7 +343,25 @@ test('semantic similarity cannot make an unrelated topic sufficient evidence', (
 
   assert.equal(grade.status, 'insufficient');
   assert.equal(grade.features.directness, 1);
-  assert.equal(grade.features.topicCoverage, 0);
+  assert.ok(grade.features.topicCoverage < grade.features.topicAnchorMinCoverage);
+
+  const legacyGrade = gradeEvidence(Object.assign({}, {
+    route: ROUTES.SITE_QA,
+    standaloneQuery: question,
+    subqueries: [question],
+    retrievedChunks: [misleading],
+    currentQuestionRefs: [],
+    resolvedArticleRefs: [],
+    history: { pageRef: null, articleRefs: [] },
+    specialistResults: {},
+    phase10: { groundedSynthesisEnabled: false },
+    evidenceCalibration: createEvidenceCalibration()
+  }));
+  assert.equal(legacyGrade.status, 'insufficient');
+  assert.ok(
+    legacyGrade.features.topicCoverage <
+      legacyGrade.features.topicAnchorMinCoverage
+  );
 });
 
 test('grounded verification rejects a citation not assigned to its subquestion', () => {
@@ -375,6 +412,45 @@ test('grounded prompt marks unassigned evidence as unavailable for claims', () =
 
   assert.match(prompt, /可用于子问题: sq_1/);
   assert.match(prompt, /可用于子问题: 无（不得引用）/);
+  assert.match(prompt, /最近对话（只用于理解当前追问和指代/);
+  assert.match(prompt, /不要把整句 quote 原样复制/);
+});
+
+test('list questions can assign evidence from several relevant articles', async () => {
+  const corpus = makeAgentCorpus();
+  let generatedInput;
+  await runAgent(makeInput({
+    question: '推荐系统有哪些经典算法？',
+    messages: [{ role: 'user', content: '推荐系统有哪些经典算法？' }]
+  }), {
+    corpus,
+    groundedSynthesisEnabled: true,
+    semanticVerificationEnabled: true,
+    canUseModel: () => true,
+    canUseVerifier: () => true,
+    async generateV2(input) {
+      generatedInput = input;
+      return { claims: [], unansweredSubquestions: ['sq_1'] };
+    },
+    async verify() {
+      return {
+        claims: [],
+        subquestions: [{ id: 'sq_1', covered: false }],
+        memoryDelta: {
+          activeTopic: '推荐系统',
+          explicitLearningProgress: [],
+          responsePreferences: [],
+          summaryUpdate: ''
+        }
+      };
+    }
+  });
+
+  assert.ok(generatedInput);
+  assert.ok(generatedInput.evidenceAssignments.length >= 2);
+  assert.ok(new Set(generatedInput.evidence.map(item => (
+    item.chunk.postUrl
+  ))).size >= 2);
 });
 
 test('runAgent uses two bounded model calls and publishes only verifier-approved claims', async () => {

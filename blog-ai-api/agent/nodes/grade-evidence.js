@@ -169,6 +169,18 @@ function groundedCandidate(candidates, query, calibration) {
     ))[0] || null;
 }
 
+function bestTopicCandidate(candidates, query, calibration) {
+  return matchingQueryCandidates(candidates, query)
+    .slice()
+    .sort((left, right) => (
+      candidateTopicCoverage(right, query, calibration) -
+        candidateTopicCoverage(left, query, calibration) ||
+      candidateCoverage(right, query, calibration) -
+        candidateCoverage(left, query, calibration) ||
+      (right.score || 0) - (left.score || 0)
+    ))[0] || null;
+}
+
 function bestCoverage(candidates, query, calibration, options) {
   return candidates.reduce(
     (best, candidate) => Math.max(
@@ -530,28 +542,35 @@ function gradeEvidence(state) {
     calibration
   ) || candidates[0];
   const directness = candidateDirectness(directnessCandidate, coverageQuery);
-  const phase10Candidate = groundedCandidate(
-    candidates,
-    state.subqueries[0] || coverageQuery,
-    calibration
-  );
   const topicCoverage = candidateTopicCoverage(
-    phase10Candidate,
+    bestTopicCandidate(
+      candidates,
+      state.subqueries[0] || coverageQuery,
+      calibration
+    ),
     state.subqueries[0] || coverageQuery,
     calibration
   );
   const coverageEnough = coverage >= calibration.siteQaMinCoverage;
   const directEnough = directness >= 0.5;
-  const topicEnough = topicCoverage >= calibration.topicAnchorMinCoverage;
-  const sufficient = coverageEnough && (
-    !state.phase10.groundedSynthesisEnabled || directEnough && topicEnough
+  const topicThreshold = state.phase10.groundedSynthesisEnabled
+    ? calibration.topicAnchorMinCoverage
+    : Math.max(
+      calibration.siteQaMinCoverage,
+      calibration.topicAnchorMinCoverage - 0.1
+    );
+  const topicEnough = topicCoverage >= topicThreshold;
+  const sufficient = coverageEnough && topicEnough && (
+    !state.phase10.groundedSynthesisEnabled || directEnough
   );
   return gradeResult(
     sufficient ? 'sufficient' : 'insufficient',
     sufficient
       ? 'query_terms_covered'
       : coverageEnough
-        ? 'direct_answer_terms_not_covered'
+        ? !topicEnough
+          ? 'topic_anchor_not_covered'
+          : 'direct_answer_terms_not_covered'
         : 'query_terms_not_covered',
     coverage,
     calibration.siteQaMinCoverage,
@@ -560,7 +579,7 @@ function gradeEvidence(state) {
       directness,
       topicCoverage,
       topicAnchor: topicAnchorQuery(state.subqueries[0] || coverageQuery),
-      topicAnchorMinCoverage: calibration.topicAnchorMinCoverage,
+      topicAnchorMinCoverage: topicThreshold,
       coverageQuery,
       semanticAllowed: coverageOptions.allowSemantic,
       candidates: candidates.length,
@@ -642,9 +661,24 @@ function selectContext(state) {
           candidateDirectness(left, subquestion.question) ||
         (right.score || 0) - (left.score || 0)
       ));
-      const candidate = eligible.find(item => !assignedChunks.has(item.chunk.id)) ||
-        eligible[0] || null;
-      if (candidate) {
+      const listQuestion = /哪些|列举|包括|算法|步骤|优点|缺点|特点|区别/.test(
+        subquestion.question
+      );
+      const assignmentLimit = listQuestion ? 3 : 1;
+      const candidates = [];
+      const assignedPosts = new Set();
+      for (const candidate of eligible) {
+        const postUrl = normalizePostUrl(candidate.chunk.postUrl);
+        if (
+          assignedChunks.has(candidate.chunk.id) ||
+          assignedPosts.has(postUrl)
+        ) continue;
+        candidates.push(candidate);
+        assignedPosts.add(postUrl);
+        if (candidates.length >= assignmentLimit) break;
+      }
+      if (!candidates.length && eligible[0]) candidates.push(eligible[0]);
+      for (const candidate of candidates) {
         assignedChunks.add(candidate.chunk.id);
         const added = add(candidate);
         if (added || seen.has(candidate.chunk.id)) {

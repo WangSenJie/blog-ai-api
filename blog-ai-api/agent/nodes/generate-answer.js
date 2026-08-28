@@ -396,7 +396,6 @@ function buildSingleEvidenceClaims(state) {
 
   const primaryReference = state.resolvedArticleRefs[0] ||
     state.history.pageRef ||
-    state.history.articleRefs[0] ||
     null;
   const primaryUrl = normalizePostUrl(primaryReference && primaryReference.url);
   const anchoredCandidates = primaryUrl
@@ -432,7 +431,7 @@ function buildDeterministicResponse(state) {
 
   if (state.needsClarification) {
     return {
-      answer: '我还不能确定你指的是哪篇文章。请补充文章标题，或先从上一轮结果中明确选择第几篇。',
+      answer: '我还不能确定你指的是哪个概念或哪篇文章。请补充主题或文章标题，或者明确选择上一轮的第几篇。',
       citations: [],
       related: [],
       claims: []

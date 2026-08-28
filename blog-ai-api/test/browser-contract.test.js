@@ -257,7 +257,8 @@ test('local fallback conservatively rewrites ordinal and pronoun follow-ups', ()
   assert.match(rewrite, /getOrdinalReferences\(question,\s*references\)/);
   assert.match(rewrite, /我还没有足够的文章顺序/);
   assert.match(rewrite, /继续\|接着\|展开/);
-  assert.match(rewrite, /它\|这个\|那个\|上述/);
+  assert.match(rewrite, /它\|他\|她\|其/);
+  assert.match(rewrite, /inferConversationTopic\(state\.lastStandaloneQuery\)/);
   assert.match(rewrite, /我还不确定你指的是哪个概念或哪篇文章/);
   assert.match(ask, /fallbackPlan\.clarification/);
   assert.match(ask, /fallbackPlan\.question/);

@@ -350,15 +350,20 @@
     }
 
     const continuation = /继续|接着|展开|详细(?:说|讲|解释)|再(?:说|讲|解释)|然后呢/.test(question);
-    const pronoun = /它|这个|那个|上述|前面(?:的)?/.test(question);
-    if (!continuation && !pronoun) {
+    const conceptPronoun = /(?:它|他|她|其)(?=的|有|是|能|会|可|应|如何|怎么|怎样|为什么|为何|哪些|什么|呢|和|与|跟|相比|[，。！？?]|$)|(?:这个|那个|上述|前面(?:提到|说到)?的?)(?:模型|方法|算法|框架|概念|技术|主题|问题|机制|系统|过程|(?=有|是|能|会|可|应|如何|怎么|怎样|为什么|为何|哪些|什么|呢|[，。！？?]|$))/.test(question);
+    if (!continuation && !conceptPronoun) {
       return { question, mode, context };
     }
 
     const anchor = references[0] || null;
+    const topic = references.length
+      ? inferConversationTopic(state.lastStandaloneQuery) ||
+        anchor && anchor.title ||
+        ''
+      : '';
     if (
-      (pronoun && !anchor) ||
-      (!anchor && !state.lastStandaloneQuery)
+      (conceptPronoun && !topic) ||
+      (!topic && !state.lastStandaloneQuery)
     ) {
       return {
         clarification: '我还不确定你指的是哪个概念或哪篇文章。可以补充一下名称吗？',
@@ -368,22 +373,45 @@
       };
     }
 
-    const anchorTitle = anchor ? `《${anchor.title}》` : state.lastStandaloneQuery;
-    const rewritten = pronoun
-      ? question.replace(/它|这个|那个|上述|前面(?:的)?/g, anchorTitle)
-      : `${state.lastStandaloneQuery || anchorTitle}：${question}`;
+    const replaceTopic = () => topic;
+    const rewritten = conceptPronoun
+      ? question
+        .replace(
+          /(?:这个|那个|上述|前面(?:提到|说到)?的?)(?:模型|方法|算法|框架|概念|技术|主题|问题|机制|系统|过程)/g,
+          replaceTopic
+        )
+        .replace(
+          /(?:它|他|她|其)(?=的|有|是|能|会|可|应|如何|怎么|怎样|为什么|为何|哪些|什么|呢|和|与|跟|相比|[，。！？?]|$)|(?:这个|那个|上述|前面(?:提到|说到)?的?)(?=有|是|能|会|可|应|如何|怎么|怎样|为什么|为何|哪些|什么|呢|[，。！？?]|$)/g,
+          replaceTopic
+        )
+      : `${topic || state.lastStandaloneQuery}：${question}`;
 
     return {
       question: rewritten,
-      mode: anchor ? 'page' : mode,
-      context: anchor
-        ? {
-            title: anchor.title,
-            url: anchor.url,
-            description: ''
-          }
-        : context
+      mode,
+      context
     };
+  }
+
+  function inferConversationTopic(value) {
+    let text = String(value || '')
+      .replace(/[《》]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .replace(/[，。；：！？?、,.!]+$/g, '')
+      .trim();
+    if (!text) return '';
+    text = text.replace(
+      /^(?:请|麻烦|帮我|给我)?\s*(?:介绍|解释|说明|讲讲|说说)(?:一下)?\s*/,
+      ''
+    ).trim();
+    const definition = text.match(/^(?:什么是|何为)\s*(.{2,160})$/);
+    if (definition) return definition[1].replace(/的$/g, '').trim();
+    const subject = text.match(
+      /^(.{2,160}?)(?:的)?(?:是什么|有哪些|有什么|有何|如何|怎么|怎样|为什么|为何|是否|能否|包含什么|包括什么)/
+    );
+    if (subject) return subject[1].replace(/的$/g, '').trim();
+    return text.length <= 160 ? text : '';
   }
 
   function storage() {

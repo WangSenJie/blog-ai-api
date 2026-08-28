@@ -4,7 +4,10 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 
 const { buildVectorIndex, embeddingInputForChunk } = require('../lib/embedding');
-const { hybridRankChunks } = require('../lib/hybrid-retrieve');
+const {
+  hybridRankChunks,
+  hybridRankChunksAsync
+} = require('../lib/hybrid-retrieve');
 
 function makeChunk(values) {
   return Object.assign({
@@ -165,4 +168,49 @@ test('hybrid reranking removes duplicate evidence while retaining current-page c
     result.ranked.filter(item => duplicateIds.has(item.chunk.id)).length,
     1
   );
+});
+
+test('BM25 degradation still diversifies posts before applying the result limit', async () => {
+  const chunks = [];
+  for (let index = 0; index < 6; index += 1) {
+    chunks.push(makeChunk({
+      id: `boost_${index}`,
+      contentHash: `sha256:${String(index).repeat(64)}`,
+      postId: 'boost',
+      postTitle: 'AdaBoost',
+      postUrl: '/adaboost/',
+      tags: ['集成学习'],
+      sectionTitle: '算法',
+      content: `集成学习算法与弱学习器 ${'算法 '.repeat(8 - index)}`
+    }));
+  }
+  chunks.push(makeChunk({
+    id: 'gbdt_0',
+    contentHash: `sha256:${'a'.repeat(64)}`,
+    postId: 'gbdt',
+    postTitle: 'GBDT',
+    postUrl: '/gbdt/',
+    tags: ['集成学习'],
+    sectionTitle: '算法',
+    content: 'GBDT 是一种集成学习算法。'
+  }));
+
+  const result = await hybridRankChunksAsync(
+    chunks,
+    [],
+    '集成学习算法',
+    'site',
+    null,
+    {
+      remoteEmbeddingEnabled: false,
+      maxChunksPerPost: 2,
+      rerankTopK: 10
+    }
+  );
+
+  assert.equal(result.strategy, 'bm25');
+  assert.ok(result.ranked.some(item => item.chunk.id === 'gbdt_0'));
+  assert.ok(result.ranked.filter(item => (
+    item.chunk.postUrl === '/adaboost/'
+  )).length <= 2);
 });

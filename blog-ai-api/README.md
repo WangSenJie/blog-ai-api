@@ -118,8 +118,9 @@ apiBaseUrl: 'https://your-blog-ai-api.vercel.app'
 - `NATURAL_ANSWER_V2_ENABLED` and `SEMANTIC_VERIFIER_ENABLED`
   - Canonical Phase 11 release flags for the Phase 10 natural answer and independent verifier. Both must be `true` before a natural claim can be published. If either path fails, the request falls back to the verified deterministic answer.
   - `GROUNDED_SYNTHESIS_ENABLED` and `SEMANTIC_VERIFICATION_ENABLED` remain compatible aliases so an existing deployment keeps its behavior while the environment variables are migrated.
-- `GROUNDED_SYNTHESIS_ROLLOUT_PERCENT`
-  - Optional stable rollout percentage from 0–100. Bucketing uses the opaque memory digest when available and never uses IP or browser fingerprinting.
+- `NATURAL_ANSWER_V2_ROLLOUT_PERCENT`
+  - Optional stable rollout percentage from 0–100 for the canonical Phase 11 natural-answer flags. It defaults to `100`; keep it at `100` after the release has graduated. Bucketing uses the opaque memory digest when available and never uses IP or browser fingerprinting.
+  - `GROUNDED_SYNTHESIS_ROLLOUT_PERCENT` is retained only for deployments that still use the legacy `GROUNDED_SYNTHESIS_ENABLED` / `SEMANTIC_VERIFICATION_ENABLED` aliases. A stale legacy percentage no longer silently limits canonical Natural Answer v2.
 - `VERIFIER_API_BASE_URL`, `VERIFIER_API_KEY`, `VERIFIER_MODEL`, and `VERIFIER_API_PATH`
   - Optional independent semantic-verifier provider settings. Each value falls back to the corresponding `LLM_*` setting, but verification is always a separate bounded model call.
 - `VERIFIER_TIMEOUT_MS` and `VERIFIER_MAX_OUTPUT_TOKENS`

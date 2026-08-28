@@ -106,6 +106,7 @@ function trustedConversationContext(input, corpus, indexVersion) {
   return {
     articleRefs,
     pageRef,
+    latestAssistantGrounded: articleRefs.length > 0,
     previousStandaloneQuery,
     previousUserQuestion
   };
@@ -206,6 +207,7 @@ function createAgentState(input, options) {
     currentQuestionRefs: currentQuestionReferences(input.question, corpus),
     route: '',
     standaloneQuery: input.question,
+    conversationTopic: '',
     subqueries: [],
     subquestionPlan: [],
     targetQueries: [],
