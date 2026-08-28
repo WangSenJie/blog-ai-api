@@ -403,8 +403,18 @@ function buildSingleEvidenceClaims(state) {
       normalizePostUrl(item && item.chunk && item.chunk.postUrl) === primaryUrl
     ))
     : [];
+  const assignedIds = new Set((state.evidenceAssignments || [])
+    .map(item => String(item && item.chunkId || '').trim())
+    .filter(Boolean));
+  const assignedCandidates = state.selectedChunks.filter(item => (
+    assignedIds.has(String(item && item.chunk && item.chunk.id || ''))
+  ));
   const candidate = bestEvidenceCandidate(
-    anchoredCandidates.length ? anchoredCandidates : state.selectedChunks,
+    anchoredCandidates.length
+      ? anchoredCandidates
+      : assignedCandidates.length
+        ? assignedCandidates
+        : state.selectedChunks,
     state.evidenceQuery || state.standaloneQuery,
     state.evidenceCalibration,
     state.standaloneQuery

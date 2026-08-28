@@ -131,6 +131,23 @@ function candidateCoverage(candidate, query, calibration, options) {
 function candidateDirectness(candidate, query) {
   if (!candidate || !candidate.chunk) return 0;
   const normalizedQuery = normalizeText(query);
+  if (/什么是|何为|是什么|定义|结构|组成|原理/.test(normalizedQuery)) {
+    const anchor = normalizeText(topicAnchorQuery(query));
+    if (!anchor) return 0;
+    const text = normalizeText([
+      candidate.chunk.sectionTitle,
+      candidate.chunk.content
+    ].join(' '));
+    const anchorIndex = text.indexOf(anchor);
+    if (anchorIndex < 0) return 0;
+    const definitionWindow = text.slice(
+      anchorIndex,
+      anchorIndex + anchor.length + 36
+    );
+    return /(?:是|指|由|包括|包含|组成|核心|本质|定义)/.test(
+      definitionWindow.slice(anchor.length)
+    ) ? 1 : 0;
+  }
   const rules = DIRECTNESS_RULES.filter(rule => rule.question.test(normalizedQuery));
   if (!rules.length) return 1;
   const text = [

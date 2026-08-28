@@ -708,6 +708,13 @@ function finalizeAnswer(state, trace) {
         state.llmFallback = true;
         state.model.rejectionReason = result.verification.reasons[0] ||
           'no_verified_direct_claim';
+        state.modelResponse = null;
+        state.semanticVerification = null;
+        result = applyVerifiedResponse(
+          state,
+          state.deterministicResponse,
+          'deterministic_fallback'
+        );
       }
     } else {
       state.llmFallback = true;

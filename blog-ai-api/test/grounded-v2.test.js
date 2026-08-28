@@ -295,6 +295,19 @@ test('topic relevance and direct answer evidence are scored separately', () => {
     candidateDirectness(candidate(corpus, 'tower#0'), '双塔模型的结构是什么？'),
     1
   );
+  assert.equal(
+    candidateDirectness(candidate(corpus, 'tower#0'), '什么是双塔模型？'),
+    1
+  );
+  assert.equal(candidateDirectness({
+    chunk: {
+      postTitle: 'AdaBoost',
+      sectionTitle: '算法',
+      tags: ['集成学习'],
+      categories: ['机器学习'],
+      content: '根据以上内容，整理 AdaBoost 算法的输入和输出。'
+    }
+  }, '什么是集成学习？'), 0);
   assert.equal(topicAnchorQuery('随机森林如何降低过拟合风险？'), '随机森林');
   assert.ok(
     candidateTopicCoverage(
@@ -502,7 +515,7 @@ test('runAgent uses two bounded model calls and publishes only verifier-approved
   assert.deepEqual(payload.unansweredSubquestions, []);
 });
 
-test('zero published claims are not reported as an accepted model answer', async () => {
+test('zero published claims use verified deterministic evidence', async () => {
   const corpus = makeAgentCorpus();
   const wrongQuote = corpus.chunks.find(chunk => chunk.id === 'usercf#0').content;
   const payload = await runAgent(makeInput({
@@ -537,8 +550,11 @@ test('zero published claims are not reported as an accepted model answer', async
   assert.equal(payload.meta.model.accepted, false);
   assert.equal(payload.meta.model.rejectionReason, 'unknown_or_unselected_citation');
   assert.equal(payload.meta.llmFallback, true);
-  assert.deepEqual(payload.claims, []);
-  assert.deepEqual(payload.citations, []);
+  assert.equal(payload.meta.citationVerification.source, 'deterministic_fallback');
+  assert.ok(payload.claims.length > 0);
+  assert.deepEqual(payload.citations.map(item => item.chunkId), ['tower#0']);
+  assert.match(payload.answer, /双塔模型由用户塔和物品塔组成/);
+  assert.doesNotMatch(payload.answer, /UserCF/);
 });
 
 test('an unavailable or invalid semantic verifier falls back to deterministic evidence', async () => {
