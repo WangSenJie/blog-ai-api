@@ -175,7 +175,12 @@ async function executeWithTimeout(tools, name, args, timeoutMs) {
 }
 
 function routeToolRequests(state, queries) {
+  const currentReference = Array.isArray(state.currentQuestionRefs) &&
+    state.currentQuestionRefs.length === 1
+    ? state.currentQuestionRefs[0]
+    : null;
   const primaryReference = state.resolvedArticleRefs[0] ||
+    currentReference ||
     state.history.pageRef ||
     state.history.articleRefs[0] ||
     null;
@@ -262,6 +267,23 @@ function routeToolRequests(state, queries) {
         { topic: state.standaloneQuery, topK: Math.min(topK, 8) },
         pageUrl ? { url: pageUrl } : {}
       ),
+      query: queries[0]
+    }];
+  }
+
+  const namedDefinitionQuestion = /什么是|是什么|何为|定义/.test(
+    String(state.standaloneQuery || state.question || '')
+  );
+  if (
+    state.route === ROUTES.SITE_QA &&
+    currentReference &&
+    pageUrl &&
+    queries.length === 1 &&
+    namedDefinitionQuestion
+  ) {
+    return [{
+      name: 'get_article',
+      args: { url: pageUrl, topK },
       query: queries[0]
     }];
   }

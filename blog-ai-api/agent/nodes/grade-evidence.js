@@ -401,9 +401,10 @@ function gradeEvidence(state) {
       coverage >= calibration.pageQaMinCoverage ||
       genericArticleQuestion
     );
+    const directnessQuery = state.subqueries[0] || state.standaloneQuery;
     const directness = pageCandidates.reduce((best, candidate) => Math.max(
       best,
-      candidateDirectness(candidate, coverageQuery)
+      candidateDirectness(candidate, directnessQuery)
     ), 0);
     const sufficient = coverageEnough && (
       !state.phase10.groundedSynthesisEnabled || directness >= 0.5
@@ -558,7 +559,10 @@ function gradeEvidence(state) {
     state.subqueries[0] || coverageQuery,
     calibration
   ) || candidates[0];
-  const directness = candidateDirectness(directnessCandidate, coverageQuery);
+  const directness = candidateDirectness(
+    directnessCandidate,
+    state.subqueries[0] || coverageQuery
+  );
   const topicCoverage = candidateTopicCoverage(
     bestTopicCandidate(
       candidates,
@@ -577,7 +581,13 @@ function gradeEvidence(state) {
       calibration.topicAnchorMinCoverage - 0.1
     );
   const topicEnough = topicCoverage >= topicThreshold;
-  const sufficient = coverageEnough && topicEnough && (
+  const namedArticleDefinition = Boolean(
+    state.currentQuestionRefs &&
+    state.currentQuestionRefs.length === 1 &&
+    isGenericArticleDetailQuery(coverageQuery)
+  );
+  const sufficient = (coverageEnough || namedArticleDefinition) &&
+    topicEnough && (
     !state.phase10.groundedSynthesisEnabled || directEnough
   );
   return gradeResult(
@@ -589,7 +599,7 @@ function gradeEvidence(state) {
           ? 'topic_anchor_not_covered'
           : 'direct_answer_terms_not_covered'
         : 'query_terms_not_covered',
-    coverage,
+    namedArticleDefinition ? 1 : coverage,
     calibration.siteQaMinCoverage,
     {
       coverage,
@@ -599,6 +609,7 @@ function gradeEvidence(state) {
       topicAnchorMinCoverage: topicThreshold,
       coverageQuery,
       semanticAllowed: coverageOptions.allowSemantic,
+      namedArticleDefinition,
       candidates: candidates.length,
       calibrationVersion: calibration.version
     }

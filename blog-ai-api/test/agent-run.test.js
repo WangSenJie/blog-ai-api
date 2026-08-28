@@ -444,6 +444,30 @@ test('an explicit verified title anchors summary and related-article tools', asy
   );
 });
 
+test('site QA for one explicit article reads its source-ordered evidence', async () => {
+  const corpus = makeAgentCorpus();
+  const question = '什么是双塔模型？';
+  const payload = await runAgent(makeInput({
+    question,
+    messages: [{ role: 'user', content: question }]
+  }), {
+    corpus,
+    groundedSynthesisEnabled: true,
+    semanticVerificationEnabled: true,
+    canUseModel: () => false,
+    canUseVerifier: () => false
+  });
+
+  assert.equal(payload.meta.route, 'site_qa');
+  assert.equal(payload.meta.evidenceStatus, 'sufficient');
+  assert.deepEqual(
+    [...new Set(payload.meta.toolCalls.map(call => call.name))],
+    ['get_article']
+  );
+  assert.deepEqual(payload.citations.map(item => item.chunkId), ['tower#0']);
+  assert.match(payload.answer, /双塔模型由用户塔和物品塔组成/);
+});
+
 test('conversation pronouns override an unrelated current page for page tools', async () => {
   const corpus = makeAgentCorpus();
   const previousAnswer = assistantReference(corpus, ['usercf#0'], {
