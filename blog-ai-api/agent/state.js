@@ -199,6 +199,10 @@ function createAgentState(input, options) {
   return {
     sessionId: input.sessionId,
     messages: input.messages || [],
+    // Keep the validated corpus on state so downstream routing can resolve a
+    // trusted conversation topic to a published article without trusting
+    // arbitrary client prose or memory text.
+    corpus,
     question: input.question,
     page,
     legacyMode: input.mode || '',
@@ -212,6 +216,7 @@ function createAgentState(input, options) {
     subquestionPlan: [],
     targetQueries: [],
     resolvedArticleRefs: [],
+    conversationArticleRef: null,
     phase5Request: null,
     specialistResults: {
       comparison: null,

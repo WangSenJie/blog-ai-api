@@ -174,13 +174,70 @@ async function executeWithTimeout(tools, name, args, timeoutMs) {
   }
 }
 
+function exactConversationArticleReference(state) {
+  const topic = normalizeText(state && state.conversationTopic);
+  if (!topic || topic.length < 2) return null;
+
+  // Prefer references already validated against the corpus while restoring
+  // memory. They retain the canonical title and URL used by citations.
+  const trustedReferences = []
+    .concat(state && state.history && state.history.articleRefs || [])
+    .concat(state && state.trustedMemory && state.trustedMemory.articleRefs || []);
+  const trustedMatch = trustedReferences.find(reference => (
+    normalizeText(reference && reference.title) === topic &&
+    normalizePostUrl(reference && reference.url)
+  ));
+  if (trustedMatch) {
+    return Object.assign({}, trustedMatch, {
+      url: normalizePostUrl(trustedMatch.url)
+    });
+  }
+
+  // Long-term activeTopic may survive after the short citation list rolls
+  // over. Resolve it only against a currently published, chunked post.
+  const corpus = state && state.corpus;
+  const posts = corpus && Array.isArray(corpus.posts) ? corpus.posts : [];
+  const chunks = corpus && Array.isArray(corpus.chunks) ? corpus.chunks : [];
+  for (const post of posts) {
+    const title = String(post && post.title || '').trim();
+    const url = normalizePostUrl(post && post.url);
+    if (
+      normalizeText(title) !== topic ||
+      !url ||
+      !chunks.some(chunk => normalizePostUrl(chunk && chunk.postUrl) === url)
+    ) {
+      continue;
+    }
+    return {
+      chunkId: '',
+      title,
+      url,
+      section: ''
+    };
+  }
+
+  return null;
+}
+
 function routeToolRequests(state, queries) {
   const currentReference = Array.isArray(state.currentQuestionRefs) &&
     state.currentQuestionRefs.length === 1
     ? state.currentQuestionRefs[0]
     : null;
+  const conversationReference = exactConversationArticleReference(state);
+  const topicMentionedInQuery = Boolean(
+    conversationReference &&
+    state.conversationTopic &&
+    normalizeText(state.standaloneQuery).includes(
+      normalizeText(state.conversationTopic)
+    )
+  );
+  state.conversationArticleRef = topicMentionedInQuery
+    ? conversationReference
+    : null;
   const primaryReference = state.resolvedArticleRefs[0] ||
     currentReference ||
+    state.conversationArticleRef ||
     state.history.pageRef ||
     state.history.articleRefs[0] ||
     null;
@@ -276,10 +333,9 @@ function routeToolRequests(state, queries) {
   );
   if (
     state.route === ROUTES.SITE_QA &&
-    currentReference &&
+    (currentReference && namedDefinitionQuestion || topicMentionedInQuery) &&
     pageUrl &&
-    queries.length === 1 &&
-    namedDefinitionQuestion
+    queries.length === 1
   ) {
     return [{
       name: 'get_article',
@@ -366,6 +422,7 @@ module.exports = {
   AgentDeadlineError,
   assertWithinDeadline,
   captureSpecialistResult,
+  exactConversationArticleReference,
   mergeCandidates,
   normalizeToolItem,
   retrieveEvidence,

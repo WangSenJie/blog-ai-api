@@ -468,6 +468,42 @@ test('site QA for one explicit article reads its source-ordered evidence', async
   assert.match(payload.answer, /双塔模型由用户塔和物品塔组成/);
 });
 
+test('trusted conversation topic anchors follow-up article retrieval', async () => {
+  const corpus = makeAgentCorpus();
+  corpus.chunks.splice(1, 0, Object.assign({}, corpus.chunks[1], {
+    id: 'tower#training',
+    sectionTitle: '双塔模型的训练',
+    content: '双塔模型常见的训练方式包括 Pointwise、Pairwise 和 Listwise。'
+  }));
+  const question = '它有哪些训练方式？';
+  const previousAnswer = assistantReference(corpus, ['tower#0'], {
+    standaloneQuery: '什么是双塔模型？'
+  });
+  const payload = await runAgent(makeInput({
+    question,
+    messages: [
+      { role: 'user', content: '什么是双塔模型？' },
+      previousAnswer,
+      { role: 'user', content: question }
+    ]
+  }), {
+    corpus,
+    groundedSynthesisEnabled: true,
+    semanticVerificationEnabled: true,
+    canUseModel: () => false,
+    canUseVerifier: () => false
+  });
+
+  assert.equal(payload.meta.conversationTopic, '双塔模型');
+  assert.match(payload.meta.standaloneQuery, /双塔模型有哪些训练方式/);
+  assert.equal(payload.meta.evidenceStatus, 'sufficient');
+  assert.deepEqual(
+    [...new Set(payload.meta.toolCalls.map(call => call.name))],
+    ['get_article']
+  );
+  assert.ok(payload.citations.some(citation => citation.chunkId === 'tower#training'));
+});
+
 test('conversation pronouns override an unrelated current page for page tools', async () => {
   const corpus = makeAgentCorpus();
   const previousAnswer = assistantReference(corpus, ['usercf#0'], {

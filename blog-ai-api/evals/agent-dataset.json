@@ -458,7 +458,7 @@
           "线上召回"
         ],
         "toolNames": [
-          "search_blog"
+          "get_article"
         ],
         "relevantPostTitles": [
           "双塔模型"
@@ -495,7 +495,7 @@
           "残差连接"
         ],
         "toolNames": [
-          "search_blog"
+          "get_article"
         ],
         "relevantPostTitles": [
           "ResNet"

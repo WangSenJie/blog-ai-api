@@ -207,7 +207,7 @@ test('messages API resolves a trusted multi-turn reference and exposes Agent met
     payload.meta.evidenceCalibration.version,
     'phase10-topic-anchor-v1'
   );
-  assert.ok(payload.meta.toolCalls.some(call => call.name === 'search_blog'));
+  assert.ok(payload.meta.toolCalls.some(call => call.name === 'get_article'));
   assert.ok(payload.citations.some(citation => citation.title === '双塔模型'));
   assert.equal(Object.prototype.hasOwnProperty.call(payload, 'messages'), false);
 });

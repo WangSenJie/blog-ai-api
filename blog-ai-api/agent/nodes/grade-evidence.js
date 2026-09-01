@@ -103,9 +103,20 @@ function removeKnownArticleTitles(query, state) {
 function isGenericArticleDetailQuery(query) {
   const normalized = normalizeText(query)
     .replace(/[《》：:，,。！？?!\s]/g, '');
-  return /^(?:的)?(?:结构|原理|定义|实现|特点|内容|作用|性质)?(?:什么是|是什么|介绍一下|讲了什么|主要内容|核心观点|有什么特点|有何特点|有哪些特点|有哪些内容|有什么性质|有哪些性质|它有什么性质|如何工作)?$/.test(
+  return /^(?:的)?(?:结构|原理|定义|实现|特点|内容|作用|性质|训练方式|经典算法|方法|步骤|流程|组成|部分|模块|场景|用途)?(?:什么是|是什么|介绍一下|讲了什么|主要内容|核心观点|有什么特点|有何特点|有哪些特点|有哪些内容|有什么性质|有哪些性质|它有什么性质|有哪些(?:训练方式|经典算法|方法|步骤|流程|组成|部分|模块|场景|用途)|如何工作)?$/.test(
     normalized
   );
+}
+
+function articleDetailIntentQuery(query) {
+  const normalized = normalizeText(query);
+  if (/训练方式|训练方法/.test(normalized)) return '训练';
+  if (/经典算法|有哪些算法|算法/.test(normalized)) return '算法';
+  if (/步骤|流程/.test(normalized)) return '步骤';
+  if (/模块|组成|部分|结构/.test(normalized)) return '结构';
+  if (/特点|性质|优点|缺点|局限/.test(normalized)) return '特点';
+  if (/场景|用途|作用/.test(normalized)) return '用途';
+  return '';
 }
 
 function candidateCoverage(candidate, query, calibration, options) {
@@ -282,6 +293,7 @@ function gradeEvidence(state) {
       isGenericArticleDetailQuery(coverageQuery)
   };
   const primaryReference = state.resolvedArticleRefs[0] ||
+    state.conversationArticleRef ||
     state.history.pageRef ||
     state.history.articleRefs[0] ||
     null;
@@ -548,8 +560,18 @@ function gradeEvidence(state) {
     );
   }
 
+  // get_article returns source order rather than a relevance ranking, so a
+  // follow-up may be answered by a later section (for example "线上召回" or
+  // "训练"). Inspect the full article in that case; keep ordinary search
+  // grading limited to its strongest candidates.
+  const sourceOrderedArticle = (state.toolCalls || []).some(call => (
+    call && call.name === 'get_article'
+  ));
+  const coverageCandidates = sourceOrderedArticle
+    ? candidates
+    : candidates.slice(0, 5);
   const coverage = bestCoverage(
-    candidates.slice(0, 5),
+    coverageCandidates,
     coverageQuery,
     calibration,
     coverageOptions
@@ -581,10 +603,27 @@ function gradeEvidence(state) {
       calibration.topicAnchorMinCoverage - 0.1
     );
   const topicEnough = topicCoverage >= topicThreshold;
-  const namedArticleDefinition = Boolean(
-    state.currentQuestionRefs &&
-    state.currentQuestionRefs.length === 1 &&
-    isGenericArticleDetailQuery(coverageQuery)
+  const conversationArticleAnchor = Boolean(
+    state.conversationArticleRef &&
+    state.conversationTopic &&
+    normalizeText(state.standaloneQuery).includes(
+      normalizeText(state.conversationTopic)
+    )
+  );
+  const explicitArticleAnchor = Boolean(
+    state.currentQuestionRefs && state.currentQuestionRefs.length === 1
+  );
+  const articleDetailQuery = isGenericArticleDetailQuery(coverageQuery);
+  const detailIntent = articleDetailIntentQuery(coverageQuery);
+  const detailIntentCovered = detailIntent
+    ? bestCoverage(coverageCandidates, detailIntent, calibration, {
+      allowSemantic: false
+    }) >= calibration.siteQaMinCoverage
+    : true;
+  const namedArticleDefinition = (
+    (explicitArticleAnchor || conversationArticleAnchor) &&
+    articleDetailQuery &&
+    detailIntentCovered
   );
   const sufficient = (coverageEnough || namedArticleDefinition) &&
     topicEnough && (
@@ -687,19 +726,34 @@ function selectContext(state) {
         ) ||
         candidateDirectness(right, subquestion.question) -
           candidateDirectness(left, subquestion.question) ||
+        candidateCoverage(
+          right,
+          subquestion.question,
+          state.evidenceCalibration
+        ) -
+          candidateCoverage(
+            left,
+            subquestion.question,
+            state.evidenceCalibration
+          ) ||
         (right.score || 0) - (left.score || 0)
       ));
       const listQuestion = /哪些|列举|包括|算法|步骤|优点|缺点|特点|区别/.test(
         subquestion.question
       );
       const assignmentLimit = listQuestion ? 3 : 1;
+      const articleScopedQuestion = Boolean(
+        state.currentQuestionRefs && state.currentQuestionRefs.length === 1 ||
+        state.resolvedArticleRefs && state.resolvedArticleRefs.length ||
+        state.conversationArticleRef
+      );
       const candidates = [];
       const assignedPosts = new Set();
       for (const candidate of eligible) {
         const postUrl = normalizePostUrl(candidate.chunk.postUrl);
         if (
           assignedChunks.has(candidate.chunk.id) ||
-          assignedPosts.has(postUrl)
+          assignedPosts.has(postUrl) && !articleScopedQuestion
         ) continue;
         candidates.push(candidate);
         assignedPosts.add(postUrl);

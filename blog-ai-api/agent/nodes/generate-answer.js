@@ -395,6 +395,7 @@ function buildSingleEvidenceClaims(state) {
   }
 
   const primaryReference = state.resolvedArticleRefs[0] ||
+    state.conversationArticleRef ||
     state.history.pageRef ||
     null;
   const primaryUrl = normalizePostUrl(primaryReference && primaryReference.url);
