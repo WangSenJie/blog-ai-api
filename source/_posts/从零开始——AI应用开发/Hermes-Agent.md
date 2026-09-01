@@ -1,10 +1,10 @@
 ---
-title: Harmes-Agent
+title: Hermes-Agent
 date: 2026-07-30
-description: Harmes Agent 工作流
+description: Hermes Agent 工作流
 categories:
   - 从零开始——AI应用开发
-  - Harmes
+  - Hermes
 tags:
 comments: True
 mathjax: false
