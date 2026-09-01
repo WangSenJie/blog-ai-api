@@ -1,3 +1,15 @@
+---
+title: Harmes-Agent
+date: 2026-07-30
+description: Harmes Agent 工作流
+categories:
+  - 从零开始——AI应用开发
+  - Harmes
+tags:
+comments: True
+mathjax: false
+---
+
 ## Agent Loop
 
 - Turn: 从一次用户输入到一次最终回答
